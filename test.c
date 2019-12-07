@@ -8,3 +8,5 @@ int recvMessage(void)
 {
 	return 0;
 }
+
+int inter(void)
