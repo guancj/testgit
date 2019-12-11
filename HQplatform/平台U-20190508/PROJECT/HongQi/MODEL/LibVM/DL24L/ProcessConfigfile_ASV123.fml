@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="SG_Name" type="8" data="" description="ECU Shortname"/>
+<Variable id="Konfigfile" type="8" data="" description="configuration file DL24"/>
+<Variable id="Konfigtyp" type="8" data="" description="Tag name: &quot;KonfigurationVerbaupruefung&quot; or &quot;KonfigurationInbetriebnahme&quot; (for compatibility to older versions of configfile)"/>
+</Inputs>
+<Outputs>
+<Variable id="DatenProzess" type="8" data="" description="Data logistic process"/>
+<Variable id="DatenSchluessel1" type="8" data="" description="Data set key 1"/>
+<Variable id="SwvPruefung" type="3" data="0" description="Activation of SW-Version check (-1 = undefined)"/>
+<Variable id="HwvPruefung" type="3" data="0" description="Activation of HW-Version check (-1 = undefined)"/>
+<Variable id="HkzUnterscheidng" type="3" data="0" description="Activation of HKZ differentiation (-1 = undefined)"/>
+<Variable id="AktivierungASV" type="3" data="0" description="Activation of ASV list (-1 = undefined)"/>
+<Variable id="AktKorrektur" type="3" data="0" description="Activation of correction (ECU and ZDC partnumber) (-1 = undefined)"/>
+<Variable id="AktTeileaufbr" type="3" data="0" description="Activation of Teileaufbrauch (consumption of remaining parts) (-1 = undefined)"/>
+<Variable id="AktTeileFreiPrf" type="3" data="0" description="Activation of &quot;Teile-Frei-Pruefung&quot; (-1 = undefined)"/>
+<Variable id="AktFlashen" type="3" data="0" description="Activation of &quot;Flashing&quot; (-1 = undefined)"/>
+<Variable id="AktKorrZDC" type="3" data="0" description="Activation of ZDC correction (Compatibility to Configfile V13)"/>
+<Variable id="AktZdcProzess" type="3" data="0" description="Activation of ZDC-process (-1 = undefined)"/>
+<Variable id="AktSWaP" type="3" data="0" description="Activation of SWaP (-1 = undefined)"/>
+<Variable id="VorserienFzg" type="3" data="0" description="Combines global &quot;AktivierungVorserienfahrzeug&quot; with ECU related &quot;AktivierungVorserienfahrzeug&quot;"/>
+<Variable id="PrnrVorserie" type="8" data="" description="PRNR Term according to part list syntax"/>
+<Variable id="BGSG" type="8" data="" description="ECU-Baugruppennummer from Konfigfile"/>
+<Variable id="BGZDC" type="8" data="" description="ZDC-Baugruppennummer from Konfigfile"/>
+<Variable id="BGSWaP" type="8" data="" description="SWaP-Baugruppennummer from Konfigfile"/>
+<Variable id="VersionKonfgFile" type="8" data="" description="Version of Config file"/>
+<Variable id="errFlag" type="3" data="0" description="error code"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This function reads data of a DL24 config file
+
+input parameter:SG_Name,Konfigfile,Konfigtyp
+output parameter:DatenProzess,DatenSchluessel1,SwvPruefung,HwvPruefung,HkzUnterscheidng,AktivierungASV,AktKorrektur,
+			AktTeileaufbr,AktTeileFreiPrf,AktFlashen,AktKorrZDC,AktZdcProzess,AktSWaP,VorserienFzg,PrnrVorserie,BGSG,
+                        BGZDC,BGSWaP,VersionKonfgFile,errFlag
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+
+Konfigtyp = Konfigtyp or "KonfigurationVerbaupruefung"
+
+
+local xmlPath = "DL24Konfiguration"
+local xmlTagKopfdaten = "Kopfdaten"
+local xmlTagSGListe = "SteuergeraeteListe"
+local xmlTagKonfigurationVerbaupruefung = "KonfigurationVerbaupruefung"
+local xmlTagKonfigurationInbetriebnahme = "KonfigurationInbetriebnahme"
+local xmlTagKonfigurationSwaP = "KonfigurationSwaP"
+local xmlTagStrgParam= "Steuerungsparameter"
+local xmlTagAktASV = "AktivierungAsv"
+local xmlTagAsvFunktionen= "AsvFunktionen"
+local xmlTagAktKorrekturSG = "AktivierungKorrekturSG"
+local xmlTagAktTeileaufbrauch = "AktivierungTeileaufbrauch"
+local xmlTagAktTeileFreiPruefung = "AktivierungTeileFreiPruefung"
+local xmlTagAktFlashen = "AktivierungFlashen"
+local xmlTagAktKorrekturZDC = "AktivierungKorrekturZDC"
+local xmlTagAktZdcProzess = "AktivierungZdcProzess"
+local xmlTagAktVorseriensteuerung = "AktivierungVorseriensteuerung"
+local xmlTagAktSWaP = "AktivierungSWaP"
+local xmlTagPrnrVorserie = "PrnrVorserie"
+local xmlTagSG = "BG_24"
+local xmlTagSGName = "PruefprogrammSchluessel"
+local xmlTagFZDSchluessel1 = "DatensatzSchluessel1"
+local xmlTagFZDSchluessel = "DatensatzSchluessel"
+local xmlTagAktivSwvPruefung = "AktivierungSwvPruefung"
+local xmlTagAktivHwvPruefung = "AktivierungHwvPruefung"
+local xmlTagAktivHkzUnterscheidung = "AktivierungHkzUnterscheidung"
+local DL24UpsKonfigFileVersion = "DL24UpsKonfigFileSchemaVersion"
+
+local tmpbuf = ""
+local tmpbuflist = ""
+
+local found_sg = false
+local found_zdc = false
+local found_swap = false
+local aktVorseriensteuerung_Global = -1
+-- return value
+DatenProzess = "DL24";			--Data logistic process
+DatenSchluessel1 = "";			--Data set key 1
+SwvPruefung = -1;				--Activation of SW-Version check (-1 = undefined)
+HwvPruefung = -1;				--Activation of HW-Version check (-1 = undefined)
+HkzUnterscheidng = -1;			--Activation of HKZ differentiation (-1 = undefined)
+AktivierungASV = -1;			--Activation of ASV list (-1 = undefined)
+AktKorrektur = -1;				--Activation of correction (ECU and ZDC partnumber) (-1 = undefined)
+AktTeileaufbr = -1;				--Activation of Teileaufbrauch (consumption of remaining parts) (-1 = undefined)
+AktTeileFreiPrf = -1;			--Activation of "Teile-Frei-Pruefung" (-1 = undefined)
+AktFlashen = -1;				--Activation of "Flashing" (-1 = undefined)
+AktKorrZDC = -1;				--Activation of ZDC correction (Compatibility to Configfile V13)
+AktZdcProzess = -1;				--Activation of ZDC-process (-1 = undefined)
+AktSWaP = -1;					--Activation of SWaP (-1 = undefined)
+VorserienFzg = -1;				--Combines global "AktivierungVorserienfahrzeug" with ECU related "AktivierungVorserienfahrzeug"
+PrnrVorserie = "";				--PRNR Term according to part list syntax
+BGSG = "";						--ECU-Baugruppennummer from Konfigfile (e.g. "SZ98")
+BGZDC = "";						--ZDC-Baugruppennummer from Konfigfile (e.g. "SZ99")
+BGSWaP = "";					--SWaP-Baugruppennummer from Konfigfile (e.g. "SZ99")
+VersionKonfgFile ="";			--Version of Config file
+errFlag = 0;					--error code
+-- return value
+
+print("Konfigfile:"..Konfigfile);
+
+local xmlHndl = XmlDocment()
+
+if(false == xmlHndl.load(Konfigfile)) then
+	print("!!!load xml file err ")
+	engine.LastError = 1;
+	errFlag = 1983;
+else
+-- Kopfdaten
+	local PATH = "/"..xmlPath.."/"..xmlTagKopfdaten.."/";
+	tmpbuf = xmlHndl.selectSingleNode(PATH..DL24UpsKonfigFileVersion)
+	if(tmpbuf ~= nil) then
+		tmpbuf = tmpbuf.text
+	else
+		tmpbuf = nil
+	end
+	if(nil ~= tmpbuf) then
+		VersionKonfgFile = tmpbuf ;
+	end
+	print("Konfigfile-Version: "..VersionKonfgFile)
+	if(nil ~= tmpbuf and tmpbuf &gt;= "V16") then
+		if (tmpbuf &lt; "V18") then found_swap = true end
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAktASV)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			AktivierungASV = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false") then
+			AktivierungASV = 0;
+		else
+			print("Config data not found: "..xmlTagAktASV)
+			errFlag = 1979;
+			engine.LastError = 1;
+		end
+		print(xmlTagAktASV..":"..tostring(tmpbuf).." "..AktivierungASV)
+		
+-- xmlTagAktKorrekturSG = "AktivierungKorrekturSG"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktKorrekturSG)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			AktKorrektur = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false")then
+			AktKorrektur = 0;
+		else
+			print("Config data not found: "..AktKorrektur)
+			errFlag = 1970;	
+			engine.LastError = 1 ;
+		end
+		print(xmlTagAktKorrekturSG..":"..tostring(tmpbuf).." "..AktKorrektur)		
+		
+-- xmlTagAktTeileaufbrauch = "AktivierungTeileaufbrauch"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktTeileaufbrauch)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			AktTeileaufbr = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false")then
+			AktTeileaufbr = 0;
+		else
+			print("Config data not found: "..AktTeileaufbr)
+			errFlag = 1971;	
+			engine.LastError = 1 ;
+		end
+		print(xmlTagAktTeileaufbrauch..":"..tostring(tmpbuf).." "..AktTeileaufbr)	
+		
+-- xmlTagAktTeileFreiPruefung = "AktivierungTeileFreiPruefung"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktTeileFreiPruefung)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			AktTeileFreiPrf = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false")then
+			AktTeileFreiPrf = 0;
+		else
+			print("Config data not found: "..AktTeileFreiPrf)
+			errFlag = 1972;	
+			engine.LastError = 1 ;
+		end
+		print(xmlTagAktTeileFreiPruefung..":"..tostring(tmpbuf).." "..AktTeileFreiPrf)
+		
+-- xmlTagAktFlashen = "AktivierungFlashen"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktFlashen)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			AktFlashen = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false")then
+			AktFlashen = 0;
+		else
+			print("Config data not found: "..AktFlashen)
+			errFlag = 1973;	
+			engine.LastError = 1 ;
+		end
+		print(xmlTagAktFlashen..":"..tostring(tmpbuf).." "..AktFlashen)
+		
+-- xmlTagAktKorrekturZDC = "AktivierungKorrekturZDC"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktKorrekturZDC)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			AktKorrZDC = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false")then
+			AktKorrZDC = 0;
+		else
+			print("Config data not found: "..AktKorrZDC)
+			errFlag = 1974;	
+			engine.LastError = 1 ;
+		end
+		print(xmlTagAktKorrekturZDC..":"..tostring(tmpbuf).." "..AktKorrZDC)
+		
+-- xmlTagAktZdcProzess = "AktivierungZdcProzess"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktZdcProzess)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			AktZdcProzess = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false")then
+			AktZdcProzess = 0;
+		else
+			print("Config data not found: "..AktZdcProzess)
+			errFlag = 1975;	
+			engine.LastError = 1 ;
+		end
+		print(xmlTagAktZdcProzess..":"..tostring(tmpbuf).." "..AktZdcProzess)
+		
+-- xmlTagAktVorseriensteuerung = "AktivierungVorseriensteuerung"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktVorseriensteuerung)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf and tmpbuf == "true") then
+			aktVorseriensteuerung_Global = 1;
+		elseif(nil ~= tmpbuf and tmpbuf == "false")then
+			aktVorseriensteuerung_Global = 0;
+		else
+			print("Config data not found: "..aktVorseriensteuerung_Global)
+			errFlag = 1975;	
+			engine.LastError = 1 ;
+		end
+		print(xmlTagAktVorseriensteuerung..":"..tostring(tmpbuf).." "..aktVorseriensteuerung_Global)	
+
+-- xmlTagPrnrVorserie = "PrnrVorserie"
+		tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagPrnrVorserie)
+		if(tmpbuf ~= nil) then
+			tmpbuf = tmpbuf.text
+		else
+			tmpbuf = nil
+		end
+		if(nil ~= tmpbuf) then PrnrVorserie = tmpbuf end
+		print(xmlTagPrnrVorserie..": "..PrnrVorserie)
+		
+-- xmlTagPrnrVorserie = "AktivierungSWaP"
+		if(VersionKonfgFile &gt;= "V18") then
+			tmpbuf = xmlHndl.selectSingleNode(PATH..xmlTagStrgParam.."/"..xmlTagAsvFunktionen.."/"..xmlTagAktSWaP)
+			if(tmpbuf ~= nil) then
+				tmpbuf = tmpbuf.text
+			else
+				tmpbuf = nil
+			end
+			if(nil ~= tmpbuf and tmpbuf == "true") then
+				AktSWaP = 1 ;
+				BGSWaP = "0000" ;
+			elseif(nil ~= tmpbuf and tmpbuf == "false") then
+				AktSWaP = 0 ;
+			end
+			if(1 ~= AktSWaP) then
+				found_swap = true ;
+				BGSWaP = "0000" ;
+			end
+			
+			print(xmlTagAktSWaP..": "..tostring(tmpbuf).." "..AktSWaP)
+		end
+
+-- SG-Daten		
+		PATH = "/"..xmlPath.."/"..xmlTagSGListe.."/";
+		tmpbuflist = xmlHndl.selectNodes(PATH..xmlTagSG);
+		if (0 == engine.LastError and nil ~= tmpbuflist)  then
+			for i = 0,tmpbuflist.length - 1 do
+				if(0 ~= engine.LastError) then break end
+						
+				if(false == found_sg) then
+					tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationVerbaupruefung.."/"..xmlTagSGName)
+					if(tmpbuf ~= nil) then
+						tmpbuf = tmpbuf.text
+					else
+						tmpbuf = nil
+					end
+					if(nil ~= tmpbuf and tmpbuf == SG_Name) then
+						print(xmlTagSGName..": "..tostring(tmpbuf))
+						
+						tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationVerbaupruefung.."/"..xmlTagAktivSwvPruefung)
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = nil
+						end
+						if(nil ~= tmpbuf and tmpbuf == "true") then
+							SwvPruefung = 1 ;
+						elseif(nil ~= tmpbuf and tmpbuf == "false") then
+							SwvPruefung = 0 ;
+						end
+						print(xmlTagAktivSwvPruefung..":"..tostring(tmpbuf))	
+
+						tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationVerbaupruefung.."/"..xmlTagAktivHwvPruefung)
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = nil
+						end
+						if(nil ~= tmpbuf and tmpbuf == "true") then
+							HwvPruefung = 1 ;
+						elseif(nil ~= tmpbuf and tmpbuf == "false") then
+							HwvPruefung = 0 ;
+						end
+						print(xmlTagAktivHwvPruefung..":"..tostring(tmpbuf))
+						
+						tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationVerbaupruefung.."/"..xmlTagAktivHkzUnterscheidung)
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = nil
+						end
+						if(nil ~= tmpbuf and tmpbuf == "true") then
+							HkzUnterscheidng = 1 ;
+						elseif(nil ~= tmpbuf and tmpbuf == "false") then
+							HkzUnterscheidng = 0 ;
+						end
+						print(xmlTagAktivHkzUnterscheidung..":"..tostring(tmpbuf))
+						
+						tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationVerbaupruefung.."/"..xmlTagAktVorseriensteuerung)
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = nil
+						end
+						
+						if(nil ~= tmpbuf and "true" == tmpbuf and aktVorseriensteuerung_Global == 1) then
+							VorserienFzg = 1 ;
+						elseif(nil ~= tmpbuf and "false" == tmpbuf) then
+							VorserienFzg = 0 ;
+						end
+						print(xmlTagAktVorseriensteuerung..":"..tostring(tmpbuf))
+						
+						tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationVerbaupruefung.."/"..xmlTagFZDSchluessel1)
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = nil
+						end
+						if(nil == tmpbuf) then
+							BGSG = SG_Name;
+							print("Config data not found: "..xmlTagFZDSchluessel1)
+							errFlag = 1981;
+						elseif("" == tmpbuf) then
+							BGSG = SG_Name;
+						else
+						BGSG = tmpbuf ;
+						end						
+						print(xmlTagFZDSchluessel1..": "..tostring(BGSG))
+						found_sg = true ;
+					end
+				end
+				
+				if(false == found_zdc) then
+					tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationInbetriebnahme.."/"..xmlTagSGName)
+					if(tmpbuf ~= nil) then
+						tmpbuf = tmpbuf.text
+					else
+						tmpbuf = nil
+					end
+					if(nil == tmpbuf) then
+						engine.LastError = 0 ;
+						BGZDC = "0000" ;
+						found_zdc = true ;
+					elseif(tmpbuf == SG_Name) then
+						tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationInbetriebnahme.."/"..xmlTagFZDSchluessel1)
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = nil
+						end
+						if(nil == tmpbuf ) then
+							engine.LastError = 0 ;
+							BGZDC = "0000" ;	
+							print("Config data not found: "..xmlTagFZDSchluessel1)
+						elseif("" == tmpbuf) then
+							BGZDC = "0000" ;
+						else
+							BGZDC = tmpbuf ;
+						end
+						print(xmlTagFZDSchluessel1..": "..tostring(BGZDC))
+						found_zdc = true ;
+					end			
+				end
+				
+				if(false == found_swap ) then
+					tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationSwaP.."/"..xmlTagSGName)
+					if(tmpbuf ~= nil) then
+						tmpbuf = tmpbuf.text
+					else
+						tmpbuf = nil
+					end
+					if(nil == tmpbuf) then
+						engine.LastError = 0 ;
+						BGSWaP = "0000" ;
+					elseif(tmpbuf == SG_Name) then
+						tmpbuf = tmpbuflist[i].selectSingleNode(xmlTagKonfigurationSwaP.."/"..xmlTagFZDSchluessel)
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = nil
+						end
+						if(nil == tmpbuf ) then
+							engine.LastError = 0 ;
+							BGSWaP = "0000" ;	
+							print("Config data not found: "..xmlTagFZDSchluessel)
+						elseif("" == tmpbuf) then
+							BGSWaP = "0000" ;
+						else
+							BGSWaP = tmpbuf ;
+						end
+						print(xmlTagFZDSchluessel..": "..tostring(BGSWaP))
+						found_swap = true ;
+					end
+				end
+				
+				
+				
+				if(found_sg == true and found_zdc == true and found_swap == false) then found_swap = true ; end
+				if(found_sg == true and found_zdc == true and found_swap == true) then break end
+				
+			
+			end
+		else
+		
+		end
+	else
+		print("Configfile-Version not Version V16 or newer")
+		print("call pragma ProcessConfigfile")
+		--ProcessConfigfile(SG_Name,Konfigfile,Konfigtyp);
+	
+	end
+	
+
+end</Script></Function>
+

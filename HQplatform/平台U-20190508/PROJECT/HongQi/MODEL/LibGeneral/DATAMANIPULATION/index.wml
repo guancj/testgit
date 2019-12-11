@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="binStr2Int"/>
+
+<Function id="conv2ByteToBinString"/>
+
+<Function id="conv4ByteToBinString"/>
+
+<Function id="convNumTo4ByteHex"/>
+
+<Function id="float2int"/>
+
+<Function id="hex2str"/>
+
+<Function id="KeyCodeConvert4Byte"/>
+
+<Function id="str2hex"/>
+
+<Function id="StringResetBitInByte"/>
+
+<Function id="StringSetBitInByte"/>
+
+<Function id="StringTestBitInByte"/>
+
+<Function id="GetPreciseDecimal"/>
+
+<Function id="CarTNC_Isnot_CFaceAndHrid"/>
+
+<Function id="CarTNC_Is_Hrid"/>
+
+<Function id="CarTNC_Is_CFace"/>
+
+<Function id="CarTNC_Isnot_CFace"/>
+
+<Function id="CarTNC_Isnot_Hrid"/>
+
+</children>
+</Workplace>

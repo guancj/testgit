@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="Position" type="3" data="1" description="&gt;= 1"/>
+<Variable id="RecvTel" type="8" data="&quot;&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="MeasValue" type="8" data="" description="参与运算前判定是不是nil"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used  to   Transform VWDg Data  
+input parameter:Position,RecvTel
+output parameer :Value
+
+07/26/2017     created by viforce
+******************************************************************************--]]
+
+MeasValue = nil
+
+if(RecvTel == nil or Position &lt; 1) then
+	engine.LastError = 1
+        engine.StatValue = " parameter Error !!!"
+	return MeasValue
+end
+
+
+if(type(vx_diag) ~= "function" ) then
+
+local path = engine.ProgPath .. "vw_diag.ini";
+LibVW.vw_diag_load(path);
+
+end
+
+
+if(string.len(RecvTel) &gt;= ((Position)*3)) then
+		Position = Position - 1;
+		local MessureString = string.sub(RecvTel,(Position*3+1),(Position*3)+3);
+		local M_byte_1 =string.byte(MessureString,1);
+		local M_byte_2 =string.byte(MessureString,2);
+		local M_byte_3 =string.byte(MessureString,3);
+		MeasValue = vx_diag(M_byte_1,M_byte_2,M_byte_3);
+end
+
+
+print("&lt;VWDgFormel&gt;" .. tostring(MeasValue))</Script></Function>
+

@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="ReviewsDocument" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="368" top="19" right="468" bottom="51"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="379" top="6844" right="479" bottom="6876"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="结果判定">
+<Rect left="369" top="80" right="469" bottom="112"/>
+<Script>DInt_Pruefortbewertung_shared = 1
+if(engine.TestResult == 0) then
+DInt_Pruefortbewertung_shared = 0
+end
+
+-- DStr_Prozessort_shared == "FAS"</Script></Activity>
+<Activity id="4" ActivityType="3" name="Prozessbyte schreiben">
+<Rect left="370" top="202" right="470" bottom="234"/>
+<Script>-- FAS  prozessbytes.ini   =&gt;   Byte=10  Bit=6
+DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="6" ActivityType="5" name="c7_gwa">
+<Rect left="370" top="269" right="470" bottom="301"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteRead&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="Transportmode" value="&quot;&quot;" ret="TransportmodeGWA"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="7" ActivityType="13" name="StringSetBitInByte">
+<Rect left="287" top="340" right="387" bottom="372"/>
+<FunctionRef id="StringSetBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="DestString" ret="DMCDResultString_Prozessbytes_shared"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="8" ActivityType="13" name="StringResetBitInByte">
+<Rect left="458" top="338" right="558" bottom="370"/>
+<FunctionRef id="StringResetBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="DestString" ret="DMCDResultString_Prozessbytes_shared"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="9" ActivityType="3" name="debug">
+<Rect left="288" top="408" right="388" bottom="440"/>
+<Script>engine.println("&lt;ReviewsDocument&gt; ".."Gesamtergebnis IO")</Script></Activity>
+<Activity id="10" ActivityType="3" name="debug">
+<Rect left="459" top="408" right="559" bottom="440"/>
+<Script>engine.println("&lt;ReviewsDocument&gt; ".."Gesamtergebnis NIO")</Script></Activity>
+<Activity id="12" ActivityType="5" name="c7_gwa">
+<Rect left="380" top="477" right="480" bottom="509"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteWrite&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="Transportmode" value="&quot;&quot;" ret="TransportmodeGWA"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="13" ActivityType="3" name="FISeQS schreiben">
+<Rect left="380" top="544" right="480" bottom="576"/>
+<Script></Script></Activity>
+<Activity id="14" ActivityType="3" name="总评估">
+<Rect left="380" top="608" right="480" bottom="640"/>
+<Script>
+if(DInt_Pruefortbewertung_shared == 0) then
+	engine.StatValue = "评估"
+        engine.LastError = 0
+else
+	engine.StatValue = "评估"
+        engine.LastError = 1
+end </Script><assessment block="10" group="137" pbltext="DEP1460" no="1" name="DEP1461" type="8" flags="97"/>
+</Activity>
+<Activity id="15" ActivityType="3" name="Fahrzeugstatus drucken">
+<Rect left="381" top="672" right="481" bottom="704"/>
+<Script></Script></Activity>
+<Activity id="16" ActivityType="5" name="c7_gwa">
+<Rect left="381" top="739" right="481" bottom="771"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteRead&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="Transportmode" value="&quot;&quot;" ret="TransportmodeGWA"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="17" ActivityType="3" name="结果不合格">
+<Rect left="381" top="801" right="481" bottom="833"/>
+<Script>engine.StatValue = "结果不合格"
+engine.LastError = 1
+</Script><assessment block="3" group="199" pbltext="DEP1462" no="1" name="DEP1449" type="61240" flags="97"/>
+</Activity>
+<Activity id="18" ActivityType="3" name="Statusbytes">
+<Rect left="382" top="863" right="482" bottom="895"/>
+<Script>DString_Statusbytes = ""</Script></Activity>
+<Activity id="19" ActivityType="3" name="a_flag1">
+<Rect left="383" top="931" right="483" bottom="963"/>
+<Script>a_flag1 = 0</Script></Activity>
+<Activity id="20" ActivityType="3" name="String Set">
+<Rect left="383" top="996" right="483" bottom="1028"/>
+<Script>DString_1 = "需要重新进行的检测: "
+DString = "不合格的检测: "</Script></Activity>
+<Activity id="21" ActivityType="3" name="VP2">
+<Rect left="328" top="1058" right="428" bottom="1090"/>
+<Script></Script></Activity>
+<Activity id="22" ActivityType="3" name="Byte bit处理">
+<Rect left="384" top="1191" right="484" bottom="1223"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="23" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="383" top="1123" right="483" bottom="1155"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;VP2&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="24" ActivityType="13" name="StringTestBitInByte">
+<Rect left="383" top="1256" right="483" bottom="1288"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="25" ActivityType="3" name="VP2判断分析">
+<Rect left="384" top="1317" right="484" bottom="1349"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "VP2" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="26" ActivityType="3" name="TNE">
+<Rect left="326" top="1381" right="426" bottom="1413"/>
+<Script></Script></Activity>
+<Activity id="27" ActivityType="3" name="Byte bit处理">
+<Rect left="382" top="1514" right="482" bottom="1546"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="28" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="381" top="1446" right="481" bottom="1478"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;TNE&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="29" ActivityType="13" name="StringTestBitInByte">
+<Rect left="381" top="1579" right="481" bottom="1611"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="30" ActivityType="3" name="TNE判断分析">
+<Rect left="382" top="1640" right="482" bottom="1672"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "TNE" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="31" ActivityType="3" name="VP3">
+<Rect left="327" top="1700" right="427" bottom="1732"/>
+<Script></Script></Activity>
+<Activity id="32" ActivityType="3" name="Byte bit处理">
+<Rect left="383" top="1833" right="483" bottom="1865"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="33" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="382" top="1765" right="482" bottom="1797"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;VP3&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="34" ActivityType="13" name="StringTestBitInByte">
+<Rect left="382" top="1898" right="482" bottom="1930"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="35" ActivityType="3" name="VP3判断分析">
+<Rect left="383" top="1959" right="483" bottom="1991"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "VP3" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="36" ActivityType="3" name="BFA">
+<Rect left="324" top="2030" right="424" bottom="2062"/>
+<Script></Script></Activity>
+<Activity id="37" ActivityType="3" name="Byte bit处理">
+<Rect left="380" top="2163" right="480" bottom="2195"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="38" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="379" top="2095" right="479" bottom="2127"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;BFA&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="39" ActivityType="13" name="StringTestBitInByte">
+<Rect left="379" top="2228" right="479" bottom="2260"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="40" ActivityType="3" name="BFA判断分析">
+<Rect left="380" top="2289" right="480" bottom="2321"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "BFA" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="41" ActivityType="3" name="IBN">
+<Rect left="327" top="2355" right="427" bottom="2387"/>
+<Script></Script></Activity>
+<Activity id="42" ActivityType="3" name="Byte bit处理">
+<Rect left="383" top="2488" right="483" bottom="2520"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="43" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="382" top="2420" right="482" bottom="2452"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;IBN&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="44" ActivityType="13" name="StringTestBitInByte">
+<Rect left="382" top="2553" right="482" bottom="2585"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="45" ActivityType="3" name="IBN判断分析">
+<Rect left="383" top="2614" right="483" bottom="2646"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "IBN" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="46" ActivityType="3" name="NKT">
+<Rect left="327" top="2678" right="427" bottom="2710"/>
+<Script></Script></Activity>
+<Activity id="47" ActivityType="3" name="Byte bit处理">
+<Rect left="383" top="2811" right="483" bottom="2843"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="48" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="382" top="2743" right="482" bottom="2775"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;NKT&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="49" ActivityType="13" name="StringTestBitInByte">
+<Rect left="382" top="2876" right="482" bottom="2908"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="50" ActivityType="3" name="NKT判断分析">
+<Rect left="383" top="2937" right="483" bottom="2969"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "NKT" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="51" ActivityType="3" name="FWE">
+<Rect left="326" top="3002" right="426" bottom="3034"/>
+<Script></Script></Activity>
+<Activity id="52" ActivityType="3" name="Byte bit处理">
+<Rect left="382" top="3135" right="482" bottom="3167"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="53" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="381" top="3067" right="481" bottom="3099"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;FWE&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="54" ActivityType="13" name="StringTestBitInByte">
+<Rect left="381" top="3200" right="481" bottom="3232"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="55" ActivityType="3" name="FWE判断分析">
+<Rect left="382" top="3261" right="482" bottom="3293"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "FWE" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="56" ActivityType="3" name="SWE">
+<Rect left="323" top="3327" right="423" bottom="3359"/>
+<Script></Script></Activity>
+<Activity id="57" ActivityType="3" name="Byte bit处理">
+<Rect left="379" top="3460" right="479" bottom="3492"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="58" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="378" top="3392" right="478" bottom="3424"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;SWE&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="59" ActivityType="13" name="StringTestBitInByte">
+<Rect left="378" top="3525" right="478" bottom="3557"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="60" ActivityType="3" name="SWE判断分析">
+<Rect left="379" top="3586" right="479" bottom="3618"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "SWE" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="61" ActivityType="3" name="LEP">
+<Rect left="322" top="3644" right="422" bottom="3676"/>
+<Script></Script></Activity>
+<Activity id="62" ActivityType="3" name="Byte bit处理">
+<Rect left="378" top="3777" right="478" bottom="3809"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="63" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="377" top="3709" right="477" bottom="3741"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;LEP&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="64" ActivityType="13" name="StringTestBitInByte">
+<Rect left="377" top="3842" right="477" bottom="3874"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="65" ActivityType="3" name="LEP判断分析">
+<Rect left="378" top="3903" right="478" bottom="3935"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "LEP" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="66" ActivityType="3" name="ABS">
+<Rect left="323" top="3963" right="423" bottom="3995"/>
+<Script></Script></Activity>
+<Activity id="67" ActivityType="3" name="Byte bit处理">
+<Rect left="379" top="4096" right="479" bottom="4128"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="68" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="378" top="4028" right="478" bottom="4060"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;ABS&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="69" ActivityType="13" name="StringTestBitInByte">
+<Rect left="378" top="4161" right="478" bottom="4193"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="70" ActivityType="3" name="ABS判断分析">
+<Rect left="379" top="4222" right="479" bottom="4254"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "ABS" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="71" ActivityType="3" name="ICS">
+<Rect left="320" top="4291" right="420" bottom="4323"/>
+<Script></Script></Activity>
+<Activity id="72" ActivityType="3" name="Byte bit处理">
+<Rect left="376" top="4424" right="476" bottom="4456"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="73" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="375" top="4356" right="475" bottom="4388"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;ICS&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="74" ActivityType="13" name="StringTestBitInByte">
+<Rect left="375" top="4489" right="475" bottom="4521"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="75" ActivityType="3" name="ICS判断分析">
+<Rect left="376" top="4550" right="476" bottom="4582"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "ICS" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="76" ActivityType="3" name="MOP">
+<Rect left="322" top="4611" right="422" bottom="4643"/>
+<Script></Script></Activity>
+<Activity id="77" ActivityType="3" name="Byte bit处理">
+<Rect left="378" top="4744" right="478" bottom="4776"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="78" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="377" top="4676" right="477" bottom="4708"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;MOP&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="79" ActivityType="13" name="StringTestBitInByte">
+<Rect left="377" top="4809" right="477" bottom="4841"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="80" ActivityType="3" name="MOP判断分析">
+<Rect left="378" top="4870" right="478" bottom="4902"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "MOP" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="81" ActivityType="3" name="ABGAS">
+<Rect left="320" top="4930" right="420" bottom="4962"/>
+<Script></Script></Activity>
+<Activity id="82" ActivityType="3" name="Byte bit处理">
+<Rect left="376" top="5063" right="476" bottom="5095"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="83" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="375" top="4995" right="475" bottom="5027"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;ABGAS&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="84" ActivityType="13" name="StringTestBitInByte">
+<Rect left="375" top="5128" right="475" bottom="5160"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="85" ActivityType="3" name="ABGAS判断分析">
+<Rect left="376" top="5189" right="476" bottom="5221"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "ABGAS" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="86" ActivityType="3" name="FAS">
+<Rect left="324" top="5255" right="424" bottom="5287"/>
+<Script></Script></Activity>
+<Activity id="87" ActivityType="3" name="Byte bit处理">
+<Rect left="380" top="5388" right="480" bottom="5420"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="88" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="379" top="5320" right="479" bottom="5352"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;FAS&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="89" ActivityType="13" name="StringTestBitInByte">
+<Rect left="379" top="5453" right="479" bottom="5485"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="90" ActivityType="3" name="FAS判断分析">
+<Rect left="380" top="5514" right="480" bottom="5546"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "FAS" .. " "
+        DString = DString .. "FAS" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+        a_flag1 = 1
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="91" ActivityType="3" name="FP2">
+<Rect left="324" top="5574" right="424" bottom="5606"/>
+<Script></Script></Activity>
+<Activity id="92" ActivityType="3" name="Byte bit处理">
+<Rect left="380" top="5707" right="480" bottom="5739"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="93" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="379" top="5639" right="479" bottom="5671"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;FP2&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="94" ActivityType="13" name="StringTestBitInByte">
+<Rect left="379" top="5772" right="479" bottom="5804"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="95" ActivityType="3" name="FP2判断分析">
+<Rect left="380" top="5839" right="480" bottom="5871"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "FP2" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="96" ActivityType="3" name="BZD">
+<Rect left="325" top="5901" right="425" bottom="5933"/>
+<Script></Script></Activity>
+<Activity id="97" ActivityType="3" name="Byte bit处理">
+<Rect left="381" top="6034" right="481" bottom="6066"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="98" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="380" top="5966" right="480" bottom="5998"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;BZD&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="99" ActivityType="13" name="StringTestBitInByte">
+<Rect left="380" top="6099" right="480" bottom="6131"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="100" ActivityType="3" name="BZD判断分析">
+<Rect left="381" top="6166" right="481" bottom="6198"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "BZD" .. " "
+	DString_Statusbytes = DString_Statusbytes .. "0"
+else
+	DString_Statusbytes = DString_Statusbytes .. "1"
+end</Script></Activity>
+<Activity id="101" ActivityType="3" name="Ruhestrom">
+<Rect left="325" top="6242" right="425" bottom="6274"/>
+<Script></Script></Activity>
+<Activity id="102" ActivityType="3" name="Byte bit处理">
+<Rect left="381" top="6375" right="481" bottom="6407"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;ReviewsDocument&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="103" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="380" top="6307" right="480" bottom="6339"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;Ruhestrom&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="104" ActivityType="13" name="StringTestBitInByte">
+<Rect left="380" top="6440" right="480" bottom="6472"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;ReviewsDocument&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="105" ActivityType="3" name="Ruhestrom判断分析">
+<Rect left="381" top="6507" right="481" bottom="6539"/>
+<Script>if(DInt_Prozessbyte  == 0) then
+	DString_1 = DString_1 .. "Ruhestrom" .. " "
+end</Script></Activity>
+<Activity id="107" ActivityType="3" name="结果不合格">
+<Rect left="380" top="6576" right="480" bottom="6608"/>
+<Script>engine.StatValue = tostring(DString)
+engine.LastError = 1
+</Script><assessment block="3" group="199" pbltext="DEP1462" no="1" name="DEP1449" type="61240" flags="97"/>
+</Activity>
+<Activity id="109" ActivityType="3" name="结果合格">
+<Rect left="295" top="6645" right="395" bottom="6677"/>
+<Script>engine.StatValue = "结果合格"
+engine.LastError = 1
+</Script><assessment block="3" group="199" pbltext="DEP1462" no="1" name="DEP1449" type="61240" flags="97"/>
+</Activity>
+<Activity id="110" ActivityType="3" name="状态字节">
+<Rect left="380" top="6710" right="480" bottom="6742"/>
+<Script>DString_Statusbytes = "Statusbytes: " .. DString_Statusbytes
+engine.StatValue = DString_Statusbytes
+engine.LastError = 0</Script><assessment block="3" group="199" pbltext="DEP1462" no="2" name="DEP1463" type="8" flags="97"/>
+</Activity>
+<Activity id="111" ActivityType="3" name="结果合格">
+<Rect left="380" top="6775" right="480" bottom="6807"/>
+<Script>engine.StatValue = tostring(DString_1)
+engine.LastError = 0
+</Script><assessment block="3" group="199" pbltext="DEP1462" no="3" name="DEP1449" type="61240" flags="97"/>
+</Activity>
+<Activity id="112" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="369" top="144" right="469" bottom="176"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;FAS&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="112" type="0">
+</Transition>
+<Transition StartId="4" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="7" type="1">
+<Expression>DInt_Pruefortbewertung_shared == 0</Expression></Transition>
+<Transition StartId="6" EndId="8" type="0">
+</Transition>
+<Transition StartId="7" EndId="9" type="0">
+</Transition>
+<Transition StartId="8" EndId="10" type="0">
+</Transition>
+<Transition StartId="9" EndId="12" type="0">
+</Transition>
+<Transition StartId="10" EndId="12" type="0">
+</Transition>
+<Transition StartId="12" EndId="13" type="0">
+</Transition>
+<Transition StartId="13" EndId="14" type="0">
+</Transition>
+<Transition StartId="14" EndId="15" type="0">
+</Transition>
+<Transition StartId="15" EndId="16" type="0">
+</Transition>
+<Transition StartId="16" EndId="17" type="0">
+</Transition>
+<Transition StartId="17" EndId="18" type="0">
+</Transition>
+<Transition StartId="18" EndId="19" type="0">
+</Transition>
+<Transition StartId="19" EndId="20" type="0">
+</Transition>
+<Transition StartId="20" EndId="21" type="0">
+</Transition>
+<Transition StartId="21" EndId="23" type="0">
+</Transition>
+<Transition StartId="22" EndId="24" type="0">
+</Transition>
+<Transition StartId="23" EndId="22" type="0">
+</Transition>
+<Transition StartId="24" EndId="25" type="0">
+</Transition>
+<Transition StartId="25" EndId="26" type="0">
+</Transition>
+<Transition StartId="26" EndId="28" type="0">
+</Transition>
+<Transition StartId="27" EndId="29" type="0">
+</Transition>
+<Transition StartId="28" EndId="27" type="0">
+</Transition>
+<Transition StartId="29" EndId="30" type="0">
+</Transition>
+<Transition StartId="30" EndId="31" type="0">
+</Transition>
+<Transition StartId="31" EndId="33" type="0">
+</Transition>
+<Transition StartId="32" EndId="34" type="0">
+</Transition>
+<Transition StartId="33" EndId="32" type="0">
+</Transition>
+<Transition StartId="34" EndId="35" type="0">
+</Transition>
+<Transition StartId="35" EndId="36" type="0">
+</Transition>
+<Transition StartId="36" EndId="38" type="0">
+</Transition>
+<Transition StartId="37" EndId="39" type="0">
+</Transition>
+<Transition StartId="38" EndId="37" type="0">
+</Transition>
+<Transition StartId="39" EndId="40" type="0">
+</Transition>
+<Transition StartId="40" EndId="41" type="0">
+</Transition>
+<Transition StartId="41" EndId="43" type="0">
+</Transition>
+<Transition StartId="42" EndId="44" type="0">
+</Transition>
+<Transition StartId="43" EndId="42" type="0">
+</Transition>
+<Transition StartId="44" EndId="45" type="0">
+</Transition>
+<Transition StartId="45" EndId="46" type="0">
+</Transition>
+<Transition StartId="46" EndId="48" type="0">
+</Transition>
+<Transition StartId="47" EndId="49" type="0">
+</Transition>
+<Transition StartId="48" EndId="47" type="0">
+</Transition>
+<Transition StartId="49" EndId="50" type="0">
+</Transition>
+<Transition StartId="50" EndId="51" type="0">
+</Transition>
+<Transition StartId="51" EndId="53" type="0">
+</Transition>
+<Transition StartId="52" EndId="54" type="0">
+</Transition>
+<Transition StartId="53" EndId="52" type="0">
+</Transition>
+<Transition StartId="54" EndId="55" type="0">
+</Transition>
+<Transition StartId="55" EndId="56" type="0">
+</Transition>
+<Transition StartId="56" EndId="58" type="0">
+</Transition>
+<Transition StartId="57" EndId="59" type="0">
+</Transition>
+<Transition StartId="58" EndId="57" type="0">
+</Transition>
+<Transition StartId="59" EndId="60" type="0">
+</Transition>
+<Transition StartId="60" EndId="61" type="0">
+</Transition>
+<Transition StartId="61" EndId="63" type="0">
+</Transition>
+<Transition StartId="62" EndId="64" type="0">
+</Transition>
+<Transition StartId="63" EndId="62" type="0">
+</Transition>
+<Transition StartId="64" EndId="65" type="0">
+</Transition>
+<Transition StartId="65" EndId="66" type="0">
+</Transition>
+<Transition StartId="66" EndId="68" type="0">
+</Transition>
+<Transition StartId="67" EndId="69" type="0">
+</Transition>
+<Transition StartId="68" EndId="67" type="0">
+</Transition>
+<Transition StartId="69" EndId="70" type="0">
+</Transition>
+<Transition StartId="70" EndId="71" type="0">
+</Transition>
+<Transition StartId="71" EndId="73" type="0">
+</Transition>
+<Transition StartId="72" EndId="74" type="0">
+</Transition>
+<Transition StartId="73" EndId="72" type="0">
+</Transition>
+<Transition StartId="74" EndId="75" type="0">
+</Transition>
+<Transition StartId="75" EndId="76" type="0">
+</Transition>
+<Transition StartId="76" EndId="78" type="0">
+</Transition>
+<Transition StartId="77" EndId="79" type="0">
+</Transition>
+<Transition StartId="78" EndId="77" type="0">
+</Transition>
+<Transition StartId="79" EndId="80" type="0">
+</Transition>
+<Transition StartId="80" EndId="81" type="0">
+</Transition>
+<Transition StartId="81" EndId="83" type="0">
+</Transition>
+<Transition StartId="82" EndId="84" type="0">
+</Transition>
+<Transition StartId="83" EndId="82" type="0">
+</Transition>
+<Transition StartId="84" EndId="85" type="0">
+</Transition>
+<Transition StartId="85" EndId="86" type="0">
+</Transition>
+<Transition StartId="86" EndId="88" type="0">
+</Transition>
+<Transition StartId="87" EndId="89" type="0">
+</Transition>
+<Transition StartId="88" EndId="87" type="0">
+</Transition>
+<Transition StartId="89" EndId="90" type="0">
+</Transition>
+<Transition StartId="90" EndId="91" type="0">
+</Transition>
+<Transition StartId="91" EndId="93" type="0">
+</Transition>
+<Transition StartId="92" EndId="94" type="0">
+</Transition>
+<Transition StartId="93" EndId="92" type="0">
+</Transition>
+<Transition StartId="94" EndId="95" type="0">
+</Transition>
+<Transition StartId="95" EndId="96" type="0">
+</Transition>
+<Transition StartId="96" EndId="98" type="0">
+</Transition>
+<Transition StartId="97" EndId="99" type="0">
+</Transition>
+<Transition StartId="98" EndId="97" type="0">
+</Transition>
+<Transition StartId="99" EndId="100" type="0">
+</Transition>
+<Transition StartId="100" EndId="101" type="0">
+</Transition>
+<Transition StartId="101" EndId="103" type="0">
+</Transition>
+<Transition StartId="102" EndId="104" type="0">
+</Transition>
+<Transition StartId="103" EndId="102" type="0">
+</Transition>
+<Transition StartId="104" EndId="105" type="0">
+</Transition>
+<Transition StartId="105" EndId="107" type="0">
+</Transition>
+<Transition StartId="107" EndId="109" type="1">
+<Expression>a_flag1 == 0</Expression></Transition>
+<Transition StartId="107" EndId="110" type="0">
+</Transition>
+<Transition StartId="109" EndId="110" type="0">
+</Transition>
+<Transition StartId="110" EndId="111" type="0">
+</Transition>
+<Transition StartId="111" EndId="2" type="0">
+</Transition>
+<Transition StartId="112" EndId="4" type="0">
+</Transition>
+</Transitions>
+</Process>
+

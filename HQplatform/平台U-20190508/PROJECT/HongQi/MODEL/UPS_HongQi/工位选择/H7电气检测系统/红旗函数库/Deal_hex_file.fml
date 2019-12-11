@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="file_path" type="8" data=""/>
+<Variable id="dataflag" type="3" data="0"/>
+<Variable id="blcokSizek" type="3" data="1" description="1k=1,2k=2,4k=4"/>
+</Inputs>
+<Script>--[[ 
+************************************************************************************************************************
+The function is used to extract data from HEX file and caculate CRC32 code.
+
+History:
+    08/13/2016, developer : Zhushaodong created
+    01/12/0217,update: zsd;
+************************************************************************************************************************
+--]]
+
+local line_data;
+line_data="";
+local datatype;
+datatype="";
+local baseadd;
+baseadd="";
+local startadd;
+startadd="";
+local endadd;
+endadd="";
+local newadd;
+newadd="";
+local oldadd;
+oldadd="0000";
+local addlth;
+addlth=0;
+local linedatalth;
+linedatalth=0;
+local oldlinedatalth;
+oldlinedatalth=0;
+local newlineadddec;
+newlineadddec=0;
+local oldlineadddec;
+oldlineadddec=0;
+local lineadd;
+lineadd="0000";
+local blockdata;
+blockdata="";
+local blockline;
+blockline="";
+local blocknum;
+blocknum=0;
+local crcnum;
+crcnum=0;
+local blocklinenum;
+blocklinenum=0;
+local blocklinenum1;
+blocklinenum1=0;
+local blocklinenum2;
+blocklinenum2=0;
+local crcstr;
+crcstr=""
+local totallth;
+totallth=0;
+
+if(blcokSizek == 1)then
+	blockSize = 1016*2;--1K刷写，有线支持
+elseif(blcokSizek == 2)then
+	blockSize = 2040*2;--K4刷写，蓝牙支持	
+elseif(blcokSizek == 4)then
+	blockSize = 4080*2;--K4刷写，蓝牙支持	
+end
+
+--[[
+if(dataflag == 1)then--遍历文件，计算出程序数据所占用的地址空间
+       local tmpadd;
+	   tmpadd = "0000";
+       local minadd;
+	   minadd = "0000";
+       local maxadd;
+	   maxadd = "0000";
+	   local minadddec;
+	   minadddec = 0;
+	   local maxadddec;
+	   maxadddec = 0;
+	   local tmpadddec;
+	   tmpadddec = 0;
+       local datafile = io.open(file_path,"r");
+       assert(datafile);
+       while true do 
+              line_data = datafile:read("*line"); -- 提取行
+			  if line_data == nil then 
+                     print("line_data=nil,break");
+                     break;
+		      end      	  
+              if(string.sub(line_data,8,9) == "04")then--提到04中的基地址，保存最小地址和最大地址
+					 tmpadd = string.sub(line_data,10,13);
+					 --print("tmpadd"..tmpadd);
+					 tmpadddec = (hex2dec(tmpadd,1)*256+hex2dec(tmpadd,3));
+					 --print("tmpadddec"..tmpadddec);
+					 if(minadd == "0000" or maxadd == "0000")then
+					        minadddec = tmpadddec; 
+							minadd = tmpadd;
+                            --print("获得第一个新地址minadddec"..minadddec);
+						    --print("获得第一个新地址minadd"..minadd);
+							
+					        maxadddec = tmpadddec;
+							maxadd = tmpadd;
+							--print("获得第一个新地址maxadddec"..maxadddec);							
+							--print("获得第一个新地址maxadd"..maxadd);	
+					 else
+							if(tmpadddec &lt; minadddec)then--计算出最大和最小地址
+								minadddec = tmpadddec; 
+								minadd = tmpadd;
+								--print("获得更小的新地址minadddec"..minadddec);
+								--print("获得更小的新地址minadd"..minadd);
+							elseif(tmpadddec &gt; maxadddec)then
+								maxadddec = tmpadddec;
+								maxadd = tmpadd;
+								--print("获得更大的新地址maxadddec"..maxadddec);							
+								--print("获得更大的新地址maxadd"..maxadd);
+							end
+					 end
+			  end
+       end
+	   print("计算后的占用地址空间记录")
+       print("获得更小的新地址minadddec"..minadddec);
+	   print("获得更小的新地址minadd"..minadd);
+	   print("获得更大的新地址maxadddec"..maxadddec);							
+	   print("获得更大的新地址maxadd"..maxadd);
+							
+	   minadd = minadd.."0000";
+	   print("计算后最小地址minadd"..minadd);
+	   totallth = maxadddec*65536 - minadddec*65536 + 65536;
+	   totallth = string.format("%08X",totallth);--转换成十六进制
+	   print("程序数据所占用空间totallth"..totallth);
+	   
+	   --清空变量
+	   line_data = "";
+	   --file:seek("set");--指针回到文件开关
+	   
+--刷程序数据前擦除程序地址空间,fls文件不需要擦除	   			
+#DELAY 1000 
+#COMM 0x31 0x01 0xff 0x00 0x44 hex2bin(minadd) hex2bin(totallth) 	
+end
+]]--
+
+--开始读取文件数据
+local file = io.open(file_path, "r");
+print("file:"..file_path);
+assert(file);
+local i = 1;   
+engine.SetLineText(1,string.sub(file_path,3,string.len(file_path))); 
+
+--固定擦除程序地址空间
+if(dataflag == 1)then--遍历文件，计算出程序数据所占用的地址空间
+		local filename=string.sub(file_path,9,11);
+print("擦除程序，文件名:"..filename);
+
+		if(filename=="CAL")then
+#COMM 0x31 0x01 0xff 0x00 0x44 0x00 0x02 0x00 0x00 0x00 0x02 0x00 0x00 
+--31 01 ff 00 44 00 02 00 00 00 02 00 00 
+		elseif(filename=="BSW")then
+#COMM 0x31 0x01 0xff 0x00 0x44 0x00 0x04 0x00 0x00 0x00 0x08 0x00 0x00
+--31 01 ff 00 44 00 04 00 00 00 08 00 00
+		elseif(filename=="FSM")then
+#COMM 0x31 0x01 0xff 0x00 0x44 0x00 0x0c 0x00 0x00 0x00 0x04 0x00 0x00
+--31 01 ff 00 44 00 0c 00 00 00 04 00 00
+		elseif(filename=="ASW")then
+#COMM 0x31 0x01 0xff 0x00 0x44 0x00 0x10 0x00 0x00 0x00 0x30 0x00 0x00
+--31 01 ff 00 44 00 10 00 00 00 30 00 00
+		end
+else
+end
+ 
+
+--按行读文件                      
+while true do
+                  
+          line_data = file:read("*line"); -- 提取行
+          if line_data == nil then 
+                print("line_data=nil,break");
+                break;
+          end          
+          line_data=string.gsub(line_data,":","");--去掉":"
+
+          --print("linetestlength"..string.len(line_data)); 
+          --print("lineno"..line_data);
+          datatype = string.sub(line_data,7,8)--提取行类型
+          --print("第一行datatype:"..datatype);   
+
+          if(datatype == "04")then
+                 --print("datatype04新一块")
+                 newadd = "0000";				 
+                 oldadd = "0000";
+                 startadd = "";--清空块首地址
+				 blocknum = blocknum + 1;
+				 --print("块数量blocknum"..blocknum);
+				 engine.SetLineText(2,"第"..tostring(blocknum).."块");--显示块数量
+				 
+				 baseadd = string.sub(line_data,9,12);--文件基地址
+                 --print("baseadd"..baseadd); 
+                 while true do
+                        
+                        line_data = file:read("*line");
+                        --print("line_data in 00-"..line_data);
+						--print("line_data in 04-"..line_data);
+                        line_data=string.gsub(line_data,":","");--去掉":"
+                        datatype = string.sub(line_data,7,8)--提取行类型
+                        --print("datatype:"..datatype); 
+						continueadd="FFFF"
+                        if(datatype ~= "00")then
+							if(datatype=="04")then
+								continueadd=string.sub(line_data,9,12);
+								--print("datatype04内单块循环完成，遇到下一块是04,扩展地址："..continueadd.."-十六进制为:"..(hex2dec(continueadd,1)*256+hex2dec(continueadd,3)));
+								continueadddec=hex2dec(continueadd,1)*16777216+hex2dec(continueadd,3)*65536;
+								--print("datatype04内单块循环完成，遇到下一块是04,扩展地址十进制："..continueadddec);
+								baseadddec=hex2dec(baseadd,1)*16777216+hex2dec(baseadd,3)*65536;
+								--print("基地址十进制："..baseadddec);
+								baseadd=continueadd;--datatype04单块结束后与下一块是连续的情况下，将基地址转换成十进制后赋值下一块的基地址。
+								line_data = file:read("*line");--此时已经将04扩展行读出，再读就是下一行的数据行
+								line_data=string.gsub(line_data,":","");--去掉":"
+								
+								--print("datatype04内单块循环完成，遇到下一块是04,下一行数据行"..line_data);
+								
+							else
+								print("循环到04块尾，下一块头并且不是连续地址");
+								file:seek("set",file:seek()-string.len(line_data)-3);
+								break;
+							end
+                        end      
+
+
+                        --lineadd = string.sub(line_data,3,6)
+						newadd = string.sub(line_data,3,6)--提取新行地址
+						--print("提取新行地址newadd"..newadd);
+						--print("上一行地址及长度oldadd,oldlinedatalth"..oldadd..","..oldlinedatalth);
+						
+						linedatalth = hex2dec(string.sub(line_data,1,2),1);--提取行数据长度
+						--print("linedatalth"..linedatalth);
+						
+						newlineadddec = (hex2dec(newadd,1)*256+hex2dec(newadd,3));--比对新老两行地址是否连续
+						oldlineadddec = (hex2dec(oldadd,1)*256+hex2dec(oldadd,3))+oldlinedatalth;
+						
+						--print("新行首地址十进制"..newlineadddec);
+						--print("老行首地址加老行长度和"..oldlineadddec);
+						--新老两行比对地址是否连续
+						if((newlineadddec ~= oldlineadddec) and (oldadd ~= "0000") and ((oldlineadddec+baseadddec) ~= (continueadddec+newlineadddec)))then
+						--if( (newlineadddec ~= oldlineadddec) and (oldadd ~= "0000"))then
+						       print("循环到04扩展内非连续首地址，退出04模式");
+							   file:seek("set",file:seek()-string.len(line_data)-3);
+							   break;
+						else
+                               lineadd = newadd;  	
+                               addlth = addlth + linedatalth;							   
+						end
+						
+						oldlinedatalth = linedatalth;--保存上一行长度
+						oldadd = newadd;--保存上一行地址;
+						--print("oldlinedatalth"..oldlinedatalth);--付新值oldlinedatalth
+                        lineadd = baseadd..lineadd;--新行完整地址
+						--print("lineadd"..lineadd);
+                        --addlth = addlth + linedatalth;
+                        --print("addlth"..addlth);
+                        --print("addlth"..addlth);
+                        
+                        if (startadd == "") then
+                               startadd = lineadd;--首地址
+                        end       
+                        --print("startadd"..startadd);
+                                                
+                        writedata = string.sub(line_data,9,9+linedatalth*2-1);--提取行数据拼成blockdata
+                        --print("data.string.sub"..writedata)
+                        blockdata = blockdata..writedata;                
+                        --print("拼接blockdata\n")
+                 end
+                 print("数据记录");
+                 --print("startadd"..startadd);--刷写首地址
+                 --print("lineadd"..lineadd);--刷写尾地址                                               
+                 print("addlth"..addlth);--刷写地址长度
+                 addlth = string.format("%08X",addlth);--转换的首地址和长度
+                 --print("addlth16:"..addlth);
+                 startadd = hex2bin(startadd);                  
+                 
+                 
+                 blockdatalth = string.len(blockdata);--块全部数据                 
+                 --print("blockdataALL");
+				 --print("blockdataALL:"..blockdata);
+                 --print("blockdatalth"..blockdatalth);  
+                 --blocklinenum1,blocklinenum2 = math.modf(blockdatalth/678);--line number in block
+				 blocklinenum1,blocklinenum2 = math.modf(blockdatalth/blockSize);--line number in block 修改block内单次刷写长度，位置1
+                 --print("blocklinenum1,blocklinenum2:"..blocklinenum1,blocklinenum2);
+                 if(blocklinenum2 &gt; 0)then
+                        blocklinenum = blocklinenum1 + 1;                
+                 end
+                 --print("blocklinenum:"..blocklinenum);  
+				 print("刷写文件"..string.sub(file_path,3,string.len(file_path)));
+#COMM 0x34 0x00 0x44 startadd hex2bin(addlth)
+				 addlth = tonumber(addlth);--将地址长度转回十进制
+				 addlth = 0;
+                 for i=1,blocklinenum do
+                        --blockline = string.sub(blockdata,1+678*(i-1),678*i); 
+						blockline = string.sub(blockdata,1+blockSize*(i-1),blockSize*i);--修改block内单次刷写长度，位置1 
+                        print("blockline"..blockline);
+                        blockline = hex2bin(blockline);
+                        --print("blockline2bin",blockline);
+						--engine.SetLineText(2,"#L=BMPBAR,".."0"..","..tostring(blocklinenum)..",".."1"..","..tostring(i));--显示进度条
+						engine.SetLineText(3,tostring(i));--显示数字
+#COMM 0x36 i blockline                        
+                 end
+                 --请求数据传输退出        
+#COMM 0x37
+                 --计算crc32
+				 crcnum = crc32(crcnum,hex2bin(blockdata));
+				 crcstr = string.format("%08X",crcnum);
+				 print("crcstr"..crcstr);
+				 blockdata = "";--块数据写完后，清空变量
+          
+		  elseif(datatype == "00")then
+		  
+				 print("datatype00新一块");
+				 startadd = "";
+                 newadd = "0000";				 
+                 oldadd = "0000";
+				 baseadddec = 0;
+				 blocknum = blocknum + 1;
+				 print("块数量blocknum"..blocknum);
+				 engine.SetLineText(2,"第"..tostring(blocknum).."块");--显示块数量
+				 
+                 --startadd = "";--清空块首地址
+				 --baseadd = string.sub(line_data,9,12);
+                 print("00借用04baseadd"..baseadd); 
+				 				 
+                 while true do
+                        
+                        --line_data = file:read("*line");--接着上一个04读到的line_dta,此处提到while尾段
+						--print("line_data in 00-"..line_data);
+                        line_data=string.gsub(line_data,":","");--去掉":"
+                        datatype = string.sub(line_data,7,8)--提取行类型
+                        --print("datatype:"..datatype); 
+						continueadd="FFFF"
+                        if(datatype ~= "00")then
+							if(datatype=="04")then
+								continueadd=string.sub(line_data,9,12);
+								--print("datatype00内单块循环完成，遇到下一块是04,扩展地址："..continueadd.."-十六进制为:"..(hex2dec(continueadd,1)*256+hex2dec(continueadd,3)));
+								continueadddec=hex2dec(continueadd,1)*16777216+hex2dec(continueadd,3)*65536;
+								--print("datatype00内单块循环完成，遇到下一块是04,扩展地址十进制："..continueadddec);
+								baseadddec=hex2dec(baseadd,1)*16777216+hex2dec(baseadd,3)*65536;
+								--print("基地址十进制："..baseadddec);
+								baseadd=continueadd;--datatype00单块结束后与下一块是连续的情况下，将基地址转换成十进制后赋值下一块的基地址。
+								line_data = file:read("*line");--此时已经将04扩展行读出，再读就是下一行的数据行
+								line_data=string.gsub(line_data,":","");--去掉":"
+								
+								--print("datatype00内单块循环完成，遇到下一块是04,下一行数据行"..line_data);
+								
+							else
+								print("循环到00块尾，下一块头并且不是连续地址");
+								file:seek("set",file:seek()-string.len(line_data)-3);
+								break;
+							end
+                        end          
+
+                        --lineadd = string.sub(line_data,3,6)
+						newadd = string.sub(line_data,3,6)--提取新行地址
+						--print("提取新行地址newadd"..newadd);
+						--print("上一行地址及长度oldadd,oldlinedatalth"..oldadd..","..oldlinedatalth);
+						
+						linedatalth = hex2dec(string.sub(line_data,1,2),1);--提取行数据长度
+						--print("linedatalth"..linedatalth);
+						
+						newlineadddec = (hex2dec(newadd,1)*256+hex2dec(newadd,3));--比对新老两行地址是否连续
+						oldlineadddec = (hex2dec(oldadd,1)*256+hex2dec(oldadd,3))+oldlinedatalth;
+						
+						--print("新行首地址十进制"..newlineadddec);
+						--print("老行首地址加老行长度和"..oldlineadddec);
+						--新老两行比对地址是否连续
+						if((newlineadddec ~= oldlineadddec) and (oldadd ~= "0000") and ((oldlineadddec+baseadddec) ~= (continueadddec+newlineadddec)))then
+						       --print("循环到04扩展内非连续首地址，退出04模式");
+							   file:seek("set",file:seek()-string.len(line_data)-3);
+							   break;
+						else
+                               lineadd = newadd;  	
+                               addlth = addlth + linedatalth;							   
+						end
+						
+						oldlinedatalth = linedatalth;--保存上一行长度
+						oldadd = newadd;--保存上一行地址;
+						--print("oldlinedatalth"..oldlinedatalth);--付新值oldlinedatalth
+                        lineadd = baseadd..lineadd;--新行完整地址
+						--print("新行完整地址lineadd"..lineadd);
+                        --addlth = addlth + linedatalth;
+                        --print("addlth"..addlth);
+                        
+						if(startadd == "") then
+							   startadd = lineadd;--00借用04baseadd和读取的新地址拼成00首地址
+                        end
+						--print("startadd"..startadd);
+                        
+                        writedata = string.sub(line_data,9,9+linedatalth*2-1);--提取行数据拼成blockdata
+                        --print("data.string.sub"..writedata)
+                        blockdata = blockdata..writedata;
+                        --print("blockdata"..blockdata);                    
+                        --print("拼接blockdata\n")
+						
+						line_data = file:read("*line");--借用04读到的line_data,用完后再读文件
+                 end
+                 print("数据记录");
+                 --print("startadd"..startadd);--刷写首地址
+                 --print("lineadd"..lineadd);--刷写尾地址                                               
+                 --print("addlth"..addlth);--刷写地址长度
+                 addlth = string.format("%08X",addlth);--转换的首地址和长度
+                 --print("addlth16:"..addlth);
+                 startadd = hex2bin(startadd);                  
+                 
+                 blockdatalth = string.len(blockdata);--块全部数据                 
+                 --print("blockdataALL:"..blockdata);
+                 --print("blockdatalth"..blockdatalth);  
+                 blocklinenum1,blocklinenum2 = math.modf(blockdatalth/blockSize);--line number in block 修改block内单次刷写长度，位置2
+                 --print("blocklinenum1,blocklinenum2:"..blocklinenum1,blocklinenum2);
+                 if(blocklinenum2 &gt; 0)then
+                        blocklinenum = blocklinenum1 + 1;                
+                 end
+                 --print("blocklinenum:"..blocklinenum); 
+#COMM 0x34 0x00 0x44 startadd hex2bin(addlth)
+                 --addlth = string.format("%10d",tonumber(addlth));--将地址长度转回十进制
+				 addlth = tonumber(addlth);--将地址长度转回十进制
+				 addlth = 0;
+                 for i=1,blocklinenum do
+                        blockline = string.sub(blockdata,1+blockSize*(i-1),blockSize*i);-- 修改block内单次刷写长度，位置2 
+                        --print("blockline"..blockline);
+                        blockline = hex2bin(blockline);
+                        --print("blockline2bin",blockline);
+						--engine.SetLineText(2,"#L=BMPBAR,".."0"..","..tostring(blocklinenum)..",".."1"..","..tostring(i));--显示进度条
+						engine.SetLineText(3,tostring(i));--显示数字
+#COMM 0x36 i blockline                        
+                 end
+                 --请求数据传输退出        
+#COMM 0x37
+                 --计算crc32
+				 crcnum = crc32(crcnum,hex2bin(blockdata));
+				 --print("crcnum"..crcnum);
+				 crcstr = string.format("%08X",crcnum);
+				 print("crcstr"..crcstr);
+				 blockdata = "";--块数据写完后，清空变量
+				 
+				 
+          elseif(datatype == "01")then
+                 print("datatype=01,已到文件末尾，退出");
+			     print("crc32:"..crcstr);
+--[[				 
+				 if(string.sub(file_path,3,string.len(file_path)) == "BSW.HEX")then
+#COMM 0x31 0x01 0x02 0x02 0x40 0x64 0x54 0xC5
+					print("BSW.HEX刷写CRC32");
+				 elseif(string.sub(file_path,3,string.len(file_path)) == "ASW.HEX")then
+#COMM 0x31 0x01 0x02 0x02 0x4C 0x39 0x88 0xBC
+					print("ASW.HEX刷写CRC32");
+				 else
+#COMM 0x31 0x01 0x02 0x02 hex2bin(crcstr)
+				 end
+]]--
+#COMM 0x31 0x01 0x02 0x02 hex2bin(crcstr)
+				 
+                 break;
+          elseif(datatype == "02")then
+                 print("datatype=02")   
+          elseif(datatype == "03")then
+                 print("datatype=03")                                              
+          elseif(datatype == "05")then
+                 print("datatype=05")  
+          else
+          end   
+
+          print("\n")                        
+          
+end     
+                
+                     
+return blockdata;                                
+				
+</Script></Function>
+

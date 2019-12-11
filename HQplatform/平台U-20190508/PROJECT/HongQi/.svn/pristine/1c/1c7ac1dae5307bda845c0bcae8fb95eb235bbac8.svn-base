@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FWE_51_Fzg_Check_Availability" description="service 51">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="HeightMeasure" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FWE Service 51
+input parameter:pHndl,IDT_Timeout,HeightMeasure
+output parameter :ret;
+
+12/23/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00";
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x33");    -- 设置service号,第2字节
+
+if(HeightMeasure == 1) then
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,"\x01");  
+else
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,"\x00"); 
+end
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

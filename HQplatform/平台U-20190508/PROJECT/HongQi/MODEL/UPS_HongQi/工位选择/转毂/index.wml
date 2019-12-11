@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="H7转毂工位"/>
+<Process id="HS7转毂工位"/>
+<Workplace id="SubFunction">
+</Workplace>
+<Workplace id="Roller_In">
+</Workplace>
+<Workplace id="others">
+</Workplace>
+<Workplace id="IDT_RTS_Service">
+</Workplace>
+<Workplace id="HS7Roller_In">
+</Workplace>
+<Process id="C229转毂工位"/>
+<Workplace id="C229Roller_In">
+</Workplace>
+</children>
+</Workplace>

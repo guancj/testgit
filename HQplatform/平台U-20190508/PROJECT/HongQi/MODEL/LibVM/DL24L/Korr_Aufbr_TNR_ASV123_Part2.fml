@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data=""/>
+<Variable id="Fzd" type="8" data=""/>
+<Variable id="Knr" type="8" data="" description="production number"/>
+<Variable id="Modus" type="8" data="" description="mode to select correction / use up / ZDC selection / Flash container selection"/>
+<Variable id="SgTnr" type="8" data="" description="ECU partnumber"/>
+<Variable id="ZdcTnr" type="8" data="" description="ZDC partnumber"/>
+<Variable id="SwapDcTnr" type="8" data="" description="SWaP_DC partnumber from vehicle data set, possibly corrected"/>
+<Variable id="SwapDcBg" type="8" data="" description="Baugruppe SWaP_DC"/>
+<Variable id="IstSgTnr" type="8" data="" description="partnumber of actually assembled ECU"/>
+<Variable id="HW_Ref_TNR" type="8" data="" description="HW raw-partnumber"/>
+<Variable id="VorserienFzg" type="8" data="" description="0 = no pre-series vehicle, 1 = pre-series vehicle (according to PR-Nr from configfile)"/>
+<Variable id="bufTab" type="8" data="" description="xml string list  from Part1"/>
+</Inputs>
+<Outputs>
+<Variable id="Tnr_Aenderung" type="3" data="0" description="correction / use-up entry found"/>
+<Variable id="Tnr_Aend_SWaP" type="3" data="0" description="correction entry found for SWaP_DC-Tnr"/>
+<Variable id="SgTnrErsatz" type="8" data="" description="corrected /alternative ECU part number"/>
+<Variable id="SollTnr" type="8" data="" description="possible SollTnr (comma separated list)"/>
+<Variable id="ZdcTnrErsatz" type="8" data="" description="corrected /alternative ZDC part number"/>
+<Variable id="SwapDcTnrErsatz" type="8" data="" description="SWaP_DC partnumber from Korrekturliste"/>
+<Variable id="ZdcName" type="8" data="" description="file name of ZDC"/>
+<Variable id="ZdcVersion" type="8" data="" description="version type of ZDC"/>
+<Variable id="FlagZdcGeraten" type="3" data="0" description="for pre-series-control: more than 1 ZDC found"/>
+<Variable id="KeyID" type="8" data="" description="KeyID for SWaP function activation"/>
+<Variable id="SWaPDCName" type="8" data="" description="file name of SWaP_DC"/>
+<Variable id="SWaPDCVersion" type="8" data="" description="version of SWaP_DC"/>
+<Variable id="SW_Version" type="8" data="" description="SW-Version according to Flashlist"/>
+<Variable id="Flashdatencont" type="8" data="" description="name of flash container (*.sgm, *.odx)v"/>
+<Variable id="errFlag" type="3" data="0" description="error code"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This template continues computing the lists Korrektur SG (Modus = Korrektur), 
+Aufbrauch SG (Modus = Teileaufbrauch), ZDC Liste (link to ZDC- file name, (Modus = Zdc))
+Flash Liste (link to Flashcontainer- file name, (Modus = Flash)) and SWaP_DCListe (link to 
+SWaP_DC-filenames (Modus = SWaP). (At first the template Korr_Aufbr_TNR_ASV123_Part1 has to be used)
+(minimal required ASV list version: 1.23)
+
+input parameter:XmlHndl, Fzd, Knr, Modus, SgTnr, ZdcTnr, SwapDcTnr,SwapDcBg, IstSgTnr, HW_Ref_TNR, VorserienFzg, bufTab
+output parameter:Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+print("Korr_Aufbr_TNR_ASV123_Part2 called...")
+print("XMLHandle: ".. tostring(XmlHndl))
+print("Fzd: " .. tostring(Fzd))
+print("Knr: " .. tostring(Knr))
+print("Modus: " .. tostring(Modus))
+print("SgTnr: " .. tostring(SgTnr))
+print("ZdcTnr: " .. tostring(ZdcTnr))
+print("SwapDcTnr: " .. tostring(SwapDcTnr))
+print("SwapDcBg: " .. tostring(SwapDcBg))
+print("IstSgTnr: " .. tostring(IstSgTnr))
+print("HW_Ref_TNR: " .. tostring(HW_Ref_TNR))
+print("VorserienFzg: " .. tostring(VorserienFzg))
+print("bufTab: " .. tostring(bufTab))
+
+-- return value
+Tnr_Aenderung = -1
+Tnr_Aend_SWaP = -1
+SgTnrErsatz = ""
+SollTnr = ""
+ZdcTnrErsatz = ""
+SwapDcTnrErsatz = ""
+ZdcName = ""
+ZdcVersion = ""
+FlagZdcGeraten = -1
+KeyID = ""
+SWaPDCName = ""
+SWaPDCVersion = ""
+SW_Version = ""
+Flashdatencont = ""
+errFlag = 0
+-- return value
+
+local DEBUG = false
+local xmlbuflist
+local xmlSteuerung = ""
+local xmlModelljahr = ""
+local xmlKnrListenIDRef = ""
+local xmlPrnrTermIdRef = ""
+local xmlSteuerungInt = -1
+local xmlAttribValue = ""
+
+local KnrListenIdStat = 1
+local PRNRTermStat = 1
+local SteuerungStat = 0
+
+local tnr_ignore = "000000000";
+local swapDcTnr_ignore = tnr_ignore;
+
+local key_ID_tmp = ""
+local key_ID_tmp2 = ""
+
+local tnr_keep = "000000001";
+local swapDcTnr_keep = tnr_keep;
+local sgTnr_keep = tnr_keep;
+local zdcTnr_keep = tnr_keep;
+
+local keyID_NO_SWaP = "NO_SWAP_SG"
+local xmlAttribNameSgTnrErsatz = "SgTnrErsatz";
+local xmlAttribNameSgTnrAlternativ = "SgTnrAlternativ";
+
+local xmlAttribNameZdcTnr = "ZdcTnr";
+local xmlAttribNameZdcTnrErsatz = "ZdcTnrErsatz";
+local xmlAttribNameZdcName = "ZdcName";
+local xmlAttribNameZdcVersion = "ZdcVersion";
+
+local xmlAttribNameHWRefTnr = "HW_Ref_TNR";
+local xmlAttribNameSWVersion = "SW-Version";
+local xmlAttribNameFlashcont = "Flashdatencontainer";
+
+local xmlAttribNameSWaPTnr = "SWaP_DC_Tnr";
+local xmlAttribNameSWaPTnrErsatz = "SWaP_DC_TnrErsatz";
+local xmlAttribNameSWaPBg = "SWaP_BG";
+local xmlAttribNameSWaPName = "SWaP_DC_Dateiname";
+local xmlAttribNameSWaPVersion = "SWaP_DC_Version";
+local xmlAttribNameKeyID = "KEY-ID";
+
+local xmlAttribNameKnrListenIDRef = "KnrListenIDRef"; -- optionales Element in ASV-Liste
+local xmlAttribNamePrnrTermIDRef = "PrnrTermIDRef"; -- optionales Element in ASV-Liste
+local xmlAttribNameSteuerung = "Steuerung"; -- erforderliches Element in ASV-Liste
+local xmlAttribNameModelljahr = "Modelljahr"; -- erforderliches Element in ASV-Liste
+
+local xmlSubPathTagKorrektur = "Korrekturbeziehung";
+
+local xmlPathAufbrauch = "/AsvListe/AsvDaten/Teileaufbrauchliste";
+local xmlSubPathTagAufbrauch = "AufbrauchbeziehungSg";
+
+local xmlSubTagZdc = "ZdcListenNormalEintrag";
+local xmlSubPathTagZdc = "ZdcListenNormalEintrag";
+
+local xmlSubTagFlash = "FlashlistenEintrag";
+local xmlSubPathTagFlash = "FlashlistenEintrag";
+
+local xmlSubTagSWaP = "SWaP_DCListenEintrag";
+
+local xmlSubPath = "";
+local xmlSubTag = "";
+local xmlSubPathTag = "";
+local xmlAttribGet = "";
+
+
+if (Modus == "SWaP") then
+	xmlSubTag = xmlSubTagSWaP;
+	xmlAttribGet = xmlAttribNameKeyID;
+	if (engine.LastError == 0 and (#bufTab ~= 0)) then
+		print("Korr_Aufbr_TNR_ASV123_Part2: Modus SWaP")
+		for i = 1,#bufTab do
+			key_ID_tmp = bufTab[i].getAttribute(xmlAttribGet)
+			print("xmlAttribNameKeyID :"..tostring(key_ID_tmp))
+			xmlbuflist = bufTab[i].selectNodes(xmlSubTag)
+			if(xmlbuflist.length &gt; 0) then
+				print("xmlbuflist length :" .. tostring(xmlbuflist.length))
+				for j = 0,xmlbuflist.length - 1 do
+					print("xmlAttribNameSWaPBg :"..tostring(xmlbuflist[j].getAttribute(xmlAttribNameSWaPBg)).." =&gt; "..tostring(SwapDcBg))
+					if(xmlbuflist[j].getAttribute(xmlAttribNameSWaPBg) == SwapDcBg and xmlbuflist[j].getAttribute(xmlAttribNameSWaPTnr) == SwapDcTnr) then
+						print("Korr_Aufbr_TNR_ASV123_Part2 Possibly matching entry found ")
+						xmlSteuerung = ""
+						xmlModelljahr = ""
+						xmlKnrListenIDRef = ""
+						xmlPrnrTermIdRef = ""
+						xmlKnrListenIDRef = xmlbuflist[j].getAttribute(xmlAttribNameKnrListenIDRef)
+						if(xmlKnrListenIDRef == nil) then  xmlKnrListenIDRef = "" end
+						xmlPrnrTermIdRef = xmlbuflist[j].getAttribute(xmlAttribNamePrnrTermIDRef)
+						if(xmlPrnrTermIdRef == nil) then xmlPrnrTermIdRef = "" end
+						xmlSteuerung = xmlbuflist[j].getAttribute(xmlAttribNameSteuerung)
+						if(xmlSteuerung ~= nil and xmlSteuerung ~= "") then
+							xmlSteuerungInt = LibVW.ascstrtoNum(xmlSteuerung)
+							print("xmlSteuerungInt :" .. tostring(xmlSteuerungInt))
+						else
+							xmlSteuerungInt = -1
+							print("Korr_Aufbr_TNR_ASV123_Part2: error reading required attribute \"" .. tostring(xmlAttribNameSteuerung) .. "\" in SWaP_DCListe")
+						end
+						xmlModelljahr = xmlbuflist[j].getAttribute(xmlAttribNameModelljahr)
+						if(xmlModelljahr == nil) then
+							xmlModelljahr = "FFFF"
+							print("Korr_Aufbr_TNR_ASV123_Part2: error reading required attribute \"" .. tostring(xmlAttribNameModelljahr) .. "\" in SWaP_DCListe")
+						end
+						print("Korr_Aufbr_TNR_ASV123_Part2, " .. tostring(xmlAttribNameModelljahr) .. ": " .. tostring(xmlModelljahr))
+						print("Korr_Aufbr_TNR_ASV123_Part2, Modelljahr aus Fahrzeugdaten: " .. tostring(string.sub(Fzd,32,35)))
+						KnrListenIdStat = 1
+						PRNRTermStat = 1
+ 						if (xmlKnrListenIDRef ~= "") then
+							KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+						end
+						
+						if ((0 == engine.LastError) and (xmlPrnrTermIdRef ~= "")) then
+							PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+						end
+						
+						print("KnrListenIdStat :" .. tostring(KnrListenIdStat))
+						print("PRNRTermStat :" .. tostring(PRNRTermStat))
+						SteuerungStat = 0
+						if (xmlSteuerungInt ~= -1) then
+-- Pre-production vehicle and control unit for pre-production
+							if ((bit32.band(xmlSteuerungInt,0x01) == 0x01) and (VorserienFzg == 1)) then
+								SteuerungStat = 1;
+							end	
+-- Serial vehicle and control unit for series
+							if ((bit32.band(xmlSteuerungInt,0x02) == 0x02) and (VorserienFzg == 0)) then
+								SteuerungStat = 1;
+							end
+							print("SteuerungStat : " .. tostring(SteuerungStat))
+						end
+						
+						ModelljahrStat = 0;
+						if(xmlModelljahr ~= "FFFF") then
+							if(xmlModelljahr == "") then
+								ModelljahrStat = 1
+							elseif(string.sub(xmlModelljahr,3,4) == string.sub(Fzd,34,35)) then
+								ModelljahrStat = 1
+							end
+						end
+						print("ModelljahrStat : " .. tostring(ModelljahrStat))
+						if ((0 == engine.LastError) and (KnrListenIdStat ~= 0) and (PRNRTermStat ~= 0) and (SteuerungStat ~= 0) and (ModelljahrStat ~= 0)) then
+--  gueltigen Eintrag gefunden, Rueckgabe von KEY-ID, SWaP_DC-Name und SWaP_DC-Version
+							xmlSWaPDateiName = xmlbuflist[j].getAttribute(xmlAttribNameSWaPName)
+							xmlSWaPVersion = xmlbuflist[j].getAttribute(xmlAttribNameSWaPVersion)
+							if(xmlSWaPDateiName ~= nil and xmlSWaPVersion ~= nil) then
+								SWaPDCName = xmlSWaPDateiName;
+								SWaPDCVersion = xmlSWaPVersion;
+								KeyID = key_ID_tmp;
+								engine.LastError = 0
+								print("SWaPDCName : " .. tostring(SWaPDCName))
+								print("SWaPDCVersion : " .. tostring(SWaPDCVersion))
+								print("KeyID : " .. tostring(KeyID))
+								return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag
+							else
+								print("Error - SWaPDCName : " .. tostring(xmlSWaPDateiName))
+								print("Error - SWaPDCVersion : " .. tostring(xmlSWaPVersion))
+							end
+						end
+					end	
+				end
+			end
+		end
+	end	
+	SWaPDCName = ""
+	SWaPDCVersion = ""
+	key_ID_tmp2 = string.upper(key_ID_tmp)
+	if (key_ID_tmp2 == keyID_NO_SWaP or key_ID_tmp == "") then
+		KeyID = key_ID_tmp
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag
+	else 
+		KeyID = ""
+		errFlag = 2000 -- kein SWaP_DC zur Tnr. in ASV
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag	
+	end
+
+elseif(Modus == "Korrektur") then
+  	xmlSubPathTag = xmlSubPathTagKorrektur;
+  	xmlAttribGet = xmlAttribNameSgTnrErsatz;
+	if (engine.LastError == 0 and (#bufTab ~= 0)) then
+		print("Korr_Aufbr_TNR_ASV123_Part2: Modus Korrektur")
+		for i = 1,#bufTab do
+			xmlbuflist = bufTab[i].selectNodes(xmlSubPathTagKorrektur)	
+			if(xmlbuflist.length &gt; 0) then
+				print("xmlbuflist length :" .. tostring(xmlbuflist.length))
+				for j = 0,xmlbuflist.length - 1 do
+					print("xmlbuflist xml: " .. tostring(xmlbuflist[j].xml))
+					PRNRTermStat = -1;
+					KnrListenIdStat = -1;
+					SteuerungStat = -1;
+					ModelljahrStat = -1;
+					xmlAttribValue = "";
+					xmlKnrListenIDRef = "";
+					xmlPrnrTermIdRef = "";
+					xmlZdcVersion = "";
+					xmlZdcDateiName = "";
+					xmlSWVersion = "";
+					xmlFlashcontName = "";
+					xmlSgTnrErsatz = "";
+					xmlZdcTnrErsatz = "";
+					xmlSWaPTnrErsatz = "";
+					xmlSWaPDateiName = "";
+					xmlSWaPVersion = "";
+					xmlSteuerung = "";
+					xmlModelljahr = "";
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameKnrListenIDRef)
+					if(xmlAttribValue ~= nil) then
+						xmlKnrListenIDRef = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNamePrnrTermIDRef)
+					if(xmlAttribValue ~= nil) then
+						xmlPrnrTermIdRef = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameSteuerung)
+					if(xmlAttribValue ~= nil) then
+						xmlSteuerung = xmlAttribValue
+						xmlSteuerungInt = LibVW.ascstrtoNum(xmlSteuerung)
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameModelljahr)
+					if(xmlAttribValue ~= nil) then
+						xmlModelljahr = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameSgTnrErsatz)
+					if(xmlAttribValue ~= nil) then
+						xmlSgTnrErsatz = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameZdcTnrErsatz)
+					if(xmlAttribValue ~= nil) then
+						xmlZdcTnrErsatz = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameSWaPTnrErsatz)
+					if(xmlAttribValue ~= nil) then
+						xmlSWaPTnrErsatz = xmlAttribValue
+					end
+					print("xmlKnrListenIDRef -&gt;" .. tostring(xmlKnrListenIDRef))
+					print("xmlPrnrTermIdRef -&gt;" .. tostring(xmlPrnrTermIdRef))
+					print("xmlSteuerung -&gt;" .. tostring(xmlSteuerung))
+					print("xmlModelljahr -&gt;" .. tostring(xmlModelljahr))
+					print("xmlSgTnrErsatz -&gt;" .. tostring(xmlSgTnrErsatz))
+					print("xmlZdcTnrErsatz -&gt;" .. tostring(xmlZdcTnrErsatz))
+					print("xmlSWaPTnrErsatz -&gt;" .. tostring(xmlSWaPTnrErsatz))
+
+				end
+				
+				if (xmlKnrListenIDRef ~= "") then
+					KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+				end
+				if ((engine.LastError == 0) and (xmlPrnrTermIdRef ~= "")) then
+					PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+				end
+				SteuerungStat = 0;
+				if ((bit32.band(xmlSteuerungInt,0x01) == 0x01) and (VorserienFzg == 1)) then
+					SteuerungStat = 1;
+				end
+				if ((bit32.band(xmlSteuerungInt,0x02) == 0x02) and (VorserienFzg == 0)) then
+					SteuerungStat = 1;
+				end
+				ModelljahrStat = 0;
+				if (xmlModelljahr == "") then
+					ModelljahrStat = 1;
+				elseif (string.sub(xmlModelljahr,3,4) == string.sub(Fzd,34,35)) then
+					ModelljahrStat = 1;
+				end
+				print("KnrListenIdStat -&gt;" .. tostring(KnrListenIdStat))
+				print("PRNRTermStat -&gt;" .. tostring(PRNRTermStat))
+				print("SteuerungStat -&gt;" .. tostring(SteuerungStat))
+				print("ModelljahrStat -&gt;" .. tostring(ModelljahrStat))	
+				if ((engine.LastError == 0) and (KnrListenIdStat ~= 0) and (PRNRTermStat ~= 0) and (SteuerungStat ~= 0) and (ModelljahrStat ~= 0)) then				
+					if (xmlSgTnrErsatz ~= sgTnr_keep) then
+						SgTnrErsatz = xmlSgTnrErsatz;
+					else
+						SgTnrErsatz = SgTnr;
+					end
+					
+					if (xmlZdcTnrErsatz ~= zdcTnr_keep) then
+						ZdcTnrErsatz = xmlZdcTnrErsatz;
+					else
+						ZdcTnrErsatz = ZdcTnr;
+					end
+					
+					if ((SwapDcBg ~= "0000")and(SwapDcBg ~= "")) then
+						if (xmlSWaPTnrErsatz ~= swapDcTnr_keep) then
+							SwapDcTnrErsatz = xmlSWaPTnrErsatz;
+						else
+							SwapDcTnrErsatz = SwapDcTnr;
+							Tnr_Aend_SWaP = 1;
+						end
+					else
+						SwapDcTnrErsatz = swapDcTnr_ignore;
+						Tnr_Aend_SWaP = 0;
+					end	
+					Tnr_Aenderung = 1;
+				else
+					engine.LastError = 1
+					print("Korr_Aufbr_TNR_ASV123_Part2: no Korrektur possible, not yet;")
+				end	
+			end
+		end
+	end
+	return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag	
+	
+elseif(Modus == "Zdc") then
+    xmlSubPathTag = xmlSubPathTagZdc
+    xmlAttribGet = xmlAttribNameZdcTnr
+	if (engine.LastError == 0 and (#bufTab ~= 0)) then
+		print("Korr_Aufbr_TNR_ASV123_Part2: Modus Zdc")
+		for i = 1,#bufTab do
+			xmlAttribValue = bufTab[i].getAttribute(xmlAttribGet)
+			print("xmlAttribValue :" .. tostring(xmlAttribValue) .. "  num : " .. tostring(#bufTab))
+			if(xmlAttribValue ~= nil and xmlAttribValue ~= "" and ZdcTnr ~= "" and xmlAttribValue == ZdcTnr) then
+				PRNRTermStat = -1
+				KnrListenIdStat = -1
+				SteuerungStat = -1
+				ModelljahrStat = -1
+				xmlAttribValue = ""
+				xmlKnrListenIDRef = ""
+				xmlPrnrTermIdRef = ""
+				xmlZdcVersion = ""
+				xmlZdcDateiName = ""
+				xmlSWVersion = ""
+				xmlFlashcontName = ""
+				xmlSgTnrErsatz = ""
+				xmlZdcTnrErsatz = ""
+				xmlSWaPTnrErsatz = ""
+				xmlSWaPDateiName = ""
+				xmlSWaPVersion = ""
+				xmlSteuerung = ""
+				xmlModelljahr = ""
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameKnrListenIDRef)
+				if(xmlAttribValue ~= nil) then
+					xmlKnrListenIDRef = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNamePrnrTermIDRef)
+				if(xmlAttribValue ~= nil) then
+					xmlPrnrTermIdRef = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameSteuerung)
+				if(xmlAttribValue ~= nil) then
+					xmlSteuerung = xmlAttribValue
+					xmlSteuerungInt = LibVW.ascstrtoNum(xmlSteuerung)
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameModelljahr)
+				if(xmlAttribValue ~= nil) then
+					xmlModelljahr = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameZdcVersion)
+				if(xmlAttribValue ~= nil) then
+					xmlZdcVersion = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameZdcName)
+				if(xmlAttribValue ~= nil) then
+					xmlZdcDateiName = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameZdcTnr)
+				if(xmlAttribValue ~= nil) then
+					xmlZdcTnrErsatz = xmlAttribValue
+				end
+				print("xmlKnrListenIDRef -&gt;" .. tostring(xmlKnrListenIDRef))
+				print("xmlPrnrTermIdRef -&gt;" .. tostring(xmlPrnrTermIdRef))
+				print("xmlSteuerung -&gt;" .. tostring(xmlSteuerung))
+				print("xmlModelljahr -&gt;" .. tostring(xmlModelljahr))
+				print("xmlZdcVersion -&gt;" .. tostring(xmlZdcVersion))
+				print("xmlZdcDateiName -&gt;" .. tostring(xmlZdcDateiName))
+				print("xmlZdcTnrErsatz -&gt;" .. tostring(xmlZdcTnrErsatz))
+			end				
+		end
+		if(ZdcTnr ~= "") then
+			if (xmlKnrListenIDRef ~= "") then
+				KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+			end
+			if ((engine.LastError == 0) and (xmlPrnrTermIdRef ~= "")) then
+				PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+			end
+			SteuerungStat = 0;
+			if ((bit32.band(xmlSteuerungInt,0x01) == 0x01) and (VorserienFzg == 1)) then
+				SteuerungStat = 1;
+			end
+			if ((bit32.band(xmlSteuerungInt,0x02) == 0x02) and (VorserienFzg == 0)) then
+				SteuerungStat = 1;
+			end
+			ModelljahrStat = 0;
+			if (xmlModelljahr == "") then
+				ModelljahrStat = 1;
+			elseif (string.sub(xmlModelljahr,3,4) == string.sub(Fzd,34,35)) then
+				ModelljahrStat = 1;
+			end
+			print("KnrListenIdStat -&gt;" .. tostring(KnrListenIdStat))
+			print("PRNRTermStat -&gt;" .. tostring(PRNRTermStat))
+			print("SteuerungStat -&gt;" .. tostring(SteuerungStat))
+			print("ModelljahrStat -&gt;" .. tostring(ModelljahrStat))
+		end	
+		if ((engine.LastError == 0) and (KnrListenIdStat ~= 0) and (PRNRTermStat ~= 0) and (SteuerungStat ~= 0) and (ModelljahrStat ~= 0)) then
+				ZdcVersion = xmlZdcVersion
+				ZdcName = xmlZdcDateiName
+				ZdcTnrErsatz = xmlZdcTnrErsatz
+				if (ZdcTnr == "") then
+					FlagZdcGeraten = 1
+				end
+		else
+			engine.LastError = 1
+			print("Korr_Aufbr_TNR_ASV123_Part2: no zdc possible, not yet;")		
+		end
+		
+	else
+		FlagZdcGeraten = 0
+	end
+	return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag
+	
+elseif(Modus == "Flash") then
+    xmlSubPathTag = xmlSubPathTagFlash
+    xmlAttribGet = xmlAttribNameHWRefTnr
+	if (engine.LastError == 0 and (#bufTab ~= 0)) then
+		print("Korr_Aufbr_TNR_ASV123_Part2: Modus Flash")
+		for i = 1,#bufTab do
+			xmlAttribValue = bufTab[i].getAttribute(xmlAttribGet)
+			print("xmlAttribValue :" .. tostring(xmlAttribValue) .. "  num : " .. tostring(#bufTab))
+			if(xmlAttribValue ~= nil and xmlAttribValue ~= "" and HW_Ref_TNR ~= "" and xmlAttribValue == HW_Ref_TNR) then
+				PRNRTermStat = -1
+				KnrListenIdStat = -1
+				SteuerungStat = -1
+				ModelljahrStat = -1
+				xmlAttribValue = ""
+				xmlKnrListenIDRef = ""
+				xmlPrnrTermIdRef = ""
+				xmlZdcVersion = ""
+				xmlZdcDateiName = ""
+				xmlSWVersion = ""
+				xmlFlashcontName = ""
+				xmlSgTnrErsatz = ""
+				xmlZdcTnrErsatz = ""
+				xmlSWaPTnrErsatz = ""
+				xmlSWaPDateiName = ""
+				xmlSWaPVersion = ""
+				xmlSteuerung = ""
+				xmlModelljahr = ""
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameKnrListenIDRef)
+				if(xmlAttribValue ~= nil) then
+					xmlKnrListenIDRef = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNamePrnrTermIDRef)
+				if(xmlAttribValue ~= nil) then
+					xmlPrnrTermIdRef = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameSteuerung)
+				if(xmlAttribValue ~= nil) then
+					xmlSteuerung = xmlAttribValue
+					xmlSteuerungInt = LibVW.ascstrtoNum(xmlSteuerung)
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameModelljahr)
+				if(xmlAttribValue ~= nil) then
+					xmlModelljahr = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameSWVersion)
+				if(xmlAttribValue ~= nil) then
+					xmlSWVersion = xmlAttribValue
+				end
+				xmlAttribValue = bufTab[i].getAttribute(xmlAttribNameFlashcont)
+				if(xmlAttribValue ~= nil) then
+					xmlFlashcontName = xmlAttribValue
+				end
+
+				print("xmlKnrListenIDRef -&gt;" .. tostring(xmlKnrListenIDRef))
+				print("xmlPrnrTermIdRef -&gt;" .. tostring(xmlPrnrTermIdRef))
+				print("xmlSteuerung -&gt;" .. tostring(xmlSteuerung))
+				print("xmlModelljahr -&gt;" .. tostring(xmlModelljahr))
+				print("xmlSWVersion -&gt;" .. tostring(xmlSWVersion))
+				print("xmlFlashcontName -&gt;" .. tostring(xmlFlashcontName))	
+			end				
+		end
+
+		if (xmlKnrListenIDRef ~= "") then
+			KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+		end
+		if ((engine.LastError == 0) and (xmlPrnrTermIdRef ~= "")) then
+			PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+		end
+		SteuerungStat = 0;
+		if ((bit32.band(xmlSteuerungInt,0x01) == 0x01) and (VorserienFzg == 1)) then
+			SteuerungStat = 1;
+		end
+		if ((bit32.band(xmlSteuerungInt,0x02) == 0x02) and (VorserienFzg == 0)) then
+			SteuerungStat = 1;
+		end
+		ModelljahrStat = 0;
+		if (xmlModelljahr == "") then
+			ModelljahrStat = 1;
+		elseif (string.sub(xmlModelljahr,3,4) == string.sub(Fzd,34,35)) then
+			ModelljahrStat = 1;
+		end
+		print("KnrListenIdStat -&gt;" .. tostring(KnrListenIdStat))
+		print("PRNRTermStat -&gt;" .. tostring(PRNRTermStat))
+		print("SteuerungStat -&gt;" .. tostring(SteuerungStat))
+		print("ModelljahrStat -&gt;" .. tostring(ModelljahrStat))
+
+		if ((engine.LastError == 0) and (KnrListenIdStat ~= 0) and (PRNRTermStat ~= 0) and (SteuerungStat ~= 0) and (ModelljahrStat ~= 0)) then
+			SW_Version = xmlSWVersion
+			Flashdatencont = xmlFlashcontName
+		else
+			engine.LastError = 1
+			print("Korr_Aufbr_TNR_ASV123_Part2: no flash possible, not yet;")		
+		end
+	end
+	return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag
+elseif(Modus == "Teileaufbrauch") then
+	xmlSubPathTag = xmlSubPathTagAufbrauch;
+	xmlAttribGet = xmlAttribNameSgTnrAlternativ;
+	if (engine.LastError == 0 and (#bufTab ~= 0)) then
+		print("Korr_Aufbr_TNR_ASV123_Part2: Modus Teileaufbrauch")
+		for i = 1,#bufTab do
+			xmlbuflist = bufTab[i].selectNodes(xmlSubPathTagAufbrauch)	
+			if(xmlbuflist.length &gt; 0) then
+				print("xmlbuflist length :" .. tostring(xmlbuflist.length))
+				for j = 0,xmlbuflist.length - 1 do
+					print("xmlbuflist xml: " .. tostring(xmlbuflist[j].xml))
+					PRNRTermStat = -1;
+					KnrListenIdStat = -1;
+					xmlAttribName = "";
+					xmlAttribValue = "";
+					xmlKnrListenIDRef = "";
+					xmlPrnrTermIdRef = "";
+					xmlZdcVersion = "";
+					xmlZdcDateiName = "";
+					xmlSWVersion = "";
+					xmlFlashcontName = "";
+					xmlSgTnrErsatz = "";
+					xmlZdcTnrErsatz = "";
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameKnrListenIDRef)
+					if(xmlAttribValue ~= nil) then
+						xmlKnrListenIDRef = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNamePrnrTermIDRef)
+					if(xmlAttribValue ~= nil) then
+						xmlPrnrTermIdRef = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameSteuerung)
+					if(xmlAttribValue ~= nil) then
+						xmlSteuerung = xmlAttribValue
+						xmlSteuerungInt = LibVW.ascstrtoNum(xmlSteuerung)
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameModelljahr)
+					if(xmlAttribValue ~= nil) then
+						xmlModelljahr = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameSgTnrAlternativ)
+					if(xmlAttribValue ~= nil) then
+						xmlSgTnrErsatz = xmlAttribValue
+					end
+					xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameZdcTnr)
+					if(xmlAttribValue ~= nil) then
+						xmlZdcTnrErsatz = xmlAttribValue
+					end
+					print("xmlKnrListenIDRef -&gt;" .. tostring(xmlKnrListenIDRef))
+					print("xmlPrnrTermIdRef -&gt;" .. tostring(xmlPrnrTermIdRef))
+					print("xmlSteuerung -&gt;" .. tostring(xmlSteuerung))
+					print("xmlModelljahr -&gt;" .. tostring(xmlModelljahr))
+					print("xmlSgTnrErsatz -&gt;" .. tostring(xmlSgTnrErsatz))
+					print("xmlZdcTnrErsatz -&gt;" .. tostring(xmlZdcTnrErsatz))
+				end	
+				if (xmlKnrListenIDRef ~= "") then
+					KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+				end
+				if ((engine.LastError == 0) and (xmlPrnrTermIdRef ~= "")) then
+					PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+				end
+				SteuerungStat = 0;
+				if ((bit32.band(xmlSteuerungInt,0x01) == 0x01) and (VorserienFzg == 1)) then
+					SteuerungStat = 1;
+				end
+				if ((bit32.band(xmlSteuerungInt,0x02) == 0x02) and (VorserienFzg == 0)) then
+					SteuerungStat = 1;
+				end
+				ModelljahrStat = 0;
+				if (xmlModelljahr == "") then
+					ModelljahrStat = 1;
+				elseif (string.sub(xmlModelljahr,3,4) == string.sub(Fzd,34,35)) then
+					ModelljahrStat = 1;
+				end
+				if ((engine.LastError == 0) and (KnrListenIdStat ~= 0) and (PRNRTermStat ~= 0) and (SteuerungStat ~= 0) and (ModelljahrStat ~= 0)) then				
+					if(xmlSgTnrErsatz ~= IstSgTnr) then
+						if(SollTnr == "") then
+							SollTnr = xmlSgTnrErsatz
+						else
+							SollTnr = SollTnr .. "," .. xmlSgTnrErsatz
+						end	
+						engine.LastError = 1
+						print("Korr_Aufbr_TNR_ASV123_Part2: no Korrektur / Aufbrauch possible, not yet, but a possible alternative ecu found;")
+					else
+						engine.LastError = 0
+						SgTnrErsatz = xmlSgTnrErsatz;
+						ZdcTnrErsatz = xmlZdcTnrErsatz;						
+						SwapDcTnrErsatz = SwapDcTnr;
+						Tnr_Aenderung = 1
+						Tnr_Aend_SWaP = 0
+					end
+				else
+					engine.LastError = 1
+					print("Korr_Aufbr_TNR_ASV123_Part2: no Teileaufbrauch possible, not yet;")				
+				end
+			else
+				print("Korr_Aufbr_TNR_ASV123_Part2: no Teileaufbrauch possible")
+				engine.LastError = 1
+				errFlag = 1990
+			end
+		end
+	end
+	return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,SollTnr,ZdcTnrErsatz,SwapDcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,KeyID,SWaPDCName,SWaPDCVersion,SW_Version,Flashdatencont,errFlag
+end</Script></Function>
+

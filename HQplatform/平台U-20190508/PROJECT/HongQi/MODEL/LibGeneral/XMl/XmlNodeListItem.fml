@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlNodeList" type="8" data=""/>
+<Variable id="pos" type="3" data="0" description="索引值，pos从0开始计算"/>
+</Inputs>
+<Outputs>
+<Variable id="xmlNode" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+获取节点列表中处于指定的索引号的节点
+output parameter: xmlNode
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+xmlNode = xmlNodeList.item(pos)</Script></Function>
+

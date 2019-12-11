@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="saveFileName" type="8" data="&quot;&quot;" description="保存日志的文件名。（如文件名称为空，则只处理实时报文，不向文件中存储）"/>
+<Variable id="isFilled" type="11" data="true" description="true=将实时报文回传至lua，false=不传至lua"/>
+<Variable id="FilterID" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="result" type="3" data="0" description="0=OK, 1=NOK"/>
+</Outputs>
+<Script>if(saveFileName == nil) then
+	saveFileName = "";
+end
+local ret = engine.Buslog_Start(saveFileName, isFilled,FilterID);
+if(ret == true) then
+	engine.LastError = 0;
+        result = 0;
+        engine.dprintln("# Init buslog successful.");
+else
+	engine.println("!!!Init buslog errror!!!");
+	engine.LastError = 1;
+        result = 1;
+end</Script></Function>
+

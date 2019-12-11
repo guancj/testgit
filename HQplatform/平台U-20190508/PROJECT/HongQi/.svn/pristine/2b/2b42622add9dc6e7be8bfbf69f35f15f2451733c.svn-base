@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="UDS_ReadDTCByStatusMask" description="19 02 mask">
+<Inputs>
+<Variable id="ECU_Handle" type="3" data="vciHandle" description="ECU Handle"/>
+<Variable id="DTCInformType" type="3" data="0x02"/>
+<Variable id="DTCStatusMask" type="3" data="0x0C"/>
+</Inputs>
+<Outputs>
+<Variable id="DTC_Tab_Code" type="8" data="" description="故障码源码表"/>
+<Variable id="DTC_Tab_pCode" type="8" data="" description="故障码pCode码表"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   read DTC  from ECU   for UDS ByStatusMask;
+input parameter:ECU_Handle,DTCInformType,DTCStatusMask
+output parameter :DTC_Tab_Code;DTC_Tab_pCode;  -- string Tab type 
+
+11/28/2016     created by viforce
+******************************************************************************--]]
+local	DTCStatusAvailabilityMask = 0xff
+local	DTCLen = 4
+local	Position = 1
+local	recvTel = ""
+
+local DTC_String_Temp = "";
+DTC_Tab_Code = {}
+DTC_Tab_pCode = {}
+
+if ((DTCStatusMask &lt; 0x00) or (DTCStatusMask &gt; 0xff)) then
+	engine.LastError = 1;
+	engine.StatValue = "unvalid DTCStatusMask !!!"
+	return DTC_Tab_Code,DTC_Tab_pCode;
+end
+
+if( ECU_Handle == nil or ECU_Handle &lt; 0) then 
+
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return DTC_Tab_Code,DTC_Tab_pCode
+
+else
+
+#COMMEX ECU_Handle -1 0x19 DTCInformType DTCStatusMask
+--#COMM 0x19 DTCInformType DTCStatusMask
+	recvTel = @0-;
+	if(engine.LastError ~= 0) then
+		if(recvTel ~= nil and @0 == 0x7F and #recvTel &gt;=3) then
+			local tmpStatValue = LibGeneral.ECU_NegativeResponseValues(@2) ;
+			engine.StatValue = "NegativeResponse : "..tostring(@2).." "..tostring(tmpStatValue);
+		else
+		engine.StatValue = "Lost Connection or time out ";
+		end
+	engine.StatValue = "unexpect err ";	
+	else
+
+	engine.StatValue = "Recv :"..LibGeneral.hex2str(recvTel);	
+
+	end
+
+end
+
+
+if ( engine.LastError == 0 ) then
+	if(#recvTel &lt;= 3) then
+		engine.LastError = 0
+		engine.StatValue = "Positive :No DTC Return"
+		return DTC_Tab_Code,DTC_Tab_pCode
+	else
+		DTC_String_Temp = string.sub(recvTel, 4, -1);
+		if (string.len(DTC_String_Temp) &gt; 4) then
+			DTCStatusAvailabilityMask = string.byte(recvTel,3,3);
+                        engine.println("DTCStatusAvailabilityMask:"..tostring(DTCStatusAvailabilityMask))
+			Position = 1;
+			local i = 1;
+			DTCLen = string.len (DTC_String_Temp);
+                        engine.println("DTCLen:"..tostring(DTCLen))
+			while (Position &lt; DTCLen) do
+				if(bit32.band(string.byte(DTC_String_Temp,Position + 3),DTCStatusMask,DTCStatusAvailabilityMask) ~= 0) then
+				DTC_Tab_Code[i] = string.sub(DTC_String_Temp,Position,Position + 2)
+				DTC_Tab_pCode[i] = LibGeneral.UDS_GenericCode2pCode(LibGeneral.binStr2Int(DTC_Tab_Code[i]))
+				engine.println("DTC_Tab_Code :"..LibGeneral.hex2str(tostring(DTC_Tab_Code[i])))
+				engine.println("DTC_Tab_pCode :"..tostring(DTC_Tab_pCode[i]))
+                                i = i + 1
+				end
+				Position = Position + 4;
+			end
+		end
+	end
+end
+</Script></Function>
+

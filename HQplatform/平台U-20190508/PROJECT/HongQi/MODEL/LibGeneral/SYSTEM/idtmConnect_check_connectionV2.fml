@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>--[[
+require 'alien'
+local loopTime = 0
+local user = alien.load('Kernel32.dll') 
+user.WinExec:types{ret = 'int','string','int'}
+local file
+
+while(loopTime&lt;2) do
+	ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe 拨号连接",0,true)
+        if loopTime == 0 then
+	    user.WinExec("cmd.exe /c ping 10.1.3.1 &gt;tmp1.log",0)
+	    engine.Delay(500)
+	    file = io.open("tmp1.log","r")
+        else
+            user.WinExec("cmd.exe /c ping 10.1.3.1 &gt;tmp2.log",0)
+	    engine.Delay(500)
+	    file = io.open("tmp2.log","r")
+        end
+	local doc = file:read("*a")
+	print("doc is "..tostring(doc))
+	i,j = string.find(doc,"回复")
+	if i~=nil then
+	    ret = true
+            break
+	else
+	    ret = false
+	    ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe /disconnect",0,true)
+            engine.Delay(50)
+            loopTime = loopTime+1
+            print("ret value in loop2 is "..tostring(ret))
+	 end  
+	print("i is"..tostring(i))	
+	--engine.Delay(100000)
+ end
+ print("loop time is "..loopTime)
+ print("ret value in loop is "..tostring(ret))
+ --user.WinExec("cmd.exe /c rm tmp.log",0)
+ --]]
+require 'alien'
+local loopTime = 0
+local loopin =0
+local user = alien.load('Kernel32.dll') 
+user.WinExec:types{ret = 'int','string','int'}
+
+while(loopTime&lt;2) do
+	ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe 拨号连接",0,true)
+	user.WinExec("cmd.exe /c ping -n 1 10.1.3.1 &gt;tmp.log",0)
+        while(true) do
+	    engine.Delay(500)
+	    local file = io.open("tmp.log","r")
+	    local doc = file:read("*a")
+	    print("doc is "..tostring(doc))
+	    i,j = string.find(doc,"回复")
+            m,n = string.find(doc,"统计信息")
+            file:close()
+            if i~=nil or m~=nil then
+                break
+             end
+             if loopin&gt;8 then
+                 break
+              end
+              loopin = loopin +1
+        end
+	if i~=nil then
+	    ret = true
+            break
+	else
+	    ret = false
+	    ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe /disconnect",0,true)
+            engine.Delay(50)
+            loopTime = loopTime+1
+	 end  
+	print("i is"..tostring(i))	
+	--engine.Delay(100000)
+ end
+ print("loop time is "..loopTime)
+ --user.WinExec("cmd.exe /c rm tmp.log",0)</Script></Function>
+

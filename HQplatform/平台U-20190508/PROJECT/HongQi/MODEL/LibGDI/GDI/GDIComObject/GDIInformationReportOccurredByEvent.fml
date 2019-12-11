@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiComObject" type="8" data=""/>
+<Variable id="readFrequencyInMilliSecs" type="3" data="0"/>
+<Variable id="informationReportEvent" type="8" data=""/>
+</Inputs>
+<Script>--to do</Script></Function>
+

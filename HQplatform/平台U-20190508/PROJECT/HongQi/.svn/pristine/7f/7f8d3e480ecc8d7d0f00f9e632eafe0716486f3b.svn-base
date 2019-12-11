@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="KWP2000" code="">
+
+<Functions>
+<Function id="KWP2000_GenericCode2pCode"/>
+
+<Function id="KWP2000_GenericDTCTextFilterList"/>
+
+<Function id="KWP2000_GetDTCStatusInfor"/>
+
+<Function id="KWP2000_ReadDTCByStat"/>
+
+</Functions>
+</Workplace>

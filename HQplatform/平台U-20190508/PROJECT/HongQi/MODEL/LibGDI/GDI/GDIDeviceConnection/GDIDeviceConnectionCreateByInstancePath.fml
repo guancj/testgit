@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="initParameter" type="8" data=""/>
+<Variable id="instancePath" type="8" data="" description="DeviceConnection.DeviceFunction.Operation"/>
+<Variable id="stepIdentifier" type="3" data="0"/>
+<Variable id="analysisSupportLevel" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="gdiDeviceConnection" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>local moduleName = instancePath
+gdiDeviceConnection,gdiError= engine.GDI_CreateDeviceConnection(gdiWorkspace, moduleName, moduleName, initParameter)
+print("CreateDeviceConnectionResult of "..moduleName.." is "..tostring(gdiError))
+</Script></Function>
+

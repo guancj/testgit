@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiOperation" type="8" data=""/>
+<Variable id="inputData" type="8" data=""/>
+<Variable id="outputData_in" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="outputData_out" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>outputData_out,gdiError= engine.GDI_Execute(gdiOperation,inputData,outputData_in)
+print("opExecuteResult of "..instanceName.." is "..tostring(gdiError))</Script></Function>
+

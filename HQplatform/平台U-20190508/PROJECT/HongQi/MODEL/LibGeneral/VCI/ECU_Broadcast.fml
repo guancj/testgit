@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="CAN_ID" type="3" data="0x200"/>
+<Variable id="Dest_Addr" type="3" data="0xFE"/>
+<Variable id="ServiceId" type="3" data="0x3B"/>
+<Variable id="Param1" type="3" data="0x00"/>
+<Variable id="Param2" type="3" data="0xFF"/>
+<Variable id="ECU_Handle" type="3" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to  Transmode on or off
+input parameter:CAN_ID,Dest_Addr,ServiceId,Param1,Param2,ECU_Handle
+
+11/09/2016     created by viforce
+******************************************************************************--]]
+
+if( ECU_Handle == nil or ECU_Handle &lt; 0) then 
+
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return 
+
+else
+
+	engine.EcuBroadcast(CAN_ID,Dest_Addr,ServiceId,Param1,Param2,ECU_Handle)
+	if(engine.LastError ~= 0) then
+	engine.StatValue = "Ecu Broadcast fail ";	
+	end
+
+end
+
+</Script></Function>
+

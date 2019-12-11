@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data=""/>
+</Outputs>
+<Script>ret = false
+if (DString_C131_Car_Tpye == "CH1GM11") then
+elseif(DString_C131_Car_Tpye == "CH1GM12")then
+elseif(DString_C131_Car_Tpye == "CH1GM11")then
+elseif(DString_C131_Car_Tpye == "CH1GM21")then
+elseif(DString_C131_Car_Tpye == "CH1GM22")then
+elseif(DString_C131_Car_Tpye == "CH1GM30")then
+elseif(DString_C131_Car_Tpye == "CH1GM23")then
+elseif(DString_C131_Car_Tpye == "CH1GM40")then
+elseif(DString_C131_Car_Tpye == "CH1GM41")then
+elseif(DString_C131_Car_Tpye == "CH1GM42")then
+elseif(DString_C131_Car_Tpye == "CMNA01A")then
+elseif(DString_C131_Car_Tpye == "CMNA02A")then
+elseif(DString_C131_Car_Tpye == "DAPNHACC0000")then
+elseif(DString_C131_Car_Tpye == "DAPNHACC0001")then
+else
+	ret = true
+        print("the vehicle type do not know!")
+end</Script></Function>
+

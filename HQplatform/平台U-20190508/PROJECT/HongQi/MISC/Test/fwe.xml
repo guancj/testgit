@@ -1,0 +1,3470 @@
+<IDT_Specification>
+	<!--**************************Choosed Testbench/a country code, this enables to distinguisch between Audi site*******************************-->
+	<Machine>
+		<BaseConfig>
+			<DataBlockID>0x02</DataBlockID>
+			<!-- Was 0x1b Changed due to IDTSIM Tests -->
+			<SendTelLen>44</SendTelLen>
+			<RecvTelLen>44</RecvTelLen>
+			<ServiceIdent>idt_fwe</ServiceIdent>
+			<ConfigIdent>idtcomm_fwe</ConfigIdent>
+			<!--Debug Options for this IDT Instance
+Bit  0  : 0x00000001 Debug IDTC Configuration  
+Bit  1  : 0x00000002 Debug IDTC Init/DeInit  
+Bit  4  : 0x00000010 Debug IDTC SendCommands/ReceiveCommands (hex)
+Bit  8  : 0x00000100 Debug Send/Receive Telegram Build/Calculation  
+Bit 12  : 0x00001000 Debug IDTC Configuration Reader (detailed)
+Bit 16  : 0x00010000 Debug IDT Main Calls (Prepare, PostIDT) ?
+Bit 20  : 0x00100000 Debug IDT Main Sequences (Roller, WheelAligner, ...)
+Bit 23  : 0x00400000 Debug IDT Error Monitor (Main)
+Bit 23  : 0x00800000 Debug IDT Error Monitor (AddOn)
+Bit 24  : 0x01000000 Debug TestCTSs (RollerGearBox)-->
+			<DebugLevel>0x00000000</DebugLevel>
+			<IdtDebugLevel>768</IdtDebugLevel>
+			<Simulation>false</Simulation>
+			<SimulationFile>fwe_datasim.xml</SimulationFile>
+		</BaseConfig>
+		<IDTServices>
+			<IDTService ShortName="BasicState">
+				<Description><![CDATA[
+                <p>
+                This is the BasicStateIDT Service.
+                </p><p>
+                The command can be used to restart a test cycle without ending the communication (repair mode).
+                </p><p>
+                After the command is answered positive, the bench is ready for testing again (no wheel base required).
+                </p>
+           ]]></Description>
+				<Timeout>3600</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceBasicState"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ChassisSetPostCarriage">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceChassisSetPostCarriage"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ChassisSetStreerAngle">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceChassisSetStreerAngle"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ChassisSetup">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceChassisSetup"/>
+						<RequestParamRef ShortNameRef="ChassisSetupValue"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ChassisSetup_ControlMeasure">
+				<Description><![CDATA[
+                <p>
+                This is the ChassisSetupIDT Service.
+                </p><p>
+                If the Position can not be approached(system error), answers the state by -1.
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceChassisSetup"/>
+						<RequestParamRef ShortNameRef="ChassisSetup_ControlMeasure"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ChassisSetup_FA">
+				<Description><![CDATA[
+                <p>
+                This is the ChassisSetupIDT Service.
+                </p><p>
+                If the Position can not be approached(system error), answers the state by -1.
+                </p>
+           ]]></Description>
+				<Timeout>3600</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+						<IDTServiceRef>ReadTorqueStatus</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceChassisSetup"/>
+						<RequestParamRef ShortNameRef="ChassisSetup_FA"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ChassisSetup_RA">
+				<Description><![CDATA[
+                <p>
+                This is the ChassisSetupIDT Service.
+                </p><p>
+                If the Position can not be approached(system error), answers the state by -1.
+                </p>
+           ]]></Description>
+				<Timeout>3600</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+						<IDTServiceRef>ReadTorqueStatus</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceChassisSetup"/>
+						<RequestParamRef ShortNameRef="ChassisSetup_RA"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="EndIDT">
+				<Description><![CDATA[
+                <p>
+                This is the EndIDT Service. The command shuts down the cyclical send of data. After sending this service:
+                </p>
+				<ul>
+					<li>
+						Connection between test stand and DSA Tester will be closed as soon as acknowledgment of this service is received</li>
+					<li>
+						No Error-Message is generated while IR communication is desconnected</li>
+					<li>
+						Access to the test stand is not possible until Service Start of Testing(Service 1) is excuted again.</li>
+				</ul>
+				<p>
+					This service request is automatically generated from the MFT software at the end of the test.</p>
+				<p>
+					A new StartIDT service has to be sent to reestablish the communication.</p>	
+           ]]></Description>
+				<Timeout>300</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceEnd"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ErrorMonitor">
+				<Description><![CDATA[
+                <p>
+                Used to implement the background Error Monitor.
+                </p>
+           ]]></Description>
+				<Timeout>10</Timeout>
+				<Control>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="RespStatusInformations"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="FloatingPlateControl">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceFloatingPlateControl"/>
+						<RequestParamRef ShortNameRef="FloatingPlateControl_FA"/>
+						<RequestParamRef ShortNameRef="FloatingPlateControl_RA"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="LoweringForward_S_PointStart">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceLoweringForward_S_PointStart"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="MeasureWheelCenter">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to start WheelCenter Measure (53)
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>RespMeasureWheelCenter</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceMeasureWheelCenter"/>
+						<RequestParamRef ShortNameRef="MeasuringWheelCenter"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RespMeasureWheelCenter">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to start WheelCenter Measure (53)
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="WheelCenterFender_FL"/>
+						<ResponseParamRef ShortNameRef="WheelCenterFender_FR"/>
+						<ResponseParamRef ShortNameRef="WheelCenterFender_RL"/>
+						<ResponseParamRef ShortNameRef="WheelCenterFender_RR"/>
+						<ResponseParamRef ShortNameRef="WheelCenterFender_DiffFront"/>
+						<ResponseParamRef ShortNameRef="WheelCenterFender_DiffRear"/>
+						<ResponseParamRef ShortNameRef="WheelCenter_Eval_FL"/>
+						<ResponseParamRef ShortNameRef="WheelCenter_Eval_FR"/>
+						<ResponseParamRef ShortNameRef="WheelCenter_Eval_RL"/>
+						<ResponseParamRef ShortNameRef="WheelCenter_Eval_RR"/>
+						<ResponseParamRef ShortNameRef="WheelCenter_EvalDiff_FL"/>
+						<ResponseParamRef ShortNameRef="WheelCenter_EvalDiff_FR"/>
+						<ResponseParamRef ShortNameRef="WheelCenter_TotalEval"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="MeasureWheelHouseRefresh">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to start WheelHouse Measure (31)
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+						<IDTServiceRef>RespMeasureWheelHouse</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceMeasureWheelHouse"/>
+						<RequestParamRef ShortNameRef="WheelHouseType_Refresh"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="MeasureWheelHouseStatic">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to start WheelHouse Measure (31)
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+						<IDTServiceRef>RespMeasureWheelHouse</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceMeasureWheelHouse"/>
+						<RequestParamRef ShortNameRef="WheelHouseType_Static"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="PreparedRasing_FA">
+				<Timeout>60</Timeout>
+				<Control>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServicePreparedRasing"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="Rasing_FA_S_Point_MeasureStart">
+				<Timeout>60</Timeout>
+				<Control>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceRasing_FA_S_Point_MeasureStart"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ReadTestStandStatus">
+				<Description><![CDATA[
+                <p>
+                This is the Read Tester Stand Status Result IDT Service.
+                </p><p>
+               It will read out the measured and calculated values upon service Request Tester Stand Status
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+						<IDTServiceRef>TestReadiness</IDTServiceRef>						
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="RespFrontAndRearAxleStatus"/>
+						<ResponseParamRef ShortNameRef="RespStatusInformations"/>
+						<ResponseParamRef ShortNameRef="RespBasePosition"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ReadTorqueStatus">
+				<Description><![CDATA[
+                <p>Torque Status</p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+						<IDTServiceRef>ChassisSetup_FA</IDTServiceRef>
+						<IDTServiceRef>ChassisSetup_RA</IDTServiceRef>
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="RespTorqueStatus"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ReadWeightMeasure">
+				<Description><![CDATA[
+                <p>
+                This is the Read Weight Measure Result IDT Service.
+                </p><p>
+               It will read out the measured and calculated values upon service Request Weight Measure Result(Service09).
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ReadWeightMeasure</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceWeightMeasureResult"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RequestResultSpur">
+				<Description><![CDATA[
+                <p>
+                This is the FWE Result Spur Service.
+                </p><p>
+                Service 51 has to be executed before
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+						<IDTServiceRef>RespRequestResultSpur</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceResultSpur"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RequestResultSpurDefault">
+				<Description><![CDATA[
+                <p>
+                This is the FWE Result Spur Service.
+                </p><p>
+                Service 51 has to be executed before
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceResultSpurDefault"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RequestResultSturz">
+				<Description><![CDATA[
+                <p>
+                This is the FWE Result Sturz Service.
+                </p><p>
+                Service 52 has to be executed before
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceResultSturz"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RespRequestResultSturz">
+				<Description><![CDATA[
+                <p>
+                This is the FWE Result Sturz Service.
+                </p><p>
+                Service 52 has to be executed before
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>RequestResultSturz</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceResultSturz"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="Sturz_FL"/>
+						<ResponseParamRef ShortNameRef="Sturz_FR"/>
+						<ResponseParamRef ShortNameRef="Sturz_RL"/>
+						<ResponseParamRef ShortNameRef="Sturz_RR"/>
+						<ResponseParamRef ShortNameRef="Sturz_Diff_Front"/>
+						<ResponseParamRef ShortNameRef="Sturz_Diff_Rear"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_FL"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_FR"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_RL"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_RR"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_Diff_Front"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_Diff_Rear"/>
+						<ResponseParamRef ShortNameRef="Sturz_TotalEval"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RequestResultSturzDefault">
+				<Description><![CDATA[
+                <p>
+                This is the FWE Result Sturz Service.
+                </p><p>
+                Service 52 has to be executed before
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceResultSturzDefault"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="Sturz_FL"/>
+						<ResponseParamRef ShortNameRef="Sturz_FR"/>
+						<ResponseParamRef ShortNameRef="Sturz_RL"/>
+						<ResponseParamRef ShortNameRef="Sturz_RR"/>
+						<ResponseParamRef ShortNameRef="Sturz_Diff_Front"/>
+						<ResponseParamRef ShortNameRef="Sturz_Diff_Rear"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_FL"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_FR"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_RL"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_RR"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_Diff_Front"/>
+						<ResponseParamRef ShortNameRef="Sturz_Eval_Diff_Rear"/>
+						<ResponseParamRef ShortNameRef="Sturz_TotalEval"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RequestSteeringTest">
+				<Timeout>60</Timeout>
+				<Control>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceRequestSteeringTest"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RespMeasureWheelHouse">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to start WheelHouse Measure (31)
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>MeasureWheelHouseRefresh</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="WheelHouseZ_FL"/>
+						<ResponseParamRef ShortNameRef="WheelHouseZ_FR"/>
+						<ResponseParamRef ShortNameRef="WheelHouseZ_RL"/>
+						<ResponseParamRef ShortNameRef="WheelHouseZ_RR"/>
+						<ResponseParamRef ShortNameRef="WheelHouseZ_HeightDiffFront"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_HeightDiffRear"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_EvalHeight_FL"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_EvalHeight_FR"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_EvalHeight_RL"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_EvalHeight_RR"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_EvalHeightDiff_FL"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_EvalHeightDiff_FR"/>
+						<ResponseParamRef ShortNameRef="WheelHouse_TotalEvalHeight"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RespReadWeightMeasure">
+				<Description><![CDATA[
+                <p>
+                This is the Read Weight Measure Result IDT Service.
+                </p><p>
+               It will read out the measured and calculated values upon service Request Weight Measure Result(Service09).
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ReadWeightMeasure</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceWeightMeasureResult"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="Weight_FL"/>
+						<ResponseParamRef ShortNameRef="Weight_FR"/>
+						<ResponseParamRef ShortNameRef="Weight_FA"/>
+						<ResponseParamRef ShortNameRef="Weight_RL"/>
+						<ResponseParamRef ShortNameRef="Weight_RR"/>
+						<ResponseParamRef ShortNameRef="Weight_RA"/>
+						<ResponseParamRef ShortNameRef="Weight_Total"/>
+						<ResponseParamRef ShortNameRef="Weight_FL_SingleEvaluation"/>
+						<ResponseParamRef ShortNameRef="Weight_FR_SingleEvaluation"/>
+						<ResponseParamRef ShortNameRef="Weight_FT_SingleEvaluation"/>
+						<ResponseParamRef ShortNameRef="Weight_RL_SingleEvaluation"/>
+						<ResponseParamRef ShortNameRef="Weight_RR_SingleEvaluation"/>
+						<ResponseParamRef ShortNameRef="Weight_RT_SingleEvaluation"/>
+						<ResponseParamRef ShortNameRef="Weight_Total_SingleEvaluation"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RespRequestResultSpur">
+				<Description><![CDATA[
+                <p>
+                This is the FWE Result Spur Service.
+                </p><p>
+                Service 51 has to be executed before
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>RequestResultSpur</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="Spur_FL"/>
+						<ResponseParamRef ShortNameRef="Spur_FR"/>
+						<ResponseParamRef ShortNameRef="Spur_Front"/>
+						<ResponseParamRef ShortNameRef="Spur_RL"/>
+						<ResponseParamRef ShortNameRef="Spur_RR"/>
+						<ResponseParamRef ShortNameRef="Spur_Rear"/>
+						<ResponseParamRef ShortNameRef="DackelLaufAngle"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_FL"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_FR"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_Front"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_RL"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_RR"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_Rear"/>
+						<ResponseParamRef ShortNameRef="DackelLauf_Eval"/>
+						<ResponseParamRef ShortNameRef="Spur_TotalEval"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RespRequestResultSpurDefault">
+				<Description><![CDATA[
+                <p>
+                This is the FWE Result Spur Service.
+                </p><p>
+                Service 51 has to be executed before
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>RequestResultSpurDefault</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="Spur_FL"/>
+						<ResponseParamRef ShortNameRef="Spur_FR"/>
+						<ResponseParamRef ShortNameRef="Spur_Front"/>
+						<ResponseParamRef ShortNameRef="Spur_RL"/>
+						<ResponseParamRef ShortNameRef="Spur_RR"/>
+						<ResponseParamRef ShortNameRef="Spur_Rear"/>
+						<ResponseParamRef ShortNameRef="DackelLaufAngle"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_FL"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_FR"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_Front"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_RL"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_RR"/>
+						<ResponseParamRef ShortNameRef="Spur_Eval_Rear"/>
+						<ResponseParamRef ShortNameRef="DackelLauf_Eval"/>
+						<ResponseParamRef ShortNameRef="Spur_TotalEval"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ResultTotal">
+				<Description><![CDATA[
+                <p>Server 78 Result total</p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceResultTotal"/>
+						<RequestParamRef ShortNameRef="TotalEvaluationTransfert"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ResultTransfertSteeringWheelAngle">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="SteeringWheelValue"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ServiceTransfertResult_S_Point">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceTransfertResult_S_Point"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="Set_FA_Toe_S_PointStart">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceSet_FA_Toe_S_PointStart"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="ShowText">
+				<Description><![CDATA[
+                <p>
+               Used to transfer a Text number to the Test Stand.<p>
+			   Test Stand will
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceShowText"/>
+						<RequestParamRef ShortNameRef="TextNumber"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="StartIDT">
+				<Description><![CDATA[
+                <p>
+                This is the StartIDT Service.
+                </p><p>
+                This command must be send initially to open the interface and transfer
+                the MFT's name. If this command is not successfull the interface is not up and cannot be used for testing.
+                </p>
+				<ul>
+					<li>
+						The connection between test stand and DSA Tester will be immediately started and cyclically monitored. 
+                  Interruption leads to Error Messages and Stop of the test stand.</li>
+				  
+					<li>
+						The actual readiness for testing is established with service 4(WheelBase).</li>
+
+					<li>
+						Only after receiving the acknowledgment of this service the MFT is able to execute other services.
+                  Access to the test stand is not enabled befor receiving ACK of this Service.</li>
+				</ul>
+				<p>
+					The Service Request will be generated automatically while starting of the test.
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>StartIDT</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceStart"/>
+						<RequestParamRef ShortNameRef="MFTName"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+						<ResponseParamRef ShortNameRef="TestStandName"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="StopIDT">
+				<Description><![CDATA[
+                <p>
+                This is the StopIDT Service. The command is sent for:
+				</p>				
+				<ul>
+					<li>
+						Abort of the current Service: test stand should terminate the service if it is still on running</li>
+					<li>
+						Acknowledgement of Service processing: After the test stand has acknowledged a service as completed(with/without errors), 
+						the MFT sends service request 0(ServiceStop) and expects acknowledgement 0 from the test stand. A new service request can 
+						only be sent after this procedure is completed (even if it is the same request as that before)</li>
+					<li>
+						No Service request. Content of the data is ignored by the test stand!</li>
+					<li>
+						test stand has to update the measurement value.</li>
+				</ul>	
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceStop"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="TestReadiness">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to start Measure (TestReadiness) (51)
+                </p>
+           ]]></Description>
+				<Timeout>300</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ReadTestStandStatus</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceVehicleReady"/>
+						<RequestParamRef ShortNameRef="VehicleReady"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="TransfertSteeringWheelAngleStart">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceTransfertSteeringWheelAngle"/>
+						<RequestParamRef ShortNameRef="TransfertSteeringWheelAngleStart"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="TransfertSteeringWheelAngleStop">
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceTransfertSteeringWheelAngle"/>
+						<RequestParamRef ShortNameRef="TransfertSteeringWheelAngleStop"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="TransversePositions">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to TransversePositions (28)
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceTransversePositions"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="RespTransversePositions">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to TransversePositions (28)
+                </p>
+           ]]></Description>
+				<Timeout>60</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>TransversePositions</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="RespTransverse_AxialOffset_FA"/>
+						<ResponseParamRef ShortNameRef="RespTransverse_AxialOffset_RA"/>
+						<ResponseParamRef ShortNameRef="RespTransverse_Dackelwinkel"/>
+						<ResponseParamRef ShortNameRef="RespTransverse_SymmetricAngle"/>
+						<ResponseParamRef ShortNameRef="RespTransverse_Result"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="TurnOverMeasure">
+				<Description><![CDATA[
+                <p>
+                This is the FWE to start UmschlagsMessung Measure (52)
+                </p>
+           ]]></Description>
+				<Timeout>300</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>TurnOverMeasure</IDTServiceRef>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceTurnOverMeasure"/>
+						<RequestParamRef ShortNameRef="TurnOverMeasure"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="VehicleID_B8L">
+				<Description><![CDATA[
+                <p>
+                This is the VehicleIDIDT Service.
+                </p><p>
+                The command can be used to transfer the Vehicle ID to the TestStand.
+                </p>
+           ]]></Description>
+				<Timeout>300</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceVehicleID"/>
+						<RequestParamRef ShortNameRef="VehicleIDInfo"/>
+						<RequestParamRef ShortNameRef="VehicleID"/>
+						<RequestParamRef ShortNameRef="VehicleType_B8L"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+			<IDTService ShortName="VehicleID_CC">
+				<Description><![CDATA[
+                <p>
+                This is the VehicleIDIDT Service.
+                </p><p>
+                The command can be used to transfer the Vehicle ID to the TestStand.
+                </p>
+           ]]></Description>
+				<Timeout>300</Timeout>
+				<Control>
+					<IDTServiceRefs>
+						<IDTServiceRef>ErrorMonitor</IDTServiceRef>
+					</IDTServiceRefs>
+					<RequestParamRefs>
+						<RequestParamRef ShortNameRef="ServiceVehicleID"/>
+						<RequestParamRef ShortNameRef="VehicleIDInfo"/>
+						<RequestParamRef ShortNameRef="VehicleID"/>
+						<RequestParamRef ShortNameRef="VehicleType_CC"/>
+					</RequestParamRefs>
+					<ResponseParamRefs>
+						<ResponseParamRef ShortNameRef="FunctionResult"/>
+					</ResponseParamRefs>
+				</Control>
+			</IDTService>
+		</IDTServices>
+		<RequestParams>
+			<RequestParam ShortName="ReqDataBlock" LongName="Request DataBlock ID">
+				<Description><![CDATA[
+							<p><b>Request DataBlock ID</b></p>
+                            <p>The DataBlock ID field for the Tester DataBlock (send by MFT)</p>
+		]]></Description>
+				<BytePosition>0</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>2</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceEnd" LongName="Service End">
+				<Description><![CDATA[The Service ID]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>2</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceBasicState" LongName="Service Basic State">
+				<Description><![CDATA[Ground state The test stand is in the ground state. <br>
+The communication between MFT and test remains.]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>5</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceWeightMeasureResult" LongName="Request Weight Measure">
+				<Description><![CDATA[
+				<p>
+				         Request results for Weight Measurement       </p>
+				]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>9</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceStop" LongName="Service Stop">
+				<Description><![CDATA[The Service ID]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceStart" LongName="Service Start">
+				<Description><![CDATA[The Service ID]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>1</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceResultSturz" LongName="Service Sturz Results">
+				<Description><![CDATA[]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>11</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceVehicleID" LongName="Service Vehicle ID">
+				<Description><![CDATA[vehicle identification]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>22</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceMeasureWheelHouse" LongName="Service Measure Wheel House">
+				<Description><![CDATA[
+				]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>31</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceTransfertResult_S_Point" LongName="The Service Number">
+				<Description><![CDATA[
+											Übertragung Ergebnisdaten S-Punkt
+				Im  Antwortblock werden die Ergebnisdaten die S-Punkt-Einstellung übertragen.
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>33</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceVehicleReady" LongName="Service Initialize FWE">
+				<Description><![CDATA[
+											Fzg. in Prüfbereitschaft bringen:
+				Lenkradwaage einlegen, zentrieren, ...
+				(aber noch keine Messungen durchführen) 
+				Quittung erfolgt, wenn Werker am Prüfstand „Messung Start“ (+1=OK) oder „Abbruch“ (-1=NOK) drückt.
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>51</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceResultSpurDefault" LongName="Service Spur Results Default">
+				<Description><![CDATA[
+				]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>24</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceChassisSetPostCarriage" LongName="The Service Number">
+				<Description><![CDATA[
+									Fahrwerkeinstellung Lenkeinschlagsmessung
+				Der auf dem FWE definierte Prüfzyklus wird ausgeführt.
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>26</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceChassisSetStreerAngle" LongName="The Service Number">
+				<Description><![CDATA[
+								Fahrwerkeinstellung Lenkeinschlagsmessung
+				Der auf dem FWE definierte Prüfzyklus wird ausgeführt.
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>27</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceResultSpur" LongName="Service Spur Results">
+				<Description><![CDATA[
+				]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>10</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceTransversePositions" LongName="Service transverse positions">
+				<Description><![CDATA[Service 28 Vehicle transverse positions]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>28</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceTurnOverMeasure" LongName="Service UmschlagsMessung">
+				<Description><![CDATA[
+											Umschlagsmessung 
+				Quittung erfolgt, wenn Umschlagsmessung beendet.
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>52</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceMeasureWheelCenter" LongName="Service Measure Wheel Center">
+				<Description><![CDATA[
+				]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>53</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServicePreparedRasing" LongName="The Service Number">
+				<Description><![CDATA[
+												Vorbereitung Ausheben VA
+				keine Parameter, keine Rückgabewerte/Messwerte
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>70</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceRasing_FA_S_Point_MeasureStart" LongName="The Service Number">
+				<Description><![CDATA[
+											Start Ausheben VA für S-Punkt-Messung,
+				keine Parameter,
+				Rückgabewerte sind S-Punkt-Werte
+				(Format wie bei Dienst 33)
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>71</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceSet_FA_Toe_S_PointStart" LongName="The Service Number">
+				<Description><![CDATA[
+												Start Einstellung VA Spur und S-Punkt
+				keine Parameter,
+				Rückgabewerte sind S-Punkt-Werte
+				(Format wie bei Dienst 33)
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>72</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceLoweringForward_S_PointStart" LongName="The Service Number">
+				<Description><![CDATA[
+												Start Einstellung VA Spur und S-Punkt
+				keine Parameter,
+				Rückgabewerte sind S-Punkt-Werte
+				(Format wie bei Dienst 33)
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>73</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceRequestSteeringTest" LongName="The Service Number">
+				<Description><![CDATA[
+								Anforderung Ergebnisdaten Lenkungsprüfung (Nachlauf + Lenkeinschlag)
+				Die Ergebnisdaten der Lenkungsprüfung werden übertragen. 
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>30</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceResultSturzDefault" LongName="Service Sturz Results Default">
+				<Description><![CDATA[]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>25</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceChassisSetup" LongName="Service Chassis Setup">
+				<Description><![CDATA[
+								Fahrwerkeinstellung 
+				Weitere Parameter siehe separater Abschnitt weiter unten!
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>7</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceResultTotal" LongName="Service Result Total">
+				<Description><![CDATA[
+											Gesamtbewertung und Ergebnisübertragung starten 
+				keine Parameter, Ergebnis im Status (-1=NOK, +1=OK) 
+				Der Prüfstand fragt den Werker, ob die Prüfung beendet werden soll. Positive Quittung = OK, negative Quittung = NOK (=Wiederholung gewünscht)
+				Achtung: Das Ergebnis liefert den Tastendruck
+				und nicht das Gesamtprüfergebnis !
+				Bei OK werden ggf. implizit Ergebnisse an ein übergeordnetes System übertragen (NAFS, FISeQS,...)
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>78</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceDischargedStart" LongName="The Service Number">
+				<Description><![CDATA[
+											Ausfördern Start
+				keine Parameter, Quittung erfolgt SOFORT
+				da ggf. ein IR-Kommunikationsgerät den Dienst aus-gelöst haben kann und aus dem IR-Übertragungs-bereich ausgefördert wird.
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>79</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceTransfertSteeringWheelAngle" LongName="The Service Number">
+				<Description><![CDATA[
+											Übertragung des Winkels der Lenkradwaage
+				Die Übertragung der Lenkradwaagenwerte wird ein- bzw. ausgeschaltet; die Quittierung erfolgt sofort.
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>81</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceFloatingPlateControl" LongName="The Service Number">
+				<Description><![CDATA[
+											Schwimmplattenansteuerung
+				(Im Anschluss muss der Dienst Fzg. positionieren (51) und Umschlagsmessung (52) ausgeführt werden!)
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>85</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ServiceShowText" LongName="Service Show Text">
+				<Description><![CDATA[Service Show Text]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>16</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ReqTogglebyte" LongName="Request Togglebyte">
+				<Description><![CDATA[
+							<p><b><a name="ReqTogglebyte">Togglebyte (used for all Service Request):</a></b></p>
+			<ul>
+				<li>
+					Used to determine the response time of the MFT.</li>
+				<li>
+					The MFT writes the value, that is read from the previous response block(byte 11), in this request parameter</li>
+				<li>
+					The test stand increments this value in its response block(Byte 11) as soon as Echo of this Toggle byte(service request byte 3) is read from MFT.</li>
+			</ul>
+	]]></Description>
+				<BytePosition>3</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>2</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="TotalEvaluationTransfert" LongName="Total Evaluation Transfert">
+				<Description><![CDATA[
+				Bit 0 0 : Keine Quittierung 
+						1 : Quittierung erforderlich
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="Validation_Required" name="Validation Required"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="MeasuringWheelCenter" LongName="Wheel Center Type">
+				<Description><![CDATA[
+				Bit 0 0 : Radmittelpunktmesswerte  abholen ohne 
+						1 : Radmittelpunkt messen und Ergebnisse liefern
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="0" ShortName="Wheel_Center_Point_Measuring_and_Results" name="Wheel Center Point Measuring and Results"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="TurnOverMeasure" LongName="TurnOverMeasure">
+				<Description><![CDATA[
+				Bit 0 0 : Höhe Radhauskante (VL, VR, HL, HR) messen
+						1 : Höhe Radhauskante (VL, VR, HL, HR) nicht messen
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="High_Wheel_Center_FL_FR_RL_RR" name="High Wheel Center (FL, FR, RL, RR)"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="VehicleIDInfo" LongName="Vehicle ID Info">
+				<Description><![CDATA[	                        <b><font color="blue">Only for Service 22 - (VehicleID)</font></b>
+				<p>
+					Type of Vehicle Indentifier:</p>
+				<p>
+                <ul>
+					<li>2: ID (14 Byte): Identification Code is sent in&nbsp; Bytes 20-33 Bytes 34-36 is blank(0x20)</li>
+					<li>3: VIN (17 Byte) Bytes 20-36</li>
+                </ul>
+                </p>
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>2</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ChassisSetupValue" LongName="Chassis Setting">
+				<Description><![CDATA[
+									Fahrwerkseinstellung
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="Rear_Axel_Setting" name="Rear Axel Setting"/>
+					<Bit pos="1" value="1" ShortName="Front_Axel_Setting" name="Front Axel Setting"/>
+					<Bit pos="2" value="1" ShortName="Control_Measure" name="Control Measure"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ChassisSetup_FA" LongName="Chassis Setup Front Axle">
+				<Description><![CDATA[
+				<p><b><a name="ChassisSetupValue">Chassis Setting:</a></b></p>
+				<p>
+					Bit 0: Rear Axle Setting <br />
+					Bit 1: Front Axle Setting <br />
+					Bit 2: Control Measure </p>
+					
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="1" value="1" ShortName="Front_Axle_Setting" name="Front Axle Setting"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="FloatingPlateControl_FA" LongName="Floating Plate Control Front Axle">
+				<Description><![CDATA[
+					Schwimmplattenansteuerung VA (Vorderachse):
+				0: geklemmt (Schwimmplatten sind fixiert)
+				1: geführt (Schwimmplatten können gedreht werden)
+				2: offen (Schwimmplatten sind frei beweglich)
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="FloatingPlateControl_RA" LongName="Floating Plate Control Rear Axle">
+				<Description><![CDATA[
+					Schwimmplattenansteuerung HA (Hinterachse):
+				0: geklemmt (Schwimmplatten sind fixiert)
+				1: geführt (Schwimmplatten können gedreht werden)
+				2: offen (Schwimmplatten sind frei beweglich)
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ChassisSetup_RA" LongName="Chassis Setup Rear Axle">
+				<Description><![CDATA[
+				<p><b><a name="ChassisSetupValue">Chassis Setting:</a></b></p>
+				<p>
+					Bit 0: Rear Axle Setting <br />
+					Bit 1: Front Axle Setting <br />
+					Bit 2: Control Measure </p>
+					
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="Rear_Axle_Setting" name="Rear Axle Setting"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ChassisSetup_ControlMeasure" LongName="Chassis Setup Control Measure">
+				<Description><![CDATA[
+				<p><b><a name="ChassisSetupValue">Chassis Setting:</a></b></p>
+				<p>
+					Bit 0: Rear Axle Setting <br />
+					Bit 1: Front Axle Setting <br />
+					Bit 2: Control Measure </p>
+					
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="2" value="1" ShortName="Control_Measure" name="Control Measure"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="TransfertSteeringWheelAngleStart" LongName="Transfert Steering Wheel Angle">
+				<Description><![CDATA[
+				Bit 0 0 : Start der Übertragung 
+						1 : Stop der Übertragung
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="0" ShortName="Start" name="Start the Transfert"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="TransfertSteeringWheelAngleStop" LongName="Transfert Steering Wheel Angle">
+				<Description><![CDATA[
+				Bit 0 0 : Start der Übertragung 
+						1 : Stop der Übertragung
+		]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="Stop" name="Stop the Transfert"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="VehicleReady" LongName="Test Readiness">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 51 - (Test Readiness)</font></b>
+				<p>
+					<ul>
+						<li>Bit0: Update height and wheel center values</li>
+						<li>Bit1: Wait 10 seconds after Pruefbereitschaft == 0 <b>ATTENTION OFF is 1</b></li>
+					</ul>
+				<p>]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="0" ShortName="UpdateHeightCenterValues" name="Update height and wheel center values"/>
+					<Bit pos="1" value="0" ShortName="DoNotWait10sec" name="Wait 10 seconds after Pruefbereitschaft == 0"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="WheelHouseType" LongName="WheelHouseType">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 31 - (WheelHouse)</font></b>
+				<p>
+					<ul>
+						<li>Bit0: 0 : Dynamic Height Measure, 1 : SingleShot Measure</li>
+						<li>Bit1: 0 : Stop dyn Measure, 1 : Start Dyn Measure</li>
+						<li>Bit2: 0 : Do not Measure, just collect results, 1 : Measure Height</li>
+					</ul>
+				<p>]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="SingleShotMeasure" name="no Dynamic Height Measure"/>
+					<Bit pos="1" value="0" ShortName="StartDynMeasure" name="Start Dynamic Measure"/>
+					<Bit pos="2" value="1" ShortName="MeasureHeight" name="MeasureHeight"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="WheelHouseType_Static" LongName="WheelHouseTypeStatic">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 31 - (WheelHouse)</font></b>
+				<p>
+					<ul>
+						<li>Bit0: 0 : Dynamic Height Measure, 1 : SingleShot Measure</li>
+						<li>Bit1: 0 : Stop dyn Measure, 1 : Start Dyn Measure</li>
+						<li>Bit2: 0 : Do not Measure, just collect results, 1 : Measure Height</li>
+					</ul>
+				<p>]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="SingleShotMeasure" name="no Dynamic Height Measure"/>
+					<Bit pos="1" value="0" ShortName="StartDynMeasure" name="Start Dynamic Measure"/>
+					<Bit pos="2" value="1" ShortName="MeasureHeight" name="MeasureHeight"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="WheelHouseType_Refresh" LongName="WheelHouseTypeStatic">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 31 - (WheelHouse)</font></b>
+				<p>
+					<ul>
+						<li>Bit0: 0 : Dynamic Height Measure, 1 : SingleShot Measure</li>
+						<li>Bit1: 0 : Stop dyn Measure, 1 : Start Dyn Measure</li>
+						<li>Bit2: 0 : Do not Measure, just collect results, 1 : Measure Height</li>
+					</ul>
+				<p>]]></Description>
+				<BytePosition>4</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="1" ShortName="SingleShotMeasure" name="no Dynamic Height Measure"/>
+					<Bit pos="1" value="0" ShortName="StartDynMeasure" name="Start Dynamic Measure"/>
+					<Bit pos="2" value="0" ShortName="MeasureHeight" name="MeasureHeight"/>
+				</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="VehicleType_B8L" LongName="Vehicle Type">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 22 - (VehicleID)</font></b>
+				<p>
+					09 : Magotan - TO be defined</p>
+				<p>]]></Description>
+				<BytePosition>5</BytePosition>
+				<ByteLength>3</ByteLength>
+				<BitMask>0xffffff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>9</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="VehicleType_CC" LongName="Vehicle Type">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 22 - (VehicleID)</font></b>
+				<p>
+					12 : Magotan CCFB - TO be defined</p>
+				<p>]]></Description>
+				<BytePosition>5</BytePosition>
+				<ByteLength>3</ByteLength>
+				<BitMask>0xffffff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>12</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="VehicleID" LongName="VehicleID">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 22 - (VehicleID)</font></b>
+				<p>
+					VIN</p>
+				<p>]]></Description>
+				<BytePosition>20</BytePosition>
+				<ByteLength>17</ByteLength>
+				<Formula/>
+				<ValueType>STRING</ValueType>
+				<Value>__VEHICLEID__</Value>
+				<Unit>ASCII</Unit>
+			</RequestParam>
+			<RequestParam ShortName="MFTName" LongName="MFT Name">
+				<Description><![CDATA[
+				<b><font color="blue">Only for Service 1 - (StartIDT)</font></b>
+				<p>
+				The MFT name will be sent to the test stand for documentation. Unused bytes are filled with ,Blank&#39;(0x20).
+				</p><p>
+				</p>
+		]]></Description>
+				<BytePosition>21</BytePosition>
+				<ByteLength>15</ByteLength>
+				<Formula/>
+				<ValueType>STRING</ValueType>
+				<Value>__MFTNAME__</Value>
+				<Unit>ASCII</Unit>
+			</RequestParam>
+			<RequestParam ShortName="TextNumber" LongName="The Text number to test">
+				<Description><![CDATA[                               <b><font color="blue">Only for Service 16 - (ShowText) </font></b>
+				<p>
+				    Text number to test
+                <ul>
+					<li>0 Clear text</li>
+					<li>1-255 Number to be displayed on the test screen text</li>
+                </ul>
+				</p>
+		]]></Description>
+				<BytePosition>26</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>0x00</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ReqSeqNumber" LongName="Request Sequence Number">
+				<Description><![CDATA[
+								<p><b><a name="ReqSeqNumber">Request continuous MFT Number (used for all Service Request):</a></b></p>
+				<ul>
+					<li>
+						The continuous MFT number is set by the MFT in the request block (byte 41).</li>
+					<li>
+						The test stand mirrors the number in its answer block(byte 41).</li>
+					<li>
+						As soon as the MFT recognizes that the test stand has mirrored this value is its response, 
+                  the value is increased by 1 in MFT.</li>
+				</ul>
+				<p>
+					The continuous MFT number works analog to the toggle byte in the other direction.</p>
+		]]></Description>
+				<BytePosition>41</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>3</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ReqCheckSum" LongName="Request Checksum">
+				<Description><![CDATA[
+            <p><b><a name="ReqCheckSum">Checksum XOR (used for all Service Request):</a></b></p>
+				<ul>
+					<li>
+						The checksum is calculted by the MFT using binary XOR for the request bytes 0-41(inclusive).</li>
+					<li>
+						The test stand checks the received telegram and rejects the entire request, if the checksum is not correct.</li>
+					<li>
+						As the response of a request with incorrect checksum repeats the test stand with the last transmitted 
+                  service response, whereby response counter is updated(and possibly with updated measurement values​​).</li>
+				</ul>					
+		]]></Description>
+				<BytePosition>42</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>5</Value>
+				<Unit/>
+			</RequestParam>
+			<RequestParam ShortName="ReqDiagnoseByte" LongName="Request Diagnose Byte">
+				<Description><![CDATA[
+								<p><b><a name="ReqDiagnoseByte">Diagnose-Bytes (used for all Service Request):</a></b></p>
+				<ul>
+					<li>
+						The diagnostic byte is set to 0 by MFT.</li>
+					<li>
+						All Protocol and hardware layers, that involved in the data transfer, can write their diagnostic information in this parameter.</li>
+					<li>
+						The test stand must not assume the contents of the diagnostic bytes.</li>
+					<li>
+						When logging of data blocks, the diagnostic byte should be logged in hexadecimal values.</li>
+				</ul>
+		]]></Description>
+				<BytePosition>43</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula factor="1" offset="0"/>
+				<ValueType>INT</ValueType>
+				<Value>23</Value>
+				<Unit/>
+			</RequestParam>
+		</RequestParams>
+		<ResponseParams>
+			<ResponseParam ShortName="RespDataBlock" LongName="Response DataBlock ID">
+				<Description><![CDATA[
+				<p><b><a name="RespDataBlock">Data Block ID of Test Facility:</a></b></p>			
+				<ul>
+					<li>
+						The data block ID identifies the sender of data blocks</li>
+					<li>
+						The data block identifier is a presetbackground element in the parameter entry form and is project specific.</li>
+					<li>
+						It must be agreed for each individual project between DSA and the stand manufacturer. Project specific data block identifications prevent that the use of incorrect parameterisation set results in incorrectly control components in the test stand.</li>
+				</ul>
+		]]></Description>
+				<BytePosition>0</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>3</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="FunctionResult" LongName="The Function Result">
+				<Description><![CDATA[
+				<p><b><a name="FunctionResult">Function Result:</a></b></p>				
+				<p>
+					Test stand acknowledges the service request by the MFT with</p>
+				<ul>
+					<li>
+						0: no service in progress or ACK of service request 0</li>
+					<li>
+						1 OK: service correctly completed</li>
+					<li>
+						-1 NOK: service completed with error or service is (temporarily) not available or service is unknown</li>
+					<li>
+						2 WAIT: service in progress</li>
+				</ul>
+		]]></Description>
+				<BytePosition>1</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>1</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="ErrorState" LongName="Failure State">
+				<Description><![CDATA[	
+				<p>
+					<li>Bit1 : Error dienstanforderung (1 bytes)</li>
+<li>Bit3 : For the parameter error</li>
+<li>Bit4 : Sammelfehler accessories</li>
+<li>Bit5 : Sammelfehler does not satisfy</li>					
+				</p>
+		]]></Description>
+				<BytePosition>2</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="1" value="1" ShortName="Wrong_Service_Routine" name="Wrong Service Routine"/>
+					<Bit pos="3" value="1" ShortName="Wrong_Service_Parameter" name="Wrong Service Parameter"/>
+					<Bit pos="4" value="1" ShortName="System_Collected_Failure" name="System Collected Failure"/>
+					<Bit pos="5" value="1" ShortName="Collected_Failure_Pre_Condition_not_available" name="Collected Failure Pre-Condition not available"/>
+				</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespStatusInformations" LongName="Resp Status Informations">
+				<Description><![CDATA[
+			<p>
+					Bit 0: Emergency stop(evaluted by MFT)<br />
+					Bit 1: Error<br />
+					Bit 4: Control Mode Automatic, i.e. control by MFT<br />
+					Bit 5: Control Mode Manual<br />
+					Bit 6: Control Mode Calibrate<br />
+					Bit 7: Ready for test(Ready for test of stand doesn't mean BasicState!)</p>
+		]]></Description>
+				<BytePosition>5</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="0" value="0" ShortName="EmergencyStop" name="Emergency Stop"/>
+					<Bit pos="1" value="0" ShortName="Error" name="Error"/>
+					<Bit pos="4" value="1" ShortName="ControlModeAutomatic" name="Control Mode Automatic"/>
+					<Bit pos="5" value="0" ShortName="ControlModeManual" name="Control Mode Manual"/>
+					<Bit pos="6" value="0" ShortName="ControlModeCalibrate" name="Control Mode Calibrate"/>
+					<Bit pos="7" value="1" ShortName="TestBenchReady" name="Test Bench Ready for Test"/>
+				</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="SteeringWheelValue" LongName=" Steering Wheel Angle">
+				<Description><![CDATA[
+				Winkel der Lenkradwaage 
+		]]></Description>
+				<BytePosition>6</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256 ) + @1 ) / 100 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>2</Value>
+				<Unit>Grad</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="RespTorqueStatus" LongName="Resp Torque Status">
+				<Description><![CDATA[
+			<p>
+					Bit 2: Front Axle, 0:no, 1:yes<br />
+					Bit 3: Front Axle Result, 0:NOK, 1:OK<br />
+					Bit 4: Rear Axle, 0:no, 1:yes<br />
+					Bit 5: Rear Axle Result, 0:NOK, 1:OK<br />
+		]]></Description>
+				<BytePosition>8</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="2" value="1" ShortName="FA" name="Front Axle"/>
+					<Bit pos="3" value="1" ShortName="FA_Result" name="Front Axle Result"/>
+					<Bit pos="4" value="1" ShortName="RA" name="Rear Axle"/>
+					<Bit pos="5" value="1" ShortName="RA_Result" name="Rear Axle Result"/>
+				</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespFrontAndRearAxleStatus" LongName="Front and Rear Axle Status">
+				<Description><![CDATA[
+			<p>
+					Bit 6: Front Axle in Stand<br />
+					Bit 7: Rear Axle in Stand</p>
+		]]></Description>
+				<BytePosition>9</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="6" value="1" ShortName="FrontAxle" name="Front Axle in Stand"/>
+					<Bit pos="7" value="1" ShortName="RearAxle" name="Rear Axle in Stand"/>
+				</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespBasePosition" LongName="Resp Base Position">
+				<Description><![CDATA[
+			<p>
+					Bit 7: Base Position</p>
+		]]></Description>
+				<BytePosition>10</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula/>
+				<ValueType>BITS</ValueType>
+				<Value>
+					<Bit pos="7" value="0" ShortName="BasePosition" name="Base Position"/>
+				</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespToggelbyte" LongName="Response Toggelbyte">
+				<Description><![CDATA[
+			<p><b><a name="RespToggelbyte">Response Toggelbyte:</a></b></p>				
+			<ul>
+				<li>
+					Used to determine the response times of the MFT.</li>
+				<li>
+					The MFT writes the value, that is read from the previous response telegram(byte 11), in this request parameter &nbsp;</li>
+				<li>
+					The test stand increments this value in its response telegram(Byte 11) as soon as Echo of this Toggle byte(service request byte 3) is read from MFT.</li>
+			</ul>
+		]]></Description>
+				<BytePosition>11</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>200</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouseZ_FL" LongName="WheelHouse Height FL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+			</p>
+		]]></Description>
+				<BytePosition>12</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_FL" LongName="Sturz FL">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+			</p>
+		]]></Description>
+				<BytePosition>12</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="IdentificationType" LongName="Identification Type">
+				<Description><![CDATA[                                <b><font color="blue">Only for Service 22 - (VehicleID)</font></b>
+				<p>
+					Selection of information to be provided:
+					2: long identification number (14 characters) (bytes 13 to 26 then, filled Blank '(0x20)
+					identification
+				<p>]]></Description>
+				<BytePosition>12</BytePosition>
+				<ByteLength>1</ByteLength>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>02</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenterFender_FL" LongName="Wheel Center Fender FL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenterFender_FL
+			</p>
+		]]></Description>
+				<BytePosition>12</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_FL" LongName="Spur FL">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+			</p>
+		]]></Description>
+				<BytePosition>12</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="RespTransverse_AxialOffset_FA" LongName="Transverse Axial Off set FA">
+				<Description><![CDATA[
+			<p>
+				For Service 28 - Transverse Axial Off set FA
+			</p>
+		]]></Description>
+				<BytePosition>12</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_FL" LongName="Weight Measure FL">
+				<Description><![CDATA[				<p>
+				        Measured and Calculated values Upon service request 09(Reuqest Weight Measure Result)    </p>
+				<p><b><a name="Weight_FL">Weight Measure FL:</a></b></p>	
+		]]></Description>
+				<BytePosition>12</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( @0 * 256 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value/>
+				<Unit>kg</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Identification" LongName="Identification">
+				<Description><![CDATA[
+				ASCII, padded at the end with spaces
+Long KNR: Byte 13-26, then, Blank '(0x20) (bytes 27-29)
+				</p>
+		]]></Description>
+				<BytePosition>13</BytePosition>
+				<ByteLength>17</ByteLength>
+				<ValueType>STRING</ValueType>
+				<Value>__VEHICLEID__</Value>
+				<Unit>ASCII</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouseZ_FR" LongName="WheelHouse Height FR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+			</p>
+		]]></Description>
+				<BytePosition>14</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_FR" LongName="Sturz FR">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+			</p>
+		]]></Description>
+				<BytePosition>14</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="RespTransverse_AxialOffset_RA" LongName="Resp Wheel Center Fender FR">
+				<Description><![CDATA[
+			<p>
+				For Service 28 - Wheel Center Fender FR
+			</p>
+		]]></Description>
+				<BytePosition>14</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_FR" LongName="Spur FR">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+			</p>
+		]]></Description>
+				<BytePosition>14</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenterFender_FR" LongName="Wheel Center Fender FR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenterFender_FR
+			</p>
+		]]></Description>
+				<BytePosition>14</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_FR" LongName="Weight Measure FR">
+				<Description><![CDATA[
+				<p><b><a name="Weight_FR">Weight Measure FR:</a></b></p>	
+		]]></Description>
+				<BytePosition>14</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( @0 * 256 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value/>
+				<Unit>kg</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="RespTransverse_Dackelwinkel" LongName="Resp Transverse Dackelwinkel">
+				<Description><![CDATA[
+			<p>
+				For Service 28 - RespTransverse_Dackelwinkel
+			</p>
+		]]></Description>
+				<BytePosition>16</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenterFender_RL" LongName="Wheel Center Fender RL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenterFender_RL
+			</p>
+		]]></Description>
+				<BytePosition>16</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_RL" LongName="Sturz RL">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+			</p>
+		]]></Description>
+				<BytePosition>16</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouseZ_RL" LongName="WheelHouse Height RL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+			</p>
+		]]></Description>
+				<BytePosition>16</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Front" LongName="Spur Front">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+			</p>
+		]]></Description>
+				<BytePosition>16</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_FA" LongName="Weight Measure Front Axle">
+				<Description><![CDATA[
+				<p><b><a name="Weight_FT">Weight Measure FA:</a></b></p>	
+		]]></Description>
+				<BytePosition>16</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( @0 * 256 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value/>
+				<Unit>kg</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_RR" LongName="Sturz RR">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+			</p>
+		]]></Description>
+				<BytePosition>18</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenterFender_RR" LongName="Wheel Center Fender RR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenterFender_RR
+			</p>
+		]]></Description>
+				<BytePosition>18</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouseZ_RR" LongName="WheelHouse Height RR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+			</p>
+		]]></Description>
+				<BytePosition>18</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="RespTransverse_SymmetricAngle" LongName="Resp Transverse Symmetric Angle">
+				<Description><![CDATA[
+			<p>
+				For Service 28 - RespTransverse_SymmetricAngle
+			</p>
+		]]></Description>
+				<BytePosition>18</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_RL" LongName="Weight Measure RL">
+				<Description><![CDATA[
+				<p><b><a name="Weight_RL">Weight Measure RL:</a></b></p>	
+		]]></Description>
+				<BytePosition>18</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( @0 * 256 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value/>
+				<Unit>kg</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_RL" LongName="Spur RL">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+			</p>
+		]]></Description>
+				<BytePosition>18</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouseZ_HeightDiffFront" LongName="WheelHouse Height Difference front">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+			</p>
+		]]></Description>
+				<BytePosition>20</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_RR" LongName="Spur RR">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+			</p>
+		]]></Description>
+				<BytePosition>20</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenterFender_DiffFront" LongName="Wheel Center Difference front">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenterFender_DiffFront
+			</p>
+		]]></Description>
+				<BytePosition>20</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_RR" LongName="Weight Measure RR">
+				<Description><![CDATA[
+				<p><b><a name="Weight_RR">Weight Measure RR:</a></b></p>	
+		]]></Description>
+				<BytePosition>20</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( @0 * 256 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value/>
+				<Unit>kg</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="TestStandName" LongName="Test Stand Name">
+				<Description><![CDATA[
+				<b><font color="blue">Only for Service 1 - (StartIDT)</font></b>
+				<p>
+				The Stand name will be sent back to the MFT for documentation. Unused bytes are filled with ,Blank&#39;(0x20).
+				</p><p>
+				</p>
+		]]></Description>
+				<BytePosition>21</BytePosition>
+				<ByteLength>15</ByteLength>
+				<ValueType>STRING</ValueType>
+				<Value>0</Value>
+				<Unit>ASCII</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Rear" LongName="Spur Rear">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+			</p>
+		]]></Description>
+				<BytePosition>22</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenterFender_DiffRear" LongName="Wheel Center Difference rear">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenterFender_DiffRear
+			</p>
+		]]></Description>
+				<BytePosition>22</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_HeightDiffRear" LongName="WheelHouse Height Difference rear">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+			</p>
+		]]></Description>
+				<BytePosition>22</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>mm</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_RA" LongName="Weight Measure Rear Axle">
+				<Description><![CDATA[
+				<p><b><a name="Weight_RT">Weight Measure RA:</a></b></p>	
+		]]></Description>
+				<BytePosition>22</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( @0 * 256 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value/>
+				<Unit>kg</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Diff_Font" LongName="Sturz Difference Front">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+			</p>
+		]]></Description>
+				<BytePosition>24</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="DackelLaufAngle" LongName="DackelLaufAngle">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+			</p>
+		]]></Description>
+				<BytePosition>24</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Diff_Front" LongName="Sturz Difference Front">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+			</p>
+		]]></Description>
+				<BytePosition>24</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_Total" LongName="Weight Measure Total">
+				<Description><![CDATA[
+				<p><b><a name="Weight_Total">Weight Measure Total:</a></b></p>	
+		]]></Description>
+				<BytePosition>24</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( @0 * 256 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value/>
+				<Unit>kg</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Diff_Rear" LongName="Sturz Difference Rear">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+			</p>
+		]]></Description>
+				<BytePosition>26</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( ( ( #0 * 256.0 ) + @1 ) / 10 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>0</Value>
+				<Unit>min</Unit>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_EvalHeight_FL" LongName="WheelHouse Evaluation Height FL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>28</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenter_Eval_FL" LongName="WheelCenter Evaluation FL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenter
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>28</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Eval_FL" LongName="Sturz Evaluation FL">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>28</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Eval_FL" LongName="Spur Evaluation FL">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>28</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_FL_SingleEvaluation" LongName="Weight Measure FL Single Evaluation">
+				<Description><![CDATA[
+				<p><b><a name="Weight_FL_SingleEvaluation">Weight Measure FL Single Evaluation:</a></b></p>	
+				<p>
+				Possible results:</br>
+				0: NONE, No assessment (measured value invalid)</br>
+				1: OK, settings OK</br>
+				2: NOK, settings NOK</br>
+				3: NOK, Value too low</br>
+				4: NOK, Value too high</p>
+		]]></Description>
+				<BytePosition>28</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenter_Eval_FR" LongName="WheelCenter Evaluation FR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenter
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>29</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Eval_FR" LongName="Sturz Evaluation FR">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>29</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Eval_FR" LongName="Spur Evaluation FR">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>29</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_EvalHeight_FR" LongName="WheelHouse Evaluation Height FR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>29</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_FR_SingleEvaluation" LongName="Weight Measure FR Single Evaluation">
+				<Description><![CDATA[
+				<p><b><a name="Weight_FR_SingleEvaluation">Weight Measure FR Single Evaluation:</a></b></p>	
+				<p>
+				Possible results:</br>
+				0: NONE, No assessment (measured value invalid)</br>
+				1: OK, settings OK</br>
+				2: NOK, settings NOK</br>
+				3: NOK, Value too low</br>
+				4: NOK, Value too high</p>
+		]]></Description>
+				<BytePosition>29</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenter_Eval_RL" LongName="WheelCenter Evaluation RL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenter
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>30</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_EvalHeight_RL" LongName="WheelHouse Evaluation Height RL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>30</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Eval_RL" LongName="Sturz Evaluation RL">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>30</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Eval_Front" LongName="Spur Evaluation Front">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>30</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_FA_SingleEvaluation" LongName="WeightMeasure Front Axle Single Evaluation">
+				<Description><![CDATA[
+				<p><b><a name="Weight_FA_SingleEvaluation">Weight Measure FA Single Evaluation:</a></b></p>	
+				<p>
+				Possible results:</br>
+				0: NONE, No assessment (measured value invalid)</br>
+				1: OK, settings OK</br>
+				2: NOK, settings NOK</br>
+				3: NOK, Value too low</br>
+				4: NOK, Value too high</p>
+		]]></Description>
+				<BytePosition>30</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_FT_SingleEvaluation" LongName="WeightMeasure FT Single Evaluation">
+				<Description><![CDATA[
+												Einzelbewertungen Gewichtsdaten
+				Mögliche Bewertungen:
+				NONE	keine Bewertung (Messwert ungültig)
+				OK	Einstellung OK
+				NOK	Einstellung NOK
+				NOK	Einstellwert zu tief
+				NOK	Einstellwert zu hoch
+					Bewertung Gewicht vorne gesamt
+		]]></Description>
+				<BytePosition>30</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Eval_RL" LongName="Spur Evaluation RL">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>31</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_RL_SingleEvaluation" LongName="Weight Measure RL Single Evaluation">
+				<Description><![CDATA[
+				<p><b><a name="Weight_RL_SingleEvaluation">Weight Measure RL Single Evaluation:</a></b></p>	
+				<p>
+				Possible results:</br>
+				0: NONE, No assessment (measured value invalid)</br>
+				1: OK, settings OK</br>
+				2: NOK, settings NOK</br>
+				3: NOK, Value too low</br>
+				4: NOK, Value too high</p>
+		]]></Description>
+				<BytePosition>31</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_EvalHeight_RR" LongName="WheelHouse Evaluation Height RR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>31</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Eval_RR" LongName="Sturz Evaluation RR">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>31</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenter_Eval_RR" LongName="WheelCenter Evaluation RR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenter
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>31</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_EvalHeightDiff_FL" LongName="WheelHouse Evaluation Height Diff FL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>32</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_RR_SingleEvaluation" LongName="Weight Measure RR Single Evaluation">
+				<Description><![CDATA[
+				<p><b><a name="Weight_RR_SingleEvaluation">Weight Measure RR Single Evaluation:</a></b></p>	
+				<p>
+				Possible results:</br>
+				0: NONE, No assessment (measured value invalid)</br>
+				1: OK, settings OK</br>
+				2: NOK, settings NOK</br>
+				3: NOK, Value too low</br>
+				4: NOK, Value too high</p>
+		]]></Description>
+				<BytePosition>32</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Eval_RR" LongName="Spur Evaluation RR">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>32</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenter_EvalDiff_FL" LongName="WheelCenter Evaluation Diff FL">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenter
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>32</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Eval_Diff_Front" LongName="Sturz Evaluation DiffenrencFront">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>32</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_RT_SingleEvaluation" LongName="Weight Measure RT Single Evaluation">
+				<Description><![CDATA[
+												Einzelbewertungen Gewichtsdaten
+				Mögliche Bewertungen:
+				NONE	keine Bewertung (Messwert ungültig)
+				OK	Einstellung OK
+				NOK	Einstellung NOK
+				NOK	Einstellwert zu tief
+				NOK	Einstellwert zu hoch
+							Bewertung Gewicht hinten gesamt
+		]]></Description>
+				<BytePosition>33</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_Eval_Diff_Rear" LongName="Sturz Evaluation DiffenrencRear">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>33</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_EvalHeightDiff_FR" LongName="WheelHouse Evaluation Height Diff FR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>33</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_Eval_Rear" LongName="Spur Evaluation Rear">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>33</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenter_EvalDiff_FR" LongName="WheelCenter Evaluation Diff FR">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelCenter
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>33</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_RA_SingleEvaluation" LongName="Weight Measure Rear Axle Single Evaluation">
+				<Description><![CDATA[
+				<p><b><a name="Weight_RA_SingleEvaluation">Weight Measure Rear Axle Single Evaluation:</a></b></p>	
+				<p>
+				Possible results:</br>
+				0: NONE, No assessment (measured value invalid)</br>
+				1: OK, settings OK</br>
+				2: NOK, settings NOK</br>
+				3: NOK, Value too low</br>
+				4: NOK, Value too high</p>
+		]]></Description>
+				<BytePosition>33</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespTransverse_Result" LongName="Resp Transverse Result">
+				<Description><![CDATA[
+			<p>
+				For Service 28 - RespTransverse_Result
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>34</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="DackelLauf_Eval" LongName="DackelLauf Evaluation">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>3 : NOK Value is too deep</li>
+					<li>4 : NOK Value is too high</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>34</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_Total_SingleEvaluation" LongName="Weight Measure RT Single Evaluation">
+				<Description><![CDATA[
+				<p><b><a name="Weight_Total_SingleEvaluation">Weight Measure RT Single Evaluation:</a></b></p>
+				<p>
+				0: Measured values invalid, measurement not finished yet (will be set, as long as the alignment is not finished and no complete results are available)</br>
+				1: OK          Measured value valid, settings OK</br>
+				2: NOK       Measured value valid, settings NOK</br>
+				14:System error Test Stand (values invalid)</br>
+				15:Abort of alignment (measured values valid)</p>
+		]]></Description>
+				<BytePosition>34</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Sturz_TotalEval" LongName="Sturz Total Evaluation">
+				<Description><![CDATA[
+			<p>
+				For Service 11/25 - Result Sturz
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>14 : SystemError Test Stand</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>35</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Spur_TotalEval" LongName="Spur Total Evaluation">
+				<Description><![CDATA[
+			<p>
+				For Service 10/24 - Result Spur
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>14 : SystemError Test Stand</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>35</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelHouse_TotalEvalHeight" LongName="WheelHouse Total Evaluation Height">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>14 : SystemError Test Stand</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>35</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="WheelCenter_TotalEval" LongName="WheelCenter Total Evaluation">
+				<Description><![CDATA[
+			<p>
+				For Service 31 - WheelHouse
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>14 : SystemError Test Stand</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>35</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_Total_Evaluation" LongName="Weight Measure Total Evaluation">
+				<Description><![CDATA[
+													Gesamtbewertung Gewichtsmessung
+				Messwerte ungültig, Messung noch nicht beendet
+				(wird gesetzt, solange die Einstellung noch nicht beendet ist und somit keine vollständigen Resultate vorliegen)
+				OK	Messwert gültig, Einstellung OK
+				NOK	Messwert ungültig, Einstellung NOK
+				Systemfehler Prüfstand (Messwerte ungültig)
+				@ oder Abbruch der Einstellung - Messwerte ungültig
+		]]></Description>
+				<BytePosition>35</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="Weight_TotalEval" LongName="Weight Total Evaluation">
+				<Description><![CDATA[
+			<p>
+				For Service 9 - Result Weight
+				<ul>
+					<li>0 : NONE</li>
+					<li>1 : Result OK</li>
+					<li>2 : Result NOK</li>
+					<li>14 : SystemError Test Stand</li>
+				</ul>					
+			</p>
+		]]></Description>
+				<BytePosition>35</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="TimeInfos" LongName="Time Information">
+				<Description><![CDATA[
+				<p>
+					Time information</p>
+				<ul>
+					<li>
+						A new time stamp has to be registered for each telegram that is sent to the MFT(optionally a counter can be incremented).</li>
+					<li>
+						The MFT process only the data blocks, of which the time information differ from the last processed data block.</li>
+				</ul>
+		]]></Description>
+				<BytePosition>36</BytePosition>
+				<ByteLength>2</ByteLength>
+				<BitMask>0xffff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>FLOAT</ValueType>
+				<Value>1000</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="TestbenchID" LongName="Testbench ID">
+				<Description><![CDATA[
+				<p>
+					Test stand identification</p>
+				<p>
+					<br />
+					Each stand within a car plant has a unique Identification Number. This number will be logged in Test Protocol by MFT.</p>
+		]]></Description>
+				<BytePosition>38</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="ReservedByte" LongName="Reserved Byte">
+				<Description><![CDATA[
+									Reserve
+				Reserve-Byte, um gerade Gesamtlänge zu erreichen
+		]]></Description>
+				<BytePosition>40</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>0</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespSeqNumber" LongName="Response Sequence Number">
+				<Description><![CDATA[
+								<p><b><a name="RespSeqNumber">Request continuous MFT Number (used for all Service Response):</a></b></p>
+				<ul>
+					<li>
+						The continuous MFT number is set by the MFT in the request block (byte 41).</li>
+					<li>
+						The test stand mirrors the number in its answer block (byte 41).</li>
+					<li>
+						As soon as the MFT recognizes that the test stand has mirrored this value is its response,
+                  the value is increased by 1 in MFT.</li>
+				</ul>
+				<p>
+					The continuous MFT number works analog to the toggle byte in the other direction.</p>
+		]]></Description>
+				<BytePosition>41</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>3</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespCheckSum" LongName="Response Checksum">
+				<Description><![CDATA[
+            <p><b><a name="RespCheckSum">Checksum XOR (used for all Service Response):</a></b></p>
+				<ul>
+					<li>
+						The checksum is calculted by the MFT using binary XOR for the request bytes 0-31(inclusive).</li>
+					<li>
+						The test stand checks the received telegram and rejects the entire request, if the checksum is not correct.</li>
+					<li>
+						As the response of a request with incorrect checksum repeats the test stand with the last transmitted 
+                  service response, whereby response counter is updated(and possibly with updated measurement values​​).</li>
+				</ul>					
+		]]></Description>
+				<BytePosition>42</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>5</Value>
+				<Unit/>
+			</ResponseParam>
+			<ResponseParam ShortName="RespDiagnoseByte" LongName="Response Diagnose Byte">
+				<Description><![CDATA[
+								<p><b><a name="RespDiagnoseByte">Diagnose-Bytes (used for all Service Response):</a></b></p>
+				<ul>
+					<li>
+						The diagnostic byte is set to 0 by MFT.</li>
+					<li>
+						All Protocol and hardware layers, that involved in the data transfer, can write their diagnostic 
+                  information in this parameter.</li>
+					<li>
+						The test stand must not assume the contents of the diagnostic bytes.</li>
+					<li>
+						When logging of data blocks, the diagnostic byte should be logged in hexadecimal values.</li>
+				</ul>
+		]]></Description>
+				<BytePosition>43</BytePosition>
+				<ByteLength>1</ByteLength>
+				<BitMask>0xff</BitMask>
+				<Formula>( @0 )</Formula>
+				<ValueType>INT</ValueType>
+				<Value>23</Value>
+				<Unit/>
+			</ResponseParam>
+		</ResponseParams>
+	</Machine>
+</IDT_Specification>

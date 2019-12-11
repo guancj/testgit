@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_P_Modes_2_1_KEL" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="331" top="67" right="431" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="334" top="392" right="434" bottom="424"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="准备">
+<Rect left="331" top="132" right="431" bottom="164"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="5" name="c7_kel">
+<Rect left="333" top="262" right="433" bottom="294"/>
+<SubProcesses>
+<SubProcess id="c7_kel">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;P-Mode deaktivieren&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="5" ActivityType="3" name="KEL">
+<Rect left="332" top="195" right="432" bottom="227"/>
+<Line2Text Enable="1" Text="KEL"/>
+<Script></Script></Activity>
+<Activity id="6" ActivityType="3" name="Clear">
+<Rect left="334" top="327" right="434" bottom="359"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="5" type="0">
+</Transition>
+<Transition StartId="4" EndId="6" type="0">
+</Transition>
+<Transition StartId="5" EndId="4" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

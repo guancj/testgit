@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="SWE" code="">
+
+<Processes>
+<Process id="SWE_01_Start_Test"/>
+<Process id="SWE_02_End_Test"/>
+<Process id="SWE_22_Identity"/>
+<Process id="SWE_50_PrepositioningACC_L"/>
+<Process id="SWE_50_PrepositioningACC_R"/>
+<Process id="SWE_50_PrepositioningLSKs"/>
+<Process id="SWE_50_PrepositioningNV"/>
+<Process id="SWE_64_ACC_Setting_LSK_NV"/>
+<Process id="SWE_64_ACC_Setting_LSK_NV_02"/>
+<Process id="SWE_68_Result_ARE_ARE_02"/>
+<Process id="SWE_ARE_NSS"/>
+<Process id="SWE_Test"/>
+</Processes>
+</Workplace>

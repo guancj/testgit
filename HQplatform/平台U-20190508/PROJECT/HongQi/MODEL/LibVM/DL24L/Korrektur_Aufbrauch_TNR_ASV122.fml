@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data="" description="dl24 xml handle"/>
+<Variable id="Fzd" type="8" data="" description="车辆数据"/>
+<Variable id="Knr" type="8" data="" description="KNR"/>
+<Variable id="Modus" type="8" data="" description="mode to select correction / use up / ZDC selection / Flash container selection"/>
+<Variable id="SgTnr" type="8" data="" description="ECU partnumber"/>
+<Variable id="SgBg" type="8" data="" description="Baugruppe ECU"/>
+<Variable id="ZdcTnr" type="8" data="" description="ZDC partnumber"/>
+<Variable id="ZdcBg" type="8" data="" description="Baugruppe ZDC"/>
+<Variable id="IstSgTnr" type="8" data="" description="partnumber of actually assembled ECU"/>
+<Variable id="HW_Ref_TNR" type="8" data="" description="HW raw-partnumber"/>
+</Inputs>
+<Outputs>
+<Variable id="Tnr_Aenderung" type="3" data="0" description="correction / use-up entry found : change"/>
+<Variable id="SgTnrErsatz" type="8" data="" description="corrected /alternative ECU part number"/>
+<Variable id="SollTnr" type="8" data="" description="possible SollTnr (comma separated list)"/>
+<Variable id="ZdcTnrErsatz" type="8" data="" description="corrected /alternative ZDC part number"/>
+<Variable id="ZdcName" type="8" data="" description="file name of ZDC"/>
+<Variable id="ZdcVersion" type="8" data="" description="version type of ZDC"/>
+<Variable id="FlagZdcGeraten" type="3" data="0" description="for pre-series-control: more than 1 ZDC found"/>
+<Variable id="SW_Version" type="8" data="" description="SW-Version according to Flashlist"/>
+<Variable id="Flashdatencont" type="8" data="" description="name of flash container (*.sgm, *.odx)"/>
+<Variable id="errFlag" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+The lists Korrektur SG (Modus = Korrektur), 
+Aufbrauch SG (Modus = Teileaufbrauch), ZDC Liste (link to ZDC- file name, (Modus = Zdc))
+and Flash Liste (link to Flashcontainer- file name, (Modus = Flash)).
+(minimal required ASV list version: 1.22)
+
+input parameter:XmlHndl,Fzd,Knr,Modus,SgTnr,SgBg,ZdcTnr,ZdcBg,IstSgTnr,HW_Ref_TNR
+output parameter:Tnr_Aenderung,SgTnrErsatz,SollTnr,ZdcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,SW_Version,Flashdatencont,errFlag
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+print("Korrektur_Aufbrauch_TNR_ASV122 called...")
+
+SgTnr = SgTnr or ""
+SgBg = SgBg or ""
+ZdcTnr = ZdcTnr or ""
+ZdcBg = ZdcBg or ""
+IstSgTnr = IstSgTnr or ""
+HW_Ref_TNR = HW_Ref_TNR or ""
+
+local xmlPath = "";
+local xmlTag = "";
+local xmlAttribFilter = "";
+local xmlAttribFilter2 = "";
+local xmlAttribFilter3 = "";
+local xmlSubTag = ""
+local i = 0;
+local j = 0;
+
+local xmlKnrListenIDRef = ""
+local xmlPrnrTermIdRef = ""
+local xmlSgTnrErsatz = ""
+local xmlZdcTnrErsatz = ""
+local xmlZdcVersion = ""
+local xmlZdcDateiName = ""
+local ZdcTnrErsatz = ""
+local xmlSWVersion = ""
+local xmlFlashcontName = ""
+
+
+local FilterModus_Triple_Attribute = 8 ; -- 匹配所有属性 和 数据
+local FilterModus = 3 ; -- 匹配第一个属性
+local xmlAttribNameSgTnr = "SgTnr";
+local xmlAttribNameSgBg = "SgBg";
+local xmlAttribNameSgTnrErsatz = "SgTnrErsatz";
+local xmlAttribNameSgTnrAlternativ = "SgTnrAlternativ";
+local xmlAttribNameZdcTnr = "ZdcTnr";
+local xmlAttribNameZdcTnrOrig = "ZdcTnrOriginal";
+local xmlAttribNameZdcTnrDatensatz = "ZdcTnrDatensatz";
+local xmlAttribNameZdcTnrErsatz = "ZdcTnrErsatz";
+local xmlAttribNameZdcBg = "ZdcBg";
+local xmlAttribNameZdcName = "ZdcName";
+local xmlAttribNameZdcVersion = "ZdcVersion";
+local xmlAttribNameSWVersion = "SW-Version";
+local xmlAttribNameFlashTnr = "Flash_TNR";
+local xmlAttribNameFlashcont = "Flashdatencontainer";
+local xmlAttribNameKnrListenIDRef = "KnrListenIDRef"; --optionales Element in ASV-Liste
+local xmlAttribNamePrnrTermIDRef = "PrnrTermIDRef"; --optionales Element in ASV-Liste
+local zdcTnr_ignore = "000000000";
+local aufbrauch_Step = 0;
+local xmlTab = {}
+local xmlTab_2 = {}
+local xmlTabTmp = {}
+local xmlTabTmpCount = 1;
+local xmlbuflist = ""
+local KnrListenIdStat = -1;
+local PRNRTermStat = -1;
+--return value
+Tnr_Aenderung = -1				--correction / use-up entry found : change
+SgTnrErsatz = ""				--corrected /alternative ECU part number
+SollTnr = ""					--possible SollTnr (comma separated list)
+ZdcTnrErsatz = "";				--corrected /alternative ZDC part number
+ZdcName = "";					--file name of ZDC
+ZdcVersion = "";				--version type of ZDC
+FlagZdcGeraten = -1;			--for pre-series-control: more than 1 ZDC found 
+SW_Version = "";				--SW-Version according to Flashlist
+Flashdatencont = "";			--name of flash container (*.sgm, *.odx)
+errFlag = 0;
+-- return  value
+
+
+
+if(Modus == "Korrektur") then
+	xmlPath = "/AsvListe/AsvDaten/Korrekturliste";
+	xmlTag = "SgZdc";
+	xmlAttribFilter = xmlAttribNameSgTnr;
+	xmlAttribFilter2 = xmlAttribNameSgBg;
+	xmlAttribFilter3 = xmlAttribNameZdcTnrOrig;
+	xmlAttribGet = xmlAttribNameSgTnrErsatz;
+	xmlSubPathTag = "Korrekturbeziehung";
+	xmlTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr, xmlAttribFilter2, SgBg,xmlAttribFilter3, ZdcTnr, FilterModus_Triple_Attribute)
+	if(#xmlTab == 0 and engine.LastError == 0) then
+		xmlTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr, xmlAttribFilter2, SgBg,xmlAttribFilter3, zdcTnr_ignore, FilterModus_Triple_Attribute)
+	end
+
+	if(0 ~= engine.LastError) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: failure during check of Korrekturliste")
+		errFlag = 1957;
+		engine.LastError = 1;
+	elseif(#xmlTab == 0) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: no correction")
+		SgTnrErsatz = SgTnr;
+		ZdcTnrErsatz = ZdcTnr;
+		Tnr_Aenderung = 0;		
+	elseif( 0 == engine.LastError and #xmlTab &gt; 0) then	
+			for i = 1,#xmlTab do
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlTab:"..tostring(xmlTab[i].xml))
+				xmlbuflist = xmlTab[i].selectNodes(xmlSubPathTag)
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlbuflist:"..tostring(xmlbuflist.length))
+				if(xmlbuflist.length &gt; 0) then
+					for j = 0,xmlbuflist.length -1  do
+						xmlKnrListenIDRef = xmlbuflist[j].getAttribute(xmlAttribNameKnrListenIDRef)
+						xmlPrnrTermIdRef = xmlbuflist[j].getAttribute(xmlAttribNamePrnrTermIDRef)
+						xmlSgTnrErsatz = xmlbuflist[j].getAttribute(xmlAttribNameSgTnrErsatz)
+						xmlZdcTnrErsatz = xmlbuflist[j].getAttribute(xmlAttribNameZdcTnrErsatz)
+						print("Korrektur_Aufbrauch_TNR_ASV122:xmlKnrListenIDRef =&gt;"..tostring(xmlKnrListenIDRef))
+						print("Korrektur_Aufbrauch_TNR_ASV122:xmlPrnrTermIdRef =&gt;"..tostring(xmlPrnrTermIdRef))
+						print("Korrektur_Aufbrauch_TNR_ASV122:xmlSgTnrErsatz =&gt;"..tostring(xmlSgTnrErsatz))
+						print("Korrektur_Aufbrauch_TNR_ASV122:xmlZdcTnrErsatz =&gt;"..tostring(xmlZdcTnrErsatz))
+					end
+				else
+					print("Korrektur_Aufbrauch_TNR_ASV122: no Korrektur possible")
+					engine.LastError = 1
+				end
+			end
+			if(nil ~= xmlKnrListenIDRef and "" ~= xmlKnrListenIDRef) then 
+				KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+				print("KnrListenIdStat : "..tostring(KnrListenIdStat))
+				if(engine.LastError == 0 and nil ~= xmlPrnrTermIdRef and "" ~= xmlPrnrTermIdRef) then
+					PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+				end		
+			end	
+			if(0 == engine.LastError and KnrListenIdStat ~= 0 and PRNRTermStat ~= 0) then
+				SgTnrErsatz = xmlSgTnrErsatz;
+				ZdcTnrErsatz = xmlZdcTnrErsatz;
+				Tnr_Aenderung = 1;		
+			else
+				engine.LastError = 1;
+				print("no Korrektur / Aufbrauch possible, not yet")
+			end			
+			
+	end
+			
+	print("SgTnrErsatz:"..tostring(SgTnrErsatz).." ZdcTnrErsatz:"..tostring(ZdcTnrErsatz))
+	
+	
+end
+
+if(Modus == "Teileaufbrauch") then
+	xmlPath = "/AsvListe/AsvDaten/Teileaufbrauchliste";
+	xmlTag = "Sg";
+	xmlAttribFilter = xmlAttribNameSgTnr;
+	xmlAttribFilter2 = xmlAttribNameSgBg;
+	xmlAttribFilter3 = xmlAttribNameZdcTnrDatensatz;
+	xmlSubPathTag = "AufbrauchbeziehungSg";
+	xmlAttribGet = xmlAttribNameSgTnrAlternativ;
+	xmlTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr, xmlAttribFilter2, SgBg,xmlAttribFilter3, ZdcTnr, FilterModus_Triple_Attribute)
+	if(engine.LastError == 0) then
+		xmlTab_2 = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr, xmlAttribFilter2, SgBg,xmlAttribFilter3, zdcTnr_ignore, FilterModus_Triple_Attribute)
+	end
+
+	if(0 ~= engine.LastError) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: failure during check of Teileaufbrauchliste")
+		errFlag = 1956;
+		engine.LastError = 1;
+	elseif(#xmlTab == 0 and #xmlTab_2 == 0) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: no Teileaufbrauch")
+		errFlag = 1989;
+		SgTnrErsatz = SgTnr;
+		ZdcTnrErsatz = ZdcTnr;
+		Tnr_Aenderung = 0;	
+		engine.LastError = 1;
+	end	
+
+	if(engine.LastError ~= 0) then
+		return Tnr_Aenderung,SgTnrErsatz,SollTnr,ZdcTnrErsatz,ZdcName,ZdcVersion,FlagZdcGeraten,SW_Version,Flashdatencont,errFlag
+	end
+	
+	if(#xmlTab ~= 0) then
+		xmlTabTmp = xmlTab
+		aufbrauch_Step = 1
+	else
+		xmlTabTmp = xmlTab_2
+		aufbrauch_Step = 2
+	end
+	print("aufbrauch_Step :"..tostring(aufbrauch_Step))
+	while(aufbrauch_Step &lt;= 2) do 
+	
+		if(#xmlTabTmp == 0 and aufbrauch_Step == 2) then
+			print("Korrektur_Aufbrauch_TNR_ASV122: no Aufbrauch possible")
+			errFlag = 1990
+			break
+		end
+		
+		for i = 1,#xmlTabTmp do
+			xmlbuflist = xmlTab[i].selectNodes(xmlSubPathTag)
+			if(xmlbuflist.length &gt; 0) then
+				for j = 0,xmlbuflist.length -1 do
+					xmlKnrListenIDRef = xmlbuflist[j].getAttribute(xmlAttribNameKnrListenIDRef)
+					xmlPrnrTermIdRef = xmlbuflist[j].getAttribute(xmlAttribNamePrnrTermIDRef)
+					xmlSgTnrErsatz = xmlbuflist[j].getAttribute(xmlAttribNameSgTnrAlternativ)
+					xmlZdcTnrErsatz = xmlbuflist[j].getAttribute(xmlAttribNameZdcTnr)
+					print("Korrektur_Aufbrauch_TNR_ASV122:xmlSgTnrErsatz =&gt;"..tostring(xmlSgTnrErsatz))		
+					print("Korrektur_Aufbrauch_TNR_ASV122:xmlZdcTnrErsatz =&gt;"..tostring(xmlZdcTnrErsatz))	
+				end
+			end
+		end
+		
+		if(nil ~= xmlKnrListenIDRef and "" ~= xmlKnrListenIDRef) then 
+			KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+			print("KnrListenIdStat : "..tostring(KnrListenIdStat))
+			if(engine.LastError == 0 and nil ~= xmlPrnrTermIdRef and "" ~= xmlPrnrTermIdRef) then
+				PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+				print("PRNRTermStat : "..tostring(PRNRTermStat))
+			end		
+		end
+		
+		if(0 == engine.LastError and KnrListenIdStat ~= 0 and PRNRTermStat ~= 0) then
+			if (xmlSgTnrErsatz ~= nil and xmlSgTnrErsatz ~= "" and xmlSgTnrErsatz ~= IstSgTnr) then
+				if(SollTnr ~= "") then
+					SollTnr = SollTnr .. "," .. xmlSgTnrErsatz  -- 增加一个sg可能值
+				else
+					SollTnr = xmlSgTnrErsatz
+				end
+				engine.LastError = 1
+				print("no Korrektur / Aufbrauch possible, not yet, but a possible alternative ecu found")
+			elseif(xmlSgTnrErsatz == IstSgTnr) then
+-- Matching data found, no further search required
+				engine.LastError = 0
+				aufbrauch_Step = 3;
+				SgTnrErsatz = xmlSgTnrErsatz;
+				ZdcTnrErsatz = xmlZdcTnrErsatz;
+				Tnr_Aenderung = 1;
+			end
+		else
+			engine.LastError = 1;
+			print("no Korrektur / Aufbrauch possible, not yet")
+		end		
+		
+		aufbrauch_Step = aufbrauch_Step + 1;
+		xmlTabTmp = xmlTab_2		
+			
+	end
+	print("SgTnrErsatz:"..tostring(SgTnrErsatz).." ZdcTnrErsatz:"..tostring(ZdcTnrErsatz))
+		
+end
+
+if(Modus == "Zdc") then
+	xmlPath = "/AsvListe/AsvDaten/ZdcListe";
+	xmlTag = "Sg";
+	xmlAttribFilter = xmlAttribNameSgTnr;
+	xmlAttribFilter2 = xmlAttribNameZdcTnr;
+
+	xmlAttribFilter3 = xmlAttribNameZdcBg;
+	xmlSubTag = "ZdcListenNormalEintrag";
+	xmlAttribGet = xmlAttribNameZdcTnr;	
+	print("ZDC engine.LastError: " .. tostring(engine.LastError))
+	xmlTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr,"","","","",FilterModus)
+	
+	if( 0 ~= engine.LastError) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: failure during check of ZdcListe")
+		errFlag = 1955;
+		engine.LastError = 1 ;
+	elseif(#xmlTab == 0) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: no valid entry found in ZdcList")
+		errFlag = 1989;
+		engine.LastError = 1 ;
+	end	
+	
+	for i = 1 ,#xmlTab do
+		print("Korrektur_Aufbrauch_TNR_ASV122: "..tostring(xmlTab[i].xml))
+	end
+	
+	if( #xmlTab &gt; 0 and engine.LastError == 0 ) then
+		xmlTabTmpCount = 1 ;
+		for i = 1 ,#xmlTab do
+			xmlbuflist = xmlTab[i].selectNodes(xmlSubTag)
+			print("Korrektur_Aufbrauch_TNR_ASV122:"..tostring(xmlbuflist.length))
+			for j = 0 ,xmlbuflist.length - 1 do
+				if(xmlbuflist[j].getAttribute(xmlAttribFilter2) == ZdcTnr and xmlbuflist[j].getAttribute(xmlAttribFilter3) == ZdcBg) then
+					xmlTabTmp[xmlTabTmpCount] = xmlbuflist[j]
+					xmlTabTmpCount = xmlTabTmpCount + 1 
+				end
+			end
+		end
+				
+	end	
+	
+	if(#xmlTabTmp &gt; 0 and engine.LastError == 0) then
+		for i = 1 ,#xmlTabTmp do
+			print("sub Korrektur_Aufbrauch_TNR_ASV122: xmlTabTmp =&gt;"..tostring(xmlTabTmp[i].xml))
+			if(xmlTabTmp[i].getAttribute(xmlAttribGet) ~= ZdcTnr and ZdcTnr ~= "") then
+				engine.LastError = 1;
+			else
+				xmlKnrListenIDRef = xmlTabTmp[i].getAttribute(xmlAttribNameKnrListenIDRef)
+				xmlPrnrTermIdRef = xmlTabTmp[i].getAttribute(xmlAttribNamePrnrTermIDRef)	
+				xmlZdcVersion = xmlTabTmp[i].getAttribute(xmlAttribNameZdcVersion)
+				xmlZdcDateiName = xmlTabTmp[i].getAttribute(xmlAttribNameZdcName)
+				xmlZdcTnrErsatz = xmlTabTmp[i].getAttribute(xmlAttribNameZdcTnr)
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlKnrListenIDRef =&gt;"..tostring(xmlKnrListenIDRef))
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlPrnrTermIdRef =&gt;"..tostring(xmlPrnrTermIdRef))	
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlZdcVersion =&gt;"..tostring(xmlZdcVersion))
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlZdcDateiName =&gt;"..tostring(xmlZdcDateiName))	
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlZdcTnrErsatz =&gt;"..tostring(xmlZdcTnrErsatz))			
+			end			
+		end	
+		if(ZdcTnr ~= "") then
+			if(nil ~= xmlKnrListenIDRef and "" ~= xmlKnrListenIDRef) then 
+				KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+				print("KnrListenIdStat : "..tostring(KnrListenIdStat))
+				if(engine.LastError == 0 and nil ~= xmlPrnrTermIdRef and "" ~= xmlPrnrTermIdRef) then
+					PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+				end		
+			end		
+		end
+		
+		if(engine.LastError == 0 and KnrListenIdStat ~= 0 and PRNRTermStat ~= 0) then
+			ZdcVersion = xmlZdcVersion;
+			ZdcName = xmlZdcDateiName;
+			ZdcTnrErsatz = xmlZdcTnrErsatz;		
+			if(#xmlTabTmp &gt; 1) then
+				FlagZdcGeraten = 1;
+			else
+				FlagZdcGeraten = 0;
+			end			
+		end
+		
+	else
+		print("Korrektur_Aufbrauch_TNR_ASV122: no valid ZDC found in ZdcListe")
+		errFlag = 1996;
+		engine.LastError = 1;
+	end
+	
+	print("Korrektur_Aufbrauch_TNR_ASV122:ZdcVersion =&gt;"..tostring(ZdcVersion))
+	print("Korrektur_Aufbrauch_TNR_ASV122:ZdcName =&gt;"..tostring(ZdcName))	
+	print("Korrektur_Aufbrauch_TNR_ASV122:ZdcTnrErsatz =&gt;"..tostring(ZdcTnrErsatz))
+
+	
+end
+
+if(Modus == "Flash") then
+	xmlPath = "/AsvListe/AsvDaten/Flashliste";
+	xmlTag = "Sg";
+	xmlAttribFilter = xmlAttribNameFlashTnr;
+	xmlAttribFilter2 = "HW_Ref_TNR";
+	xmlSubTag = "FlashlistenEintrag";
+	xmlAttribGet = "HW_Ref_TNR";
+	xmlTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr,"","","","",FilterModus)
+	
+	if( 0 ~= engine.LastError) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: failure during check of Flashliste")
+		errFlag = 1954;
+		engine.LastError = 1 ;
+	elseif(#xmlTab == 0) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: no valid entry found in Flashliste")
+		errFlag = 1968;
+		engine.LastError = 1 ;
+	end	
+	
+	if( #xmlTab &gt; 0 and engine.LastError == 0 ) then
+		print("Korrektur_Aufbrauch_TNR_ASV122: Modus Flash")
+		xmlTabTmpCount = 1 ;
+		for i = 1 ,#xmlTab do
+			xmlbuflist = xmlTab[i].selectNodes(xmlSubTag)
+			print("Korrektur_Aufbrauch_TNR_ASV122:"..tostring(xmlbuflist.length))
+			for j = 0 ,xmlbuflist.length - 1 do
+				if(xmlbuflist[j].getAttribute(xmlAttribFilter2) == HW_Ref_TNR ) then
+					xmlTabTmp[xmlTabTmpCount] = xmlbuflist[j]
+					xmlTabTmpCount = xmlTabTmpCount + 1 
+				end
+			end
+		end
+	end	
+	
+	if(#xmlTabTmp &gt; 0 and engine.LastError == 0) then	
+		for i = 1 ,#xmlTabTmp do
+			print("sub Korrektur_Aufbrauch_TNR_ASV122: xmlTabTmp =&gt;"..tostring(xmlTabTmp[i].xml))
+			if(xmlTabTmp[i].getAttribute(xmlAttribGet) ~= HW_Ref_TNR) then
+				engine.LastError = 1;
+			else
+				xmlKnrListenIDRef = xmlTabTmp[i].getAttribute(xmlAttribNameKnrListenIDRef)
+				xmlPrnrTermIdRef = xmlTabTmp[i].getAttribute(xmlAttribNamePrnrTermIDRef)	
+				xmlSWVersion = xmlTabTmp[i].getAttribute(xmlAttribNameSWVersion)
+				xmlFlashcontName = xmlTabTmp[i].getAttribute(xmlAttribNameFlashcont)
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlKnrListenIDRef =&gt;"..tostring(xmlKnrListenIDRef))
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlPrnrTermIdRef =&gt;"..tostring(xmlPrnrTermIdRef))	
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlSWVersion =&gt;"..tostring(xmlSWVersion))
+				print("Korrektur_Aufbrauch_TNR_ASV122:xmlFlashcontName =&gt;"..tostring(xmlFlashcontName))			
+			end			
+		end	
+		if(nil ~= xmlKnrListenIDRef and "" ~= xmlKnrListenIDRef) then 
+			KnrListenIdStat,errFlag	 = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+			print("KnrListenIdStat : "..tostring(KnrListenIdStat))
+			if(engine.LastError == 0 and nil ~= xmlPrnrTermIdRef and "" ~= xmlPrnrTermIdRef) then
+				PRNRTermStat,errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+			end		
+		end	
+		
+		if(engine.LastError == 0 and KnrListenIdStat ~= 0 and PRNRTermStat ~= 0) then
+			SW_Version = xmlSWVersion;
+			Flashdatencont = xmlFlashcontName;			
+		end
+	else
+		print("Korrektur_Aufbrauch_TNR_ASV122: no valid flaschcontainer found in Flashliste")
+		errFlag = 1968;
+		engine.LastError = 1;	
+	end
+	print("Korrektur_Aufbrauch_TNR_ASV122:SW_Version =&gt;"..tostring(SW_Version))
+	print("Korrektur_Aufbrauch_TNR_ASV122:Flashdatencont =&gt;"..tostring(Flashdatencont))			
+end</Script></Function>
+

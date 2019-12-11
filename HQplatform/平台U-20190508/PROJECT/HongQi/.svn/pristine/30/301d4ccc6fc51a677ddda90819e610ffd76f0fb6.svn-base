@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtSigned2float" description="接受两个字节，转换成有符号整数后，再转成float">
+<Inputs>
+<Variable id="hiByte" type="3" data="0" description="高位字节"/>
+<Variable id="lowByte" type="3" data="0" description="地位字节"/>
+<Variable id="factor" type="5" data="1.0" description="乘数因子"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="5" data="0" description="返回浮点数"/>
+</Outputs>
+<Script>ret = LibIDT.idthilo2signed(hiByte,lowByte) * factor;</Script></Function>
+

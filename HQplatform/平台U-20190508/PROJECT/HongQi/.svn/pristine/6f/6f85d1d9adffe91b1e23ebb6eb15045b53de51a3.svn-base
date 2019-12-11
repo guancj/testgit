@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="7" library="1" module="LibGeneral" version="" description=" 通用库" engine="VMDSEngine" language="lua">
+<Workplaces>
+<Workplace id="DATAMANIPULATION"/>
+<Workplace id="FILE"/>
+<Workplace id="KWP2000"/>
+<Workplace id="STATISTIC"/>
+<Workplace id="SYSTEM"/>
+<Workplace id="TOLERANCE"/>
+<Workplace id="UDS"/>
+<Workplace id="VCI"/>
+<Workplace id="HUD"/>
+</Workplaces>
+</Model>

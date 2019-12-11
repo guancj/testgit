@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_ALS_ResultOfTorque_service_32" description="发送获取扭矩指令并返回结果,service 32">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="torqueValue1" type="5" data="0" description="扭矩值1"/>
+<Variable id="torqueValue1Review" type="3" data="0" description="扭矩值1评估结果"/>
+<Variable id="torqueValue2" type="5" data="0" description="扭矩值2"/>
+<Variable id="torqueValue2Review" type="3" data="0" description="扭矩值2评估结果"/>
+</Outputs>
+<Script>torqueValue1,torqueValue1Review = 0,0;
+torqueValue2,torqueValue2Review = 0,0;
+
+ret = LibIDT.idtSendDatagramALS("\x20",LibIDT.idtGetTimeout(),pHndl);
+
+--engine.Delay(200)
+
+--if(ret == 1) then
+
+local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+
+engine.println("### RESULT SERVER 32 :" ..LibIDT.idthex2str(lastRevTel));
+
+--获取扭矩值1和评估值
+torqueValue1 = LibIDT.idthilo2signed(lastRevTel:sub(13,13):byte(),lastRevTel:sub(14,14):byte());
+torqueValue1Review = lastRevTel:sub(29,29):byte();
+
+--获取扭矩值2和评估值
+torqueValue2 = LibIDT.idthilo2signed(lastRevTel:sub(15,15):byte(),lastRevTel:sub(16,16):byte());
+torqueValue2Review = lastRevTel:sub(30,30):byte();
+
+--end;
+
+--[[
+if(ret == 1) then
+
+--获取扭矩值1和评估值
+torqueValue1 = LibIDT.idthilo2signed(@12,@13);
+torqueValue1Review = @28;
+
+--获取扭矩值2和评估值
+torqueValue2 = LibIDT.idthilo2signed(@14,@15);
+torqueValue2Review = @29;
+
+end;
+]]</Script></Function>
+

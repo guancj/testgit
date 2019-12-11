@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="将双字节整型转换为16进制字符串(如：&quot;\x0A\x33&quot;)&#13;&#10;&#13;&#10;注:只获取整数的最后两个字节进行转换">
+<Inputs>
+<Variable id="word" type="3" data="0" description="输入双字节整数"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回双字节16进制字符串格式,如：&quot;\x0A\x33&quot;"/>
+</Outputs>
+<Script>ret = "";
+
+local tempNum = word;
+
+if(word &lt; 0) then
+
+tempNum = 65536 + word;
+
+end;
+
+tempNum = bit32.band(word,0xFF00);
+
+ret = ret ..string.char(bit32.rshift(tempNum,8)); --高位字节
+
+ret = ret .. string.char(bit32.band(word,0x00FF));      --低位字节</Script></Function>
+

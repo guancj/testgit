@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="version" type="3" data="0"/>
+<Variable id="name" type="8" data=""/>
+<Variable id="deviceVersion" type="3" data="0"/>
+<Variable id="factoryName" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>local driverInfo  
+version,name,deviceVersion,factoryName,gdiError= engine.GDI_GetDriverInformation(gdiWorkspace)
+</Script></Function>
+

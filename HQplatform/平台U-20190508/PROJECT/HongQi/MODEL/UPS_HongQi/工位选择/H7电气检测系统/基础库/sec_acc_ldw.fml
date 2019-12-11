@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s0" type="3" data="0"/>
+<Variable id="s1" type="3" data="0"/>
+</Inputs>
+<Script>		if( ((s0==0x00)and(s1==0x00)) or ((s0==0xff)and(s1==0xff)) )then
+		 		return nil;
+		 --end
+                else
+		 seed=bit32.lshift(s0,8)+s1;
+		 
+		 tmp_seed=bit32.band(seed*20077,0xffff);
+		 tmp_seed=bit32.band(tmp_seed+12345,0xffff);
+		 key=bit32.bxor(tmp_seed,0xA5A5);
+		 
+		key0=bit32.rshift(bit32.band(key,0xff00),8);
+		key1=bit32.band(key,0x00ff);
+                engine.println(string.format("%02x%02x",key0,key1));
+		return key0,key1;
+               end</Script></Function>
+

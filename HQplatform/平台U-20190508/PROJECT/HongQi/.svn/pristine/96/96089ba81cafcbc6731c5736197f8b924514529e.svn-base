@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_ReadMemory">
+<Inputs>
+<Variable id="StartAdresse" type="3" data="0"/>
+<Variable id="Number" type="3" data="1"/>
+<Variable id="LineNr" type="3" data="1"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="RecvData" type="8" data="" description="读取值"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this ;function  is used to   Read Mem  by Address  
+input parameter:StartAdresse;Number;LineNr;ECU_Handle
+outparameter :RecvData;
+
+01/25/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+
+local buff;
+local MaxBytes;
+local StartAdresse_tmp;
+local byte1, byte2, byte3, byte4, byte5, byte6, byte7;
+local Len_tmp;
+RecvData = "";
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return RecvData
+end
+
+--Befehl = midstr(itobinstr(StartAdresse),1,3)+ "\x00";
+byte1 = math.floor(StartAdresse/0x10000);
+StartAdresse_tmp = StartAdresse - byte1*0x10000;
+byte2 = math.floor(StartAdresse_tmp/0x100);
+byte3 = StartAdresse_tmp - byte2*0x100;
+byte4 = 0x00;
+
+--TmpStr = midstr(itobinstr(Anzahl),1,3);
+--Befehl = Befehl + TmpStr;
+byte5 = math.floor(Number/0x10000);
+Len_tmp = Number - byte5*0x10000;
+byte6 = math.floor(Len_tmp/0x100);
+byte7 = Len_tmp - byte6*0x100;
+
+--err = _vciDataExchange (Hndl, 0x35, 0x75, Befehl , &amp;StgRes);
+#COMMEX ECU_Handle -1 0x35 byte1 byte2 byte3 byte4 byte5 byte6 byte7
+	
+if (engine.LastError == 0) then 
+        buff = @0-;
+        engine.println("buff:"..LibGeneral.hex2str(buff).."\n");
+	MaxBytes = string.byte(buff,2);	
+        engine.println(string.format("MaxBytes :%d ",MaxBytes).."\n");
+        buff = "";
+	if ((Number &gt; 0) and (Number &lt;= MaxBytes)) then
+#COMMEX ECU_Handle -1 0x36
+		    if (engine.LastError == 0) then
+			buff = @1-;
+			RecvData = RecvData..buff;
+		    else
+			engine.LastError = 1;	
+		    end;
+        else
+        engine.LastError = 1;
+        end;
+else
+	engine.LastError = 1;
+end;
+
+engine.println("recvdata :"..LibGeneral.hex2str(RecvData).."\n");
+
+
+if(engine.LastError == 0) then engine.StatValue = "read Memery successfully"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpok");engine.ShowMessage();engine.Delay(1);
+else
+engine.StatValue = "read Memery failed"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.ShowMessage();engine.Delay(1);
+end;
+--_vciDataExchange (Hndl, 0x37, 0x77, "" , &amp;StgRes);
+#COMMEX ECU_Handle -1 0x37</Script></Function>
+

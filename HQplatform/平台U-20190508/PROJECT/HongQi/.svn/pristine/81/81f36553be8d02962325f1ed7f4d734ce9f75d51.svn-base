@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="HUDPrepXmlStruct">
+<Inputs>
+<Variable id="Function" type="8" data=""/>
+<Variable id="Pid" type="8" data=""/>
+<Variable id="Sender" type="8" data=""/>
+<Variable id="Receiver" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="Buffer" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  PrepXmlStruct String buffer
+
+input parameter : Function,Pid,Sender,Receiver
+output parameter : Buffer
+
+02/09/2017     created by viforce
+******************************************************************************--]]
+
+local timeForm = os.date("%Y-%m-%dT%X+08:00")
+local functionbuffer = ""
+local datetimebuffer = ""
+local Sendbuffer = ""
+local Receiverbuffer = ""
+local PIDbuffer = ""
+
+Buffer = ""
+
+datetimebuffer = "&lt;DateTime&gt;" ..timeForm.. "&lt;/DateTime&gt;"
+Sendbuffer = "&lt;Sender&gt;" ..Sender.. "&lt;/Sender&gt;"
+Receiverbuffer = "&lt;Receiver&gt;" ..Receiver.. "&lt;/Receiver&gt;"
+PIDbuffer = "&lt;Kennnummer&gt;" ..Pid.. "&lt;/Kennnummer&gt;"
+functionbuffer = "&lt;function ".."value=\""..Function.."\"&gt;" .. "&lt;data&gt;" .. datetimebuffer .. Sendbuffer  .. Receiverbuffer  .. PIDbuffer .. "&lt;/data&gt;" .. "&lt;/function&gt;"
+Buffer = "&lt;SchemaHeadUp&gt;" .. functionbuffer .. "&lt;/SchemaHeadUp&gt;"
+
+print("HUDPrepXmlStruct Length " ..tostring(#Buffer))
+print("HUDPrepXmlStruct Buffer ".. tostring(Buffer))</Script></Function>
+

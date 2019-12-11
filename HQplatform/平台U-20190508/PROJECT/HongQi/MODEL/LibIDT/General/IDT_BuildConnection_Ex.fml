@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="建立与检测设备的通信">
+<Inputs>
+<Variable id="iniFile" type="8" data="&quot;idtcom.ini&quot;" description="idt 配置文件 默认 idtcom.ini"/>
+<Variable id="iniSection" type="8" data="&quot;idtcom_fas1&quot;" description="as &quot;idtcom_fas1&quot;"/>
+<Variable id="iniKey" type="8" data="&quot;fas_udp&quot;" description="as &quot;fas_udp&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data="" description="返回值"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Outputs>
+<Script>--[[ *************************************************************
+History :
+* 04/03/2016, wuh : 保存全局变量到通讯句柄附带变量
+* 03/09/2016, viforce : 通讯参数从配置文件读取，方便修改
+* 03/09/2016, viforce : 加入log选项，可以另外生成相应Idt的通讯log文件方便调试和记录
+*************************************************************--]]
+
+	local rPort,lPort,rHost,send_mark,receive_mark,sendMode
+	
+	local ini = IniFile(engine.ProgPath .. tostring(iniFile))
+	local infor = ini.getString(iniSection,iniKey,"")
+	local logflag = ini.getString(iniSection,"log","")
+        local logsize = ini.getString(iniSection,"logsize","")
+        print("##iniSection:"..iniSection..iniKey..iniFile)
+        print("##info:"..engine.ProgPath .. tostring(iniFile))
+        
+	p1,p2 = string.find(infor,":")
+	if p1 ~= nil then
+		rHost = string.sub(infor,1,p1 - 1)
+		print("rHost : " .. tostring(rHost))
+		infor = string.sub(infor,p2 + 1,-1)
+		p1,p2 = string.find(infor,":")
+		if(p1 ~= nil) then
+			rPort = string.sub(infor,1,p1 - 1)
+			rPort = tonumber(rPort)
+			print("rPort : " .. tostring(rPort))
+			infor = string.sub(infor,p2 + 1,-1)
+			p1,p2 = string.find(infor,":")	
+			if(p1 ~= nil) then
+				lPort = string.sub(infor,1,p1 - 1)
+				lPort = tonumber(lPort)
+				print("lPort : " .. tostring(lPort))
+				infor = string.sub(infor,p2 + 1,-1)
+				p1,p2 = string.find(infor,":")	
+				if(p1 ~= nil) then
+					send_mark = string.sub(infor,1,p1 - 1)
+					send_mark = tonumber(send_mark)
+					print("send_mark : " .. tostring(send_mark))
+					infor = string.sub(infor,p2 + 1,-1)
+					p1,p2 = string.find(infor,":")	
+					if(p1 ~= nil) then
+						receive_mark = string.sub(infor,1,p1 - 1)
+						receive_mark = tonumber(receive_mark)
+						print("receive_mark : " .. tostring(receive_mark))
+						infor = string.sub(infor,p2 + 1,-1)
+						if(infor ~= "") then
+							sendMode = infor
+							sendMode = tonumber(sendMode)
+							print("sendMode : " .. tostring(sendMode))	
+						end
+					else
+						ret = false
+						pHndl = -1
+                                                engine.LastError = 1
+                                                engine.StatValue = "idt Parameter invalid !!!"
+						return ret,pHndl					
+					end
+				else
+					ret = false
+					pHndl = -1
+                                        engine.LastError = 1
+                                        engine.StatValue = "idt Parameter invalid !!!"
+					return ret,pHndl				
+				end
+			else
+				ret = false
+				pHndl = -1
+                                engine.LastError = 1
+                                engine.StatValue = "idt Parameter invalid !!!"
+				return ret,pHndl			
+			end
+		else
+			ret = false
+			pHndl = -1
+                        engine.LastError = 1
+                        engine.StatValue = "idt Parameter invalid !!!"
+			return ret,pHndl		
+		end
+	else
+		ret = false
+		pHndl = -1
+                engine.LastError = 1
+                engine.StatValue = "idt Parameter invalid !!!"
+		return ret,pHndl
+	end
+
+
+	ret = false;
+        sendMode = sendMode or 0
+	pHndl = engine.UdpOpenEx(lPort,"",rPort,rHost,-1);
+	engine.println("IDT_BuildConnection, udp handl pHndl= " .. tostring(pHndl));
+	if pHndl ~= nil  and pHndl &gt;=0 then
+		--设置发送标志和接收标志的全局变量
+		engine.UdpHandleVarSet(pHndl, "_SNDMARK", send_mark);
+		engine.UdpHandleVarSet(pHndl, "_REVMARK", receive_mark);
+		engine.UdpHandleVarSet(pHndl, "_TOGGLECOUNTER", 0);
+		engine.UdpHandleVarSet(pHndl, "_SEQUENCENUM", 0);
+		engine.UdpHandleVarSet(pHndl, "_DEVICETYPE", 6);
+		engine.UdpHandleVarSet(pHndl, "_FINISHFLAG", false);
+                engine.UdpHandleVarSet(pHndl, "_CURRENTSEVACK", 0);
+                engine.UdpHandleVarSet(pHndl, "_CURRENTSERVICE", "\x00");
+                engine.UdpHandleVarSet(pHndl, "_logFlag", logflag);
+                engine.UdpHandleVarSet(pHndl, "_logFilename", "VMDSEngine_" .. tostring(iniKey));
+                engine.UdpHandleVarSet(pHndl, "_logsize", logsize);
+                if(logflag == "true") then
+			LibGeneral.UDPLogPrint(pHndl,"=================================== TEST START =========================================")
+                        LibGeneral.UDPLogPrint(pHndl,"Vehicle PID :" .. tostring(engine.KNR))
+                        LibGeneral.UDPLogPrint(pHndl,"  02  04  06  08  10  12  14  16  18  20  22  24  26  28  30  32  34  36  38  40  42  44")
+                end
+                
+		local request = LibIDT.idtInitRequest(pHndl);
+		ret = LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl,sendMode);
+	else
+		println("IDT Build connection failed at udp open");
+		engine.LastError = -1;
+	end;;</Script></Function>
+

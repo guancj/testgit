@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="7" library="1" module="LibUI" version="" description="" engine="VMDSEngine" language="javascript">
+
+<Functions>
+<Function id="dlgWaitSecondBar"/>
+
+</Functions>
+</Model>

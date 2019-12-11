@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data="DString_C131_Car_Tpye"/>
+</Inputs>
+<Outputs>
+<Variable id="Isnot_CFace" type="11" data=""/>
+</Outputs>
+<Script>print("funcGCJ:"..DString_C131_Car_Tpye)
+Isnot_CFace = false
+if (DString_C131_Car_Tpye=="CH1LM21") then
+elseif(DString_C131_Car_Tpye=="CH1LM11" ) then
+elseif(DString_C131_Car_Tpye=="CH1MM21" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM21" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM22" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM41" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM42" ) then
+elseif(DString_C131_Car_Tpye=="CH1HM11" ) then
+elseif(DString_C131_Car_Tpye=="CH1DM14" ) then
+elseif(DString_C131_Car_Tpye=="CH1DM15" ) then
+elseif(DString_C131_Car_Tpye=="CH1FM12" ) then
+elseif(DString_C131_Car_Tpye=="CH1FM13" ) then
+elseif(DString_C131_Car_Tpye=="CH1CM28" ) then
+elseif(DString_C131_Car_Tpye=="CH1CM29" ) then
+elseif(DString_C131_Car_Tpye=="CH1JM11" ) then
+elseif(DString_C131_Car_Tpye=="CH1BM33" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM30" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM23" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM43" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM44" ) then
+elseif(DString_C131_Car_Tpye=="CH1BM34" ) then
+elseif(DString_C131_Car_Tpye=="CH1CM30" ) then
+elseif(DString_C131_Car_Tpye=="CH1CM31" ) then
+elseif(DString_C131_Car_Tpye=="CH1DM16" ) then
+elseif(DString_C131_Car_Tpye=="CH1DM17" ) then
+elseif(DString_C131_Car_Tpye=="CH1FM20" ) then
+elseif(DString_C131_Car_Tpye=="CH1FM30" ) then
+elseif(DString_C131_Car_Tpye=="CH1NM11" ) then
+elseif(DString_C131_Car_Tpye=="CH1JM12" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM40" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM41" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM42" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM46" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM47" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM48" ) then
+elseif(DString_C131_Car_Tpye=="CH1CM32" ) then
+elseif(DString_C131_Car_Tpye=="CH1CM33" ) then
+elseif(DString_C131_Car_Tpye=="CH1BM35" ) then
+elseif(DString_C131_Car_Tpye=="CH1AM54" ) then
+else
+	Isnot_CFace = true
+end</Script></Function>
+

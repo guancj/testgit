@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ExecuteRpdPending" description="如果有已下载的更新，立刻更新，并返回true,如果无更新，返回false">
+<Outputs>
+<Variable id="ret" type="8" data="" description="如果有已下载的更新，立刻更新，并返回true,如果无更新，返回false"/>
+</Outputs>
+<Script>
+ret = engine.ExecuteRpdPending();</Script></Function>
+

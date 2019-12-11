@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>ret = true
+if (DString_Car_Tpye=="CMNA02A") then
+--19year
+elseif(DString_Car_Tpye=="CMNA01A") then
+elseif(DString_Car_Tpye=="CH1QM30") then
+elseif(DString_Car_Tpye=="CH1QM40") then
+elseif(DString_Car_Tpye=="CH1QM50") then
+elseif(DString_Car_Tpye=="CNDA01A") then
+elseif(DString_Car_Tpye=="CH1PM30") then
+elseif(DString_Car_Tpye=="CH1PM20") then
+
+--H7 18year
+elseif(DString_Car_Tpye=="CH1GM40") then
+elseif(DString_Car_Tpye=="CH1GM41") then
+elseif(DString_Car_Tpye=="CH1GM42") then
+elseif(DString_Car_Tpye=="CH1QM40") then
+elseif(DString_Car_Tpye=="CH1AM46") then
+elseif(DString_Car_Tpye=="CH1AM47") then
+elseif(DString_Car_Tpye=="CH1AM48") then
+elseif(DString_Car_Tpye=="CH1BM35") then
+elseif(DString_Car_Tpye=="CH1CM32") then
+elseif(DString_Car_Tpye=="CH1CM33") then
+elseif(DString_Car_Tpye=="CH1MM41") then
+else
+	ret = false
+end
+
+
+
+</Script></Function>
+

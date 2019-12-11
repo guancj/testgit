@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="c7_pmod_deactive" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="310" top="26" right="410" bottom="58"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="312" top="551" right="412" bottom="583"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="Fahrzeugstatus_FSP">
+<Rect left="310" top="90" right="410" bottom="122"/>
+<Script>tmpFahrzeugstatus_FSP = engine.SharedVarGet("_Fahrzeugstatus_FSP")
+
+engine.SharedVarSet("_Fahrzeugstatus_FSP","IBN") -- fsp 过滤过程控制</Script></Activity>
+<Activity id="4" ActivityType="3" name="GWA">
+<Rect left="311" top="151" right="411" bottom="183"/>
+<Line2Text Enable="1" Text="GWA"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="5" name="c7_gwa">
+<Rect left="311" top="217" right="411" bottom="249"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;WakeupAllbusSystems&quot;,&quot;Transportmodus_Deactive&quot;,&quot;DisableMeasurementMode&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="3" name="Clear">
+<Rect left="310" top="282" right="410" bottom="314"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="7" ActivityType="5" name="并行过程">
+<Rect left="311" top="349" right="411" bottom="381"/>
+<SubProcesses>
+<SubProcess id="Par_P_Modes_2_1_KRE">
+</SubProcess>
+<SubProcess id="Par_P_Modes_2_1_KEL">
+</SubProcess>
+<SubProcess id="Par_P_Modes_2_1_EZE_MOT">
+</SubProcess>
+<SubProcess id="Par_P_Modes_2_1_MKB_HI">
+</SubProcess>
+<SubProcess id="Par_P_Modes_2_1_MKF_HI">
+</SubProcess>
+<SubProcess id="Par_P_Modes_2_1_IEL_FUN">
+</SubProcess>
+<SubProcess id="Par_P_Modes_2_1_ARE">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="8" ActivityType="5" name="c7_mot">
+<Rect left="312" top="416" right="412" bottom="448"/>
+<SubProcesses>
+<SubProcess id="c7_mot">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="9" ActivityType="3" name="Fahrzeugstatus_FSP">
+<Rect left="311" top="482" right="411" bottom="514"/>
+<Script>engine.SharedVarSet("_Fahrzeugstatus_FSP",tmpFahrzeugstatus_FSP) -- fsp 过滤过程控制</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="7" type="0">
+</Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="9" type="0">
+</Transition>
+<Transition StartId="9" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

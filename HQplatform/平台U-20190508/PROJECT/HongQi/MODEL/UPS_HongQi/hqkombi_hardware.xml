@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="gbk" ?>
+<global>
+
+<!--
+SBR 安全带提醒装置
+-->
+
+<!--
+控制器通讯
+-->
+<comms>
+<!--<comm name="ControlCan" module="pci9820b.dll" device="5/0" />-->
+</comms>
+
+<!--
+数据采集/控制
+-->
+
+<!--<dam type="NDAM-9000" addr="192.168.1.178">-->
+<dam type="NDAM-9000" addr="192.168.0.178">
+
+
+<!--NDAM-4055 8路数字输入 8路数字输出 工位B-->
+<module addr="1" type="NDAM-4055">
+<io type="di" addr="0"  />
+<io type="di" addr="1"  />
+<io type="di" addr="2"  />
+<io type="di" addr="3"  />
+<io type="di" addr="4"  />
+<io type="di" addr="5"  />
+<io type="di" addr="6" var="hs7_passenger_airbag_close"    name="HS7副驾气囊关闭开关"  value="1" desc="1到位" />
+<io type="di" addr="7" var="plc_sigal_ok" name="PLC信号（就位信号）"  value="0" desc="1到位" />
+
+<io type="do" addr="0" var="power_h7"      name="H7电源开关"		value="1" desc="1关 0开" />
+<io type="do" addr="1" var="power_hs7"      name="HS7电源开关"		value="1" desc="1关 0开"/>
+<io type="do" addr="2" var="constant_current_source_A"        name="恒流源输出切换控制A"     	value="1" desc="1关 0开" />
+<io type="do" addr="3" var="constant_current_source_B"		name="恒流源输出切换控制B" value="0" desc="1关 0开"/>
+<io type="do" addr="4" var="constant_current_source_C"          name="恒流源输出切换控制C"   value="1" desc="1关 0开"/>
+<io type="do" addr="5" var="constant_current_source_D"	name="恒流源输出切换控制D"	 value="1"	desc="1关 0开" />
+<io type="do" addr="6" var="ecu_CAN_control_1"	name="ECU的CAN切换控制1"	 value="1"	desc="1关 0开" />
+<io type="do" addr="7" var="ecu_CAN_control_2"	name="ECU的CAN切换控制2"	 value="1"	desc="1关 0开"/>
+
+</module>
+
+
+<!--NDAM-4017 8路模拟输入-->
+<module addr="2" type="NDAM-4017">
+<io type="ai" addr="0" var="driver_front_airbag2"  name="驾驶员二级前气囊检测"     unit="mV" formula="(@@/65535*20-10)*1000/64"         value="0x8000" desc="±150mV  2Ω" />
+<io type="ai" addr="1" var="driver_front_airbag" name="驾驶员前气囊检测" unit="mV" formula="(@@/65535*20-10)*1000/64"         value="0x8000" desc="±150mV  "/>
+<io type="ai" addr="2" var="center_speaker"  name="中置扬声器检测"     unit="mVA" formula="(@@/65535*20-10)*1000/64"         value="0x8000" desc="±150mV  2-8Ω"/>
+<io type="ai" addr="3" var="passenger_front_airbag" name="乘员前气囊检测"     unit="mV"  formula="(@@/65535*20-10)*1000/64"                value="0x8000" desc="±150mV 2Ω" />
+<io type="ai" addr="4" var="passenger_front_airbag2" name="乘员二级前气囊检测"     unit="mV"  formula="(@@/65535*20-10)*1000/64"                  value="0x8000" desc="±10V  200Ω  9V电源"/>
+<io type="ai" addr="5" />
+<io type="ai" addr="6" var="TPS_v" name="8.5---10.6V"     unit="V"  formula="(@@/65535*20-10)/1"                  value="0x8000" desc="±10V  200Ω  9V电源"/>
+<io type="ai" addr="7" />
+</module>
+
+<!--NDAM-3412 4路模拟输入 1路模拟输出 2路数字输入 4路数字输出
+模拟输入采样值为16位数据，数据的最高位为符号位，0表示测量值为负值，1表示测量值为正值，其余15位表示测量数值。
+采样值的零点值为0x0000，满量程值为0x7FFF(32767)。
+(2 * (@@ >> 15) - 1) * ((@@ & 0x7FFF) / 0x7FFF)
+
+(2 * (@@ >> 15) - 1)     = (2*bit32.rshift(@@,15)-1)
+((@@ & 0x7FFF) / 0x7FFF) = (bit32.band(@@,32767)/32767)
+
+(2*bit32.rshift(@@,15)-1)*(bit32.band(@@,32767)/32767)
+
+20mA	100KG
+4mA		0KG
+-->
+
+<module addr="3" type="NDAM-3412">
+<io type="ai" addr="0" />
+<io type="ai" addr="1" />
+<io type="ai" addr="2" />
+<io type="ai" addr="3" />
+
+<io type="ao" addr="0" var="constant_current_output" name="恒流激励信号" unit="mA" formula="@@*20/65535" desc="0-20mA电流输出 默认值10mA" />
+
+<io type="di" addr="0" var="start_press" name="开始按钮（开始信号）"  value="1"	desc="1未按下 0按下" />
+<io type="di" addr="1" var="stop_press" name="结束按钮（结束信号）"  value="1"	 desc="1未按下 0按下" />
+
+<io type="do" addr="0" var="plc_test_finished" name="PLC信号（检测完成信号）"  value="1"	desc="1关 0开"/>
+<io type="do" addr="1" var="green_power" name="绿灯电源"  notgate="1" value="1" desc="0打开 1关闭" />
+<io type="do" addr="2" var="red_power" name="红灯电源"  notgate="1" value="1" desc="0打开 1关闭" />
+<io type="do" addr="3" var="yellow_power" name="黄灯电源" notgate="1" value="1" desc="0=打开 1关闭"/>
+<io type="do" addr="0" var="sbr_p_power" name="sbr压力传感器电源"  notgate="1"  value="1" desc="0打开 1关闭"/>
+
+</module>
+
+
+
+
+
+
+
+</dam>
+
+</global>

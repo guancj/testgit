@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="instancePath" type="8" data=""/>
+<Variable id="inputData" type="8" data=""/>
+<Variable id="stepIdentifier" type="3" data="0"/>
+<Variable id="analysisSupportLevel" type="8" data=""/>
+<Variable id="outputData_in" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="outputData_out" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>local gdiOperation = engine.GDI_GetOperationByInstancePath(gdiWorkspace, instancePath)
+print("operation is "..gdiOperation)
+outputData_out,gdiError= engine.GDI_Execute(gdiOperation,inputData, outputData_in)
+print("opExecuteResult of "..gdiOperation.." is "..tostring(gdiError))</Script></Function>
+

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlNode" type="8" data=""/>
+<Variable id="name" type="8" data="" description="属性名"/>
+</Inputs>
+<Outputs>
+<Variable id="xmlAttribute" type="8" data="" description="属性值"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+获取属性的值
+output parameter: xmlAttribute
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+xmlAttribute = xmlNode.getAttribute(name)</Script></Function>
+

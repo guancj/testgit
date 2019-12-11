@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ActualValue" type="5" data="0" description="实际值"/>
+<Variable id="Utg" type="5" data="0" description="下限"/>
+<Variable id="Otg" type="5" data="0" description="上限"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to Tolerance Float UTG OTG
+input parameter:ActualValue,Utg,Otg
+
+02/07/2017    created by viforce
+******************************************************************************--]]
+
+engine.println("&lt;FloatToleranceCheck&gt;".. tostring(ActualValue))
+
+engine.StatUpper = tostring(LibGeneral.GetPreciseDecimal(Otg,3))
+engine.StatLower = tostring(LibGeneral.GetPreciseDecimal(Utg,3))
+if type(ActualValue) ~= "number" then
+	engine.LastError = 1
+        engine.StatValue = "ActualValue is not valid !!!"
+        return ;
+end
+
+if(ActualValue &gt; Otg) then
+	engine.LastError = 1
+elseif(ActualValue &lt; Utg) then
+	engine.LastError = 1
+else
+	engine.LastError = 0
+end
+
+engine.StatValue = tostring(LibGeneral.GetPreciseDecimal(ActualValue,3))
+
+</Script></Function>
+

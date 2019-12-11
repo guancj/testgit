@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_CheckStatus" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="通讯协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="接口号"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="Tester地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="波特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CANId"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CANId"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="RecvData" type="8" data=""/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="184" top="1" right="284" bottom="33"/>
+<Script>engine.DialogBackColor = -1;</Script><Line1Text Enable="1" Text="前束检测"/>
+<Line2Text Enable="1" Text="状态检查中..."/>
+</Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="183" top="553" right="283" bottom="585"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="没有自动模式">
+<Rect left="503" top="198" right="603" bottom="230"/>
+<Line2Text Enable="1" Text="没有自动模式"/>
+<Script>engine.println("##### FWE Status: Not AutoMode \n");</Script></Activity>
+<Activity id="7" ActivityType="3" name="故障">
+<Rect left="500" top="277" right="600" bottom="309"/>
+<Line2Text Enable="1" Text="故障"/>
+<Script>engine.println("##### FWE Status: Error \n");</Script></Activity>
+<Activity id="9" ActivityType="3" name="急停">
+<Rect left="502" top="362" right="602" bottom="394"/>
+<Line2Text Enable="1" Text="急停"/>
+<Script>engine.println("##### FWE Status: Emergency \n");</Script></Activity>
+<Activity id="14" ActivityType="4" name="路由节点">
+<Rect left="350" top="133" right="382" bottom="165"/>
+</Activity>
+<Activity id="15" ActivityType="3" name="无应答">
+<Rect left="500" top="133" right="600" bottom="165"/>
+<Line2Text Enable="1" Text="工位无应答"/>
+<Script>engine.println("##### FWE Status: IDT Not Response \n");</Script></Activity>
+<Activity id="20" ActivityType="4" name="路由节点">
+<Rect left="823" top="553" right="855" bottom="585"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="788" top="218" right="888" bottom="250"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="22" ActivityType="4" name="路由节点">
+<Rect left="818" right="850" bottom="32"/>
+</Activity>
+<Activity id="23" ActivityType="3" name="普通节点">
+<Rect left="182" top="450" right="282" bottom="482"/>
+<Script>isOK = true;</Script></Activity>
+<Activity id="24" ActivityType="3" name="DEBUG">
+<Rect left="183" top="69" right="283" bottom="101"/>
+<Script>engine.println("### Starting FWE_CheckStatus");</Script></Activity>
+<Activity id="25" ActivityType="13" name="IDT_FAS_State_actual">
+<Rect left="182" top="133" right="282" bottom="165"/>
+<Line2Text Enable="1"/>
+<FunctionRef id="IDT_FAS_State_actual" model="LibIDT">
+<Parameters>
+<Parameter id="filter" value="&quot;@6==0b?001??00&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+<Parameter id="receiveDatagram" ret="RecvData"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="26" ActivityType="13" name="IDT_FAS_State_store">
+<Rect left="316" top="198" right="416" bottom="230"/>
+<FunctionRef id="IDT_FAS_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="RecvData"/>
+<Parameter id="filter" value="&quot;@6==0b?001????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="27" ActivityType="13" name="IDT_FAS_State_store">
+<Rect left="315" top="277" right="415" bottom="309"/>
+<FunctionRef id="IDT_FAS_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="RecvData"/>
+<Parameter id="filter" value="&quot;@6==0b??????0?&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="28" ActivityType="13" name="IDT_FAS_State_store">
+<Rect left="316" top="363" right="416" bottom="395"/>
+<FunctionRef id="IDT_FAS_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="RecvData"/>
+<Parameter id="filter" value="&quot;@6==0b???????0&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="22" type="1">
+<Expression>Handl == nil</Expression></Transition>
+<Transition StartId="1" EndId="24" type="0">
+</Transition>
+<Transition StartId="5" EndId="21" type="0">
+</Transition>
+<Transition StartId="7" EndId="21" type="0">
+</Transition>
+<Transition StartId="9" EndId="21" type="0">
+</Transition>
+<Transition StartId="14" EndId="15" type="1">
+<Expression>string.len(RecvData) ~= 44</Expression></Transition>
+<Transition StartId="14" EndId="26" type="0">
+</Transition>
+<Transition StartId="15" EndId="21" type="0">
+</Transition>
+<Transition StartId="20" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="20" type="0">
+</Transition>
+<Transition StartId="22" EndId="21" type="0">
+</Transition>
+<Transition StartId="23" EndId="2" type="0">
+</Transition>
+<Transition StartId="24" EndId="25" type="0">
+</Transition>
+<Transition StartId="25" EndId="14" type="1">
+<Expression>not isOK</Expression></Transition>
+<Transition StartId="25" EndId="23" type="1">
+<Expression>isOK</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="26" EndId="5" type="1">
+<Expression>not isOK</Expression></Transition>
+<Transition StartId="27" EndId="28" type="0">
+</Transition>
+<Transition StartId="27" EndId="7" type="1">
+<Expression>not isOK</Expression></Transition>
+<Transition StartId="28" EndId="9" type="1">
+<Expression>not isOK</Expression></Transition>
+</Transitions>
+</Process>
+

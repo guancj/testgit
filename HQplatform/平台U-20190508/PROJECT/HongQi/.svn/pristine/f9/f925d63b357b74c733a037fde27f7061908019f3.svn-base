@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="7" library="1" module="LibHUD" version="" description="HUD 通讯库&#13;&#10;tcp 协议" engine="VMDSEngine" language="lua">
+<Workplaces>
+<Workplace id="HUD"/>
+</Workplaces>
+</Model>

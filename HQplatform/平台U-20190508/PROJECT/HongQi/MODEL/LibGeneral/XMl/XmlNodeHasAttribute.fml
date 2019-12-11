@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlNode" type="8" data="" description="元素"/>
+<Variable id="name" type="8" data="" description="属性名"/>
+</Inputs>
+<Outputs>
+<Variable id="result" type="11" data="" description="若name 入参为空, 返回元素是否拥有属性; name不为空，返回元素是否拥有指定属性"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+判断元素是否拥有指定的属性，若属性名为空，返回元素是否拥有属性
+output parameter: result
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+if(name == nil) then
+	result = xmlNode.hasAttributes()
+ else 
+	result = xmlNode.hasAttribute(name)
+ end
+ </Script></Function>
+

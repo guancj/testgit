@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s" type="8" data=""/>
+</Inputs>
+<Script>  local r;
+
+  r = '';
+  for i=1,string.len(s) do
+    if (1 ~= i) then
+      r = r .. ',';
+    end
+    r = r .. string.format("%u",string.byte(s,i));
+  end
+  return r;
+</Script></Function>
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="9" library="1" module="LibUI" version="" engine="VMDSEngine" language="javascript">
+<children>
+<Function id="dlgWaitSecondBar_showtime"/>
+
+<Function id="dlgWaitSecondBar"/>
+
+<Function id="dlgWaitSecondBar_0"/>
+
+</children>
+</Model>

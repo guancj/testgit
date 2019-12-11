@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="SCM_Common"/>
+<Process id="SCM_Shorting_longing_Motor"/>
+<Process id="SCM_Switch_Check"/>
+<Process id="SCM_Test"/>
+<Process id="SCM_ReadDTC"/>
+<Process id="SCM_FIN"/>
+</children>
+</Workplace>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="exhaustDataExchange">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯参数"/>
+<Variable id="reqData" type="8" data="" description="通讯数据"/>
+</Inputs>
+<Outputs>
+<Variable id="err" type="8" data=""/>
+<Variable id="revData" type="8" data=""/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is used to to the data exchange between tester and exhaust device
+History:
+    04/10/2016, wuh : function created
+****************************************************************--]]
+	local err = 0
+	local revData = ""
+	local reqTel = ""
+	local UDPTIMEOUT = 10000 ; -- in ms
+	
+	-- calculate checksum
+	reqTel = "\x02" .. reqData .. "\x03"
+	local checksum = 0
+	for i=1, reqTel:len() do
+		checksum = bit32.bxor(checksum, reqTel:sub(i,i):byte())
+	end
+	reqTel = reqTel .. string.char(checksum)
+	
+	-- data exchange
+	local revTel = ""
+	engine.SockExchange(pHndl, reqTel, UDPTIMEOUT)
+	revTel = @0- ;
+		
+	-- check receive data checksum
+	local checksum = 0
+	for i=1, revTel:len()-1 do
+		checksum = bit32.bxor(checksum, revTel:sub(i,i):byte())
+	end
+	
+	if string.char(checksum) ~= revTel:sub(-1,-1) then
+		engine.println("exhaustDataExchange, revTel checksum not correct. revTel = " .. tostring(revTel))
+		revData = ""
+		err = 1
+		engine.LastError = 1;
+		return err, revData
+	end
+
+	-- return data
+	revData = revTel:sub(2,-3)
+	err = engine.LastError</Script></Function>
+

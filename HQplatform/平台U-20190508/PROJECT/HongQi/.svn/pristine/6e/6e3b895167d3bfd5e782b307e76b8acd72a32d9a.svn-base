@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ECU_Close">
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to  close connect ECU 
+input parameter:ECU_Handle
+
+11/08/2016     created by viforce
+******************************************************************************--]]
+
+
+if( ECU_Handle == nil or ECU_Handle &lt; 0) then 
+
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return 
+
+else
+
+	engine.EcuClose(ECU_Handle) ;
+	if(engine.LastError ~= 0) then
+	engine.StatValue = "ECU Close fail ";	
+	end
+
+end
+</Script></Function>
+

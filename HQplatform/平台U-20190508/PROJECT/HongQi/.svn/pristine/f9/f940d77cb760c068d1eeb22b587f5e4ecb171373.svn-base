@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FAS_83_Result_Coordinates" description="service 83">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="DopplerL_X" type="5" data="0" description="左"/>
+<Variable id="DopplerL_Y" type="5" data="0" description="左"/>
+<Variable id="DopplerL_Z" type="5" data="0" description="左"/>
+<Variable id="DopplerR_X" type="5" data="0" description="右"/>
+<Variable id="DopplerR_Y" type="5" data="0" description="右"/>
+<Variable id="DopplerR_Z" type="5" data="0" description="右"/>
+<Variable id="RearView_X" type="5" data="0" description="后"/>
+<Variable id="RearView_Y" type="5" data="0" description="后"/>
+<Variable id="RearView_Z" type="5" data="0" description="后"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 83
+input parameter:pHndl,IDT_Timeout
+output parameter :ret,DopplerL_X,DopplerL_Y,DopplerL_Z,DopplerR_X,DopplerR_Y,DopplerR_Z,
+                            RearView_X,RearView_Y,RearView_Z
+                           
+12/26/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00";
+local factor = 0.1
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x53");    -- 设置service号,第2字节
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+
+
+if(ret == 1) then
+
+-- local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+local lastRevTel = revTel
+
+engine.println("### RESULT SERVER 83 :" ..LibIDT.idthex2str(lastRevTel));
+
+--左 X 
+DopplerL_X = LibIDT.idtSigned2float(lastRevTel:sub(13,13):byte(),lastRevTel:sub(14,14):byte(),1.0);
+--左 Y
+DopplerL_Y = LibIDT.idtSigned2float(lastRevTel:sub(15,15):byte(),lastRevTel:sub(16,16):byte(),factor);
+--左 Y
+DopplerL_Z = LibIDT.idtSigned2float(lastRevTel:sub(17,17):byte(),lastRevTel:sub(18,18):byte(),factor);
+--右 X 
+DopplerR_X = LibIDT.idtSigned2float(lastRevTel:sub(19,19):byte(),lastRevTel:sub(20,20):byte(),1.0);
+--右 Y
+DopplerR_Y = LibIDT.idtSigned2float(lastRevTel:sub(21,21):byte(),lastRevTel:sub(22,22):byte(),factor);
+--右 Z
+DopplerR_Z = LibIDT.idtSigned2float(lastRevTel:sub(23,23):byte(),lastRevTel:sub(24,24):byte(),factor);
+--后 X 
+RearView_X = LibIDT.idtSigned2float(lastRevTel:sub(25,25):byte(),lastRevTel:sub(26,26):byte(),1.0);
+--后 Y
+RearView_Y = LibIDT.idtSigned2float(lastRevTel:sub(27,27):byte(),lastRevTel:sub(28,28):byte(),factor);
+--后 Z
+RearView_Y = LibIDT.idtSigned2float(lastRevTel:sub(29,29):byte(),lastRevTel:sub(30,30):byte(),factor);
+
+
+engine.LastError = 0
+end</Script></Function>
+

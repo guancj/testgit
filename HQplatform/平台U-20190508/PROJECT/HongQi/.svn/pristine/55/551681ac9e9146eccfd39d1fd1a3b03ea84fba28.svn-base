@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VciStatusRead" description="#define VCI_STATUS_CONNECTED 0x00000001 //和VCI连接上&#13;&#10;#define VCI_STATUS_IGNITION  0x00000002 //上电开关状态">
+<Outputs>
+<Variable id="VCI_SatusConnection" type="11" data="" description="true - connected   false - not connected"/>
+<Variable id="VCI_SatusIgnition" type="11" data="" description="true - on       false - off"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  Transmode on or off
+output parameter:VCI_SatusConnection,VCI_SatusIgnition
+
+11/09/2016     created by viforce
+******************************************************************************--]]
+
+if(bit32.band(engine.VciStatus,0x00000001) ==  0x00000001) then
+	VCI_SatusConnection = true
+else
+	VCI_SatusConnection = false
+end
+
+if(bit32.band(engine.VciStatus,0x00000002) ==  0x00000002) then
+	VCI_SatusIgnition = true
+else
+	VCI_SatusIgnition = false
+end</Script></Function>
+

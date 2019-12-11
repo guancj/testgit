@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_GET_EZE_FTU_KEL_1" description="Line 1 显示为主&#13;&#10;" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="340" top="70" right="440" bottom="102"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="344" top="1045" right="444" bottom="1077"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="准备">
+<Rect left="341" top="135" right="441" bottom="167"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="3" name="变速箱">
+<Rect left="342" top="196" right="442" bottom="228"/>
+<Line1Text Enable="1" Text="变速箱"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="4" name="路由节点">
+<Rect left="237" top="177" right="269" bottom="209"/>
+</Activity>
+<Activity id="6" ActivityType="5" name="c7_get">
+<Rect left="342" top="261" right="442" bottom="293"/>
+<SubProcesses>
+<SubProcess id="c7_get">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;N-Gear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="7" ActivityType="3" name="Clear">
+<Rect left="341" top="323" right="441" bottom="355"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="8" ActivityType="3" name="条件判断">
+<Rect left="340" top="389" right="440" bottom="421"/>
+<Script></Script></Activity>
+<Activity id="9" ActivityType="4" name="路由节点">
+<Rect left="237" top="343" right="269" bottom="375"/>
+</Activity>
+<Activity id="10" ActivityType="3" name="EZE">
+<Rect left="340" top="458" right="440" bottom="490"/>
+<Line1Text Enable="1" Text="EZE"/>
+<Script></Script></Activity>
+<Activity id="13" ActivityType="3" name="EZE">
+<Rect left="522" top="389" right="622" bottom="421"/>
+<Line1Text Enable="1" Text="EZE"/>
+<Script></Script></Activity>
+<Activity id="14" ActivityType="5" name="c7_eze">
+<Rect left="341" top="526" right="441" bottom="558"/>
+<SubProcesses>
+<SubProcess id="c7_eze">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;CheckIdlePS&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="15" ActivityType="5" name="c7_eze">
+<Rect left="521" top="492" right="621" bottom="524"/>
+<SubProcesses>
+<SubProcess id="c7_eze">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;FrontPanelSwitchOnPS&quot;,&quot;CheckIdlePS&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="16" ActivityType="3" name="Clear">
+<Rect left="340" top="590" right="440" bottom="622"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="17" ActivityType="4" name="路由节点">
+<Rect left="556" top="590" right="588" bottom="622"/>
+</Activity>
+<Activity id="18" ActivityType="3" name="FTU">
+<Rect left="341" top="655" right="441" bottom="687"/>
+<Line1Text Enable="1" Text="FTU"/>
+<Script></Script></Activity>
+<Activity id="19" ActivityType="5" name="c7_ftu">
+<Rect left="341" top="721" right="441" bottom="753"/>
+<SubProcesses>
+<SubProcess id="c7_ftu">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Open_a_window&quot;,&quot;CloseDriverDoor&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="20" ActivityType="3" name="Clear">
+<Rect left="342" top="785" right="442" bottom="817"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="21" ActivityType="3" name="KEL">
+<Rect left="343" top="853" right="443" bottom="885"/>
+<Line1Text Enable="1" Text="KEL"/>
+<Script></Script></Activity>
+<Activity id="23" ActivityType="3" name="Clear">
+<Rect left="343" top="980" right="443" bottom="1012"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="24" ActivityType="5" name="c7_kel">
+<Rect left="342" top="917" right="442" bottom="949"/>
+<SubProcesses>
+<SubProcess id="c7_kel">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Close_the_tailgate&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="7">
+<Expression>$G0Z|$G1C|$G1D|$G1F</Expression></Transition>
+<Transition StartId="3" EndId="5" type="0">
+</Transition>
+<Transition StartId="4" EndId="6" type="0">
+</Transition>
+<Transition StartId="5" EndId="9" type="0">
+</Transition>
+<Transition StartId="6" EndId="7" type="0">
+</Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="10" type="0">
+</Transition>
+<Transition StartId="8" EndId="13" type="7">
+<Expression>$9R1</Expression></Transition>
+<Transition StartId="9" EndId="8" type="0">
+</Transition>
+<Transition StartId="10" EndId="14" type="0">
+</Transition>
+<Transition StartId="13" EndId="15" type="0">
+</Transition>
+<Transition StartId="14" EndId="16" type="0">
+</Transition>
+<Transition StartId="15" EndId="17" type="0">
+</Transition>
+<Transition StartId="16" EndId="18" type="0">
+</Transition>
+<Transition StartId="17" EndId="16" type="0">
+</Transition>
+<Transition StartId="18" EndId="19" type="0">
+</Transition>
+<Transition StartId="19" EndId="20" type="0">
+</Transition>
+<Transition StartId="20" EndId="21" type="0">
+</Transition>
+<Transition StartId="21" EndId="24" type="0">
+</Transition>
+<Transition StartId="23" EndId="2" type="0">
+</Transition>
+<Transition StartId="24" EndId="23" type="0">
+</Transition>
+</Transitions>
+</Process>
+

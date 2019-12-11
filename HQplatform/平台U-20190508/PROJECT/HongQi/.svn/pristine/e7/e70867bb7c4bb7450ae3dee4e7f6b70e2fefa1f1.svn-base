@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_RFK_SWA" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="FWEHndl" type="3" dir="0" data="FWEHndl"/>
+<Variable id="FASHndl" type="3" dir="0" data="FASHndl"/>
+<Variable id="SWEHndl" type="3" dir="0" data="SWEHndl"/>
+<Variable id="fFWE_Achsversatz_VA_shared" type="5" dir="0" data="0"/>
+<Variable id="fFWE_Achsversatz_HA_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVR_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHR_shared" type="5" dir="0" data="0"/>
+<Variable id="fFWE_Dackelwinkel_shared" type="5" dir="0" data="0" description="蟹行角"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="415" top="40" right="515" bottom="72"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="419" top="2198" right="519" bottom="2230"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="Delay">
+<Rect left="415" top="107" right="515" bottom="139"/>
+<Script>engine.Delay(250)
+engine.println(" &lt;FAS_RFK_SWA&gt; : ###FAS 1 Start###")</Script></Activity>
+<Activity id="4" ActivityType="5" name="FAS_63_DoublerRearViewBoard">
+<Rect left="414" top="218" right="514" bottom="250"/>
+<SubProcesses>
+<SubProcess id="FAS_63_DoublerRearViewBoard">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="PramDoppler" value="false"/>
+<Parameter id="PramRearViewTafel" value="true"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="5" name="FAS_100_TopViewBoards">
+<Rect left="570" top="167" right="670" bottom="199"/>
+<SubProcesses>
+<SubProcess id="FAS_100_TopViewBoards">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="Blackboard_vo_mi" value="true"/>
+<Parameter id="Blackboard_vo_li" value="true"/>
+<Parameter id="Blackboard_vo_re" value="true"/>
+<Parameter id="Blackboard_mi_li_st" value="false"/>
+<Parameter id="Blackboard_mi_re_st" value="false"/>
+<Parameter id="Blackboard_mi_li_li" value="false"/>
+<Parameter id="Blackboard_mi_re_li" value="false"/>
+<Parameter id="Blackboard_hi_mi" value="false"/>
+<Parameter id="Blackboard_hi_li" value="true"/>
+<Parameter id="Blackboard_hi_re" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="29" ActivityType="3" name="普通节点">
+<Rect left="706" top="323" right="806" bottom="355"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service 100 or 63 TopViewBoards move on position failed")
+-- 移动到工作位置</Script></Activity>
+<Activity id="30" ActivityType="3" name="isOK">
+<Rect left="414" top="323" right="514" bottom="355"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：等待。。。"/>
+<Script></Script></Activity>
+<Activity id="31" ActivityType="4" name="路由节点">
+<Rect left="604" top="269" right="636" bottom="301"/>
+</Activity>
+<Activity id="32" ActivityType="4" name="路由节点">
+<Rect left="449" top="270" right="481" bottom="302"/>
+</Activity>
+<Activity id="33" ActivityType="4" name="路由节点">
+<Rect left="249" top="107" right="281" bottom="139"/>
+</Activity>
+<Activity id="34" ActivityType="5" name="FAS_RV_BoardPositonCheck">
+<Rect left="414" top="394" right="514" bottom="426"/>
+<SubProcesses>
+<SubProcess id="FAS_RV_BoardPositonCheck">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="36" ActivityType="3" name="普通节点">
+<Rect left="708" top="394" right="808" bottom="426"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service 100 or 63 Boards not in positon")
+-- 标定板 未移动到指定位置</Script></Activity>
+<Activity id="37" ActivityType="5" name="FAS_83_Result_Coordinates">
+<Rect left="415" top="524" right="515" bottom="556"/>
+<SubProcesses>
+<SubProcess id="FAS_83_Result_Coordinates">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="fFAS_DopplerL_X_shared" ret="FAS_DopplerL_X_shared"/>
+<Parameter id="fFAS_DopplerL_Y_shared" ret="FAS_DopplerL_Y_shared"/>
+<Parameter id="fFAS_DopplerL_Z_shared" ret="FAS_DopplerL_Z_shared"/>
+<Parameter id="fFAS_DopplerR_X_shared" ret="FAS_DopplerR_X_shared"/>
+<Parameter id="fFAS_DopplerR_Y_shared" ret="FAS_DopplerR_Y_shared"/>
+<Parameter id="fFAS_DopplerR_Z_shared" ret="FAS_DopplerR_Z_shared"/>
+<Parameter id="fFAS_RearView_X_shared" ret="FAS_RearView_X_shared"/>
+<Parameter id="fFAS_RearView_Y_shared" ret="FAS_RearView_Y_shared"/>
+<Parameter id="fFAS_RearView_Z_shared" ret="FAS_RearView_Z_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="38" ActivityType="4" name="路由节点">
+<Rect left="343" top="522" right="375" bottom="554"/>
+</Activity>
+<Activity id="39" ActivityType="3" name="普通节点">
+<Rect left="414" top="456" right="514" bottom="488"/>
+<Script></Script></Activity>
+<Activity id="40" ActivityType="3" name="控制器：标定">
+<Rect left="416" top="587" right="516" bottom="619"/>
+<Line1Text Enable="1" Text="控制器：拍照"/>
+<Script></Script></Activity>
+<Activity id="41" ActivityType="3" name="普通节点">
+<Rect left="710" top="524" right="810" bottom="556"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service 83 Boards Coordinates")
+-- 多普勒 后视板 坐标</Script></Activity>
+<Activity id="42" ActivityType="5" name="c7_rfk">
+<Rect left="416" top="653" right="516" bottom="685"/>
+<SubProcesses>
+<SubProcess id="c7_rfk">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;RFKCalibration&quot;}"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="fFWE_Achsversatz_VA_shared"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="fFWE_Achsversatz_HA_shared"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="IDT_YPosRadhausVL_shared"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="IDT_YPosRadhausVR_shared"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="IDT_YPosRadhausHL_shared"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="IDT_YPosRadhausHR_shared"/>
+<Parameter id="fFAS_RearView_Z_korrekt" value="0" ret="fFAS_RearView_X_korrekt"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="43" ActivityType="5" name="FAS_40_LightingControl">
+<Rect left="417" top="779" right="517" bottom="811"/>
+<SubProcesses>
+<SubProcess id="FAS_40_LightingControl">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="bFAS_LDW_Beleuchtung_shared" value="true"/>
+<Parameter id="bFAS_RV_Beleuchtung_shared" value="false"/>
+<Parameter id="bFAS_TopView_Beleuchtung_shared" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="44" ActivityType="3" name="普通节点">
+<Rect left="708" top="779" right="808" bottom="811"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : 3 FAS Lighting Control  not  OK")
+-- FAS:灯光调节</Script></Activity>
+<Activity id="45" ActivityType="4" name="路由节点">
+<Rect left="250" top="778" right="282" bottom="810"/>
+</Activity>
+<Activity id="46" ActivityType="3" name="分支判定">
+<Rect left="418" top="842" right="518" bottom="874"/>
+<Script></Script></Activity>
+<Activity id="47" ActivityType="5" name="FAS_63_DoublerRearViewBoard">
+<Rect left="418" top="960" right="518" bottom="992"/>
+<SubProcesses>
+<SubProcess id="FAS_63_DoublerRearViewBoard">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="PramDoppler" value="false"/>
+<Parameter id="PramRearViewTafel" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="49" ActivityType="4" name="路由节点">
+<Rect left="249" top="843" right="281" bottom="875"/>
+</Activity>
+<Activity id="50" ActivityType="3" name="影像板驶入">
+<Rect left="570" top="108" right="670" bottom="140"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：倒车影像板驶入"/>
+<Script></Script></Activity>
+<Activity id="51" ActivityType="3" name="影像板驶入">
+<Rect left="413" top="170" right="513" bottom="202"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：倒车影像板驶入"/>
+<Script></Script></Activity>
+<Activity id="52" ActivityType="3" name="影像板基础位置">
+<Rect left="417" top="900" right="517" bottom="932"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：倒车影像板在基础位置"/>
+<Script></Script></Activity>
+<Activity id="53" ActivityType="3" name="影像板基础位置">
+<Rect left="584" top="842" right="684" bottom="874"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：倒车影像板在基础位置"/>
+<Script></Script></Activity>
+<Activity id="54" ActivityType="5" name="FAS_100_TopViewBoards">
+<Rect left="584" top="901" right="684" bottom="933"/>
+<SubProcesses>
+<SubProcess id="FAS_100_TopViewBoards">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="Blackboard_vo_mi" value="false"/>
+<Parameter id="Blackboard_vo_li" value="false"/>
+<Parameter id="Blackboard_vo_re" value="false"/>
+<Parameter id="Blackboard_mi_li_st" value="false"/>
+<Parameter id="Blackboard_mi_re_st" value="false"/>
+<Parameter id="Blackboard_mi_li_li" value="false"/>
+<Parameter id="Blackboard_mi_re_li" value="false"/>
+<Parameter id="Blackboard_hi_mi" value="false"/>
+<Parameter id="Blackboard_hi_li" value="false"/>
+<Parameter id="Blackboard_hi_re" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="56" ActivityType="4" name="路由节点">
+<Rect left="618" top="1015" right="650" bottom="1047"/>
+</Activity>
+<Activity id="57" ActivityType="4" name="路由节点">
+<Rect left="452" top="1016" right="484" bottom="1048"/>
+</Activity>
+<Activity id="58" ActivityType="3" name="普通节点">
+<Rect left="710" top="1076" right="810" bottom="1108"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service 100 or 63 TopViewBoards move on base position failed")
+--  移动到基础位置</Script></Activity>
+<Activity id="59" ActivityType="3" name="isOK">
+<Rect left="417" top="1077" right="517" bottom="1109"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：等待。。。"/>
+<Script></Script></Activity>
+<Activity id="60" ActivityType="3" name="Delay">
+<Rect left="418" top="1137" right="518" bottom="1169"/>
+<Script>engine.Delay(250)
+engine.println(" &lt;FAS_RFK_SWA&gt; : ###FAS 2 end###")</Script></Activity>
+<Activity id="61" ActivityType="5" name="FAS_RV_BoardPositonCheckGrundPos">
+<Rect left="419" top="1200" right="519" bottom="1232"/>
+<SubProcesses>
+<SubProcess id="FAS_RV_BoardPositonCheckGrundPos">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="62" ActivityType="3" name="普通节点">
+<Rect left="710" top="1199" right="810" bottom="1231"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service 100 or 63 Boards not in grund positon")
+-- 标定板 未移动到指定位置</Script></Activity>
+<Activity id="63" ActivityType="3" name="分支判定">
+<Rect left="419" top="1262" right="519" bottom="1294"/>
+<Script></Script></Activity>
+<Activity id="64" ActivityType="4" name="路由节点">
+<Rect left="250" top="1223" right="282" bottom="1255"/>
+</Activity>
+<Activity id="65" ActivityType="3" name="多普勒板">
+<Rect left="419" top="1323" right="519" bottom="1355"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：多普勒驶入"/>
+<Script></Script></Activity>
+<Activity id="66" ActivityType="5" name="FAS_63_DoublerRearViewBoard">
+<Rect left="419" top="1383" right="519" bottom="1415"/>
+<SubProcesses>
+<SubProcess id="FAS_63_DoublerRearViewBoard">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="PramDoppler" value="true"/>
+<Parameter id="PramRearViewTafel" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="67" ActivityType="3" name="普通节点">
+<Rect left="707" top="1382" right="807" bottom="1414"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service  63 doppler Boards move on position failed")
+-- 移动多普勒到工作位置</Script></Activity>
+<Activity id="68" ActivityType="5" name="FAS_Doppler_BoardPositonCheck">
+<Rect left="420" top="1448" right="520" bottom="1480"/>
+<SubProcesses>
+<SubProcess id="FAS_Doppler_BoardPositonCheck">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="69" ActivityType="3" name="普通节点">
+<Rect left="709" top="1448" right="809" bottom="1480"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service 100 or 63 Doppler Boards not in positon")
+-- 多普勒 未移动到指定位置</Script></Activity>
+<Activity id="70" ActivityType="5" name="FAS_83_Result_Coordinates">
+<Rect left="421" top="1511" right="521" bottom="1543"/>
+<SubProcesses>
+<SubProcess id="FAS_83_Result_Coordinates">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="fFAS_DopplerL_X_shared" ret="FAS_DopplerL_X_shared"/>
+<Parameter id="fFAS_DopplerL_Y_shared" ret="FAS_DopplerL_Y_shared"/>
+<Parameter id="fFAS_DopplerL_Z_shared" ret="FAS_DopplerL_Z_shared"/>
+<Parameter id="fFAS_DopplerR_X_shared" ret="FAS_DopplerR_X_shared"/>
+<Parameter id="fFAS_DopplerR_Y_shared" ret="FAS_DopplerR_Y_shared"/>
+<Parameter id="fFAS_DopplerR_Z_shared" ret="FAS_DopplerR_Z_shared"/>
+<Parameter id="fFAS_RearView_X_shared" ret="FAS_RearView_X_shared"/>
+<Parameter id="fFAS_RearView_Y_shared" ret="FAS_RearView_Y_shared"/>
+<Parameter id="fFAS_RearView_Z_shared" ret="FAS_RearView_Z_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="71" ActivityType="3" name="普通节点">
+<Rect left="708" top="1511" right="808" bottom="1543"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service 83 Boards Coordinates")
+-- 多普勒 后视板 坐标</Script></Activity>
+<Activity id="72" ActivityType="4" name="路由节点">
+<Rect left="248" top="1323" right="280" bottom="1355"/>
+</Activity>
+<Activity id="73" ActivityType="3" name="SWA 标定">
+<Rect left="420" top="1582" right="520" bottom="1614"/>
+<Line1Text Enable="1" Text="控制器：变道辅助校准"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : ###FAS 3 end### --- SWA Kali START")</Script></Activity>
+<Activity id="74" ActivityType="4" name="路由节点">
+<Rect left="247" top="1880" right="279" bottom="1912"/>
+</Activity>
+<Activity id="75" ActivityType="5" name="c7_swa">
+<Rect left="419" top="1758" right="519" bottom="1790"/>
+<SubProcesses>
+<SubProcess id="c7_swa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;SWAcalibration&quot;}"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="fFWE_Dackelwinkel_shared"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="fFWE_Achsversatz_VA_shared"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="fFWE_Achsversatz_HA_shared"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="IDT_YPosRadhausVL_shared"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="IDT_YPosRadhausVR_shared"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="IDT_YPosRadhausHL_shared"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="IDT_YPosRadhausHR_shared"/>
+<Parameter id="fFAS_DopplerL_X_shared" value="FAS_DopplerL_X_shared"/>
+<Parameter id="fFAS_DopplerL_Y_shared" value="FAS_DopplerL_Y_shared"/>
+<Parameter id="fFAS_DopplerL_Z_shared" value="FAS_DopplerL_Z_shared"/>
+<Parameter id="fFAS_DopplerR_X_shared" value="FAS_DopplerR_X_shared"/>
+<Parameter id="fFAS_DopplerR_Y_shared" value="FAS_DopplerR_Y_shared"/>
+<Parameter id="fFAS_DopplerR_Z_shared" value="FAS_DopplerR_Z_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="76" ActivityType="5" name="c7_gwa">
+<Rect left="530" top="1631" right="630" bottom="1663"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteRead&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="77" ActivityType="3" name="参数计算">
+<Rect left="529" top="1693" right="629" bottom="1725"/>
+<Script>fFWE_Dackelwinkel_shared = (string.byte(DMCDResultString_Prozessbytes_shared,12) - 128) * 0.1</Script></Activity>
+<Activity id="78" ActivityType="3" name="分支判定">
+<Rect left="419" top="1939" right="519" bottom="1971"/>
+<Script></Script></Activity>
+<Activity id="80" ActivityType="5" name="FAS_63_DoublerRearViewBoard">
+<Rect left="418" top="1871" right="518" bottom="1903"/>
+<SubProcesses>
+<SubProcess id="FAS_63_DoublerRearViewBoard">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="PramDoppler" value="false"/>
+<Parameter id="PramRearViewTafel" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="81" ActivityType="3" name="普通节点">
+<Rect left="699" top="1871" right="799" bottom="1903"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service  63  Doppler Boards move on base position failed")
+--  多普勒移动到基础位置</Script></Activity>
+<Activity id="82" ActivityType="3" name="多普勒基础位">
+<Rect left="419" top="1815" right="519" bottom="1847"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：多普勒基础位置"/>
+<Script></Script></Activity>
+<Activity id="83" ActivityType="5" name="FAS_62_NV_HeatingWireSwitch">
+<Rect left="419" top="2005" right="519" bottom="2037"/>
+<SubProcesses>
+<SubProcess id="FAS_62_NV_HeatingWireSwitch">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="Heizdraht" value="true"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="84" ActivityType="3" name="普通节点">
+<Rect left="418" top="2069" right="518" bottom="2101"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：等待。。。"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : #### FAS 4 Ende ####")</Script></Activity>
+<Activity id="86" ActivityType="4" name="路由节点">
+<Rect left="249" top="1994" right="281" bottom="2026"/>
+</Activity>
+<Activity id="87" ActivityType="3" name="普通节点">
+<Rect left="703" top="2004" right="803" bottom="2036"/>
+<Script>engine.println(" &lt;FAS_RFK_SWA&gt; : FAS Service  62  nss nightvision switch  failed")
+--  夜视灯丝开关</Script></Activity>
+<Activity id="88" ActivityType="3" name="设置同步量">
+<Rect left="416" top="719" right="516" bottom="751"/>
+<Script>engine.SharedVarSet("_DInt_RFK_Bildaufnahme_beendet",1)</Script></Activity>
+<Activity id="89" ActivityType="3" name="设置同步量">
+<Rect left="418" top="2136" right="518" bottom="2168"/>
+<Script>engine.SharedVarSet("_a_flag3",1)</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="51" type="7">
+<Expression>$KA2</Expression></Transition>
+<Transition StartId="3" EndId="50" type="7">
+<Expression>$KA6</Expression></Transition>
+<Transition StartId="3" EndId="33" type="0">
+</Transition>
+<Transition StartId="4" EndId="32" type="0">
+</Transition>
+<Transition StartId="6" EndId="31" type="0">
+</Transition>
+<Transition StartId="30" EndId="29" type="0">
+</Transition>
+<Transition StartId="30" EndId="34" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="31" EndId="32" type="0">
+</Transition>
+<Transition StartId="32" EndId="30" type="0">
+</Transition>
+<Transition StartId="33" EndId="45" type="0">
+</Transition>
+<Transition StartId="34" EndId="36" type="0">
+</Transition>
+<Transition StartId="34" EndId="39" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="37" EndId="41" type="0">
+</Transition>
+<Transition StartId="37" EndId="40" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="38" EndId="40" type="0">
+</Transition>
+<Transition StartId="39" EndId="37" type="7">
+<Expression>$KA2</Expression></Transition>
+<Transition StartId="39" EndId="38" type="0">
+</Transition>
+<Transition StartId="40" EndId="42" type="0">
+</Transition>
+<Transition StartId="42" EndId="88" type="0">
+</Transition>
+<Transition StartId="43" EndId="44" type="0">
+</Transition>
+<Transition StartId="43" EndId="46" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="45" EndId="43" type="0">
+</Transition>
+<Transition StartId="46" EndId="52" type="7">
+<Expression>$KA2</Expression></Transition>
+<Transition StartId="46" EndId="53" type="7">
+<Expression>$KA6</Expression></Transition>
+<Transition StartId="46" EndId="49" type="0">
+</Transition>
+<Transition StartId="47" EndId="57" type="0">
+</Transition>
+<Transition StartId="49" EndId="64" type="0">
+</Transition>
+<Transition StartId="50" EndId="6" type="0">
+</Transition>
+<Transition StartId="51" EndId="4" type="0">
+</Transition>
+<Transition StartId="52" EndId="47" type="0">
+</Transition>
+<Transition StartId="53" EndId="54" type="0">
+</Transition>
+<Transition StartId="54" EndId="56" type="0">
+</Transition>
+<Transition StartId="56" EndId="57" type="0">
+</Transition>
+<Transition StartId="57" EndId="59" type="0">
+</Transition>
+<Transition StartId="59" EndId="58" type="0">
+</Transition>
+<Transition StartId="59" EndId="60" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="60" EndId="61" type="0">
+</Transition>
+<Transition StartId="61" EndId="62" type="0">
+</Transition>
+<Transition StartId="61" EndId="63" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="63" EndId="65" type="7">
+<Expression>$7Y1|$7Y5</Expression></Transition>
+<Transition StartId="63" EndId="72" type="0">
+</Transition>
+<Transition StartId="64" EndId="63" type="0">
+</Transition>
+<Transition StartId="65" EndId="66" type="0">
+</Transition>
+<Transition StartId="66" EndId="67" type="0">
+</Transition>
+<Transition StartId="66" EndId="68" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="68" EndId="69" type="0">
+</Transition>
+<Transition StartId="68" EndId="70" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="70" EndId="71" type="0">
+</Transition>
+<Transition StartId="70" EndId="73" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="72" EndId="74" type="0">
+</Transition>
+<Transition StartId="73" EndId="75" type="0">
+</Transition>
+<Transition StartId="74" EndId="78" type="0">
+</Transition>
+<Transition StartId="75" EndId="82" type="0">
+</Transition>
+<Transition StartId="76" EndId="77" type="0">
+</Transition>
+<Transition StartId="77" EndId="75" type="0">
+</Transition>
+<Transition StartId="78" EndId="83" type="7">
+<Expression>$9R1</Expression></Transition>
+<Transition StartId="78" EndId="86" type="0">
+</Transition>
+<Transition StartId="80" EndId="81" type="0">
+</Transition>
+<Transition StartId="80" EndId="78" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="82" EndId="80" type="0">
+</Transition>
+<Transition StartId="83" EndId="84" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="83" EndId="87" type="0">
+</Transition>
+<Transition StartId="84" EndId="89" type="0">
+</Transition>
+<Transition StartId="86" EndId="84" type="0">
+</Transition>
+<Transition StartId="88" EndId="43" type="0">
+</Transition>
+<Transition StartId="89" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

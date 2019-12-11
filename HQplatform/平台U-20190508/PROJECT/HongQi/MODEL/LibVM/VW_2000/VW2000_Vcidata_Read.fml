@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="vciExData" type="8" data="" description="vw2000 protocal select Data"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to   connect ECU of vw2000  
+input parameter:ECU_Handle
+output parameter:vciExData
+
+01/21/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+vciExData = ""
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return ""
+end
+
+#COMMEX ECU_Handle -1 0x31 0xb8 0x00 0x00
+
+if(0 == engine.LastError ) then
+
+vciExData = @0-;
+
+end;
+
+
+
+
+</Script></Function>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="7" module="Test" version="" description="" engine="VMDSEngine" language="lua">
+<Imports>
+<Model id="LibGeneral" module="LibGeneral"/>
+</Imports>
+<miscs>
+<misc name="Dtc_list_F30.ini"/>
+</miscs>
+
+<Processes>
+<Process id="ECU_ABA"/>
+<Process id="ECU_ABS"/>
+<Process id="ECU_EPS"/>
+<Process id="ECU_Test"/>
+<Process id="main"/>
+<Process id="thread1"/>
+<Process id="thread2"/>
+<Process id="thread3"/>
+</Processes>
+</Model>

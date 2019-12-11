@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiDeviceFunction" type="8" data=""/>
+<Variable id="comObjectName" type="8" data=""/>
+<Variable id="instanceName" type="8" data=""/>
+<Variable id="inforReportBufferSize" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="gdiComObject" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>gdiComObject,gdiError = engine.GDI_CreateComObject(gdiDeviceFunction, comObjectName, instanceName, inforReportBufferSize)
+print("CreateComObjectResult of "..instanceName.." is "..tostring(gdiError))</Script></Function>
+

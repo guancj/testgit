@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="VW2000_Stellglied_selektiv_Stop">
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="RecvTel" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this is used to stop actutor selective
+input parameter:ECU_Handle;
+output parameter:RecvTel;
+
+01/14/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+RecvTel = "";
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return RecvTel
+end
+
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x07
+
+
+if(0 ~= engine.LastError) then return RecvTel ;end;
+
+RecvTel = @0-</Script></Function>
+

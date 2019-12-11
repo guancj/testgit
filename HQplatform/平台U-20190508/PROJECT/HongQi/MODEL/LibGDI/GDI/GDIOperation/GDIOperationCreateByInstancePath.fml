@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="instancePath" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiOperation" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>--gdiDeviceFunctionPath = getPath(instancePath)
+gdiDeviceFunction = engine.GDI_GetDeviceFunctionByInstancePath(gdiDeviceFunctionPath)
+gdiOperation,gdiError= engine.GDI_CreateOperation(gdiDeviceFunction, operationName, instanceName)
+print("creatDeviceOperationResult of "..instanceName.." is "..tostring(gdiError))</Script></Function>
+

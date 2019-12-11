@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ECU_NegativeResponseValues">
+<Inputs>
+<Variable id="NegativeResonseValue" type="3" data="00" description="如0x11"/>
+</Inputs>
+<Outputs>
+<Variable id="responseCode" type="8" data="" description="如 &apos;serviceNotSupported&apos;"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  Translate Negative Code 
+input parameter:NegativeResonseValue
+output parameter:responseCode
+
+11/08/2016     created by viforce
+******************************************************************************--]]
+
+local tmpStatValue = "ISOSAEReserved "
+if(NegativeResonseValue == 0x11) then
+	tmpStatValue = "serviceNotSupported";
+elseif(NegativeResonseValue == 0x12) then
+	tmpStatValue = "subFunctionNotSupported";
+elseif(NegativeResonseValue == 0x13) then
+	tmpStatValue = "incorrectMessageLengthOrInvalidFormat";
+elseif(NegativeResonseValue == 0x14) then
+	tmpStatValue = "responseTooLong";
+elseif(NegativeResonseValue == 0x21) then
+	tmpStatValue = "busyRepeatRequest";
+elseif(NegativeResonseValue == 0x22) then
+	tmpStatValue = "conditionsNotCorrect";
+elseif(NegativeResonseValue == 0x24) then
+	tmpStatValue = "requestSequenceError";
+elseif(NegativeResonseValue == 0x31) then
+	tmpStatValue = "requestOutOfRange";
+elseif(NegativeResonseValue == 0x33) then
+	tmpStatValue = "securityAccessDenied";
+elseif(NegativeResonseValue == 0x35) then
+	tmpStatValue = "invalidKey";
+elseif(NegativeResonseValue == 0x36) then
+	tmpStatValue = "exceedNumberOfAttempts";
+elseif(NegativeResonseValue == 0x37) then
+	tmpStatValue = "requiredTimeDelayNotExpired";
+elseif(NegativeResonseValue == 0x70) then
+	tmpStatValue = "uploadDownloadNotAccepted";
+elseif(NegativeResonseValue == 0x71) then
+	tmpStatValue = "transferDataSuspended";
+elseif(NegativeResonseValue == 0x72) then
+	tmpStatValue = "generalProgrammingFailure";
+elseif(NegativeResonseValue == 0x73) then
+	tmpStatValue = "wrongBlockSequenceCounter";
+elseif(NegativeResonseValue == 0x78) then
+	tmpStatValue = "requestCorrectlyReceived-ResponsePending";
+elseif(NegativeResonseValue == 0x7E) then
+	tmpStatValue = "subFunctionNotSupportedInActiveSession";
+elseif(NegativeResonseValue == 0x7F) then
+	tmpStatValue = "serviceNotSupportedInActiveSession";
+elseif(NegativeResonseValue == 0x81) then
+	tmpStatValue = "rpmTooHigh";
+elseif(NegativeResonseValue == 0x82) then
+	tmpStatValue = "rpmTooLow";
+elseif(NegativeResonseValue == 0x83) then
+	tmpStatValue = "engineIsRunning";
+elseif(NegativeResonseValue == 0x84) then
+	tmpStatValue = "engineIsNotRunning";
+elseif(NegativeResonseValue == 0x85) then
+	tmpStatValue = "engineRunTimeTooLow";
+elseif(NegativeResonseValue == 0x86) then
+	tmpStatValue = "temperatureTooHigh";
+elseif(NegativeResonseValue == 0x87) then
+	tmpStatValue = "temperatureTooLow";
+elseif(NegativeResonseValue == 0x88) then
+	tmpStatValue = "vehicleSpeedTooHigh";
+elseif(NegativeResonseValue == 0x89) then
+	tmpStatValue = "vehicleSpeedTooLow";
+elseif(NegativeResonseValue == 0x8A) then
+	tmpStatValue = "throttle/PedalTooHigh";
+elseif(NegativeResonseValue == 0x8B) then
+	tmpStatValue = "throttle/PedalTooLow";
+elseif(NegativeResonseValue == 0x8C) then
+	tmpStatValue = "transmissionRangeNotInNeutral";
+elseif(NegativeResonseValue == 0x8D) then
+	tmpStatValue = "transmissionRangeNotInGear";
+elseif(NegativeResonseValue == 0x8F) then
+	tmpStatValue = "brakeSwitch(es)NotClosed (Brake Pedal not pressed or not applied)";
+elseif(NegativeResonseValue == 0x90) then
+	tmpStatValue = "shifterLeverNotInPark";
+elseif(NegativeResonseValue == 0x91) then
+	tmpStatValue = "torqueConverterClutchLocked";
+elseif(NegativeResonseValue == 0x92) then
+	tmpStatValue = "voltageTooHigh";
+elseif(NegativeResonseValue == 0x93) then
+	tmpStatValue = "voltageTooLow";
+end
+
+
+responseCode = tmpStatValue;
+
+
+
+
+</Script></Function>
+

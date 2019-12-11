@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="SWE_68_Result_ARE_ARE_02" flags="1" block="4" ptbtext="DEP1368" group="115" pbltext="DEP1390">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="322" top="67" right="422" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="325" top="1270" right="425" bottom="1302"/>
+<Script></Script></End>
+<Activities>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="671" top="1270" right="703" bottom="1302"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="638" top="249" right="738" bottom="281"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="OK">
+<Rect left="320" top="311" right="420" bottom="343"/>
+<Script>isOK = true;
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : Result get OK")
+</Script></Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="323" top="136" right="423" bottom="168"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="639" top="137" right="739" bottom="169"/>
+<Script>engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="31" ActivityType="3" name="数据收取">
+<Rect left="319" top="250" right="419" bottom="282"/>
+<Script>if(Ret == 1) then
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_Azitmut --&gt;"..tostring(DFloat_ARE_Azitmut))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_02_Azitmut --&gt;"..tostring(DFloat_ARE_02_Azitmut))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_Elevation --&gt;"..tostring(DFloat_ARE_Elevation))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_02_Elevation --&gt;"..tostring(DFloat_ARE_02_Elevation))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_Azitmut_Pre --&gt;"..tostring(DFloat_ARE_Azitmut_Pre))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_02_Azitmut_Pre --&gt;"..tostring(DFloat_ARE_02_Azitmut_Pre))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_Elevation_Pre --&gt;"..tostring(DFloat_ARE_Elevation_Pre))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DFloat_ARE_02_Elevation_Pre --&gt;"..tostring(DFloat_ARE_02_Elevation_Pre))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DInt_ARE_Ergebnis --&gt;"..tostring(DInt_ARE_Ergebnis))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DInt_ARE_02_Ergebnis --&gt;"..tostring(DInt_ARE_02_Ergebnis))
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : DInt_ARE_ARE_02_Gesamtergebnis --&gt;"..tostring(DInt_ARE_ARE_02_Gesamtergebnis))
+end</Script></Activity>
+<Activity id="32" ActivityType="3" name="Delay">
+<Rect left="471" top="197" right="571" bottom="229"/>
+<Script>engine.Delay(100)</Script></Activity>
+<Activity id="33" ActivityType="3" name="finish_flag">
+<Rect left="471" top="249" right="571" bottom="281"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;SWE_68_Result_ARE_ARE_02&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="42" ActivityType="13" name="SWE_68_Result_ARE_ARE_02">
+<Rect left="319" top="196" right="419" bottom="228"/>
+<Line2Text Enable="1" Text="大灯调整：主动巡航结果"/>
+<FunctionRef id="SWE_68_Result_ARE_ARE_02" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="ResAccAzimut" value="0" ret="DFloat_ARE_Azitmut"/>
+<Parameter id="ResAccAzim_Slave" value="0" ret="DFloat_ARE_02_Azitmut"/>
+<Parameter id="ResAccElevation" value="0" ret="DFloat_ARE_Elevation"/>
+<Parameter id="ResAccElev_Slave" value="0" ret="DFloat_ARE_02_Elevation"/>
+<Parameter id="ResAccAzimutPre" value="0" ret="DFloat_ARE_Azitmut_Pre"/>
+<Parameter id="ResAccAziPreSLAV" value="0" ret="DFloat_ARE_02_Azitmut_Pre"/>
+<Parameter id="ResAccElevPre" value="0" ret="DFloat_ARE_Elevation_Pre"/>
+<Parameter id="ResAccElevPreSLA" value="0" ret="DFloat_ARE_02_Elevation_Pre"/>
+<Parameter id="ResultAcc" value="0" ret="DInt_ARE_Ergebnis"/>
+<Parameter id="ResultAccSlave" value="0" ret="DInt_ARE_02_Ergebnis"/>
+<Parameter id="ResultAccGESAMT" value="0" ret="DInt_ARE_ARE_02_Gesamtergebnis"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="43" ActivityType="3" name="统计1">
+<Rect left="321" top="376" right="421" bottom="408"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_Azitmut)
+engine.LastError = 0</Script><assessment no="11" name="DEP1404" type="8" flags="97"/>
+</Activity>
+<Activity id="44" ActivityType="3" name="统计2">
+<Rect left="321" top="441" right="421" bottom="473"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_Azitmut_Pre)
+engine.LastError = 0</Script><assessment no="12" name="DEP1405" type="8" flags="97"/>
+</Activity>
+<Activity id="45" ActivityType="3" name="统计3">
+<Rect left="321" top="512" right="421" bottom="544"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_Elevation)
+engine.LastError = 0</Script><assessment no="13" name="DEP1406" type="8" flags="97"/>
+</Activity>
+<Activity id="46" ActivityType="3" name="统计4">
+<Rect left="321" top="577" right="421" bottom="609"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_Elevation_Pre)
+engine.LastError = 0</Script><assessment no="14" name="DEP1407" type="8" flags="97"/>
+</Activity>
+<Activity id="47" ActivityType="3" name="统计5">
+<Rect left="322" top="646" right="422" bottom="678"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_02_Azitmut)
+engine.LastError = 0</Script><assessment no="15" name="DEP1408" type="8" flags="97"/>
+</Activity>
+<Activity id="48" ActivityType="3" name="统计6">
+<Rect left="322" top="711" right="422" bottom="743"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_02_Azitmut_Pre)
+engine.LastError = 0</Script><assessment no="16" name="DEP1409" type="8" flags="97"/>
+</Activity>
+<Activity id="49" ActivityType="3" name="统计7">
+<Rect left="321" top="774" right="421" bottom="806"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_02_Elevation)
+engine.LastError = 0</Script><assessment no="17" name="DEP1410" type="8" flags="97"/>
+</Activity>
+<Activity id="50" ActivityType="3" name="统计8">
+<Rect left="321" top="839" right="421" bottom="871"/>
+<Script>engine.StatValue= tostring(DFloat_ARE_02_Elevation_Pre)
+engine.LastError = 0</Script><assessment no="18" name="DEP1411" type="8" flags="97"/>
+</Activity>
+<Activity id="51" ActivityType="3" name="统计9">
+<Rect left="321" top="903" right="421" bottom="935"/>
+<Script>engine.StatValue= tostring(DInt_ARE_Ergebnis)
+engine.LastError = 0</Script><assessment no="19" name="DEP1412" type="8" flags="97"/>
+</Activity>
+<Activity id="52" ActivityType="3" name="统计10">
+<Rect left="321" top="964" right="421" bottom="996"/>
+<Script>engine.StatValue= tostring(DInt_ARE_02_Ergebnis)
+engine.LastError = 0</Script><assessment no="20" name="DEP1413" type="8" flags="97"/>
+</Activity>
+<Activity id="53" ActivityType="3" name="结果判断">
+<Rect left="322" top="1030" right="422" bottom="1062"/>
+<Script>if(DInt_ARE_Ergebnis == 0) then
+isOK = true;
+engine.LastError = 0
+engine.StatValue = "Successfully set"
+else
+isOK = false;
+engine.LastError = 1
+engine.StatValue = "not set"
+end</Script><assessment no="21" name="DEP1412" type="8" flags="97"/>
+</Activity>
+<Activity id="54" ActivityType="3" name="结果判断">
+<Rect left="323" top="1091" right="423" bottom="1123"/>
+<Script>if(DInt_ARE_02_Ergebnis == 0) then
+isOK = true;
+engine.LastError = 0
+engine.StatValue = "Successfully set"
+else
+isOK = false;
+engine.LastError = 1
+engine.StatValue = "not set"
+end</Script><assessment no="22" name="DEP1413" type="8" flags="97"/>
+</Activity>
+<Activity id="55" ActivityType="3" name="结果判断">
+<Rect left="324" top="1157" right="424" bottom="1189"/>
+<Script>if(DInt_ARE_ARE_02_Gesamtergebnis == 0) then
+isOK = true;
+engine.LastError = 0
+engine.StatValue = "Successfully set"
+else
+isOK = false;
+engine.LastError = 1
+engine.StatValue = "not set"
+end</Script><assessment no="23" name="DEP1414" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="43" type="0">
+</Transition>
+<Transition StartId="26" EndId="42" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="31" EndId="23" type="0">
+</Transition>
+<Transition StartId="31" EndId="33" type="1">
+<Expression>Ret ~= 1</Expression></Transition>
+<Transition StartId="32" EndId="42" type="0">
+</Transition>
+<Transition StartId="33" EndId="32" type="0">
+</Transition>
+<Transition StartId="33" EndId="21" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="42" EndId="31" type="0">
+</Transition>
+<Transition StartId="43" EndId="44" type="0">
+</Transition>
+<Transition StartId="44" EndId="45" type="0">
+</Transition>
+<Transition StartId="45" EndId="46" type="0">
+</Transition>
+<Transition StartId="46" EndId="47" type="0">
+</Transition>
+<Transition StartId="47" EndId="48" type="0">
+</Transition>
+<Transition StartId="48" EndId="49" type="0">
+</Transition>
+<Transition StartId="49" EndId="50" type="0">
+</Transition>
+<Transition StartId="50" EndId="51" type="0">
+</Transition>
+<Transition StartId="51" EndId="52" type="0">
+</Transition>
+<Transition StartId="52" EndId="53" type="0">
+</Transition>
+<Transition StartId="53" EndId="54" type="0">
+</Transition>
+<Transition StartId="54" EndId="55" type="0">
+</Transition>
+<Transition StartId="55" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

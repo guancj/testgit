@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="AsvListe" type="8" data="" description="e.g &quot;79-4GD-2017.03.22-955.xml&quot;"/>
+<Variable id="DL24Path" type="8" data="" description="e.g &quot;E:\\DL24\\79-150-2015.08.07-67\\&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="HeaderInfo" type="8" data=""/>
+<Variable id="Fahrzeugklasse" type="8" data=""/>
+<Variable id="Werk" type="8" data=""/>
+<Variable id="Linie" type="8" data=""/>
+<Variable id="Version" type="8" data=""/>
+<Variable id="Ersteller" type="8" data=""/>
+<Variable id="Dateiname" type="8" data=""/>
+<Variable id="DatumZeit" type="8" data=""/>
+<Variable id="StatResult" type="3" data="0"/>
+<Variable id="StatTextValue" type="8" data=""/>
+<Variable id="StatErrorCode" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+AsvListe - Dateiname der ASV-Liste
+DL24Path - Pfad zu den ASV / ZDC Dateien (werden evtl. ine ien anderes Verzeichnis per RSYNC uebertragen)
+XmlHndl - XML-Handle ASV-Liste
+HeaderInfo - Kopfdaten der ASV-Liste als String formatiert
+Fahrzeugklasse - Fahrzeugklasse aus Header der ASV-Liste
+Werk - Werk aus Header der ASV-Liste
+Linie - Montagelinie aus Header der ASV-Liste
+Version - Version der ASV-Liste
+Ersteller - Ersteller der ASV-Liste
+Dateiname - Dateiname ASV-Liste
+DatumZeit - Datum und Zeit Erstellung ASV-Liste
+
+input parameter:AsvListe,DL24Path
+output parameter:HeaderInfo,Fahrzeugklasse,Werk,Linie,Version,Ersteller,Dateiname,DatumZeit,StatResult,StatTextValue,StatErrorCode
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+-- return value
+HeaderInfo = ""
+Fahrzeugklasse = ""
+Werk = ""
+Linie = ""
+Version = ""
+Ersteller = ""
+Dateiname = ""
+DatumZeit = ""
+StatResult = -1
+StatTextValue = ""
+StatErrorCode = -1
+-- return value
+
+local xmlHndl = XmlDocment()
+local errFlag = 0
+
+local xmlPath = "/AsvListe"
+local xmlTagKopfdaten = "Kopfdaten"
+local xmlTagFahrzeugklasse = "FKL"
+local xmlTagWerk = "Werk"
+local xmlTagLinie = "Linie"
+local xmlTagVersion = "Version"
+local xmlTagErsteller = "Ersteller"
+local xmlTagDateinameAsvListe = "ASVRelease"
+local xmlTagDatumZeitErstellung = "DatumZeitErstellung"
+
+ASVListfile = DL24Path .. "\\" .. ASVListfile
+if(false == xmlHndl.load(ASVListfile)) then
+	print("!!!load xml file err :" .. tostring(ASVListfile))
+	engine.LastError = 1
+	errFlag = 1986
+else
+	-- FKL
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagFahrzeugklasse)
+	if(tmpbuf ~= nil) then
+		Fahrzeugklasse = tmpbuf.text
+	else
+		Fahrzeugklasse = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagFahrzeugklasse) .. ":" .. tostring(Fahrzeugklasse) .. "/"
+	-- Werk
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagWerk)
+	if(tmpbuf ~= nil) then
+		Werk = tmpbuf.text
+	else
+		Werk = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagWerk) .. ":" .. tostring(Werk) .. "/"
+	-- Linie
+	-- tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagLinie)
+	-- if(tmpbuf ~= nil) then
+	-- 	Linie = tmpbuf.text
+	-- else
+	-- 	Linie = ""
+	-- end
+	-- HeaderInfo = HeaderInfo .. tostring(xmlTagLinie) .. ":" .. tostring(Linie) .. "/"
+	-- Ersteller
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagErsteller)
+	if(tmpbuf ~= nil) then
+		Ersteller = tmpbuf.text
+	else
+		Ersteller = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagErsteller) .. ":" .. tostring(Ersteller) .. "/"	
+	-- ASVRelease
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagDateinameAsvListe)
+	if(tmpbuf ~= nil) then
+		Dateiname = tmpbuf.text
+	else
+		Dateiname = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagDateinameAsvListe) .. ":" .. tostring(Dateiname) .. "/"	
+	-- DatumZeitErstellung
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagDatumZeitErstellung)
+	if(tmpbuf ~= nil) then
+		DatumZeit = tmpbuf.text
+	else
+		DatumZeit = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagDatumZeitErstellung) .. ":" .. tostring(DatumZeit) .. "/"		
+end
+
+print("HeaderInfo: " .. tostring(HeaderInfo))
+
+if(engine.LastError == 0) then
+	engine.StatValue = HeaderInfo
+    StatErrorCode = 0
+    StatTextValue = HeaderInfo
+    StatResult = 0		
+else
+	if(errFlag == 1986) then
+		engine.StatValue = LibVW.DL24_Errflag2Statstr(1986,"")
+		StatErrorCode = 1
+		StatTextValue = LibVW.DL24_Errflag2Statstr(1986,"")
+		StatResult = 1
+	else
+		engine.StatValue = HeaderInfo
+		StatErrorCode = 1
+		StatTextValue = ""
+		StatResult = 1
+	end
+end</Script></Function>
+

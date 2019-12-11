@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="StringTestBitInByte">
+<Inputs>
+<Variable id="SrcString" type="8" data="&quot;&quot;"/>
+<Variable id="BytePosition" type="3" data="0"/>
+<Variable id="BitPosition" type="3" data="0"/>
+<Variable id="Log" type="8" data="&quot;&quot;" description="Log 描述"/>
+</Inputs>
+<Outputs>
+<Variable id="Result" type="3" data="0" description="0 or 1"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  String Test In Byte
+input parameter:SrcString,BytePosition,BitPosition,Log
+output parameter:Result
+01/12/2017     created by viforce
+******************************************************************************--]]
+engine.println(tostring(Log) .. "BytePosition" .. tostring(BytePosition))
+engine.println(tostring(Log) .. "BitPosition" .. tostring(BitPosition))
+if(SrcString ~= nil  and SrcString ~= "")  then
+	local srcbinString = SrcString
+	local value = string.byte(srcbinString,BytePosition + 1)
+	local TestBit = math.pow(2,BitPosition)
+	Result = bit32.band(value,TestBit)
+	engine.println(tostring(Log).."Result TestBit :"..tostring(Result))
+else
+	engine.println(tostring(Log).."SrcString not valid :"..tostring(SrcString))
+	engine.LastError = 1
+end</Script></Function>
+

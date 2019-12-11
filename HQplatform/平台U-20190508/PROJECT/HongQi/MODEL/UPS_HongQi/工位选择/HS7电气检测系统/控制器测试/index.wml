@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Workplace id="GateWay">
+</Workplace>
+<Workplace id="EMS">
+</Workplace>
+<Workplace id="AT">
+</Workplace>
+<Workplace id="EGSM">
+</Workplace>
+<Workplace id="ACM">
+</Workplace>
+<Workplace id="ACU">
+</Workplace>
+<Workplace id="ESP">
+</Workplace>
+<Workplace id="SAS">
+</Workplace>
+<Workplace id="EPS">
+</Workplace>
+<Workplace id="TOD">
+</Workplace>
+<Workplace id="AirS">
+</Workplace>
+<Workplace id="DMSCU">
+</Workplace>
+<Workplace id="PDC">
+</Workplace>
+<Workplace id="AVM">
+</Workplace>
+<Workplace id="IFC">
+</Workplace>
+<Workplace id="ADV">
+</Workplace>
+<Workplace id="BSD">
+</Workplace>
+<Workplace id="PDCU">
+</Workplace>
+<Workplace id="DDCU">
+</Workplace>
+<Workplace id="RLDCU">
+</Workplace>
+<Workplace id="RRDCU">
+</Workplace>
+<Workplace id="DSCU">
+</Workplace>
+<Workplace id="SCM">
+</Workplace>
+<Workplace id="T-BOX">
+</Workplace>
+<Workplace id="AC">
+</Workplace>
+<Workplace id="BCM1">
+</Workplace>
+<Workplace id="BCM2">
+</Workplace>
+<Workplace id="PEPS">
+</Workplace>
+<Workplace id="PLGM">
+</Workplace>
+<Workplace id="ACP_F">
+</Workplace>
+<Workplace id="ACP_R">
+</Workplace>
+<Workplace id="IVI">
+</Workplace>
+<Workplace id="DVR">
+</Workplace>
+<Workplace id="SCCU">
+</Workplace>
+<Workplace id="ALS">
+</Workplace>
+</children>
+</Workplace>

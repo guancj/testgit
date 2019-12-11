@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="IDT_AUDI" code="">
+<Workplaces>
+<Workplace id="IDT_FAS_AUDI"/>
+<Workplace id="IDT_FWE_AUDI_V108"/>
+<Workplace id="IDT_HUP_AUDI"/>
+<Workplace id="IDT_SWE_AUDI_V110"/>
+</Workplaces>
+</Workplace>

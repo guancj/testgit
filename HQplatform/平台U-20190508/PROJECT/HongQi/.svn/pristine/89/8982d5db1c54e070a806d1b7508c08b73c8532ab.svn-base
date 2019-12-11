@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FAS_100_TopViewBoards" description="service 100">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="Tafel_vo_mi" type="11" data="false"/>
+<Variable id="Tafel_vo_li" type="11" data="false"/>
+<Variable id="Tafel_vo_re" type="11" data="false"/>
+<Variable id="Tafel_mi_li_st" type="11" data="false"/>
+<Variable id="Tafel_mi_re_st" type="11" data="false"/>
+<Variable id="Tafel_mi_li_li" type="11" data="false"/>
+<Variable id="Tafel_mi_re_li" type="11" data="false"/>
+<Variable id="Tafel_hi_mi" type="11" data="false"/>
+<Variable id="Tafel_hi_li" type="11" data="false"/>
+<Variable id="Tafel_hi_re" type="11" data="false"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 100
+input parameter:pHndl,IDT_Timeout,Tafel_vo_mi,Tafel_vo_li,Tafel_vo_re,Tafel_mi_li_st,Tafel_mi_re_st,Tafel_mi_li_li,
+                        Tafel_mi_re_li,Tafel_hi_mi,Tafel_hi_li,Tafel_hi_re
+output parameter :ret;
+
+12/25/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00"
+local TempByte5 = 0 
+local TempByte6 = 0
+local TempByte7 = 0
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x64");    -- 设置service号,第2字节
+
+if(Tafel_vo_mi) then   -- Blackboard front center
+  TempByte5 = 1;  
+end
+
+if(Tafel_vo_li) then   -- Blackboard front left 
+  TempByte5 = TempByte5 + 2;
+end
+
+if(Tafel_vo_re) then   -- Blackboard front right
+  TempByte5 = TempByte5 + 4;
+end
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(TempByte5)); 
+
+if(Tafel_mi_li_st) then -- Blackboard standing left
+  TempByte6 = 1;
+end
+
+if(Tafel_mi_re_st) then   -- Blackboard standing right
+  TempByte6 = TempByte6 + 2;
+end
+
+if(Tafel_mi_li_li) then    -- Blackboard lying on the left
+  TempByte6 = TempByte6 + 4;
+end
+
+if(Tafel_mi_re_li) then    -- Blackboard lying right
+  TempByte6 = TempByte6 + 8;
+end
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(TempByte6)); 
+
+if(Tafel_hi_mi) then   -- Blackboard Rear center
+  TempByte7 = 1;  
+end
+
+if(Tafel_hi_li) then   -- Blackboard Rear left 
+  TempByte7 = TempByte7 + 2;
+end
+
+if(Tafel_hi_re) then   -- Blackboard Rear right
+  TempByte7 = TempByte7 + 4;
+end
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(TempByte7)); 
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

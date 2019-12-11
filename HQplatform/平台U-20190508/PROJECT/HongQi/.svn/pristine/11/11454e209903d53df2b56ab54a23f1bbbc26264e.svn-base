@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="PBL_Result">
+<Inputs>
+<Variable id="PTB_Nr" type="3" data="0" description="Test Block Number"/>
+<Variable id="PBL_Nr" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="PBL_Result" type="3" data="0" description="0 ,OK ;~0 NOK  ;-15 未找到"/>
+</Outputs>
+<Script>--[[ ********************************************************************************************
+these  codes are used to  Get pbl result 
+input prameter : PTB_Nr,PBL_Nr
+output prameter: PBL_Result
+
+4/08/2016     created by viforce
+11/08/2016     created by viforce
+*************************************************************************************************--]]
+
+local StatisticTestResult = engine.GetResults();
+local i,j;
+local PtbTest,PblTest;
+PBL_Result = -15;
+
+if(#StatisticTestResult ~= 0) then
+
+--engine.println(table2xmlstring("Gongshu",StatisticTestResult));
+--dump("Gongshu",StatisticTestResult);
+
+  for i=1, #StatisticTestResult do 
+PtbTest = StatisticTestResult[i];
+
+    if(PtbTest.ptbno == PTB_Nr ) then 
+
+      for j=1, #PtbTest.pbl do 
+          PblTest = PtbTest.pbl[j];
+        if(PblTest.pblno == PBL_Nr) then 
+           PBL_Result = PblTest.result ;
+        end;
+		
+      end;
+    end;
+
+  end;
+
+
+end;</Script></Function>
+

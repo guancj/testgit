@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="获取VmtId的值，返回格式：&quot;\xA0&quot;">
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回engine.VmtId的值,格式：&quot;\xA0&quot;"/>
+</Outputs>
+<Script>ret = string.char(engine.VmtId);</Script></Function>
+

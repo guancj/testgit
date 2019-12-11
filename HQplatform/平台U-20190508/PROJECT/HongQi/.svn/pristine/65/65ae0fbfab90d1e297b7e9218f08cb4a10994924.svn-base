@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="XML_BGW_Berechnung" flags="1" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<ProcessParameters>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="DFloatBGWTable32" type="8" dir="1" data="" description="32个数据"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="354" top="64" right="454" bottom="96"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="360" top="484" right="460" bottom="516"/>
+<Script></Script></End>
+<Activities>
+<Activity id="117" ActivityType="3" name="XML_BGW_Berechnung">
+<Rect left="353" top="137" right="453" bottom="169"/>
+<Script>engine.println("&lt;XML_BGW_Berechnung&gt; START HUP SUB XML BGW Berechnung" )
+DFloatBGWTable32 = {}</Script></Activity>
+<Activity id="118" ActivityType="3" name="OK">
+<Rect left="250" top="278" right="350" bottom="310"/>
+<Script>isOK = true
+DFloatBGWTable32 = DFloatBGWTable
+
+engine.println("&lt;XML_BGW_Berechnung&gt;"..tostring(DFloatBGWTable))
+engine.println("&lt;XML_BGW_Berechnung&gt;"..tostring(DFloatBGWTable32))</Script></Activity>
+<Activity id="119" ActivityType="3" name="NOK">
+<Rect left="456" top="276" right="556" bottom="308"/>
+<Script>isOK = false
+DFloatBGWTable32 = {}</Script></Activity>
+<Activity id="120" ActivityType="3" name="统计">
+<Rect left="251" top="341" right="351" bottom="373"/>
+<Script>engine.LastError = 0
+engine.StatValue = "BGW Berechnung IO"</Script><assessment no="26" name="DEP1691" type="8" flags="97"/>
+</Activity>
+<Activity id="121" ActivityType="3" name="统计">
+<Rect left="456" top="339" right="556" bottom="371"/>
+<Script>engine.LastError = 1
+engine.StatValue = "BGW Berechnung NIO"</Script><assessment no="26" name="DEP1691" type="8" flags="97"/>
+</Activity>
+<Activity id="123" ActivityType="13" name="HUDTcpGetBGWCalc">
+<Rect left="353" top="199" right="453" bottom="231"/>
+<FunctionRef id="HUDTcpGetBGWCalc" model="LibHUD">
+<Parameters>
+<Parameter id="Pid" value="&quot;79201612345678&quot;"/>
+<Parameter id="IpAddress" value="&quot;127.0.0.1&quot;"/>
+<Parameter id="Timeout" value="20"/>
+<Parameter id="Sender" value="&quot;MFT&quot;"/>
+<Parameter id="Receiver" value="&quot;PS&quot;"/>
+<Parameter id="Result" ret="Result"/>
+<Parameter id="ErrorMessage" ret="ErrorMessage"/>
+<Parameter id="ErrorCode" value="0" ret="ErrorCode"/>
+<Parameter id="DFloatBGWTable" ret="DFloatBGWTable"/>
+<Parameter id="DFloat_XML_BGW_Alpha_Rot" ret="DFloat_XML_BGW_Alpha_Rot"/>
+<Parameter id="DFloat_XML_BGW_Translation_Horizontal" ret="DFloat_XML_BGW_Translation_Horizontal"/>
+<Parameter id="DFloat_XML_BGW_Translation_Vertikal" ret="DFloat_XML_BGW_Translation_Vertikal"/>
+<Parameter id="DFloat_XML_BGW_Beta_links" ret="DFloat_XML_BGW_Beta_links"/>
+<Parameter id="DFloat_XML_BGW_Beta_vertikal" ret="DFloat_XML_BGW_Beta_vertikal"/>
+<Parameter id="DFloat_XML_BGW_Beta_rechts" ret="DFloat_XML_BGW_Beta_rechts"/>
+<Parameter id="DFloat_XML_BGW_Beta_oben" ret="DFloat_XML_BGW_Beta_oben"/>
+<Parameter id="DFloat_XML_BGW_Beta_horizontal" ret="DFloat_XML_BGW_Beta_horizontal"/>
+<Parameter id="DFloat_XML_BGW_Beta_unten" ret="DFloat_XML_BGW_Beta_unten"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_vertikal" ret="DFloat_XML_BGW_Beta_trapez_vertikal"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_horizontal" ret="DFloat_XML_BGW_Beta_trapez_horizontal"/>
+<Parameter id="DFloat_XML_BGW_A_aspekt" ret="DFloat_XML_BGW_A_aspekt"/>
+<Parameter id="DFloat_XML_BGW_Z_1" ret="DFloat_XML_BGW_Z_1"/>
+<Parameter id="DFloat_XML_BGW_Z_2" ret="DFloat_XML_BGW_Z_2"/>
+<Parameter id="DFloat_XML_BGW_Z_3" ret="DFloat_XML_BGW_Z_3"/>
+<Parameter id="DFloat_XML_BGW_Y_1" ret="DFloat_XML_BGW_Y_1"/>
+<Parameter id="DFloat_XML_BGW_Y_2" ret="DFloat_XML_BGW_Y_2"/>
+<Parameter id="DFloat_XML_BGW_Y_3" ret="DFloat_XML_BGW_Y_3"/>
+<Parameter id="DFloat_XML_BGW_Y_max" ret="DFloat_XML_BGW_Y_max"/>
+<Parameter id="DFloat_XML_BGW_Y_min" ret="DFloat_XML_BGW_Y_min"/>
+<Parameter id="DFloat_XML_BGW_Z_max" ret="DFloat_XML_BGW_Z_max"/>
+<Parameter id="DFloat_XML_BGW_Z_min" ret="DFloat_XML_BGW_Z_min"/>
+<Parameter id="DFloat_XML_BGW_B_links" ret="DFloat_XML_BGW_B_links"/>
+<Parameter id="DFloat_XML_BGW_B_oben" ret="DFloat_XML_BGW_B_oben"/>
+<Parameter id="DFloat_XML_BGW_B_rechts" ret="DFloat_XML_BGW_B_rechts"/>
+<Parameter id="DFloat_XML_BGW_B_unten" ret="DFloat_XML_BGW_B_unten"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Abstand" ret="DFloat_XML_BGW_Ghost_y_Abstand"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Helligkeit" ret="DFloat_XML_BGW_Ghost_y_Helligkeit"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Anzahl" ret="DFloat_XML_BGW_Ghost_y_Anzahl"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Abstand" ret="DFloat_XML_BGW_Ghost_z_Abstand"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Helligkeit" ret="DFloat_XML_BGW_Ghost_z_Helligkeit"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Anzahl" ret="DFloat_XML_BGW_Ghost_z_Anzahl"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="124" ActivityType="3" name="debug">
+<Rect left="360" top="419" right="460" bottom="451"/>
+<Script>print("Result :".. tostring(Result))
+print("ErrorMessage :".. tostring(ErrorMessage))
+print("ErrorCode :".. tostring(ErrorCode))
+
+print("DFloatBGWTable[ALPHA_rot] = " ..DFloatBGWTable["ALPHA_rot"].. " DFloat_XML_BGW_Alpha_Rot " .. DFloat_XML_BGW_Alpha_Rot )   
+print("DFloatBGWTable[Y_trans] = " ..DFloatBGWTable["Y_trans"].. " DFloat_XML_BGW_Translation_Horizontal " .. DFloat_XML_BGW_Translation_Horizontal)	
+print("DFloatBGWTable[Z_trans] = " ..DFloatBGWTable["Z_trans"].. " DFloat_XML_BGW_Translation_Vertikal " .. DFloat_XML_BGW_Translation_Vertikal ) 	
+print("DFloatBGWTable[BETA_links] = " ..DFloatBGWTable["BETA_links"].. "  DFloat_XML_BGW_Beta_links " .. DFloat_XML_BGW_Beta_links) 
+print("DFloatBGWTable[BETA_vertikal] = " ..DFloatBGWTable["BETA_vertikal"].. " DFloat_XML_BGW_Beta_vertikal " .. DFloat_XML_BGW_Beta_vertikal) 
+print("DFloatBGWTable[BETA_rechts] = " ..DFloatBGWTable["BETA_rechts"].. " DFloat_XML_BGW_Beta_rechts " .. DFloat_XML_BGW_Beta_rechts) 
+print("DFloatBGWTable[BETA_oben] = " ..DFloatBGWTable["BETA_oben"].. " DFloat_XML_BGW_Beta_oben " .. DFloat_XML_BGW_Beta_oben) 
+print("DFloatBGWTable[BETA_horizontal] = " ..DFloatBGWTable["BETA_horizontal"].. " DFloat_XML_BGW_Beta_horizontal " .. DFloat_XML_BGW_Beta_horizontal) 
+print("DFloatBGWTable[BETA_unten] =  " ..DFloatBGWTable["BETA_unten"].. " DFloat_XML_BGW_Beta_unten " .. DFloat_XML_BGW_Beta_unten ) 
+print("DFloatBGWTable[BETA_trapez_verti] = " ..DFloatBGWTable["BETA_trapez_verti"].. " DFloat_XML_BGW_Beta_trapez_vertikal " .. DFloat_XML_BGW_Beta_trapez_vertikal) 
+print("DFloatBGWTable[BETA_trapez_horiz] = " ..DFloatBGWTable["BETA_trapez_horiz"].. " DFloat_XML_BGW_Beta_trapez_horizontal " .. DFloat_XML_BGW_Beta_trapez_horizontal) 
+print("DFloatBGWTable[A_aspekt] = " ..DFloatBGWTable["A_aspekt"].. "  DFloat_XML_BGW_A_aspekt " .. DFloat_XML_BGW_A_aspekt ) 
+print("DFloatBGWTable[Z_1] = " ..DFloatBGWTable["Z_1"].. "  DFloat_XML_BGW_Z_1 " .. DFloat_XML_BGW_Z_1 ) 
+print("DFloatBGWTable[Z_2] = " ..DFloatBGWTable["Z_2"].. "  DFloat_XML_BGW_Z_2 " .. DFloat_XML_BGW_Z_2) 
+print("DFloatBGWTable[Z_3] = " ..DFloatBGWTable["Z_3"].. "  DFloat_XML_BGW_Z_3 " .. DFloat_XML_BGW_Z_3) 
+print("DFloatBGWTable[Y_1] = " ..DFloatBGWTable["Y_1"].. "  DFloat_XML_BGW_Y_1 " .. DFloat_XML_BGW_Y_1) 
+print("DFloatBGWTable[Y_2] = " ..DFloatBGWTable["Y_2"].. "  DFloat_XML_BGW_Y_2 " .. DFloat_XML_BGW_Y_2) 
+print("DFloatBGWTable[Y_3] = " ..DFloatBGWTable["Y_3"].. "  DFloat_XML_BGW_Y_3 " .. DFloat_XML_BGW_Y_3) 
+print("DFloatBGWTable[Y_max] = " ..DFloatBGWTable["Y_max"].. "  DFloat_XML_BGW_Y_max " .. DFloat_XML_BGW_Y_max ) 
+print("DFloatBGWTable[Y_min] = " ..DFloatBGWTable["Y_min"].. "  DFloat_XML_BGW_Y_min " .. DFloat_XML_BGW_Y_min) 
+print("DFloatBGWTable[Z_max] = " ..DFloatBGWTable["Z_max"].. "  DFloat_XML_BGW_Z_max " .. DFloat_XML_BGW_Z_max) 
+print("DFloatBGWTable[Z_min] = " ..DFloatBGWTable["Z_min"].. "  DFloat_XML_BGW_Z_min " .. DFloat_XML_BGW_Z_min) 
+print("DFloatBGWTable[B_links] = " ..DFloatBGWTable["B_links"].. "  DFloat_XML_BGW_B_links " .. DFloat_XML_BGW_B_links) 
+print("DFloatBGWTable[B_oben] = " ..DFloatBGWTable["B_oben"].. "  DFloat_XML_BGW_B_oben " .. DFloat_XML_BGW_B_oben) 
+print("DFloatBGWTable[B_rechts] = " ..DFloatBGWTable["B_rechts"].. "  DFloat_XML_BGW_B_rechts " .. DFloat_XML_BGW_B_rechts) 
+print("DFloatBGWTable[B_unten] = " ..DFloatBGWTable["B_unten"].. "  DFloat_XML_BGW_B_unten " .. DFloat_XML_BGW_B_unten) 
+print("DFloatBGWTable[Ghost_y_Abstand] = " ..DFloatBGWTable["Ghost_y_Abstand"].. "  DFloat_XML_BGW_Ghost_y_Abstand " .. DFloat_XML_BGW_Ghost_y_Abstand) 
+print("DFloatBGWTable[Ghost_y_Hell] = " ..DFloatBGWTable["Ghost_y_Hell"].. "  DFloat_XML_BGW_Ghost_y_Helligkeit " .. DFloat_XML_BGW_Ghost_y_Helligkeit) 
+print("DFloatBGWTable[Ghost_y_Anz] = " ..DFloatBGWTable["Ghost_y_Anz"].. "  DFloat_XML_BGW_Ghost_y_Anzahl " .. DFloat_XML_BGW_Ghost_y_Anzahl) 
+print("DFloatBGWTable[Ghost_z_Abstand] = " ..DFloatBGWTable["Ghost_z_Abstand"].. "  DFloat_XML_BGW_Ghost_z_Abstand " .. DFloat_XML_BGW_Ghost_z_Abstand) 
+print("DFloatBGWTable[Ghost_z_Hell] = " ..DFloatBGWTable["Ghost_z_Hell"].. "  DFloat_XML_BGW_Ghost_z_Helligkeit " .. DFloat_XML_BGW_Ghost_z_Helligkeit) 	
+print("DFloatBGWTable[Ghost_z_Anz] = " ..DFloatBGWTable["Ghost_z_Anz"].. "  DFloat_XML_BGW_Ghost_z_Anzahl " .. DFloat_XML_BGW_Ghost_z_Anzahl) 
+engine.println("&lt;XML_BGW_Berechnung&gt; ENDE HUP SUB XML BGW Berechnung" )</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="117" type="0">
+</Transition>
+<Transition StartId="117" EndId="123" type="0">
+</Transition>
+<Transition StartId="118" EndId="120" type="0">
+</Transition>
+<Transition StartId="119" EndId="121" type="0">
+</Transition>
+<Transition StartId="120" EndId="124" type="0">
+</Transition>
+<Transition StartId="121" EndId="124" type="0">
+</Transition>
+<Transition StartId="123" EndId="119" type="0">
+</Transition>
+<Transition StartId="123" EndId="118" type="3">
+</Transition>
+<Transition StartId="124" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

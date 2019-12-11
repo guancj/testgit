@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Outputs>
+<Variable id="symbolicNames" type="8" data=""/>
+</Outputs>
+<Script>strNames = engine.GDI_GetAllWorkspaceSymbolicNames()
+symbolicNames = LibGDI.split(strNames)</Script></Function>
+

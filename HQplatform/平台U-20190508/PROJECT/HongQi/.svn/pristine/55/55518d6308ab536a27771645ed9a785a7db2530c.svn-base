@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="Switch_Status_Check_Text_VW_Complete" description="--[[*****************************************************************************&#13;&#10;this function is used to compare MeasureText for tp2000 vw&#13;&#10;input parameter:         PramIn ; 首次参数必须为nil;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.timeout;计时&#13;&#10;                        :PramIn.timeoutFlag ;超时标志 true : 超时 ; false :未超时&#13;&#10;                        :PramIn.errflag = 0;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.okFlag ;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.okCount ;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.nokCount ;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.timestart = os.clock();&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.duration = 0;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.durationStart = os.clock();&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.FinishFlag ;&#13;&#10;                                                :PramIn.StatValue ;&#13;&#10;                                                :PramIn.StatTarget ;&#13;&#10;&#13;&#10;&#9;&#9;&#9;&#9;LineNr ;&#13;&#10;                                LastErr;&#13;&#10;&#9;&#9;&#9;&#9;RecvTel ; tp2000 ID data group &#13;&#10;&#9;&#9;&#9;&#9;Measurenummer ;Number of messure value&#13;&#10;&#9;&#9;&#9;&#9;MeasureText ; Text to be compare ,example .IO.&#13;&#10;&#9;&#9;&#9;&#9;LeftViewText ;&#13;&#10;&#9;&#9;&#9;&#9;RightViewText;&#13;&#10;&#9;&#9;&#9;&#9;CType ; 1,OK计数，2，NOK计数，3，OK计时，4，NOK计时&#13;&#10;&#9;&#9;&#9;&#9;OKcount;  计数或者算秒&#13;&#10;&#9;&#9;&#9;&#9;NOKcount; 计数或者算秒&#13;&#10;&#9;&#9;&#9;&#9;TimeOut; 超时 秒&#13;&#10;&#9;&#9;&#9;&#9;DialogHandle;保留&#13;&#10;&#9;&#9;&#9;&#9;&#13;&#10;&#9;&#9;&#9;&#9;&#13;&#10;output parameter :FinishFlag ; true / false&#13;&#10;&#9;&#9;&#9;&#9;  PramOut;&#13;&#10;&#9;&#9;&#9;&#9; &#13;&#10;                   &#13;&#10;created by zhouxh 05/18/2016&#13;&#10;******************************************************************************--]]">
+<Inputs>
+<Variable id="PramIn" type="8" data="Pram_1" description="参数留存表  首次必须为nil"/>
+<Variable id="LineNr" type="3" data="1" description="显示行"/>
+<Variable id="LastErr" type="3" data="0" description="读服务的返回Err （注意使用）"/>
+<Variable id="RecvTel" type="8" data="RecvTel" description="tp2000 ID data group"/>
+<Variable id="Measurenummer" type="3" data="1" description="Number of measure value"/>
+<Variable id="LeftViewText" type="8" data="&quot;&quot;" description="左边框显示文字"/>
+<Variable id="RightViewText" type="8" data="&quot;&quot;" description="右边框显示文字"/>
+<Variable id="CType" type="3" data="1" description="1,OK计数，2，NOK计数，3，OK计时，4，NOK计时"/>
+<Variable id="OKcount" type="3" data="1" description="计数或者算秒"/>
+<Variable id="NOKcount" type="3" data="0" description="计数或者算秒"/>
+<Variable id="TimeOut" type="3" data="10" description="超时 秒"/>
+<Variable id="DialogHandle" type="3" data="0" description="保留未开放"/>
+<Variable id="MeasureText" type="3" data="&quot;&quot;" description="Text to be compare ,example .IO."/>
+</Inputs>
+<Outputs>
+<Variable id="PramOut" type="8" data="" description="表,循环中为下次参数"/>
+<Variable id="FinishFlag" type="11" data="" description="true 完成退出  false 未完成"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to compare MeasureText for tp2000 vw
+input parameter:         PramIn ; 首次参数必须为nil;
+						:PramIn.timeout;计时
+                                                :PramIn.timeoutFlag ;超时标志 true : 超时 ; false :未超时
+                                                :PramIn.errflag = 0;
+						:PramIn.okFlag ;
+						:PramIn.okCount ;
+						:PramIn.nokCount ;
+						:PramIn.timestart = os.clock();
+						:PramIn.duration = 0;
+						:PramIn.durationStart = os.clock();
+						:PramIn.FinishFlag ;
+                                                :PramIn.StatValue ;
+                                                :PramIn.StatTarget ;
+
+				LineNr ;
+                                LastErr;
+				RecvTel ; tp2000 ID data group 
+				Measurenummer ;Number of messure value
+				MeasureText ; Text to be compare ,example .IO.
+				LeftViewText ;
+				RightViewText;
+				CType ; 1,OK计数，2，NOK计数，3，OK计时，4，NOK计时
+				OKcount;  计数或者算秒
+				NOKcount; 计数或者算秒
+				TimeOut; 超时 秒
+				DialogHandle;保留
+				
+				
+output parameter :FinishFlag ; true / false
+				  PramOut;
+				 
+                   
+created by zhouxh 05/18/2016
+******************************************************************************--]]
+
+
+local viewText ;
+local valueView;
+local M_byte_1,M_byte_2,M_byte_3;
+local MeasureText_ecu;
+
+
+
+if( LastErr ~= 0 or RecvTel == "" or RecvTel == nil or Measurenummer &lt; 1) then
+
+viewText = "service err or invalid receive data or parameter  ";
+--PramOut.errflag = LastErr ;
+engine.LastError = LastErr;
+FinishFlag = true;
+engine.StatValue = viewText;
+engine.SetLineText(LineNr,"#L=" .. viewText .. "#R=bmpnok");
+engine.ShowMessage();
+
+else
+
+if(type(vx_diag) ~= "function" ) then
+
+local path = engine.ProgPath .. "vw_diag.ini";
+LibVW.vw_diag_load(path);
+
+end;
+
+
+
+if(string.len(RecvTel) &gt;= ((Measurenummer)*3)) then
+		Measurenummer = Measurenummer - 1;
+		local MessureString = string.sub(RecvTel,(Measurenummer*3+1),(Measurenummer*3)+3);
+			M_byte_1 =string.byte(MessureString,1);
+			M_byte_2 =string.byte(MessureString,2);
+			M_byte_3 =string.byte(MessureString,3);
+			--engine.println(M_byte_1..M_byte_2..M_byte_3);engine.println('\n');
+		MeasureText_ecu = vx_diag(M_byte_1,M_byte_2,M_byte_3);
+		valueView = MeasureText_ecu;
+                engine.println("### ECU Text :"..tostring(MeasureText_ecu));
+	
+end
+
+
+-- parameter set
+		if (PramIn == nil) then  
+			PramOut = {};
+			PramOut.timeout = 0;
+			PramOut.timeoutFlag = false;
+			PramOut.timestart = os.clock();
+			PramOut.errflag = 0;
+			PramOut.okFlag = false;
+            PramOut.FinishFlag = false;
+			PramOut.StatValue = "";
+			PramOut.StatTarget = "";
+			
+			if(CType == 1) then PramOut.okCount = 0   end;
+			if(CType == 2) then PramOut.nokCount = 0  end;
+			if(CType == 3) then PramOut.duration = 0; PramOut.durationStart = os.clock(); end;
+			if(CType == 4) then PramOut.duration = 0; PramOut.durationStart = os.clock(); end;
+	
+		else   
+		PramOut = PramIn;
+		end;
+		
+		
+-- CType do loop
+-- OKcount
+		if(CType == 1) then
+			if(MeasureText_ecu == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatTarget = tostring(MeasureText);PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				end;
+				
+				if(MeasureText_ecu == MeasureText )  then
+					PramOut.okCount = PramOut.okCount + 1 ;
+						if(PramOut.okCount &gt;= OKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasureText_ecu);
+							PramOut.StatTarget = tostring(MeasureText);
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+						end;
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasureText_ecu);
+					PramOut.StatTarget = tostring(MeasureText);
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;
+--NOKcount
+		if(CType == 2) then
+			if(MeasureText_ecu == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatTarget = tostring(MeasureText); PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				end;
+				
+				if(MeasureText_ecu ~= MeasureText )  then
+					PramOut.nokCount = PramOut.nokCount + 1 ;
+						if(PramOut.nokCount &gt;= NOKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasureText_ecu);
+							PramOut.StatTarget = tostring(MeasureText);
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+						end;
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasureText_ecu);
+					PramOut.StatTarget = tostring(MeasureText);
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;		
+
+--OKcount time
+		if(CType == 3) then
+			if(MeasureText_ecu == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatTarget = tostring(MeasureText); PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				end;
+				
+				if(MeasureText_ecu == MeasureText )  then
+					PramOut.duration = os.clock() - PramOut.durationStart;
+						if(PramOut.duration &gt;= OKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasureText_ecu);
+							PramOut.StatTarget = tostring(MeasureText);
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+						end;
+				else
+				PramOut.duration = 0;
+				PramOut.durationStart = os.clock();
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasureText_ecu);
+					PramOut.StatTarget = tostring(MeasureText);
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;
+--NOKcount time
+		if(CType == 4) then
+			if(MeasureText_ecu == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatTarget = tostring(MeasureText); PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				end;
+				
+				if(MeasureText_ecu ~= MeasureText )  then
+					PramOut.duration = os.clock() - PramOut.durationStart;
+						if(PramOut.duration &gt;= NOKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasureText_ecu);
+							PramOut.StatTarget = tostring(MeasureText);
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+						end;
+				else
+				PramOut.duration = 0;
+				PramOut.durationStart = os.clock();
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L="..tostring(LeftViewText)..":"..tostring(valueView).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasureText_ecu);
+					PramOut.StatTarget = tostring(MeasureText);
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;
+	
+PramOut.timeout = os.clock() - PramOut.timestart;		
+engine.StatValue = PramOut.StatValue;
+engine.StatTarget = PramOut.StatTarget;		
+engine.LastError = PramOut.errflag ;
+FinishFlag = PramOut.FinishFlag;
+end;</Script></Function>
+

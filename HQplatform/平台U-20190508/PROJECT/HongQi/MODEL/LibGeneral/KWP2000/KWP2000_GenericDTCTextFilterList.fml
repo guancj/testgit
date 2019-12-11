@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="LineNr" type="3" data="0" description="行号"/>
+<Variable id="DTC_String" type="8" data="&quot;&quot;" description="VW2000_DTC_Read_Quantity  的返回值"/>
+<Variable id="Pos" type="3" data="3" description="Dtc开始位置  first  == [1]"/>
+<Variable id="Comment" type="8" data="&quot;读故障码&quot;" description="显示"/>
+<Variable id="Timeout" type="3" data="1" description="Err Text 列表显示的时间 /ms"/>
+<Variable id="Filter_Pcode" type="8" data="{}" description="过滤或者忽略相应的DTC   {} ：不过滤 例 {&quot;Bxxxxxx&quot;,&quot;&quot;}"/>
+<Variable id="section" type="8" data="&quot;&quot;" description="dtc_list.ini  section for this project"/>
+</Inputs>
+<Outputs>
+<Variable id="errText" type="8" data="" description="所有故障码的Text的"/>
+<Variable id="pCodeTab" type="8" data="" description="pcode 表结构"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   Generic DTC  from ECU   for  kwp 2000;
+input parameter:LineNr,DTC_String,Pos,Comment,Timeout,Filter_Pcode
+output parameter :errText,pCodeTab
+
+11/25/2016     created by viforce
+******************************************************************************--]]
+
+local errStr = "";
+
+local Dtc_codeInt = 0;
+local Dtc_code = "";
+local Dtc_state = "";
+local Dtc_state_Text = "";
+local Dtc_code_Text = "";
+local Dtc_pCode = "";
+local value = ""
+local Filter_Pcode_tmp = Filter_Pcode;
+local FilterFlag = false
+
+errText = "";
+pCodeTab = {}
+
+if (0 ~= engine.LastError) then
+
+	engine.StatValue = "Read DTC Err ;negative response";
+	engine.LastError = 1;
+	return "";	
+	
+end;
+
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,Comment);
+    engine.ShowMessage();
+
+end;
+
+if(DTC_String  == "") then engine.StatValue = "NO DTC"; engine.LastError = 0; return "";end;
+
+
+local i = 1;
+local j = 1;
+engine.ListClear();
+DTC_String = string.sub(DTC_String,Pos,-1);
+local length = string.len (DTC_String);
+while (i &lt; length)  do
+
+	errStr = string.sub (DTC_String, i, i+2);
+    if(errStr == nil ) then break; end;
+	if (string.len(errStr) &lt; 3) then break;end;
+	
+    Dtc_codeInt = string.byte(errStr,1)*256 + string.byte(errStr,2);
+    Dtc_code = string.format ("%04x", string.byte(errStr,1)*256 + string.byte(errStr,2));
+	Dtc_state = string.format ("%02x", string.byte(errStr,3));
+	engine.println("######DTC CODE :"..Dtc_code.."  ".."DTC STATE :"..Dtc_state);
+
+	Dtc_state_Text = LibGeneral.KWP2000_GetDTCStatusInfor(string.byte(errStr,3));
+    --engine.println("Dtc_state_Text :"..tostring(Dtc_state_Text));
+	
+    --Dtc_code = string.upper(Dtc_code);
+	Dtc_pCode = LibGeneral.KWP2000_GenericCode2pCode(Dtc_codeInt)	
+	engine.println("Dtc_pCode :"..tostring(Dtc_pCode));
+	FilterFlag = false	
+	for i, value in pairs(Filter_Pcode_tmp) do 
+		if(Dtc_pCode == value )  then  FilterFlag = true ;end;
+	end;	
+	if(FilterFlag == false) then
+		pCodeTab[j] = Dtc_pCode;
+		j = j + 1;
+		Dtc_code_Text = LibGeneral.GetDTCText(Dtc_pCode,section)
+	
+		StringListTmp = Dtc_code_Text;
+		engine.ListAddString(Dtc_code_Text,false);
+		engine.ListAddString(Dtc_state_Text,false);
+		errText = errText..Dtc_code_Text.."\x0a\x0d"..Dtc_state_Text.."\x0a\x0d";
+		engine.println(tostring(errText));
+	end
+	i = i + 3;
+end;
+
+	
+if(errText ~= "" and Timeout ~= 0) then 
+	engine.StatValue = errText;	
+	engine.DialogBackColor = "red";
+	engine.SelectLayout(1);
+	
+	engine.Delay(Timeout);
+	
+    engine.SelectLayout(0);
+	engine.DialogBackColor = "white";
+	engine.LastError = 1;
+	
+else
+
+if(errText == "") then
+    engine.StatValue = "NO DTC";
+    engine.SetLineText(1,"#L=" .. "读取故障码" .. "#R=BMPOK");
+    engine.ShowMessage();
+    engine.LastError = 0;
+end; 
+	
+end;	
+
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,"");
+    engine.ShowMessage();
+
+end;
+
+</Script></Function>
+

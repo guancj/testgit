@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_ALS_HLA_StopTest_service_2" description="发送停止检测命令,service=2.">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>ret = LibIDT.idtSendDatagramALS("\x02",LibIDT.idtGetTimeout(),pHndl);</Script></Function>
+

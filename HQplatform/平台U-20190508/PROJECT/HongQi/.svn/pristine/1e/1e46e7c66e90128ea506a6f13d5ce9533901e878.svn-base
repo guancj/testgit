@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FWE_Start_Conditions" flags="1" block="4" ptbtext="DEP1368" group="117" pbltext="DEP739">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="249" top="66" right="349" bottom="98"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="252" top="1735" right="352" bottom="1767"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="错误">
+<Rect left="653" top="1247" right="753" bottom="1279"/>
+<Line2Text Enable="1" Text="FWE SERVICE 05 ERROR"/>
+<Script>engine.println(" &lt;FWE_Start_Conditions&gt; : FWE Status: Error --&gt;"..tostring(Ret))</Script></Activity>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="836" top="1736" right="868" bottom="1768"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="803" top="1248" right="903" bottom="1280"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="回基础位">
+<Rect left="482" top="1317" right="582" bottom="1349"/>
+<Script>isOK = false;
+engine.println(" &lt;FWE_Start_Conditions&gt; : service 05 base position OK --&gt;"..tostring(Ret))
+</Script></Activity>
+<Activity id="25" ActivityType="13" name="IDT_WaitForServiceFinish">
+<Rect left="481" top="1247" right="581" bottom="1279"/>
+<FunctionRef id="IDT_WaitForServiceFinish" model="LibIDT">
+<Parameters>
+<Parameter id="serviceNum" value="5"/>
+<Parameter id="timeOut" value="60"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="revTel" ret="RecvData"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="483" top="1134" right="583" bottom="1166"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="802" top="1134" right="902" bottom="1166"/>
+<Script>engine.println(" &lt;FWE_Start_Conditions&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="29" ActivityType="3" name="状态检测">
+<Rect left="250" top="131" right="350" bottom="163"/>
+<TitleText Enable="1" Text="前束调整：建立检测准备"/>
+<Script>engine.println(" &lt;FWE_Start_Conditions&gt; 前束调整：建立检测准备")</Script></Activity>
+<Activity id="31" ActivityType="3" name="Err Print">
+<Rect left="250" top="253" right="350" bottom="285"/>
+<Script>if (isOK1 == true) then
+engine.println(" &lt;FWE_Start_Conditions&gt; Light barrier VA and HA: Fzg standing")
+else
+engine.println(" &lt;FWE_Start_Conditions&gt; Light barrier VA and HA: Fzg NOT in stand")
+end</Script></Activity>
+<Activity id="32" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="250" top="192" right="350" bottom="224"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@10==0b?1?????? &amp;&amp; @10==0b1???????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK1"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="34" ActivityType="3" name="Err Print">
+<Rect left="250" top="373" right="350" bottom="405"/>
+<Script>if (isOK2 == true) then
+engine.println(" &lt;FWE_Start_Conditions&gt; Test stand ready for testing")
+else
+engine.println(" &lt;FWE_Start_Conditions&gt; Test stand not ready for testing")
+end</Script></Activity>
+<Activity id="35" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="250" top="312" right="350" bottom="344"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@6==0b1???????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK2"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="36" ActivityType="3" name="Err Print">
+<Rect left="250" top="494" right="350" bottom="526"/>
+<Script>if (isOK3 == true) then
+engine.println(" &lt;FWE_Start_Conditions&gt; Test stand in basic position")
+else
+engine.println(" &lt;FWE_Start_Conditions&gt; Test stand not in basic position")
+end</Script></Activity>
+<Activity id="37" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="250" top="433" right="350" bottom="465"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@11==0b1???????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK3"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="38" ActivityType="3" name="OK">
+<Rect left="251" top="1661" right="351" bottom="1693"/>
+<Script>isOK = true;
+engine.println(" &lt;FWE_Start_Conditions&gt; : Condition Check OK ")
+</Script></Activity>
+<Activity id="39" ActivityType="3" name="状态检查">
+<Rect left="480" top="494" right="580" bottom="526"/>
+<TitleText Enable="1" Text="前束调整"/>
+<Script>engine.println(" &lt;FWE_Start_Conditions&gt; Condition not ready wait for handle")</Script></Activity>
+<Activity id="40" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="480" top="558" right="580" bottom="590"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@10==0b?1??????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK4"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="41" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="480" top="681" right="580" bottom="713"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@10==0b1???????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK5"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="42" ActivityType="3" name="前轴光栅">
+<Rect left="480" top="619" right="580" bottom="651"/>
+<Line1Text Enable="1" Text="前轴光栅：车辆不在位置"/>
+<Script>engine.println(" &lt;FWE_Start_Conditions&gt; LichtschrankVA: Fzg NICHT in Position")</Script></Activity>
+<Activity id="43" ActivityType="4" name="路由节点">
+<Rect left="411" top="621" right="443" bottom="653"/>
+</Activity>
+<Activity id="44" ActivityType="3" name="后轴光栅">
+<Rect left="481" top="746" right="581" bottom="778"/>
+<Line2Text Enable="1" Text="后轴光栅：车辆不在位置"/>
+<Script>engine.println(" &lt;FWE_Start_Conditions&gt; LichtschrankHA: Fzg NICHT in Position")</Script></Activity>
+<Activity id="45" ActivityType="4" name="路由节点">
+<Rect left="412" top="747" right="444" bottom="779"/>
+</Activity>
+<Activity id="46" ActivityType="3" name="重新检测？">
+<Rect left="481" top="817" right="581" bottom="849"/>
+<Script></Script></Activity>
+<Activity id="47" ActivityType="3" name="NOK">
+<Rect left="910" top="815" right="1010" bottom="847"/>
+<Script>isOK = false;</Script></Activity>
+<Activity id="48" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="481" top="947" right="581" bottom="979"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@11==0b1???????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK6"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="49" ActivityType="3" name="Delay">
+<Rect left="616" top="557" right="716" bottom="589"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Script>engine.Delay(1000)</Script></Activity>
+<Activity id="50" ActivityType="4" name="路由节点">
+<Rect left="371" top="543" right="403" bottom="575"/>
+</Activity>
+<Activity id="51" ActivityType="4" name="路由节点">
+<Rect left="370" top="849" right="402" bottom="881"/>
+</Activity>
+<Activity id="52" ActivityType="3" name="回基础位置">
+<Rect left="482" top="1010" right="582" bottom="1042"/>
+<Line3Text Enable="1" Text="执行回基础位置？"/>
+<ButtonLText Enable="1" Text="不执行"/>
+<ButtonRText Enable="1" Text="执行"/>
+<Script>engine.DialogBackColor = "yellow";
+#PRESSBUTTON</Script></Activity>
+<Activity id="53" ActivityType="4" name="路由节点">
+<Rect left="423" top="979" right="455" bottom="1011"/>
+</Activity>
+<Activity id="54" ActivityType="3" name="基础位置">
+<Rect left="482" top="1072" right="582" bottom="1104"/>
+<Script></Script></Activity>
+<Activity id="55" ActivityType="13" name="FWE_05_Basic_State">
+<Rect left="482" top="1189" right="582" bottom="1221"/>
+<Line2Text Enable="1" Text="行驶到基础位置"/>
+<FunctionRef id="FWE_05_Basic_State" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="56" ActivityType="3" name="OK">
+<Rect left="481" top="885" right="581" bottom="917"/>
+<Script>isOK = true;
+engine.println(" &lt;FWE_Start_Conditions&gt; VA HA: Condition Check OK ")
+</Script></Activity>
+<Activity id="59" ActivityType="4" name="路由节点">
+<Rect left="424" top="1385" right="456" bottom="1417"/>
+</Activity>
+<Activity id="60" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="480" top="1452" right="580" bottom="1484"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@6==0b1???????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK7"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="61" ActivityType="3" name="检测站准备">
+<Rect left="481" top="1387" right="581" bottom="1419"/>
+<Script></Script></Activity>
+<Activity id="62" ActivityType="3" name="检测站未准备">
+<Rect left="480" top="1512" right="580" bottom="1544"/>
+<Line1Text Enable="1" Text="检测站未准备"/>
+<Script>engine.println(" &lt;FWE_Start_Conditions&gt; Test stand NOT ready for testing")</Script></Activity>
+<Activity id="63" ActivityType="3" name="重新检测？">
+<Rect left="481" top="1575" right="581" bottom="1607"/>
+<Script>engine.Delay(1000)
+isOK = false;</Script></Activity>
+<Activity id="65" ActivityType="3" name="Delay">
+<Rect left="628" top="1451" right="728" bottom="1483"/>
+<Line1Text Enable="1"/>
+<Script>engine.Delay(1000)</Script></Activity>
+<Activity id="66" ActivityType="4" name="路由节点">
+<Rect left="427" top="1516" right="459" bottom="1548"/>
+</Activity>
+<Activity id="67" ActivityType="4" name="路由节点">
+<Rect left="758" top="1388" right="790" bottom="1420"/>
+</Activity>
+<Activity id="68" ActivityType="4" name="路由节点">
+<Rect left="757" top="1660" right="789" bottom="1692"/>
+</Activity>
+<Activity id="70" ActivityType="3" name="dlgclr">
+<Rect left="482" top="1661" right="582" bottom="1693"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="72" ActivityType="4" name="路由节点">
+<Rect left="945" top="1737" right="977" bottom="1769"/>
+</Activity>
+<Activity id="73" ActivityType="3" name="finish_flag">
+<Rect left="616" top="816" right="716" bottom="848"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;FWE_Start_Conditions&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="74" ActivityType="3" name="finish_flag">
+<Rect left="628" top="1575" right="728" bottom="1607"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;FWE_Start_Conditions&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="29" type="0">
+</Transition>
+<Transition StartId="5" EndId="21" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="61" type="0">
+</Transition>
+<Transition StartId="25" EndId="23" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="25" EndId="5" type="0">
+</Transition>
+<Transition StartId="26" EndId="55" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="29" EndId="32" type="0">
+</Transition>
+<Transition StartId="31" EndId="35" type="0">
+</Transition>
+<Transition StartId="32" EndId="31" type="0">
+</Transition>
+<Transition StartId="34" EndId="37" type="0">
+</Transition>
+<Transition StartId="35" EndId="34" type="0">
+</Transition>
+<Transition StartId="36" EndId="38" type="1">
+<Expression>isOK == true and isOK1 == true and isOK2 == true</Expression></Transition>
+<Transition StartId="36" EndId="39" type="0">
+</Transition>
+<Transition StartId="37" EndId="36" type="0">
+</Transition>
+<Transition StartId="38" EndId="2" type="0">
+</Transition>
+<Transition StartId="39" EndId="40" type="1">
+<Expression>isOK1 == false</Expression></Transition>
+<Transition StartId="39" EndId="50" type="0">
+</Transition>
+<Transition StartId="40" EndId="42" type="1">
+<Expression>isOK4 == false</Expression></Transition>
+<Transition StartId="40" EndId="43" type="0">
+</Transition>
+<Transition StartId="41" EndId="44" type="1">
+<Expression>isOK5 == false</Expression></Transition>
+<Transition StartId="41" EndId="45" type="0">
+</Transition>
+<Transition StartId="42" EndId="41" type="0">
+</Transition>
+<Transition StartId="43" EndId="41" type="0">
+</Transition>
+<Transition StartId="44" EndId="46" type="0">
+</Transition>
+<Transition StartId="45" EndId="46" type="0">
+</Transition>
+<Transition StartId="46" EndId="56" type="1">
+<Expression>isOK4 == true and isOK5 == true</Expression></Transition>
+<Transition StartId="46" EndId="73" type="0">
+</Transition>
+<Transition StartId="47" EndId="72" type="0">
+</Transition>
+<Transition StartId="48" EndId="52" type="1">
+<Expression>isOK6 == false</Expression></Transition>
+<Transition StartId="48" EndId="53" type="0">
+</Transition>
+<Transition StartId="49" EndId="40" type="0">
+</Transition>
+<Transition StartId="50" EndId="51" type="0">
+</Transition>
+<Transition StartId="51" EndId="56" type="0">
+</Transition>
+<Transition StartId="52" EndId="54" type="6">
+</Transition>
+<Transition StartId="52" EndId="53" type="0">
+</Transition>
+<Transition StartId="53" EndId="59" type="0">
+</Transition>
+<Transition StartId="54" EndId="26" type="0">
+</Transition>
+<Transition StartId="55" EndId="25" type="0">
+</Transition>
+<Transition StartId="56" EndId="48" type="0">
+</Transition>
+<Transition StartId="59" EndId="61" type="0">
+</Transition>
+<Transition StartId="60" EndId="62" type="1">
+<Expression>isOK7 == false</Expression></Transition>
+<Transition StartId="60" EndId="66" type="0">
+</Transition>
+<Transition StartId="61" EndId="60" type="1">
+<Expression>isOK2 == false</Expression></Transition>
+<Transition StartId="61" EndId="67" type="0">
+</Transition>
+<Transition StartId="62" EndId="63" type="0">
+</Transition>
+<Transition StartId="63" EndId="74" type="0">
+</Transition>
+<Transition StartId="63" EndId="70" type="1">
+<Expression>isOK7 == true</Expression></Transition>
+<Transition StartId="65" EndId="60" type="0">
+</Transition>
+<Transition StartId="66" EndId="63" type="0">
+</Transition>
+<Transition StartId="67" EndId="68" type="0">
+</Transition>
+<Transition StartId="68" EndId="6" type="0">
+</Transition>
+<Transition StartId="70" EndId="68" type="0">
+</Transition>
+<Transition StartId="72" EndId="6" type="0">
+</Transition>
+<Transition StartId="73" EndId="49" type="0">
+</Transition>
+<Transition StartId="73" EndId="47" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="74" EndId="65" type="0">
+</Transition>
+<Transition StartId="74" EndId="68" type="1">
+<Expression>finishflag</Expression></Transition>
+</Transitions>
+</Process>
+

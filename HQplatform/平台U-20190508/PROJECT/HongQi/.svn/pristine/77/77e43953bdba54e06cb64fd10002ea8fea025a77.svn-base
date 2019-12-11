@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="CheckFirapName" description="如果返回的TestStationID值为0则表示未读取到信息。" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="通讯协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="接口号"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="Tester地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="波特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CANId"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CANId"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="FirapName" type="8" dir="1" data="" description="Firap名称"/>
+<Variable id="TestStationID" type="3" dir="1" data="0" description="当前测试台序号"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="54" top="86" right="154" bottom="118"/>
+<Script>TestStationID = 0;</Script><Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<InputText Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+</Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="57" top="366" right="157" bottom="398"/>
+<Script></Script></End>
+<Activities>
+<Activity id="4" ActivityType="3" name="截取台号">
+<Rect left="57" top="291" right="157" bottom="323"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<InputText Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+<Script>engine.println("### FIRAP NAME : " .. tostring(FirapName))
+engine.SharedVarSet("_DStr_FirapName_shared",FirapName) -- firap name
+TestStationID = math.floor(tonumber(string.sub(FirapName,string.len(FirapName)-1,string.len(FirapName))))
+
+if(string.len(FirapName) &gt; 0 and TestStationID &gt; 0) then
+ engine.LastError = 0;
+else
+ engine.LastError = -1;
+ TestStationID = -1
+end</Script></Activity>
+<Activity id="8" ActivityType="3" name="显示延迟">
+<Rect left="56" top="225" right="156" bottom="257"/>
+<Line3Text Enable="1" Text="&amp;FirapName"/>
+<Script>engine.Delay(1000)</Script></Activity>
+<Activity id="9" ActivityType="3" name="普通节点">
+<Rect left="194" top="155" right="294" bottom="187"/>
+<Script>FirapName = "MOPC1SHFIRAP02"</Script></Activity>
+<Activity id="10" ActivityType="13" name="GetFirapName">
+<Rect left="55" top="156" right="155" bottom="188"/>
+<FunctionRef id="GetFirapName" model="LibGeneral">
+<Parameters>
+<Parameter id="firapName" ret="FirapName"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="10" type="0">
+</Transition>
+<Transition StartId="4" EndId="2" type="0">
+</Transition>
+<Transition StartId="8" EndId="4" type="0">
+</Transition>
+<Transition StartId="10" EndId="8" type="0">
+</Transition>
+</Transitions>
+</Process>
+

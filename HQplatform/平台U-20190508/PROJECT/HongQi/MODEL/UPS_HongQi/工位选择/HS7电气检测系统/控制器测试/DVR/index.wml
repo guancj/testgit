@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="DVR_Common"/>
+<Process id="DVR_ReadDTC"/>
+<Process id="DVR_FIN"/>
+</children>
+</Workplace>

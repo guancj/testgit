@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="Pid" type="8" data="&quot;&quot;" description="Production ID (Kennnummer)"/>
+<Variable id="IpAddress" type="8" data="&quot;127.0.0.1&quot;" description="IP address of test stand"/>
+<Variable id="Timeout" type="3" data="5" description="Timeout in sec for sending request and receiving response"/>
+<Variable id="Sender" type="8" data="&quot;MFT&quot;" description="String to be sent as value of tag Sender"/>
+<Variable id="Receiver" type="8" data="&quot;PS&quot;" description="String to be sent as value of tag Receiver"/>
+</Inputs>
+<Outputs>
+<Variable id="Result" type="11" data="" description="Result of function retrieved from test stand: 0=not available; 1=available"/>
+<Variable id="ErrorMessage" type="8" data="" description="Error message retreived from test stand"/>
+<Variable id="ErrorCode" type="3" data="0" description="Error code retrieved from test stand"/>
+<Variable id="DFloatBGWTable" type="5" data="0" description="下面返回参数的集合表"/>
+<Variable id="DFloat_XML_BGW_Alpha_Rot" type="5" data="0" description="DFloatBGWTable[&quot;ALPHA_rot&quot;] 旋转检测"/>
+<Variable id="DFloat_XML_BGW_Translation_Horizontal" type="5" data="0" description="DFloatBGWTable[&quot;Y_trans&quot;] 图像水平方向平移"/>
+<Variable id="DFloat_XML_BGW_Translation_Vertikal" type="5" data="0" description="DFloatBGWTable[&quot;Z_trans&quot;] 图像垂直方向平移"/>
+<Variable id="DFloat_XML_BGW_Beta_links" type="5" data="0" description="DFloatBGWTable[&quot;BETA_links&quot;] 图像左方垂直倾斜位置"/>
+<Variable id="DFloat_XML_BGW_Beta_vertikal" type="5" data="0" description="DFloatBGWTable[&quot;BETA_vertikal&quot;] 图像中间垂直倾斜位置"/>
+<Variable id="DFloat_XML_BGW_Beta_rechts" type="5" data="0" description="DFloatBGWTable[&quot;BETA_rechts&quot;] 图像右方垂直倾斜位置"/>
+<Variable id="DFloat_XML_BGW_Beta_oben" type="5" data="0" description="DFloatBGWTable[&quot;BETA_oben&quot;] 图像上方水平倾斜位置"/>
+<Variable id="DFloat_XML_BGW_Beta_horizontal" type="5" data="0" description="DFloatBGWTable[&quot;BETA_horizontal&quot;] 图像中间水平倾斜位置"/>
+<Variable id="DFloat_XML_BGW_Beta_unten" type="5" data="0" description="DFloatBGWTable[&quot;BETA_unten&quot;] 图像下方水平倾斜位置"/>
+<Variable id="DFloat_XML_BGW_Beta_trapez_vertikal" type="5" data="0" description="DFloatBGWTable[&quot;BETA_trapez_verti&quot;] 图像水平方向T形"/>
+<Variable id="DFloat_XML_BGW_Beta_trapez_horizontal" type="5" data="0" description="DFloatBGWTable[&quot;BETA_trapez_horiz&quot;] 图像垂直方向T形"/>
+<Variable id="DFloat_XML_BGW_A_aspekt" type="5" data="0" description="DFloatBGWTable[&quot;A_aspekt&quot;] A 范围"/>
+<Variable id="DFloat_XML_BGW_Z_1" type="5" data="0" description="DFloatBGWTable[&quot;Z_1&quot;] 上方水平线偏差"/>
+<Variable id="DFloat_XML_BGW_Z_2" type="5" data="0" description="DFloatBGWTable[&quot;Z_2&quot;] 中间水平线偏差"/>
+<Variable id="DFloat_XML_BGW_Z_3" type="5" data="0" description="DFloatBGWTable[&quot;Z_3&quot;] 下方水平线偏差"/>
+<Variable id="DFloat_XML_BGW_Y_1" type="5" data="0" description="DFloatBGWTable[&quot;Y_1&quot;] 左方垂直线偏差"/>
+<Variable id="DFloat_XML_BGW_Y_2" type="5" data="0" description="DFloatBGWTable[&quot;Y_2&quot;] 中间垂直线偏差"/>
+<Variable id="DFloat_XML_BGW_Y_3" type="5" data="0" description="DFloatBGWTable[&quot;Y_3&quot;] 右方垂直线偏差"/>
+<Variable id="DFloat_XML_BGW_Y_max" type="5" data="0" description="DFloatBGWTable[&quot;Y_max&quot;] 水平方向最大 放大 缩小"/>
+<Variable id="DFloat_XML_BGW_Y_min" type="5" data="0" description="DFloatBGWTable[&quot;Y_min&quot;] 水平方向最小 放大 缩小"/>
+<Variable id="DFloat_XML_BGW_Z_max" type="5" data="0" description="DFloatBGWTable[&quot;Z_max&quot;] 垂直方向最大 放大 缩小"/>
+<Variable id="DFloat_XML_BGW_Z_min" type="5" data="0" description="DFloatBGWTable[&quot;Z_min&quot;] 垂直方向最小 放大 缩小"/>
+<Variable id="DFloat_XML_BGW_B_links" type="5" data="0" description="DFloatBGWTable[&quot;B_links&quot;] 图像左边边缘"/>
+<Variable id="DFloat_XML_BGW_B_oben" type="5" data="0" description="DFloatBGWTable[&quot;B_oben&quot;] 图像上方边缘"/>
+<Variable id="DFloat_XML_BGW_B_rechts" type="5" data="0" description="DFloatBGWTable[&quot;B_rechts&quot;] 图像右方边缘"/>
+<Variable id="DFloat_XML_BGW_B_unten" type="5" data="0" description="DFloatBGWTable[&quot;B_unten&quot;] 图像下方边缘"/>
+<Variable id="DFloat_XML_BGW_Ghost_y_Abstand" type="5" data="0" description="DFloatBGWTable[&quot;Ghost_y_Abstand&quot;] 重影图像水平距离"/>
+<Variable id="DFloat_XML_BGW_Ghost_y_Helligkeit" type="5" data="0" description="DFloatBGWTable[&quot;Ghost_y_Hell&quot;] 重影图像水平亮度"/>
+<Variable id="DFloat_XML_BGW_Ghost_y_Anzahl" type="5" data="0" description="DFloatBGWTable[&quot;Ghost_y_Anz&quot;] 重影图像水平数量"/>
+<Variable id="DFloat_XML_BGW_Ghost_z_Abstand" type="5" data="0" description="DFloatBGWTable[&quot;Ghost_z_Abstand&quot;] 重影图像垂直距离"/>
+<Variable id="DFloat_XML_BGW_Ghost_z_Helligkeit" type="5" data="0" description="DFloatBGWTable[&quot;Ghost_z_Hell&quot;] 重影图像垂直亮度"/>
+<Variable id="DFloat_XML_BGW_Ghost_z_Anzahl" type="5" data="0" description="DFloatBGWTable[&quot;Ghost_z_Anz&quot;] 重影图像垂直数量"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  BGW Berechnung
+input paramter:Pid,IpAddress,Timeout,Sender,Receiver
+output paramter:Result,ErrorMessage,ErrorCode,32 of return values
+
+          DFloatBGWTable = {}
+                        DFloatBGWTable["ALPHA_rot"] = DFloat_XML_BGW_Alpha_Rot    
+			DFloatBGWTable["Y_trans"] = DFloat_XML_BGW_Translation_Horizontal	
+			DFloatBGWTable["Z_trans"] = DFloat_XML_BGW_Translation_Vertikal	
+			DFloatBGWTable["BETA_links"] = DFloat_XML_BGW_Beta_links	
+			DFloatBGWTable["BETA_vertikal"] = DFloat_XML_BGW_Beta_vertikal
+			DFloatBGWTable["BETA_rechts"] = DFloat_XML_BGW_Beta_rechts
+			DFloatBGWTable["BETA_oben"] = DFloat_XML_BGW_Beta_oben
+			DFloatBGWTable["BETA_horizontal"] = DFloat_XML_BGW_Beta_horizontal
+			DFloatBGWTable["BETA_unten"] = DFloat_XML_BGW_Beta_unten
+			DFloatBGWTable["BETA_trapez_verti"] = DFloat_XML_BGW_Beta_trapez_vertikal
+			DFloatBGWTable["BETA_trapez_horiz"] = DFloat_XML_BGW_Beta_trapez_horizontal
+			DFloatBGWTable["A_aspekt"] = DFloat_XML_BGW_A_aspekt
+			DFloatBGWTable["Z_1"] = DFloat_XML_BGW_Z_1
+			DFloatBGWTable["Z_2"] = DFloat_XML_BGW_Z_2
+			DFloatBGWTable["Z_3"] = DFloat_XML_BGW_Z_3
+			DFloatBGWTable["Y_1"] = DFloat_XML_BGW_Y_1
+			DFloatBGWTable["Y_2"] = DFloat_XML_BGW_Y_2
+			DFloatBGWTable["Y_3"] = DFloat_XML_BGW_Y_3
+			DFloatBGWTable["Y_max"] = DFloat_XML_BGW_Y_max
+			DFloatBGWTable["Y_min"] = DFloat_XML_BGW_Y_min
+			DFloatBGWTable["Z_max"] = DFloat_XML_BGW_Z_max
+			DFloatBGWTable["Z_min"] = DFloat_XML_BGW_Z_min
+			DFloatBGWTable["B_links"] = DFloat_XML_BGW_B_links
+			DFloatBGWTable["B_oben"] = DFloat_XML_BGW_B_oben
+			DFloatBGWTable["B_rechts"] = DFloat_XML_BGW_B_rechts
+			DFloatBGWTable["B_unten"] = DFloat_XML_BGW_B_unten
+			DFloatBGWTable["Ghost_y_Abstand"] = DFloat_XML_BGW_Ghost_y_Abstand
+			DFloatBGWTable["Ghost_y_Hell"] = DFloat_XML_BGW_Ghost_y_Helligkeit
+			DFloatBGWTable["Ghost_y_Anz"] = DFloat_XML_BGW_Ghost_y_Anzahl
+			DFloatBGWTable["Ghost_z_Abstand"] = DFloat_XML_BGW_Ghost_z_Abstand
+			DFloatBGWTable["Ghost_z_Hell"] = DFloat_XML_BGW_Ghost_z_Helligkeit	
+			DFloatBGWTable["Ghost_z_Anz"] = DFloat_XML_BGW_Ghost_z_Anzahl
+
+02/13/2017     created by viforce
+******************************************************************************--]]
+
+
+local pidResponse = ""
+local functionresultbuff = ""
+local ResultTmp = false
+local ErrorMessageTmp = ""
+local ErrorCodeTmp = -1
+DFloatBGWTable = {}
+engine.LastError = 1
+local buffer = LibHUD.HUDPrepXmlStruct("BGWBerechnung",Pid,Sender,Receiver)
+
+local response,err = LibHUD.HUDTelegramExchange(buffer,IpAddress,Timeout)
+
+pidResponse,functionresultbuff,ResultTmp,ErrorMessageTmp,ErrorCodeTmp,err = LibHUD.HUDExtractDataFromResponse(response)
+
+if(err == 0) then
+	if(pidResponse == Pid) then
+		-- read ALPHA_rot
+                pos1,pos2 = string.find(functionresultbuff,"&lt;ALPHA_rot&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/ALPHA_rot&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Alpha_Rot = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", ALPHA_rot: ".. tostring(DFloat_XML_BGW_Alpha_Rot)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Alpha_Rot = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  ALPHA_rot  invalid ")                                 
+                end
+            DFloatBGWTable["ALPHA_rot"] = DFloat_XML_BGW_Alpha_Rot    
+		-- read Y_trans
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Y_trans&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Y_trans&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Translation_Horizontal = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Y_trans: ".. tostring(DFloat_XML_BGW_Translation_Horizontal)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Translation_Horizontal = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Y_trans  invalid ")                                 
+                end 
+			DFloatBGWTable["Y_trans"] = DFloat_XML_BGW_Translation_Horizontal	
+		-- read Z_trans
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Z_trans&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Z_trans&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Translation_Vertikal = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Z_trans: ".. tostring(DFloat_XML_BGW_Translation_Vertikal)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Translation_Vertikal = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Z_trans  invalid ")                                 
+                end
+			DFloatBGWTable["Z_trans"] = DFloat_XML_BGW_Translation_Vertikal	
+		-- read BETA_links
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_links&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_links&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_links = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_links: ".. tostring(DFloat_XML_BGW_Beta_links)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_links = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_links  invalid ")                                 
+                end
+			DFloatBGWTable["BETA_links"] = DFloat_XML_BGW_Beta_links	
+		-- read BETA_vertikal
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_vertikal&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_vertikal&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_vertikal = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_vertikal: ".. tostring(DFloat_XML_BGW_Beta_vertikal)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_vertikal = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_vertikal  invalid ")                                 
+                end
+			DFloatBGWTable["BETA_vertikal"] = DFloat_XML_BGW_Beta_vertikal
+		-- read BETA_rechts
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_rechts&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_rechts&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_rechts = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_rechts: ".. tostring(DFloat_XML_BGW_Beta_rechts)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_rechts = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_rechts  invalid ")                                 
+                end	
+			DFloatBGWTable["BETA_rechts"] = DFloat_XML_BGW_Beta_rechts
+		-- read BETA_oben
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_oben&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_oben&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_oben = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_oben: ".. tostring(DFloat_XML_BGW_Beta_oben)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_oben = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_oben  invalid ")                                 
+                end	
+			DFloatBGWTable["BETA_oben"] = DFloat_XML_BGW_Beta_oben
+		-- read BETA_horizontal
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_horizontal&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_horizontal&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_horizontal = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_horizontal: ".. tostring(DFloat_XML_BGW_Beta_horizontal)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_horizontal = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_horizontal  invalid ")                                 
+                end
+			DFloatBGWTable["BETA_horizontal"] = DFloat_XML_BGW_Beta_horizontal
+		-- read BETA_unten
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_unten&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_unten&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_unten = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_unten: ".. tostring(DFloat_XML_BGW_Beta_unten)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_unten = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_unten  invalid ")                                 
+                end
+			DFloatBGWTable["BETA_unten"] = DFloat_XML_BGW_Beta_unten
+		-- read BETA_trapez_verti
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_trapez_verti&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_trapez_verti&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_trapez_vertikal = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_trapez_verti: ".. tostring(DFloat_XML_BGW_Beta_trapez_vertikal)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_trapez_vertikal = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_trapez_verti  invalid ")                                 
+                end	
+			DFloatBGWTable["BETA_trapez_verti"] = DFloat_XML_BGW_Beta_trapez_vertikal
+		-- read BETA_trapez_horiz
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;BETA_trapez_horiz&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/BETA_trapez_horiz&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Beta_trapez_horizontal = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", BETA_trapez_horiz: ".. tostring(DFloat_XML_BGW_Beta_trapez_horizontal)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Beta_trapez_horizontal = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  BETA_trapez_horiz  invalid ")                                 
+                end	
+			DFloatBGWTable["BETA_trapez_horiz"] = DFloat_XML_BGW_Beta_trapez_horizontal
+		-- read A_aspekt
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;A_aspekt&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/A_aspekt&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_A_aspekt = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", A_aspekt: ".. tostring(DFloat_XML_BGW_A_aspekt)) 
+                else
+			err = 1
+			DFloat_XML_BGW_A_aspekt = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  A_aspekt  invalid ")                                 
+                end	
+			DFloatBGWTable["A_aspekt"] = DFloat_XML_BGW_A_aspekt
+		-- read Z_1
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Z_1&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Z_1&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Z_1 = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Z_1: ".. tostring(DFloat_XML_BGW_Z_1)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Z_1 = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Z_1  invalid ")                                 
+                end
+			DFloatBGWTable["Z_1"] = DFloat_XML_BGW_Z_1
+		-- read Z_2
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Z_2&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Z_2&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Z_2 = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Z_2: ".. tostring(DFloat_XML_BGW_Z_2)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Z_2 = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Z_2  invalid ")                                 
+                end	
+			DFloatBGWTable["Z_2"] = DFloat_XML_BGW_Z_2
+		-- read Z_3
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Z_3&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Z_3&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Z_3 = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Z_3: ".. tostring(DFloat_XML_BGW_Z_3)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Z_3 = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Z_3  invalid ")                                 
+                end	
+			DFloatBGWTable["Z_3"] = DFloat_XML_BGW_Z_3
+		-- read Y_1
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Y_1&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Y_1&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Y_1 = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Y_1: ".. tostring(DFloat_XML_BGW_Y_1)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Y_1 = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Y_1  invalid ")                                 
+                end	
+			DFloatBGWTable["Y_1"] = DFloat_XML_BGW_Y_1
+		-- read Y_2
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Y_2&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Y_2&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Y_2 = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Y_2: ".. tostring(DFloat_XML_BGW_Y_2)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Y_2 = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Y_2  invalid ")                                 
+                end	
+			DFloatBGWTable["Y_2"] = DFloat_XML_BGW_Y_2
+		-- read Y_3
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Y_3&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Y_3&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Y_3 = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Y_3: ".. tostring(DFloat_XML_BGW_Y_3)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Y_3 = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Y_3  invalid ")                                 
+                end	
+			DFloatBGWTable["Y_3"] = DFloat_XML_BGW_Y_3
+		-- read Y_max
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Y_max&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Y_max&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Y_max = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Y_max: ".. tostring(DFloat_XML_BGW_Y_max)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Y_max = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Y_max  invalid ")                                 
+                end	
+			DFloatBGWTable["Y_max"] = DFloat_XML_BGW_Y_max
+		-- read Y_min
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Y_min&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Y_min&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Y_min = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Y_min: ".. tostring(DFloat_XML_BGW_Y_min)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Y_min = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Y_min  invalid ")                                 
+                end	
+			DFloatBGWTable["Y_min"] = DFloat_XML_BGW_Y_min
+		-- read Z_max
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Z_max&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Z_max&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Z_max = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Z_max: ".. tostring(DFloat_XML_BGW_Z_max)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Z_max = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Z_max  invalid ")                                 
+                end	
+			DFloatBGWTable["Z_max"] = DFloat_XML_BGW_Z_max
+		-- read Z_min
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Z_min&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Z_min&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Z_min = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Z_min: ".. tostring(DFloat_XML_BGW_Z_min)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Z_min = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Z_min  invalid ")                                 
+                end
+			DFloatBGWTable["Z_min"] = DFloat_XML_BGW_Z_min
+		-- read B_links
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;B_links&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/B_links&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_B_links = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", B_links: ".. tostring(DFloat_XML_BGW_B_links)) 
+                else
+			err = 1
+			DFloat_XML_BGW_B_links = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  B_links  invalid ")                                 
+                end	
+			DFloatBGWTable["B_links"] = DFloat_XML_BGW_B_links
+		-- read B_oben
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;B_oben&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/B_oben&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_B_oben = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", B_oben: ".. tostring(DFloat_XML_BGW_B_oben)) 
+                else
+			err = 1
+			DFloat_XML_BGW_B_oben = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  B_oben  invalid ")                                 
+                end	
+			DFloatBGWTable["B_oben"] = DFloat_XML_BGW_B_oben
+		-- read B_rechts
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;B_rechts&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/B_rechts&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_B_rechts = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", B_rechts: ".. tostring(DFloat_XML_BGW_B_rechts)) 
+                else
+			err = 1
+			DFloat_XML_BGW_B_rechts = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  B_rechts  invalid ")                                 
+                end	
+			DFloatBGWTable["B_rechts"] = DFloat_XML_BGW_B_rechts
+		-- read B_unten
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;B_unten&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/B_unten&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_B_unten = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", B_unten: ".. tostring(DFloat_XML_BGW_B_unten)) 
+                else
+			err = 1
+			DFloat_XML_BGW_B_unten = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  B_unten  invalid ")                                 
+                end	
+			DFloatBGWTable["B_unten"] = DFloat_XML_BGW_B_unten
+		-- read Ghost_y_Abstand
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Ghost_y_Abstand&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Ghost_y_Abstand&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Ghost_y_Abstand = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Ghost_y_Abstand: ".. tostring(DFloat_XML_BGW_Ghost_y_Abstand)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Ghost_y_Abstand = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Ghost_y_Abstand  invalid ")                                 
+                end	
+			DFloatBGWTable["Ghost_y_Abstand"] = DFloat_XML_BGW_Ghost_y_Abstand
+		-- read Ghost_y_Hell
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Ghost_y_Hell&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Ghost_y_Hell&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Ghost_y_Helligkeit = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Ghost_y_Hell: ".. tostring(DFloat_XML_BGW_Ghost_y_Helligkeit)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Ghost_y_Helligkeit = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Ghost_y_Hell  invalid ")                                 
+                end	
+			DFloatBGWTable["Ghost_y_Hell"] = DFloat_XML_BGW_Ghost_y_Helligkeit
+		-- read Ghost_y_Anz
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Ghost_y_Anz&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Ghost_y_Anz&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Ghost_y_Anzahl = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Ghost_y_Anz: ".. tostring(DFloat_XML_BGW_Ghost_y_Anzahl)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Ghost_y_Anzahl = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Ghost_y_Anz  invalid ")                                 
+                end	
+			DFloatBGWTable["Ghost_y_Anz"] = DFloat_XML_BGW_Ghost_y_Anzahl
+		-- read Ghost_z_Abstand
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Ghost_z_Abstand&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Ghost_z_Abstand&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Ghost_z_Abstand = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Ghost_z_Abstand: ".. tostring(DFloat_XML_BGW_Ghost_z_Abstand)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Ghost_z_Abstand = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Ghost_z_Abstand  invalid ")                                 
+                end	
+			DFloatBGWTable["Ghost_z_Abstand"] = DFloat_XML_BGW_Ghost_z_Abstand
+		-- read Ghost_z_Hell
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Ghost_z_Hell&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Ghost_z_Hell&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Ghost_z_Helligkeit = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Ghost_z_Hell: ".. tostring(DFloat_XML_BGW_Ghost_z_Helligkeit)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Ghost_z_Helligkeit = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Ghost_z_Hell  invalid ")                                 
+                end	
+			DFloatBGWTable["Ghost_z_Hell"] = DFloat_XML_BGW_Ghost_z_Helligkeit	
+		-- read Ghost_z_Anz
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Ghost_z_Anz&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Ghost_z_Anz&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			DFloat_XML_BGW_Ghost_z_Anzahl = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; HUDTcpGetBGWCalc - PID:  " .. tostring(Pid) .. ", Ghost_z_Anz: ".. tostring(DFloat_XML_BGW_Ghost_z_Anzahl)) 
+                else
+			err = 1
+			DFloat_XML_BGW_Ghost_z_Anzahl = -9999
+                        engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  Ghost_z_Anz  invalid ")                                 
+                end	
+			DFloatBGWTable["Ghost_z_Anz"] = DFloat_XML_BGW_Ghost_z_Anzahl		
+        else
+		err = 1
+		engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR  HUDTcpGetBGWCalc - specified PID: " .. tostring(Pid) .. ",retreived PID: " .. tostring(pidResponse)) 
+        end
+        if(err == 0) then
+		Result = ResultTmp
+                ErrorMessage = ErrorMessageTmp
+                ErrorCode = ErrorCodeTmp
+                engine.LastError = 0
+        end     
+else
+	engine.println("&lt;HUDTcpGetBGWCalc&gt; ERR HUDExtractDataFromResponse excute failed ") 
+end</Script></Function>
+

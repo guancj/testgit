@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace description="H7电气检测系统&#13;&#10;&#13;&#10;***********************************************************************************************************************&#13;&#10;20170317 更新&#13;&#10;车型名称更新&#13;&#10;CH1GM21-&gt;CH1GM30&#13;&#10;CH1GM22-&gt;CH1GM23&#13;&#10;CH1AM41-&gt;CH1AM43&#13;&#10;CH1AM42-&gt;CH1AM44&#13;&#10;CH1BM33-&gt;CH1BM34&#13;&#10;CH1CM29-&gt;CH1CM31&#13;&#10;CH1DM14-&gt;CH1DM16&#13;&#10;CH1DM15-&gt;CH1DM17&#13;&#10;CH1LM11-&gt;CH1LM13&#13;&#10;CH1LM21-&gt;CH1LM23&#13;&#10;CH1FM12-&gt;CH1FM20&#13;&#10;CH1FM13-&gt;CH1FM30&#13;&#10;CH1BM33==CH1NM11&#13;&#10;CH1JM11-&gt;CH1JM12&#13;&#10;***********************************************************************************************************************&#13;&#10;">
+<children>
+<Workplace id="传统车型">
+</Workplace>
+<Workplace id="功能性节点">
+</Workplace>
+<Workplace id="基础库">
+</Workplace>
+<Workplace id="控制器通讯">
+</Workplace>
+<Workplace id="故障码">
+</Workplace>
+<Workplace id="未使用">
+</Workplace>
+<Workplace id="测试用">
+</Workplace>
+<Workplace id="混动车型">
+</Workplace>
+<Workplace id="红旗函数库">
+</Workplace>
+<Workplace id="2019年型">
+</Workplace>
+<Process id="FLASH"/>
+<Process id="一次内饰"/>
+<Process id="二次内饰"/>
+<Process id="机能线"/>
+<Process id="测试"/>
+<Process id="电池检测"/>
+<Process id="终检线"/>
+<Process id="返修"/>
+</children>
+</Workplace>

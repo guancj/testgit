@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Outputs>
+<Variable id="headerInfo" type="8" data=""/>
+<Variable id="FKL" type="8" data=""/>
+<Variable id="werk" type="8" data=""/>
+<Variable id="version" type="8" data=""/>
+<Variable id="datumZeitAenderung" type="8" data=""/>
+<Variable id="aenderungDurch" type="8" data=""/>
+<Variable id="aenderungsbeschr" type="8" data=""/>
+<Variable id="schemaVersion" type="8" data=""/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to get dl24 config file information
+History:
+    12/31/2015, wuh : function created
+****************************************************************--]]
+
+
+headerInfo,FKL,werk,version,datumZeitAenderung,aenderungDurch,aenderungsbeschr,schemaVersion = engine.DL24_GetInfoConfigHeader()
+</Script></Function>
+

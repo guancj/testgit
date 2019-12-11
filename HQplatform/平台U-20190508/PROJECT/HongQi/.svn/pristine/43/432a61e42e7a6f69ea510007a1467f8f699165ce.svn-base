@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="MK60" code="">
+
+<Functions>
+<Function id="VW2000_MK60_ValveImpuls"/>
+
+<Function id="VW2000_MK60_ValveOperating"/>
+
+</Functions>
+</Workplace>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="XML_BH_Berechnung" flags="1" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<ProcessParameters>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="DFloat_XML_BH_Bildhoehe_oben" type="5" dir="1" data=""/>
+<Variable id="DFloat_XML_BH_Bildhoehe_unten" type="5" dir="1" data=""/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="354" top="64" right="454" bottom="96"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="360" top="484" right="460" bottom="516"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="13" name="HUDTcpGetBHCalc">
+<Rect left="354" top="204" right="454" bottom="236"/>
+<FunctionRef id="HUDTcpGetBHCalc" model="LibHUD">
+<Parameters>
+<Parameter id="Pid" value="&quot;79201612345678&quot;"/>
+<Parameter id="IpAddress" value="&quot;127.0.0.1&quot;"/>
+<Parameter id="Timeout" value="5"/>
+<Parameter id="Sender" value="&quot;MFT&quot;"/>
+<Parameter id="Receiver" value="&quot;PS&quot;"/>
+<Parameter id="BildhoeheOben" ret="BildhoeheOben"/>
+<Parameter id="BildhoeheUnten" ret="BildhoeheUnten"/>
+<Parameter id="Result" ret="Result"/>
+<Parameter id="ErrorMessage" ret="ErrorMessage"/>
+<Parameter id="ErrorCode" ret="ErrorCode"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="117" ActivityType="3" name="XML_BH_Berechnung">
+<Rect left="353" top="137" right="453" bottom="169"/>
+<Script>engine.println("&lt;XML_BH_Berechnung&gt; START HUP SUB XML BH Berechnung" )</Script></Activity>
+<Activity id="118" ActivityType="3" name="OK">
+<Rect left="250" top="278" right="350" bottom="310"/>
+<Script>isOK = true
+DFloat_XML_BH_Bildhoehe_oben = BildhoeheOben
+DFloat_XML_BH_Bildhoehe_unten = BildhoeheUnten</Script></Activity>
+<Activity id="119" ActivityType="3" name="NOK">
+<Rect left="456" top="276" right="556" bottom="308"/>
+<Script>isOK = false
+DFloat_XML_BH_Bildhoehe_oben = -1
+DFloat_XML_BH_Bildhoehe_unten = -1</Script></Activity>
+<Activity id="120" ActivityType="3" name="统计">
+<Rect left="251" top="341" right="351" bottom="373"/>
+<Script>engine.LastError = 0
+engine.StatValue = "BH Berechnung IO"</Script><assessment no="12" name="DEP1689" type="8" flags="97"/>
+</Activity>
+<Activity id="121" ActivityType="3" name="统计">
+<Rect left="456" top="339" right="556" bottom="371"/>
+<Script>engine.LastError = 1
+engine.StatValue = "BH Berechnung NIO"</Script><assessment no="12" name="DEP1689" type="8" flags="97"/>
+</Activity>
+<Activity id="122" ActivityType="3" name="debug">
+<Rect left="361" top="417" right="461" bottom="449"/>
+<Script>engine.println("&lt;XML_BH_Berechnung&gt;############# Bildhoehe_Oben" .. tostring(DFloat_XML_BH_Bildhoehe_oben))
+engine.println("&lt;XML_BH_Berechnung&gt;############# Bildhoehe_Unten" .. tostring(DFloat_XML_BH_Bildhoehe_unten))
+engine.println("&lt;XML_BH_Berechnung&gt;############# Result" .. tostring(Result))
+engine.println("&lt;XML_BH_Berechnung&gt;############# ErrorMessage" .. tostring(ErrorMessage))
+engine.println("&lt;XML_BH_Berechnung&gt;############# ErrorCode" .. tostring(ErrorCode))
+engine.println("&lt;XML_BH_Berechnung&gt; ENDE HUP SUB XML BH Berechnung" )</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="117" type="0">
+</Transition>
+<Transition StartId="3" EndId="118" type="3">
+</Transition>
+<Transition StartId="3" EndId="119" type="0">
+</Transition>
+<Transition StartId="117" EndId="3" type="0">
+</Transition>
+<Transition StartId="118" EndId="120" type="0">
+</Transition>
+<Transition StartId="119" EndId="121" type="0">
+</Transition>
+<Transition StartId="120" EndId="122" type="0">
+</Transition>
+<Transition StartId="121" EndId="122" type="0">
+</Transition>
+<Transition StartId="122" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

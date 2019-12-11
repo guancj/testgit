@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="exec">
+<Inputs>
+<Variable id="ID" type="3" data="0"/>
+<Variable id="NW" type="3" data="0"/>
+<Variable id="MW" type="3" data="0"/>
+</Inputs>
+<Script>print("vx_diag(" .. tostring(ID) .. "," .. tostring(NW) .. "," .. tostring(MW) .. ") = " .. tostring(vx_diag(ID,NW,MW)));</Script></Function>
+

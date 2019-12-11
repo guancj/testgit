@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_CodefileProgrammReadLong" description="CodefileProgrammReadLang_KWP2000">
+<Inputs>
+<Variable id="ProgL_String" type="8" data="&quot;&quot;" description="program string from zdc"/>
+<Variable id="LineNr" type="3" data="1" description="行号"/>
+<Variable id="Comment" type="8" data="&quot;&quot;" description="显示内容"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to read  programming  data  and compare;
+input parameter:ProgL_String;LineNr;Comment;ECU_Handle;
+
+01/25/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+
+local  NumBlock;
+local  NumBlockStr;
+local  BlockAddr;
+local  BlockAddrStr;
+local  BlockLen;
+local  BlockLenStr;
+local  PartStr;
+local  ReadStr;
+local  ProgString;
+local  CommentNOK = "NOK"
+
+local Addr_Command;
+local BlockAddrStr_byte_1;
+local BlockAddrStr_byte_2;
+local BlockAddrStr_byte_3;
+local BlockAddrStr_byte_4;
+	
+local tmpStrLen_byte3;
+local tmpStrLen_byte2;
+local tmpStrLen_byte1;
+local tmpPartStrLen;
+local MaxBytes;
+local buff;
+
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,Comment);
+    engine.ShowMessage();
+	end;	
+
+engine.LastError = 0;
+ProgString = ProgL_String;	
+	
+engine.println(LibGeneral.hex2str(ProgString));
+
+if (string.len(ProgString) &lt;= 4)  then engine.StatValue = CommentNOK..":ProgString&lt;4"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.LastError = 1 ; end;
+
+NumBlockStr  = string.sub(ProgString,1,4);
+NumBlock = string.byte(NumBlockStr,1) * 0x1000000 + string.byte(NumBlockStr,2) * 0x10000 + string.byte(NumBlockStr,3)*0x100 + string.byte(NumBlockStr,4);
+ProgString = string.sub(ProgString,5,-1);
+
+
+
+while ((NumBlock &gt; 0) and (engine.LastError == 0)) do
+	if (string.len(ProgString) &lt;= 8) then
+		engine.StatValue = CommentNOK..":ProgString&lt;8"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.LastError = 1;return;end;
+	
+	BlockAddrStr   = string.sub(ProgString,1,4);
+	BlockAddr = string.byte(BlockAddrStr,1) * 0x1000000 + string.byte(BlockAddrStr,2) * 0x10000 + string.byte(BlockAddrStr,3)*0x100 + string.byte(BlockAddrStr,4);
+	ProgString  = string.sub(ProgString,5,-1);
+	BlockLenStr = string.sub(ProgString,1,4);
+	BlockLen = string.byte(BlockLenStr,1) * 0x1000000 + string.byte(BlockLenStr,2) * 0x10000 + string.byte(BlockLenStr,3)*0x100 + string.byte(BlockLenStr,4);
+	ProgString  = string.sub(ProgString,5,-1);
+	PartStr	    = string.sub(ProgString,1,BlockLen);
+	ProgString  = string.sub(ProgString,BlockLen + 1,-1);
+	
+	
+	
+	if (string.len(PartStr) &lt; BlockLen)	 then 
+	     engine.StatValue = CommentNOK..":ProgString len err"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.LastError = 1;return;end;
+
+
+    
+if ((BlockAddr &lt; 0 ) or (BlockAddr &gt; 0xffffff)) then engine.StatValue = CommentNOK..":Address not correct"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.LastError = 1;return;end;
+    
+    ReadStr = "";
+    engine.LastError = 0;
+
+
+    Addr_Command = string.sub(BlockAddrStr,2,4).."\x00";
+	BlockAddrStr_byte_1 = string.byte(BlockAddrStr,2);
+	BlockAddrStr_byte_2 = string.byte(BlockAddrStr,3);
+	BlockAddrStr_byte_3 = string.byte(BlockAddrStr,4);
+	BlockAddrStr_byte_4 = 0x00;
+	
+	tmpPartStrLen= BlockLen;
+	tmpStrLen_byte3 = math.floor(tmpPartStrLen/0x10000);
+	tmpPartStrLen = tmpPartStrLen - tmpStrLen_byte3*0x10000;
+	tmpStrLen_byte2 = math.floor(tmpPartStrLen/0x100);
+	tmpStrLen_byte1 = tmpPartStrLen - tmpStrLen_byte2*0x100;
+	
+
+    if ((BlockLen &gt; 0) and (BlockLen &lt;= 0xffffff)) then 
+#COMMEX ECU_Handle -1 0x35 BlockAddrStr_byte_1 BlockAddrStr_byte_2 BlockAddrStr_byte_3 BlockAddrStr_byte_4 tmpStrLen_byte3 tmpStrLen_byte2 tmpStrLen_byte1
+	if (engine.LastError ~= 0) then 
+	engine.StatValue = CommentNOK..":read data program maxbytes err "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.LastError = 1;return;  end; 
+    else
+	engine.println(string.format("Block Length %d \n",BlockLen));
+	end;
+
+    MaxBytes = string.byte(@1,1);
+
+	
+    while (( string.len(ReadStr) &lt;  BlockLen) and (engine.LastError == 0)) do
+#COMMEX ECU_Handle -1 0x36
+buff = @1-;
+	if (engine.LastError == 0) then 
+		ReadStr = ReadStr..buff;
+	else
+		engine.StatValue = CommentNOK..":read data program err "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.LastError = 1;return;
+	end;
+   end;
+
+--Transfer Exit
+#COMMEX ECU_Handle -1 0x37 
+
+engine.println("readStr ："..LibGeneral.hex2str(ReadStr).."\n");
+
+
+	if ((engine.LastError ~= 0) or (string.len(ReadStr) ~= BlockLen) or (PartStr ~= ReadStr)) then
+       engine.StatValue = CommentNOK..":compare program failed "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.LastError = 1;return;
+	   end;
+
+	NumBlock = NumBlock - 1;
+end;
+
+
+engine.StatValue = "have programed "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.LastError = 0;
+
+</Script></Function>
+

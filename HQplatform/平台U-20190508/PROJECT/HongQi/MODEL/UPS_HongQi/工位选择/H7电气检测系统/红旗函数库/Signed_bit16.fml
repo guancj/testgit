@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="input" type="3" data="0" description="输入十六进制或十进制数值，大小两个字节"/>
+</Inputs>
+<Script>--[[ 
+************************************************************************************************************************
+The function is used to convert Signed char 16bit to Unsigned number.
+
+History:
+    07/03/2016, developer : Zhushaodong created
+************************************************************************************************************************
+--]]
+
+input=input;
+originalCode=0;
+trueNum=0;
+engine.println("传入的2个字节有符号数为："..input);
+engine.println("bit32.band"..bit32.band(input,0x8000));
+if(bit32.band(input,0x8000)==0x8000)then
+	engine.println("这个有符号数是负数，补码："..input);
+	
+	--originalCode=bit32.bnot(input);
+	--engine.println("原码："..originalCode);
+	originalCode=bit32.bnot(input)-4294901760;
+	--0b1111 1111 1111 1111 0000 0000 0000 0000 4294934528 0b1111 1111 1111 1111 1000 0000 0000 0000 0x8000 0b1000 0000 0000 0000	
+	engine.println("取反："..originalCode);
+	trueNum=originalCode+1;
+	engine.println("原码："..trueNum);
+	trueNum=0-trueNum;
+	engine.println("真实码："..trueNum);
+else
+    trueNum=input;
+end
+return input;
+
+</Script></Function>
+

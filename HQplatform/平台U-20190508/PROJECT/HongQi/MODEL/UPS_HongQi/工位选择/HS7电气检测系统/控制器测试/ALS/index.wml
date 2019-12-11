@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="ALS_Common"/>
+<Process id="ALS_ReadDTC"/>
+<Process id="ALS_test"/>
+<Process id="ALS_FIN"/>
+</children>
+</Workplace>

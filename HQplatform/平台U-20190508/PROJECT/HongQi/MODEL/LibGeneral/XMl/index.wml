@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="XmlLoadXML"/>
+
+<Function id="XmlSelectNodes"/>
+
+<Function id="XmlSelectSingleNode"/>
+
+<Function id="XmlNodeGetAttribute"/>
+
+<Function id="XmlNodeHasAttribute"/>
+
+<Function id="XmlNodeHasChildNodes"/>
+
+<Function id="XmlNodeSelectNodes"/>
+
+<Function id="XmlNodeselectSingleNode"/>
+
+<Function id="XmlNodeListItem"/>
+
+<Function id="XmlCreatHandle"/>
+
+<Function id="XmlLoadFile"/>
+
+</children>
+</Workplace>

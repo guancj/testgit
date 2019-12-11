@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="VektorValue" type="3" data="0" description="0 - 255 一字节整数"/>
+<Variable id="Modus" type="8" data="&quot;&quot;" description="&quot;Verbaupruefung&quot; &quot;Inbetriebnahme&quot; &quot;Flashen&quot; &quot;SWaP&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="EV_Text" type="8" data="" description="返回相应描述说明"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  transform val (0 - 255) to Text String
+input parameter:VektorValue,Modus
+output parameter:EV_Text
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+-- return value
+EV_Text = ""
+-- return value
+
+local xmlTagVerbaupruefung = "Verbaupruefung";
+local xmlTagInbetriebnahme = "Inbetriebnahme";
+local xmlTagFlashen = "Flashen";
+local xmlTagSWaP = "SWaP";
+
+print("DL24_EV_Text_ASV123: Modus: " .. tostring(Modus))
+print("DL24_EV_Text_ASV123: ascBinString: " .. tostring(LibVW.conv1ByteToBinString(VektorValue)))
+
+if(Modus == xmlTagVerbaupruefung) then
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"?100????") == 1) then
+		EV_Text = "TNR n.i.O"
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"?110????") == 1) then
+		EV_Text = "TNR (Korrektur) n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"?101????") == 1) then
+		EV_Text = "TNR (Aufbrauch) n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"1000????") == 1) then
+		EV_Text = "Teilefreipruefung n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"1010????") == 1) then
+		EV_Text = "Teilefreipruefung (Korrektur) n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"1001????") == 1) then
+		EV_Text = "Teilefreipruefung (Aufbrauch) n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"0000??11") == 1) then
+		if(LibVW.BinString1BytefilterCmp(VektorValue,"00001111") == 1) then
+			EV_Text = "HW- und SW-Version n.i.O."
+		else
+			EV_Text = "HW-Version n.i.O."
+		end
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"0010??11") == 1) then
+		if(LibVW.BinString1BytefilterCmp(VektorValue,"00101111") == 1) then
+			EV_Text = "HW- und SW-Version (Korrektur) n.i.O."
+		else
+			EV_Text = "HW-Version (Korrektur) n.i.O."
+		end	
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"0001??11") == 1) then
+		if(LibVW.BinString1BytefilterCmp(VektorValue,"00011111") == 1) then
+			EV_Text = "HW- und SW-Version (Aufbrauch) n.i.O."
+		else
+			EV_Text = "HW-Version (Aufbrauch) n.i.O."
+		end	
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"000011??") == 1) then
+		if(LibVW.BinString1BytefilterCmp(VektorValue,"00001111") == 1) then
+			EV_Text = "HW- und SW-Version n.i.O."
+		else
+			EV_Text = "SW-Version n.i.O."
+		end
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"001011??") == 1) then
+		if(LibVW.BinString1BytefilterCmp(VektorValue,"00101111") == 1) then
+			EV_Text = "HW- und SW-Version (Korrektur) n.i.O."
+		else
+			EV_Text = "SW-Version (Korrektur) n.i.O."
+		end		
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"000111??") == 1) then
+		if(LibVW.BinString1BytefilterCmp(VektorValue,"00011111") == 1) then
+			EV_Text = "HW- und SW-Version (Aufbrauch) n.i.O."
+		else
+			EV_Text = "SW-Version (Aufbrauch) n.i.O."
+		end	
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"00???0?0") == 1) then	
+		EV_Text = "i.O."
+	end
+elseif(Modus == xmlTagInbetriebnahme) then
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"10??????") == 1) then
+		EV_Text = "Verbaupruefung nicht durchgefuehrt"
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"?1??????") == 1) then
+		EV_Text = "ZDC - ASV nicht aktiv"
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"000000??") == 1) then
+		EV_Text = "ZDC i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"001000??") == 1) then
+		EV_Text = "ZDC Aufbrauch i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"001100??") == 1) then
+		EV_Text = "ZDC Aufbrauch n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"000010??") == 1) then
+		EV_Text = "ZDC Korrektur i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"000110??") == 1) then
+		EV_Text = "ZDC Korrektur n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"001110??") == 1) then
+		EV_Text = "ZDC Aufbrauch und Korrektur n.i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"001010??") == 1) then
+		EV_Text = "ZDC Aufbrauch und Korrektur i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"000100??") == 1) then
+		EV_Text = "kein ZDC gefunden"
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"000101??") == 1) then
+		EV_Text = "kein ZDC gefunden VSC aktiv"		
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"?????10?") == 1) then
+		EV_Text = "ZDC Vorserienstrg.  i.O."
+	elseif(LibVW.BinString1BytefilterCmp(VektorValue,"?????11?") == 1) then
+		EV_Text = "ZDC Vorserienstrg.  n.i.O. (Mehrfachtreffer)"		
+	end
+elseif(Modus == xmlTagFlashen) then
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"0?00????") == 1) then
+		EV_Text = "Flash i.O."
+	end
+elseif(Modus == xmlTagSWaP) then
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00000000") == 1) then
+		EV_Text = "SWaP-DC i.O."
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00000001") == 1) then
+		EV_Text = "SWaP in ConfigFile deaktiviert "
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00000010") == 1) then
+		EV_Text = "SWaP abgebrochen - Verbauprüfung n.i.O."
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00000100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00001000") == 1) then
+		EV_Text = "SWaP abgebrochen - Inbetriebnahme nach Korrektur nicht erlaubt "
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00010000") == 1) then
+		EV_Text = "SWaP-DC i.O. (Korrektur)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00010100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden (Korrektur)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00100000") == 1) then
+		EV_Text = "SWaP-DC i.O. (ohne Kommunikation zum SG)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00100100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden (ohne Kommunikation zum SG)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00101000") == 1) then
+		EV_Text = "SWaP abgebrochen - Inbetriebnahme nach Korrektur nicht erlaubt (ohne Kommunikation zum SG)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00110000") == 1) then
+		EV_Text = "SWaP-DC i.O. (Korrektur &amp; ohne Kommunikation zum SG)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"00110100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden (Korrektur &amp; ohne Kommunikation zum SG)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01000000") == 1) then
+		EV_Text = "SWaP-DC i.O. (Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01000001") == 1) then
+		EV_Text = "SWaP in ConfigFile deaktiviert (Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01000010") == 1) then
+		EV_Text = "SWaP abgebrochen - Verbauprüfung n.i.O. (Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01000100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden (Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01001000") == 1) then
+		EV_Text = "SWaP abgebrochen - Inbetriebnahme nach Korrektur nicht erlaubt (Aenderung SWaP_DC_TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01010000") == 1) then
+		EV_Text = "SWaP-DC i.O. (Korrektur &amp; Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01010100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden (Korrektur &amp; Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01100000") == 1) then
+		EV_Text = "SWaP-DC i.O. (ohne Kommunikation zum SG &amp; Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01100100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden (ohne Kommunikation zum SG &amp; Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01101000") == 1) then
+		EV_Text = "SWaP abgebrochen - Inbetriebnahme nach Korrektur nicht erlaubt (ohne Kommunikation zum SG &amp; Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01110000") == 1) then
+		EV_Text = "SWaP-DC i.O. (Korrektur &amp; ohne Kommunikation zum SG &amp; Aenderung SWaP_DC-TNR)"
+	end
+	if(LibVW.BinString1BytefilterCmp(VektorValue,"01110100") == 1) then
+		EV_Text = "kein SWaP-DC gefunden (Korrektur &amp; ohne Kommunikation zum SG &amp; Aenderung SWaP_DC-TNR)"
+	end
+end
+
+print("DL24_EV_Text_ASV123: Errortext: " .. tostring(EV_Text))</Script></Function>
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="c7_hud_xml" flags="1" block="4" ptbtext="DEP1368" group="145" pbltext="DEP1527">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="389" top="50" right="489" bottom="82"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="397" top="724" right="497" bottom="756"/>
+<Script></Script></End>
+<Activities>
+</Activities>
+<Transitions>
+</Transitions>
+</Process>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiComObject" type="8" data=""/>
+<Variable id="informationReportRead_in" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="dataAvailable" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+<Variable id="informationReportRead_out" type="8" data=""/>
+</Outputs>
+<Script>informationReportRead_out,dataAvailable,gdiError = engine.GDI_InformationReportOccured(gdiComObject,informationReportRead_in)
+--[[ret = fillCSF(CSF, informationReportRead)
+if ret==true
+then dataAvailable =true
+else 
+	dataAvailable = false
+--]]</Script></Function>
+

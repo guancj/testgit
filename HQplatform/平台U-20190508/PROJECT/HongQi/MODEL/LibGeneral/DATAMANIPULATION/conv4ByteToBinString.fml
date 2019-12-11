@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="val" type="3" data="0" description="0x0000 - 0xffff"/>
+</Inputs>
+<Outputs>
+<Variable id="outstr" type="8" data="" description="二进制字符串 - &quot;00000000111111110000000011111111&quot; 4 byte"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   convert 4byte to binString  from ECU 
+input parameter:val
+output parameter :outstr;
+
+11/25/2016     created by viforce
+******************************************************************************--]]
+
+local IntText = ""
+local bitNum = 0
+ for i = 0,31 do 
+	bitNum = bit32.extract(val,31-i,1);
+	IntText = IntText..tostring(bitNum);
+end;
+
+outstr = IntText</Script></Function>
+

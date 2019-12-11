@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="service 61">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="HoeheTafelLDW" type="5" data="0"/>
+<Variable id="sendMode" type="3" data="0" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="revTel" type="8" data="" description="返回报文"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 61 变道辅助板高度 （夜视）
+input parameter:pHndl,IDT_Timeout,HoeheTafelLDW,sendMode                    
+output parameter :ret;revTel
+
+12/28/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00"
+local TempByte5 = 0
+local TempByte6 = 0
+local iHeightBoardLDW = 0
+
+sendMode = sendMode or 0
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x3D");    -- 设置service号,第2字节
+ret = -1
+if(HoeheTafelLDW &gt;= 0 and HoeheTafelLDW &lt;= 6553.6) then
+	iHeightBoardLDW = HoeheTafelLDW * 10.0
+        TempByte5 = iHeightBoardLDW / 0x100
+        TempByte6 = iHeightBoardLDW % 0x100
+        idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(TempByte5))
+        idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(TempByte6))
+--发送报文并校验返回报文是否正确
+	err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl,sendMode)
+	ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")      
+else
+engine.LastError = 1
+engine.println("FAS_61_LDW_HeightPanel : Errror :Prameter -- &gt;HoeheTafelLDW  invalid")
+end
+
+
+
+</Script></Function>
+

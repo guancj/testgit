@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s0" type="3" data="0"/>
+<Variable id="s1" type="3" data="0"/>
+<Variable id="s2" type="3" data="0"/>
+<Variable id="s3" type="3" data="0"/>
+<Variable id="p_mask" type="3" data="0"/>
+</Inputs>
+<Script>seed={0x00,0x00,0x00,0x00};
+	mask=p_mask;
+
+	seed[1]=s0;
+	seed[2]=s1;
+	seed[3]=s2;
+	seed[4]=s3;
+print("s0,s1,s2,s3:"..s0..","..s1..","..s2..","..s3);
+
+	if( (seed[1]==0) and (seed[2]==0) )then
+			key_length=0;
+	else
+			seed_wort=bit32.lshift(seed[1],24)+bit32.lshift(seed[2],16)+bit32.lshift(seed[3],8)+seed[4];
+			for i=1,35,1 do--待定
+					if((bit32.band(seed_wort,0x80000000))~=0)then
+							seed_wort=bit32.lshift(seed_wort,1);
+							seed_wort=bit32.bxor(seed_wort,mask);
+					else
+							seed_wort=bit32.lshift(seed_wort,1);
+					end
+			end
+
+	end
+		key0=bit32.rshift(bit32.band(seed_wort,bit32.lshift(0xff,24)),24);
+		key1=bit32.rshift(bit32.band(seed_wort,bit32.lshift(0xff,16)),16);
+		key2=bit32.rshift(bit32.band(seed_wort,bit32.lshift(0xff,8)),8);
+		key3=bit32.rshift(bit32.band(seed_wort,bit32.lshift(0xff,0)),0);
+print("key0,key1,key2,key3:"..key0..","..key1..","..key2..","..key3);
+		return key0,key1,key2,key3;
+
+</Script></Function>
+

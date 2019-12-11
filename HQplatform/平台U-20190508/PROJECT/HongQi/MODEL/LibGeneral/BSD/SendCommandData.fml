@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="SendCommandData">
+<Inputs>
+<Variable id="vciHandle" type="3" data="0"/>
+<Variable id="EcuHexData" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="SendData1" type="8" data=""/>
+<Variable id="SendData2" type="8" data=""/>
+<Variable id="SendData3" type="8" data=""/>
+<Variable id="SendData4" type="8" data=""/>
+<Variable id="isOK" type="11" data=""/>
+</Outputs>
+<Script>local a = 0
+local requestData = "\x01\xE0\xD7"..EcuHexData
+
+repeat
+	recvTel = LibGeneral.ECU_DataExchange(vciHandle, 0x31, 0x71, requestData);
+	a = a + 1
+until(engine.LastError == 0 or a &gt;= 3)
+
+if (engine.LastError == 0) then
+	SendData1 = recvTel:sub(7,14)
+        SendData2 = recvTel:sub(15,22)
+        SendData3 = recvTel:sub(23,30)
+        SendData4 = recvTel:sub(31,38)
+	isOK = true
+end
+
+if(engine.LastError ~= 0 and a &gt;= 3) then
+	isOK = false
+	print("Ecu Negative Response!")
+end</Script></Function>
+

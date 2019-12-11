@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_WriteMemory">
+<Inputs>
+<Variable id="StartAdresse" type="3" data="0" description="写入地址"/>
+<Variable id="SendData" type="8" data="0" description="写入数据"/>
+<Variable id="LineNr" type="8" data="1" description="LineNr"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this  function is used to   Write Mem  by Address  
+input parameter:StartAdresse;SendData;LineNr;ECU_Handle
+
+01/25/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+local StartAdresse_tmp;
+local strLen;
+local Len_tmp;
+local byte1, byte2, byte3, byte4, byte5, byte6, byte7;
+local TmpStr;
+local MaxBytes;
+local Pos;
+local SendData_hex;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+engine.println("write Mem SendData:"..tostring(SendData));
+
+if (SendData == nil) then engine.LastError = 1;engine.StatValue = "senddata nil";return;end;
+if (string.len(SendData) &lt;= 0) then engine.LastError = 1;return;end;
+
+byte1 = math.floor(StartAdresse/0x10000);
+StartAdresse_tmp = StartAdresse - byte1*0x10000;
+byte2 = math.floor(StartAdresse_tmp/0x100);
+byte3 = StartAdresse_tmp - byte2*0x100;
+byte4 = 0x00;
+SendData_hex = LibGeneral.str2hex(SendData);
+strLen = string.len(SendData_hex);
+byte5 = math.floor(strLen/0x10000);
+Len_tmp = strLen - byte5*0x10000;
+byte6 = math.floor(Len_tmp/0x100);
+byte7 = Len_tmp - byte6*0x100;
+
+
+#COMMEX ECU_Handle -1 0x34 byte1 byte2 byte3 byte4 byte5 byte6 byte7
+	
+if (engine.LastError == 0)  then 
+	MaxBytes = @1;	
+	if (MaxBytes &gt; 62 ) then
+		MaxBytes = 62;	end;
+	Pos = 0;
+	while ( (engine.LastError == 0) and (string.len(SendData_hex) &gt; Pos )) do 
+		TmpStr = string.sub(SendData_hex,Pos+1,MaxBytes+Pos);
+		Pos = Pos + string.len(TmpStr);		
+engine.println(string.format("SendData : %s \n",LibGeneral.hex2str(TmpStr)));
+        --local TmpStr_byte = string.byte(TmpStr,1);
+#COMMEX ECU_Handle -1 0x36 TmpStr
+	end
+else
+	engine.LastError = 1;
+end;
+
+if(engine.LastError == 0) then engine.StatValue = "Write Memery successfully"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpok");
+else 
+engine.StatValue = "Write Memery failed"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");
+end;
+
+#COMMEX ECU_Handle -1 0x37
+
+if (engine.LastError ~= 0) then engine.StatValue = "service 0x37 failed"; end; 
+ </Script></Function>
+

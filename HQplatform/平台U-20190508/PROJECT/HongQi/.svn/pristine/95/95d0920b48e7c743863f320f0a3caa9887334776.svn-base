@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="General" code="">
+
+<Functions>
+<Function id="IDT_BuildConnection"/>
+
+<Function id="IDT_DestroyConnection"/>
+
+<Function id="IDT_Excute_Common_Service"/>
+
+<Function id="IDT_WaitForServiceFinish"/>
+
+</Functions>
+
+<Processes>
+<Process id="IDT_Toggling"/>
+</Processes>
+</Workplace>

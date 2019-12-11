@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_P_Modes_deaktiveren_FAS_2" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="428" top="47" right="528" bottom="79"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="431" top="1123" right="531" bottom="1155"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="GWA">
+<Rect left="429" top="113" right="529" bottom="145"/>
+<Line1Text Enable="1" Text="GWA"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="3" name="Prozessbyte reset Liste">
+<Rect left="430" top="176" right="530" bottom="208"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="5" name="c7_gwa">
+<Rect left="431" top="240" right="531" bottom="272"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteRead&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="TransportMode" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="3" name="参数准备">
+<Rect left="430" top="489" right="530" bottom="521"/>
+<Script>
+-- FAS  prozessbytes.ini   =&gt;   Byte=10  Bit=6
+-- BZD  prozessbytes.ini   =&gt;   Byte=11  Bit=0
+-- FP2  prozessbytes.ini   =&gt;   Byte=10  Bit=7
+
+DInt_Byteposition_FAS = (ByteFAS - 11) * (-1)
+engine.println("&lt;Par_P_Modes_deaktiveren_FAS_2&gt; FAS DInt_Byteposition :"..tostring(DInt_Byteposition_FAS))
+DInt_Bitposition_FAS = (BitFAS - 7) * (-1)
+engine.println("&lt;Par_P_Modes_deaktiveren_FAS_2&gt; FAS DInt_Bitposition :"..tostring(DInt_Bitposition_FAS))
+
+DInt_Byteposition_BZD = (ByteBZD - 11) * (-1)
+engine.println("&lt;Par_P_Modes_deaktiveren_FAS_2&gt; BZD DInt_Byteposition :"..tostring(DInt_Byteposition_BZD))
+DInt_Bitposition_BZD = (BitBZD - 7) * (-1)
+engine.println("&lt;Par_P_Modes_deaktiveren_FAS_2&gt; BZD DInt_Bitposition :"..tostring(DInt_Bitposition_BZD))
+
+DInt_Byteposition_FP2 = (ByteFP2 - 11) * (-1)
+engine.println("&lt;Par_P_Modes_deaktiveren_FAS_2&gt; FP2 DInt_Byteposition :"..tostring(DInt_Byteposition_FP2))
+DInt_Bitposition_FP2 = (BitFP2 - 7) * (-1)
+engine.println("&lt;Par_P_Modes_deaktiveren_FAS_2&gt; FP2 DInt_Bitposition :"..tostring(DInt_Bitposition_FP2))
+
+</Script></Activity>
+<Activity id="78" ActivityType="13" name="FAS">
+<Rect left="429" top="554" right="529" bottom="586"/>
+<FunctionRef id="StringResetBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition_FAS"/>
+<Parameter id="BitPosition" value="DInt_Bitposition_FAS"/>
+<Parameter id="Log" value="&quot;&lt;Par_P_Modes_deaktiveren_FAS_2&gt;&quot;"/>
+<Parameter id="DestString" ret="DMCDResultString_Prozessbytes_shared"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="79" ActivityType="13" name="BZD">
+<Rect left="430" top="615" right="530" bottom="647"/>
+<FunctionRef id="StringResetBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition_BZD"/>
+<Parameter id="BitPosition" value="DInt_Bitposition_BZD"/>
+<Parameter id="Log" value="&quot;&lt;Par_P_Modes_deaktiveren_FAS_2&gt;&quot;"/>
+<Parameter id="DestString" ret="DMCDResultString_Prozessbytes_shared"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="80" ActivityType="13" name="FP2">
+<Rect left="430" top="676" right="530" bottom="708"/>
+<FunctionRef id="StringResetBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition_FP2"/>
+<Parameter id="BitPosition" value="DInt_Bitposition_FP2"/>
+<Parameter id="Log" value="&quot;&lt;Par_P_Modes_deaktiveren_FAS_2&gt;&quot;"/>
+<Parameter id="DestString" ret="DMCDResultString_Prozessbytes_shared"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="81" ActivityType="5" name="c7_gwa">
+<Rect left="430" top="744" right="530" bottom="776"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteWrite&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="TransportMode" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="82" ActivityType="3" name="生产模式关闭">
+<Rect left="430" top="806" right="530" bottom="838"/>
+<Line1Text Enable="1" Text="控制器：生产模式关闭"/>
+<Script></Script></Activity>
+<Activity id="83" ActivityType="5" name="c7_pmod_deactive">
+<Rect left="430" top="871" right="530" bottom="903"/>
+<SubProcesses>
+<SubProcess id="c7_pmod_deactive">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="84" ActivityType="3" name="安装检测">
+<Rect left="431" top="934" right="531" bottom="966"/>
+<Line1Text Enable="1" Text="控制器：FAS 安装检测"/>
+<Script></Script></Activity>
+<Activity id="85" ActivityType="5" name="安装检测并行">
+<Rect left="430" top="998" right="530" bottom="1030"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_KAS">
+</SubProcess>
+<SubProcess id="Par_ZDC_Check_2_2_BVE">
+</SubProcess>
+<SubProcess id="Par_ZDC_Check_2_2_ARE_ARE02">
+</SubProcess>
+<SubProcess id="Par_ZDC_Check_2_2_HUD">
+</SubProcess>
+<SubProcess id="Par_ZDC_Check_2_2_SWA">
+</SubProcess>
+<SubProcess id="Par_ZDC_Check_2_2_RFK">
+</SubProcess>
+<SubProcess id="Par_ZDC_Check_2_2_NSS">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="86" ActivityType="3" name="控制器等待">
+<Rect left="431" top="1058" right="531" bottom="1090"/>
+<Line2Text Enable="1" Text="控制器等待"/>
+<Script></Script></Activity>
+<Activity id="88" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="432" top="305" right="532" bottom="337"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;FAS&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="ByteFAS"/>
+<Parameter id="Bit" value="0" ret="BitFAS"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="89" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="432" top="367" right="532" bottom="399"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;BZD&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="ByteBZD"/>
+<Parameter id="Bit" value="0" ret="BitBZD"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="90" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="431" top="427" right="531" bottom="459"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;FP2&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="ByteFP2"/>
+<Parameter id="Bit" value="0" ret="BitFP2"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="91" ActivityType="5" name="Par_ZDC_Check_2_2_ARE_ARE02">
+<Rect left="579" top="933" right="679" bottom="965"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_ARE_ARE02">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="92" ActivityType="5" name="Par_ZDC_Check_2_2_BVE">
+<Rect left="580" top="996" right="680" bottom="1028"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_BVE">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="93" ActivityType="5" name="Par_ZDC_Check_2_2_HUD">
+<Rect left="581" top="1056" right="681" bottom="1088"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_HUD">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="94" ActivityType="5" name="Par_ZDC_Check_2_2_KAS">
+<Rect left="704" top="933" right="804" bottom="965"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_KAS">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="95" ActivityType="5" name="Par_ZDC_Check_2_2_NSS">
+<Rect left="707" top="991" right="807" bottom="1023"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_NSS">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="96" ActivityType="5" name="Par_ZDC_Check_2_2_RFK">
+<Rect left="711" top="1050" right="811" bottom="1082"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_RFK">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="97" ActivityType="5" name="Par_ZDC_Check_2_2_SWA">
+<Rect left="711" top="1110" right="811" bottom="1142"/>
+<SubProcesses>
+<SubProcess id="Par_ZDC_Check_2_2_SWA">
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="88" type="0">
+</Transition>
+<Transition StartId="6" EndId="78" type="0">
+</Transition>
+<Transition StartId="78" EndId="79" type="0">
+</Transition>
+<Transition StartId="79" EndId="80" type="0">
+</Transition>
+<Transition StartId="80" EndId="81" type="0">
+</Transition>
+<Transition StartId="81" EndId="82" type="0">
+</Transition>
+<Transition StartId="82" EndId="83" type="0">
+</Transition>
+<Transition StartId="83" EndId="84" type="0">
+</Transition>
+<Transition StartId="84" EndId="91" type="0">
+</Transition>
+<Transition StartId="85" EndId="86" type="0">
+</Transition>
+<Transition StartId="86" EndId="2" type="0">
+</Transition>
+<Transition StartId="88" EndId="89" type="0">
+</Transition>
+<Transition StartId="89" EndId="90" type="0">
+</Transition>
+<Transition StartId="90" EndId="6" type="0">
+</Transition>
+<Transition StartId="91" EndId="92" type="0">
+</Transition>
+<Transition StartId="92" EndId="93" type="0">
+</Transition>
+<Transition StartId="93" EndId="94" type="0">
+</Transition>
+<Transition StartId="94" EndId="95" type="0">
+</Transition>
+<Transition StartId="95" EndId="96" type="0">
+</Transition>
+<Transition StartId="96" EndId="97" type="0">
+</Transition>
+<Transition StartId="97" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

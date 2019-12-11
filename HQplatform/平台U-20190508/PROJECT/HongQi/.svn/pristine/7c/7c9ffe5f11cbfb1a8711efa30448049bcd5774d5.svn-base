@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtchecksum" description="xor校验函数">
+<Inputs>
+<Variable id="hexString" type="8" data="" description="字节串,格式如:&quot;\x06\0xAB......&quot;,"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回xor校验后的结果，用一个字节表示如：&quot;\xF2&quot;"/>
+</Outputs>
+<Script>local sum = 0x00;
+
+local tempStr = hexString:sub(1,42);
+
+for index = 1,tempStr:len() do
+
+sum = bit32.bxor(sum,tempStr:sub(index,index):byte());
+
+end;
+
+ret = string.char(sum);</Script></Function>
+

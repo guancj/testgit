@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="hexEcuData" type="8" data="" description="EcuService读到的全部数据"/>
+<Variable id="Posbyte" type="3" data="0" description="截取哪服务中的哪个字节"/>
+<Variable id="traPosStart" type="3" data="0" description="字节中截取的开始位"/>
+<Variable id="traLength" type="3" data="0" description="长度"/>
+<Variable id="repPosStart" type="3" data="0" description="替换返回值字节的开始位"/>
+<Variable id="repLength" type="3" data="0" description="长度"/>
+<Variable id="preValue" type="3" data="0" description="是否需要连续拼接"/>
+</Inputs>
+<Outputs>
+<Variable id="rbyte" type="3" data="0"/>
+</Outputs>
+<Script>initByte = 0
+
+tmpEcuData = string.byte(hexEcuData:sub(Posbyte,Posbyte))
+
+tmpValue = bit32.extract(tmpEcuData,traPosStart,traLength)
+if (preValue == nil) then
+	rbyte = bit32.replace(initByte,tmpValue,repPosStart,repLength)
+else
+	rbyte = bit32.replace(preValue,tmpValue,repPosStart,repLength)
+end	
+print("HEXrbyte = "..tostring(string.format("0x%X",rbyte)))</Script></Function>
+

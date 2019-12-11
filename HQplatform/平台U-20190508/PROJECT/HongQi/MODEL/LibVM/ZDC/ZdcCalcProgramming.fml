@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="zdcHndl" type="3" data="0" description="ZDC handle"/>
+<Variable id="modusFilter" type="8" data="&quot;&quot;" description="ZDC &apos;MODUSTEIL&apos; filter, e.g. &quot;P1&quot;. set empty return all MODUSTEIL value"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="progString" type="8" data="0" description="The calibration value form ZDC container"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to caculate zdc Programming value which modus is 'P'
+History:
+    02/01/2016, wuh : function created
+	03/10/2016, wuh : add caculating for short programming cod word
+	04/11/2016, wuh : add debugLevel
+****************************************************************--]]
+	local err = 0
+	local progString = ""
+	
+	-- **** precondition check **** --
+	if nil == zdcHndl then 
+		engine.StatValue = "input zdc handle is invalid"
+		engine.println("ERROR, ZdcCalcProgramming : input zdc handle is invalid, zdcHndl= " .. tostring(zdcHndl))
+		engine.LastError = 1 ;  progString = ""
+		return progString
+	end
+
+	-- **** get all 'TABELLE' which belong to modus 'P' ****--
+	local xpath = "/ZDC/VORSCHRIFT/DIREKT/TABELLEN/TABELLE/MODUS[text()='P']/.."
+	local nodeTabelles = zdcHndl.selectNodes(xpath)
+	if nil == nodeTabelles then 
+		engine.StatValue = "no zdc programming in zdc container"
+		engine.println("WARNING, ZdcCalcProgramming : Modus tables not found , xpath = " .. xpath)
+		engine.LastError = 0 ; progString=""
+		return progString
+	end
+	
+	-- **** Caculate all 'TABELLE's **** --
+	local blockSum, tmpResStr = 0, ""
+	for i=0, nodeTabelles.length-1, 1 do
+		local nodeTabelle = nodeTabelles[i]
+		if "" == modusFilter or nodeTabelle.selectSingleNode("MODUSTEIL").text == modusFilter then 
+			if debugLevel &gt; 0 then
+				engine.println("ZdcCalcProgramming, start caculate new table",
+					"MODUSTEIL=" .. tostring(nodeTabelle.selectSingleNode("MODUSTEIL").text),
+					"BESCHREIBUNG=" .. tostring(nodeTabelle.selectSingleNode("BESCHREIBUNG").text) )
+			end
+		
+			-- caculate code word
+			local knotens = LibVW.zdcGetKnotens(nodeTabelle,debugLevel)
+			if engine.LastError ~= 0 then
+				engine.println("ERROR, 'ZdcCalcProgramming' : zdcGetKnotens failed")
+				engine.LastError = 1 ; progString=""
+				return progString
+			end
+			-- type "DATEN-NAME"
+			if knotens[1].valueType == "DATEN-NAME" then
+				local dt = LibVW.zdcInContainerDataBuild(zdcHndl, nodeTabelle, debugLevel)
+				if engine.LastError ~= 0 then
+					engine.StatValue = "zdc caculate failed, zdc data invalid"
+					engine.println("ERROR, ZdcCalcProgramming : programming data caculate failed.")
+					engine.LastError = 1 ; progString=""
+					return progString
+				end
+				for _,v in ipairs(dt) do
+					tmpResStr = tmpResStr .. string.format("%08x", v.startAddr) .. string.format("%08x", v.dataLen) .. v.data
+					blockSum = blockSum + 1
+				end
+			-- caculate code word, type "DATEN-NAME"
+			elseif knotens[1].valueType == "WERT" then
+				local cwt =LibVW.zdcCalcCodeWord(nodeTabelle, debugLevel)
+				if engine.LastError ~= 0 then
+					engine.StatValue = "zdc caculate failed, zdc data invalid"
+					engine.println("ERROR, ZdcCalcProgramming : code word caculate failed.")
+					engine.LastError =1 ; progString=""
+					return progString
+				end
+				tmpResStr = tmpResStr .. string.format("%08x", cwt.minValidByte) .. string.format("%08x", cwt.codeLen) .. cwt.codeString
+				blockSum = blockSum + 1
+			else
+					engine.StatValue = "zdc caculate failed, zdc data type not support for modus P, type is " .. tostring(knotens[1].valueType)
+					engine.println("ERROR, ZdcCalcProgramming : code word caculate failed. modus P not support data type " .. tostring(knotens[1].valueType))
+					engine.LastError =1 ; progString=""
+					return progString
+			end
+			
+		end	
+	end
+	-- add block number infor in the front of the code string 
+	if blockSum &lt;= 0 then engine.println("WARNING, ZdcCalcProgramming : no programming value found.") end
+	tmpResStr = string.format("%08x", blockSum) .. tmpResStr
+	engine.println("ZdcCalcProgramming, progString caculate result hexstring : " .. tmpResStr)
+	
+	-- hex string convert to bin string
+	progString = ""
+	for i=1,tmpResStr:len(),2 do	    
+		progString=progString .. string.char(tonumber(tmpResStr:sub(i,i+1),16))
+	end
+	
+         tmpResStr = "zdc programming string=" .. tmpResStr ;
+     if (string.len(tmpResStr) &gt; 240)  then
+       tmpResStr = string.sub(tmpResStr,1,236) .. "...";  
+       engine.println("length control :"..tostring(tmpResStr)) ;
+     end;
+
+	engine.StatValue = tmpResStr
+	engine.LastError = err</Script></Function>
+

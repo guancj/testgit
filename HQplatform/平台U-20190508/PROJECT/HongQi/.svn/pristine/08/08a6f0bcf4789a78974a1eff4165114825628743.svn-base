@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="DL24_Select">
+<Inputs>
+<Variable id="FKL" type="8" data="" description="vehicle class"/>
+</Inputs>
+<Script>--[[ ***************************************************************
+The function is use to set dl24 which the current runtime used.
+History:
+    12/31/2015, wuh : function created
+****************************************************************--]]
+
+
+engine.DL24_Select(FKL)</Script></Function>
+

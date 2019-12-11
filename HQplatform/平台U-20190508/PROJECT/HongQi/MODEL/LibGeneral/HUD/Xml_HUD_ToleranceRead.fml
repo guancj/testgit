@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlFile" type="8" data="&quot;au57x_toleranzen_headup.xml&quot;" description="xml 文件名"/>
+<Variable id="Karosserievariante" type="8" data="&quot;AU57x&quot;" description="车型分类 &quot;AU57x&quot;"/>
+<Variable id="Lenker" type="8" data="&quot;Lenker&quot;" description="&quot;Lenker&quot;"/>
+<Variable id="Prueftyp" type="8" data="&quot;BGW&quot;" description="&quot;BGW&quot;"/>
+<Variable id="Position" type="8" data="&quot;&quot;" description="&quot;1+2+3&quot; 或者 &quot;4+5+6+7&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="float_Rotation_OTG" type="5" data="0"/>
+<Variable id="float_Rotation_UTG" type="5" data="0"/>
+<Variable id="float_Translation_vertikal_OTG" type="5" data="0"/>
+<Variable id="float_Translation_vertikal_UTG" type="5" data="0"/>
+<Variable id="float_Translation_horizontal_OTG" type="5" data="0"/>
+<Variable id="float_Translation_horizontal_UTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_vertikal_links_OTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_vertikal_links_UTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_vertikal_mitte_OTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_vertikal_mitte_UTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_vertikal_rechts_OTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_vertikal_rechts_UTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_horizontal_oben_OTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_horizontal_oben_UTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_horizontal_mitte_OTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_horizontal_mitte_UTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_horizontal_unten_OTG" type="5" data="0"/>
+<Variable id="float_Schiefstellung_horizontal_unten_UTG" type="5" data="0"/>
+<Variable id="float_Trapez_vertikal_OTG" type="5" data="0"/>
+<Variable id="float_Trapez_vertikal_UTG" type="5" data="0"/>
+<Variable id="float_Trapez_horizontal_OTG" type="5" data="0"/>
+<Variable id="float_Trapez_horizontal_UTG" type="5" data="0"/>
+<Variable id="float_Aspekt_OTG" type="5" data="0"/>
+<Variable id="float_Aspekt_UTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_horizontal_oben_OTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_horizontal_oben_UTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_horizontal_mitte_OTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_horizontal_mitte_UTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_horizontal_unten_OTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_horizontal_unten_UTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_vertikal_links_OTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_vertikal_links_UTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_vertikal_mitte_OTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_vertikal_mitte_UTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_vertikal_rechts_OTG" type="5" data="0"/>
+<Variable id="float_Abw_Geraden_vertikal_rechts_UTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_horizontal_max_OTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_horizontal_max_UTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_horizontal_min_OTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_horizontal_min_UTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_vertikal_max_OTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_vertikal_max_UTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_vertikal_min_OTG" type="5" data="0"/>
+<Variable id="float_Vergr_Verkl_vertikal_min_UTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_links_OTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_links_UTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_oben_OTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_oben_UTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_rechts_OTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_rechts_UTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_unten_OTG" type="5" data="0"/>
+<Variable id="float_Beschnitt_unten_UTG" type="5" data="0"/>
+<Variable id="float_Ghost_horizontal_Abstand_OTG" type="5" data="0"/>
+<Variable id="float_Ghost_horizontal_Abstand_UTG" type="5" data="0"/>
+<Variable id="float_Ghost_horizontal_Helligkeit_OTG" type="5" data="0"/>
+<Variable id="float_Ghost_horizontal_Helligkeit_UTG" type="5" data="0"/>
+<Variable id="float_Ghost_horizontal_Anzahl_OTG" type="5" data="0"/>
+<Variable id="float_Ghost_horizontal_Anzahl_UTG" type="5" data="0"/>
+<Variable id="float_Ghost_vertikal_Abstand_OTG" type="5" data="0"/>
+<Variable id="float_Ghost_vertikal_Abstand_UTG" type="5" data="0"/>
+<Variable id="float_Ghost_vertikal_Helligkeit_OTG" type="5" data="0"/>
+<Variable id="float_Ghost_vertikal_Helligkeit_UTG" type="5" data="0"/>
+<Variable id="float_Ghost_vertikal_Anzahl_OTG" type="5" data="0"/>
+<Variable id="float_Ghost_vertikal_Anzahl_UTG" type="5" data="0"/>
+</Outputs>
+<Script>--[[ ********************************************************************************************
+The element read hud Tolerance parameter OTG UTG from xml file  
+input prameter : xmlFile,Karosserievariante,Lenker,Prueftyp,Position
+output prameter: 32 couples of OTG and UTG  value
+
+02/06/2017     created by viforce
+*************************************************************************************************--]]
+
+xmlFile = engine.Dl24Path .. "\\" ..  xmlFile
+
+
+local node = ""
+local nodeList = ""
+local nodeList2 = ""
+local statStr = ""
+local handle = XmlDocment()
+local xmlKarosserievariante
+local xmlLenker
+local xmlPrueftyp
+local xmlPosition
+local ParaName = ""
+
+
+if(false == handle.load(xmlFile)) then
+	-- engine.println("!!!load xml file err ")
+	statStr = "xmlFile:"..tostring(xmlFile).." Invalid !!!"
+	engine.LastError = 1
+	-- engine.engine.LastError = 1
+else
+	-- SVN_Datum get
+	node = handle.selectSingleNode("/Parameter_Headup")
+	VersionStr = node.getAttribute("SVN_Datum")
+	if(VersionStr ~= nil) then
+		VersionStr = string.sub(VersionStr,8,26)
+		statStr = statStr .. "XML-File Version :"..tostring(VersionStr)
+		print(VersionStr)
+	else
+		statStr = statStr .. "Get XML-File Version failed "
+		engine.LastError = 1
+	end
+	
+	-- tolerance value get
+	-- xmlKarosserievariante value get
+	node = handle.selectSingleNode("/Parameter_Headup/Karosserievariante")
+	xmlKarosserievariante = node.getAttribute("Name")
+	if(xmlKarosserievariante ~= nil) then
+		print("xmlKarosserievariante :" .. tostring(xmlKarosserievariante))
+		if(xmlKarosserievariante == Karosserievariante) then
+			-- xmlLenker value get 
+			node = handle.selectSingleNode("/Parameter_Headup/Karosserievariante/Lenker")
+			xmlLenker = node.getAttribute("Name")			
+			if(xmlLenker ~= nil) then
+				print("xmlLenker :" .. tostring(xmlLenker))	
+				if(xmlLenker == Lenker) then
+					-- xmlPrueftyp value get
+					node = handle.selectSingleNode("/Parameter_Headup/Karosserievariante/Lenker/Prueftyp")
+					xmlPrueftyp = node.getAttribute("Name")	
+					if(xmlPrueftyp ~= nil) then
+						print("xmlPrueftyp :" .. tostring(xmlPrueftyp))
+						if(xmlPrueftyp == Prueftyp) then
+							-- xmlPosition value get
+							nodeList = handle.selectNodes("/Parameter_Headup/Karosserievariante/Lenker/Prueftyp/Position")
+							for i = 0 ,nodeList.length -1 do
+								xmlPosition = nodeList[i].getAttribute("Nummer")		
+									if(xmlPosition ~= nil) then
+										print("xmlPosition :" .. tostring(xmlPosition))	
+										if(xmlPosition == Position) then
+											--print(nodeList[i].xml)
+											-- tolerance value get
+											-- get nodes list 
+											nodeList2 = nodeList[i].selectNodes("Parameter")
+											print(nodeList2.length)
+											if(nodeList2.length &gt;= 32) then
+												for i = 0 ,nodeList2.length -1 do
+													--print(nodeList2[i].getAttribute("Name"))
+													ParaName = nodeList2[i].getAttribute("Name")
+													if(ParaName == "Rotation") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Rotation_OTG = tonumber(node.getAttribute("OTG"))
+														float_Rotation_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Rotation_OTG))
+														print(tostring(float_Rotation_UTG))
+													elseif(ParaName == "Translation_vertikal") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Translation_vertikal_OTG = tonumber(node.getAttribute("OTG"))
+														float_Translation_vertikal_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Translation_vertikal_OTG))
+														print(tostring(float_Translation_vertikal_UTG))													
+													elseif(ParaName == "Translation_horizontal") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Translation_horizontal_OTG = tonumber(node.getAttribute("OTG"))
+														float_Translation_horizontal_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Translation_horizontal_OTG))
+														print(tostring(float_Translation_horizontal_UTG))														
+													elseif(ParaName == "Schiefstellung_vertikal_links") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Schiefstellung_vertikal_links_OTG = tonumber(node.getAttribute("OTG"))
+														float_Schiefstellung_vertikal_links_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Schiefstellung_vertikal_links_OTG))
+														print(tostring(float_Schiefstellung_vertikal_links_UTG))														
+													elseif(ParaName == "Schiefstellung_vertikal_mitte") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Schiefstellung_vertikal_mitte_OTG = tonumber(node.getAttribute("OTG"))
+														float_Schiefstellung_vertikal_mitte_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Schiefstellung_vertikal_mitte_OTG))
+														print(tostring(float_Schiefstellung_vertikal_mitte_UTG))													
+													elseif(ParaName == "Schiefstellung_vertikal_rechts") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Schiefstellung_vertikal_rechts_OTG = tonumber(node.getAttribute("OTG"))
+														float_Schiefstellung_vertikal_rechts_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Schiefstellung_vertikal_rechts_OTG))
+														print(tostring(float_Schiefstellung_vertikal_rechts_UTG))													
+													elseif(ParaName == "Schiefstellung_horizontal_oben") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Schiefstellung_horizontal_oben_OTG = tonumber(node.getAttribute("OTG"))
+														float_Schiefstellung_horizontal_oben_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Schiefstellung_horizontal_oben_OTG))
+														print(tostring(float_Schiefstellung_horizontal_oben_UTG))														
+													elseif(ParaName == "Schiefstellung_horizontal_mitte") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Schiefstellung_horizontal_mitte_OTG = tonumber(node.getAttribute("OTG"))
+														float_Schiefstellung_horizontal_mitte_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Schiefstellung_horizontal_mitte_OTG))
+														print(tostring(float_Schiefstellung_horizontal_mitte_UTG))													
+													elseif(ParaName == "Schiefstellung_horizontal_unten") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Schiefstellung_horizontal_unten_OTG = tonumber(node.getAttribute("OTG"))
+														float_Schiefstellung_horizontal_unten_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Schiefstellung_horizontal_unten_OTG))
+														print(tostring(float_Schiefstellung_horizontal_unten_UTG))													
+													elseif(ParaName == "Trapez_vertikal") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Trapez_vertikal_OTG = tonumber(node.getAttribute("OTG"))
+														float_Trapez_vertikal_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Trapez_vertikal_OTG))
+														print(tostring(float_Trapez_vertikal_UTG))														
+													elseif(ParaName == "Trapez_horizontal") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Trapez_horizontal_OTG = tonumber(node.getAttribute("OTG"))
+														float_Trapez_horizontal_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Trapez_horizontal_OTG))
+														print(tostring(float_Trapez_horizontal_UTG))														
+													elseif(ParaName == "Aspekt") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Aspekt_OTG = tonumber(node.getAttribute("OTG"))
+														float_Aspekt_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Aspekt_OTG))
+														print(tostring(float_Aspekt_UTG))													
+													elseif(ParaName == "Abw_Geraden_horizontal_oben") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Abw_Geraden_horizontal_oben_OTG = tonumber(node.getAttribute("OTG"))
+														float_Abw_Geraden_horizontal_oben_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Abw_Geraden_horizontal_oben_OTG))
+														print(tostring(float_Abw_Geraden_horizontal_oben_UTG))													
+													elseif(ParaName == "Abw_Geraden_horizontal_mitte") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Abw_Geraden_horizontal_mitte_OTG = tonumber(node.getAttribute("OTG"))
+														float_Abw_Geraden_horizontal_mitte_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Abw_Geraden_horizontal_mitte_OTG))
+														print(tostring(float_Abw_Geraden_horizontal_mitte_UTG))													
+													elseif(ParaName == "Abw_Geraden_horizontal_unten") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Abw_Geraden_horizontal_unten_OTG = tonumber(node.getAttribute("OTG"))
+														float_Abw_Geraden_horizontal_unten_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Abw_Geraden_horizontal_unten_OTG))
+														print(tostring(float_Abw_Geraden_horizontal_unten_UTG))													
+													elseif(ParaName == "Abw_Geraden_vertikal_links") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Abw_Geraden_vertikal_links_OTG = tonumber(node.getAttribute("OTG"))
+														float_Abw_Geraden_vertikal_links_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Abw_Geraden_vertikal_links_OTG))
+														print(tostring(float_Abw_Geraden_vertikal_links_UTG))													
+													elseif(ParaName == "Abw_Geraden_vertikal_mitte") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Abw_Geraden_vertikal_mitte_OTG = tonumber(node.getAttribute("OTG"))
+														float_Abw_Geraden_vertikal_mitte_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Abw_Geraden_vertikal_mitte_OTG))
+														print(tostring(float_Abw_Geraden_vertikal_mitte_UTG))													
+													elseif(ParaName == "Abw_Geraden_vertikal_rechts") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Abw_Geraden_vertikal_rechts_OTG = tonumber(node.getAttribute("OTG"))
+														float_Abw_Geraden_vertikal_rechts_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Abw_Geraden_vertikal_rechts_OTG))
+														print(tostring(float_Abw_Geraden_vertikal_rechts_UTG))														
+													elseif(ParaName == "Vergr_Verkl_horizontal_max") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Vergr_Verkl_horizontal_max_OTG = tonumber(node.getAttribute("OTG"))
+														float_Vergr_Verkl_horizontal_max_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Vergr_Verkl_horizontal_max_OTG))
+														print(tostring(float_Vergr_Verkl_horizontal_max_UTG))														
+													elseif(ParaName == "Vergr_Verkl_horizontal_min") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Vergr_Verkl_horizontal_min_OTG = tonumber(node.getAttribute("OTG"))
+														float_Vergr_Verkl_horizontal_min_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Vergr_Verkl_horizontal_min_OTG))
+														print(tostring(float_Vergr_Verkl_horizontal_min_UTG))														
+													elseif(ParaName == "Vergr_Verkl_vertikal_max") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Vergr_Verkl_vertikal_max_OTG = tonumber(node.getAttribute("OTG"))
+														float_Vergr_Verkl_vertikal_max_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Vergr_Verkl_vertikal_max_OTG))
+														print(tostring(float_Vergr_Verkl_vertikal_max_UTG))													
+													elseif(ParaName == "Vergr_Verkl_vertikal_min") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Vergr_Verkl_vertikal_min_OTG = tonumber(node.getAttribute("OTG"))
+														float_Vergr_Verkl_vertikal_min_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Vergr_Verkl_vertikal_min_OTG))
+														print(tostring(float_Vergr_Verkl_vertikal_min_UTG))														
+													elseif(ParaName == "Beschnitt_links") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Beschnitt_links_OTG = tonumber(node.getAttribute("OTG"))
+														float_Beschnitt_links_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Beschnitt_links_OTG))
+														print(tostring(float_Beschnitt_links_UTG))														
+													elseif(ParaName == "Beschnitt_oben") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Beschnitt_oben_OTG = tonumber(node.getAttribute("OTG"))
+														float_Beschnitt_oben_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Beschnitt_oben_OTG))
+														print(tostring(float_Beschnitt_oben_UTG))														
+													elseif(ParaName == "Beschnitt_rechts") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Beschnitt_rechts_OTG = tonumber(node.getAttribute("OTG"))
+														float_Beschnitt_rechts_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Beschnitt_rechts_OTG))
+														print(tostring(float_Beschnitt_rechts_UTG))													
+													elseif(ParaName == "Beschnitt_unten") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Beschnitt_unten_OTG = tonumber(node.getAttribute("OTG"))
+														float_Beschnitt_unten_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Beschnitt_unten_OTG))
+														print(tostring(float_Beschnitt_unten_UTG))														
+													elseif(ParaName == "Ghost_horizontal_Abstand") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Ghost_horizontal_Abstand_OTG = tonumber(node.getAttribute("OTG"))
+														float_Ghost_horizontal_Abstand_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Ghost_horizontal_Abstand_OTG))
+														print(tostring(float_Ghost_horizontal_Abstand_UTG))														
+													elseif(ParaName == "Ghost_horizontal_Helligkeit") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Ghost_horizontal_Helligkeit_OTG = tonumber(node.getAttribute("OTG"))
+														float_Ghost_horizontal_Helligkeit_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Ghost_horizontal_Helligkeit_OTG))
+														print(tostring(float_Ghost_horizontal_Helligkeit_UTG))													
+													elseif(ParaName == "Ghost_horizontal_Anzahl") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Ghost_horizontal_Anzahl_OTG = tonumber(node.getAttribute("OTG"))
+														float_Ghost_horizontal_Anzahl_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Ghost_horizontal_Anzahl_OTG))
+														print(tostring(float_Ghost_horizontal_Anzahl_UTG))														
+													elseif(ParaName == "Ghost_vertikal_Abstand") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Ghost_vertikal_Abstand_OTG = tonumber(node.getAttribute("OTG"))
+														float_Ghost_vertikal_Abstand_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Ghost_vertikal_Abstand_OTG))
+														print(tostring(float_Ghost_vertikal_Abstand_UTG))													
+													elseif(ParaName == "Ghost_vertikal_Helligkeit") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Ghost_vertikal_Helligkeit_OTG = tonumber(node.getAttribute("OTG"))
+														float_Ghost_vertikal_Helligkeit_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Ghost_vertikal_Helligkeit_OTG))
+														print(tostring(float_Ghost_vertikal_Helligkeit_UTG))													
+													elseif(ParaName == "Ghost_vertikal_Anzahl") then
+														node = nodeList2[i].selectSingleNode("Toleranzen")
+														float_Ghost_vertikal_Anzahl_OTG = tonumber(node.getAttribute("OTG"))
+														float_Ghost_vertikal_Anzahl_UTG = tonumber(node.getAttribute("UTG"))
+														print(tostring(float_Ghost_vertikal_Anzahl_OTG))
+														print(tostring(float_Ghost_vertikal_Anzahl_UTG))													
+													end
+													
+													
+												end
+												statStr = statStr .. " KSB Get hub Parameter Toleranzen UTG OTG OK "
+												engine.LastError = 0
+											else
+												statStr = statStr .. " Get Parameter Length not Correct !!!"
+												engine.LastError = 1
+											end
+                                                                                        break
+                                                                                       
+										else
+											statStr = statStr .. "xmlPosition :" .. tostring(xmlPosition) .. "!=" .. "Position :" .. tostring(Position)
+											engine.LastError = 1								
+										end
+									else
+										statStr = statStr .. "Get &lt;Position name failed "
+										engine.LastError = 1							
+									end	
+							end
+						else
+							statStr = statStr .. "xmlPrueftyp :" .. tostring(xmlPrueftyp) .. "!=" .. "Prueftyp :" .. tostring(Prueftyp)
+							engine.LastError = 1						
+						end					
+					else
+						statStr = statStr .. "Get &lt;Prueftyp name failed "
+						engine.LastError = 1					
+					end
+				else
+					statStr = statStr .. "xmlLenker :" .. tostring(xmlLenker) .. "!=" .. "Lenker :" .. tostring(Lenker)
+					engine.LastError = 1				
+				end
+			else
+				statStr = statStr .. "Get &lt;Lenker name failed "
+				engine.LastError = 1			
+			end						
+		else
+			statStr = statStr .. "xmlKarosserievariante :" .. tostring(xmlKarosserievariante) .. "!=" .. "Karosserievariante :" .. tostring(Karosserievariante)
+			engine.LastError = 1
+		end
+	else
+		statStr = statStr .. "Get &lt;Karosserievariante name failed "
+		engine.LastError = 1
+	end
+		
+end
+
+engine.StatValue = statStr
+
+</Script></Function>
+

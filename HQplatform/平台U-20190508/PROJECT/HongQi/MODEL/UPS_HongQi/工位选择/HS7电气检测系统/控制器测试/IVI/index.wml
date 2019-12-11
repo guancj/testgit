@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="IVI_Common"/>
+<Process id="IVI_ReadDTC"/>
+<Process id="IVI_test"/>
+<Process id="IVI_FIN"/>
+<Process id="IVI_ReadCarType"/>
+</children>
+</Workplace>

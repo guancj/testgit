@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="val" type="3" data="0" description="0 &lt;= val &lt;= 255   one byte"/>
+<Variable id="ascBinString" type="8" data="" description="ascBinString fit as &quot;0000????&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="1 - true   0 - false"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  compare val (0 - 255) with binstring ("00001001") :filter mode
+input parameter:val,ascBinString
+output parameter:ret
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+-- val  0 &lt;= val &lt;= 255   one byte
+-- ascBinString fit as "0000????"
+local bitNum = ""
+local bitStr = "" 
+if(val ~= nil and ascBinString ~= nil and #ascBinString &gt;= 8) then
+	for i = 0, 7 do	
+		local bitStr = ascBinString:sub(i+1,i+1)
+		local bitNum = bit32.extract(val,7-i,1)
+		
+		-- print("bitStr:"..bitStr..";bitNum:"..bitNum.."--bit" .. tostring(7-i))
+	
+		if(bitStr == "0" and bitNum == 0) then 
+			ret = 1
+		-- print("index:"..tostring(i).." ret:"..tostring(ret))
+		elseif( bitStr == "1" and bitNum ==1) then
+			ret = 1
+		-- print("index:"..tostring(i).." ret:"..tostring(ret))
+		elseif (bitStr == "?") then
+			ret = 1
+		-- print("index:"..tostring(i).." ret:"..tostring(ret))
+		else
+			ret = 0;
+			break		
+		end	
+	end
+else
+	print("BinString1BytefilterCmp Err : invalid parameter !!!")
+	ret = 0
+end</Script></Function>
+

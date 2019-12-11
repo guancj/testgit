@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="HUP_91_Bild_Aufnahme" description="Image recording" flags="1" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+<Variable id="DInt_HUP_Bildtyp_shared" type="3" dir="0" data=""/>
+<Variable id="DInt_HUP_Bildpos_shared" type="3" dir="0" data=""/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="301" top="155" right="401" bottom="187"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="303" top="692" right="403" bottom="724"/>
+<Script></Script></End>
+<Activities>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="655" top="693" right="687" bottom="725"/>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="302" top="217" right="402" bottom="249"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="622" top="217" right="722" bottom="249"/>
+<Script>engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="37" ActivityType="3" name="不合格">
+<Rect left="621" top="496" right="721" bottom="528"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : HUP: Kamera anfahren NIO ")</Script></Activity>
+<Activity id="39" ActivityType="3" name="HUP：照相">
+<Rect left="302" top="289" right="402" bottom="321"/>
+<Line3Text Enable="1" Text="HUP：照相"/>
+<Script>engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : HUP: Kamera anfahren --&gt;")
+</Script></Activity>
+<Activity id="41" ActivityType="3" name="数据收取">
+<Rect left="301" top="497" right="401" bottom="529"/>
+<Script>if(Ret == 1) then
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : +++HUP 91 Bildtyp --&gt;"..tostring(DInt_HUP_Bildtyp_shared))
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : +++HUP 91 BildPos --&gt;"..tostring(DInt_HUP_Bildpos_shared))
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : +++HUP 91 Ergebnis Aufnahme --&gt;"..tostring(DInt_Ergebnis_Aufnahme))
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : +++HUP 91 Ergebnis Helligkeit --&gt;"..tostring(DInt_Ergebnis_Helligkeit))
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : +++HUP 91 Ergebnis Kontrast --&gt;"..tostring(DInt_Ergebnis_Kontrastwert))
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : +++HUP 91 Ergebnis Anzahl Punkte --&gt;"..tostring(DInt_Ergebnis_Anzahl_Punkte))
+end</Script></Activity>
+<Activity id="42" ActivityType="3" name="Delay">
+<Rect left="449" top="430" right="549" bottom="462"/>
+<Script>engine.Delay(100)</Script></Activity>
+<Activity id="43" ActivityType="3" name="finish_flag">
+<Rect left="449" top="496" right="549" bottom="528"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="46" ActivityType="3" name="OK">
+<Rect left="302" top="562" right="402" bottom="594"/>
+<Script>isOK = true;
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : ret --&gt;"..tostring(Ret))
+engine.println(" &lt;HUP_91_Bild_Aufnahme&gt; : HUP: Kamera anfahren IO ")
+</Script></Activity>
+<Activity id="49" ActivityType="3" name="初始化">
+<Rect left="303" top="366" right="403" bottom="398"/>
+<Script>DInt_Ergebnis_Aufnahme_lokal = 0
+DInt_Counter = 2
+</Script></Activity>
+<Activity id="50" ActivityType="13" name="HUP_91_TakePicture">
+<Rect left="302" top="433" right="402" bottom="465"/>
+<FunctionRef id="HUP_91_TakePicture" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="BildSpeichern" value="ture"/>
+<Parameter id="Bildtyp" value="DInt_HUP_Bildtyp_shared"/>
+<Parameter id="Bildposition" value="DInt_HUP_Bildpos_shared"/>
+<Parameter id="Stablevel" value="10"/>
+<Parameter id="StabTime" value="500"/>
+<Parameter id="GrabLevel" value="10"/>
+<Parameter id="GrabTime" value="2000"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="Ergebnis" value="0" ret="DInt_Ergebnis_Aufnahme"/>
+<Parameter id="Helligkeitswert" value="0" ret="DInt_Ergebnis_Helligkeit"/>
+<Parameter id="Kontrastwert" value="0" ret="DInt_Ergebnis_Kontrastwert"/>
+<Parameter id="Anzahl_Punkte" value="0" ret="DInt_Ergebnis_Anzahl_Punkte"/>
+</Parameters>
+</FunctionRef>
+<assessment no="14" name="DEP1523" type="8" flags="97"/>
+</Activity>
+<Activity id="51" ActivityType="3" name="判断">
+<Rect left="303" top="624" right="403" bottom="656"/>
+<Script>DInt_Ergebnis_Aufnahme_lokal = DInt_Ergebnis_Aufnahme 
+DInt_Counter =  DInt_Counter - 1</Script></Activity>
+<Activity id="53" ActivityType="4" name="路由节点">
+<Rect left="483" top="623" right="515" bottom="655"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="26" EndId="39" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="27" EndId="37" type="0">
+</Transition>
+<Transition StartId="37" EndId="6" type="0">
+</Transition>
+<Transition StartId="39" EndId="49" type="0">
+</Transition>
+<Transition StartId="41" EndId="43" type="1">
+<Expression>Ret ~= 1</Expression></Transition>
+<Transition StartId="41" EndId="46" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="42" EndId="50" type="0">
+</Transition>
+<Transition StartId="43" EndId="42" type="0">
+</Transition>
+<Transition StartId="43" EndId="37" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="46" EndId="51" type="0">
+</Transition>
+<Transition StartId="49" EndId="50" type="0">
+</Transition>
+<Transition StartId="50" EndId="41" type="0">
+</Transition>
+<Transition StartId="51" EndId="2" type="0">
+</Transition>
+<Transition StartId="51" EndId="53" type="1">
+<Expression>DInt_Ergebnis_Aufnahme == 0 and DInt_Counter ~= 0</Expression></Transition>
+<Transition StartId="53" EndId="43" type="0">
+</Transition>
+</Transitions>
+</Process>
+

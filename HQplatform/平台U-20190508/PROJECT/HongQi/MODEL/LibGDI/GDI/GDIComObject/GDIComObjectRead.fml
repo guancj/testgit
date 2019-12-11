@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiComObject" type="8" data=""/>
+<Variable id="comObjectRead_in" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiError" type="8" data=""/>
+<Variable id="comObjectRead_out" type="8" data=""/>
+</Outputs>
+<Script>comObjectRead_out,gdiError = engine.GDI_Read(gdiComObject, comObjectRead_in)
+print("ComObjectReadResult of "..gdiComObject.." is "..tostring(gdiError))</Script></Function>
+

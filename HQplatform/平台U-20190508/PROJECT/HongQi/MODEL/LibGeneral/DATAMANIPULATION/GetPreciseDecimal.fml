@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="nNum" type="5" data="0" description="浮点数    as   3.1414926"/>
+<Variable id="n" type="3" data="0" description="保留小数点后 n 位"/>
+</Inputs>
+<Outputs>
+<Variable id="nRet" type="8" data="" description="保留 n 位小数点后的值 as  3.14......"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  cut float precise Decimal  
+input parameter:nNum,n
+output parameter:nRet
+01/24/2017     created by viforce
+******************************************************************************--]]
+
+
+    if type(nNum) ~= "number" then
+        return nNum;
+    end
+    
+    n = n or 0;
+    n = math.floor(n)
+    local fmt = '%.' .. n .. 'f'
+    nRet = tonumber(string.format(fmt, nNum))</Script></Function>
+

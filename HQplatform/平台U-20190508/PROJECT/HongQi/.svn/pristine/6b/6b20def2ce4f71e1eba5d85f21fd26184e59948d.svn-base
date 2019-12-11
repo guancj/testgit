@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idthilo2signed" description="将两个字节转换成short类型">
+<Inputs>
+<Variable id="hightByte" type="3" data="0" description="高位字节"/>
+<Variable id="lowByte" type="3" data="0" description="地位字节"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回两个字节拼成的值"/>
+</Outputs>
+<Script>ret = hightByte * 256 + lowByte;
+if (ret &gt; 32767) then
+ret = ret - 65536;
+end
+</Script></Function>
+

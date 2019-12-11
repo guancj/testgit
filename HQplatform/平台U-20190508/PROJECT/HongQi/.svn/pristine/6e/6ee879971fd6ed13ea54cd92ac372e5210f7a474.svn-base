@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FWE_31_Result_HeightMeasurement" flags="1" block="4" ptbtext="DEP1368" group="117" pbltext="DEP739">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="IDT_YPosRadhausVL_shared" type="5" dir="1" data="0"/>
+<Variable id="IDT_YPosRadhausVR_shared" type="5" dir="1" data="0"/>
+<Variable id="IDT_YPosRadhausHL_shared" type="5" dir="1" data="0"/>
+<Variable id="IDT_YPosRadhausHR_shared" type="5" dir="1" data="0"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="322" top="67" right="422" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="324" top="756" right="424" bottom="788"/>
+<Script></Script></End>
+<Activities>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="673" top="755" right="705" bottom="787"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="638" top="249" right="738" bottom="281"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="OK">
+<Rect left="320" top="311" right="420" bottom="343"/>
+<Script>isOK = true;
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : Result AxialOffset get OK")
+</Script></Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="321" top="137" right="421" bottom="169"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="639" top="137" right="739" bottom="169"/>
+<Script>engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="31" ActivityType="3" name="数据收取">
+<Rect left="319" top="250" right="419" bottom="282"/>
+<Script>if(Ret == 1) then
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : IDT_YPosRadhausVL --&gt;"..tostring(IDT_YPosRadhausVL))
+IDT_YPosRadhausVL_shared = IDT_YPosRadhausVL
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : IDT_YPosRadhausVR --&gt;"..tostring(IDT_YPosRadhausVR))
+IDT_YPosRadhausVR_shared = IDT_YPosRadhausVR
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : IDT_YPosRadhausHL --&gt;"..tostring(IDT_YPosRadhausHL))
+IDT_YPosRadhausHL_shared = IDT_YPosRadhausHL
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : IDT_YPosRadhausHR --&gt;"..tostring(IDT_YPosRadhausHR))
+IDT_YPosRadhausHR_shared = IDT_YPosRadhausHR
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : IDT_YPosRadhausDiffV --&gt;"..tostring(IDT_YPosRadhausDiffV))
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : IDT_YPosRadhausDiffH --&gt;"..tostring(IDT_YPosRadhausDiffH))
+end</Script></Activity>
+<Activity id="32" ActivityType="3" name="Delay">
+<Rect left="471" top="197" right="571" bottom="229"/>
+<Script>engine.Delay(100)</Script></Activity>
+<Activity id="33" ActivityType="3" name="finish_flag">
+<Rect left="471" top="249" right="571" bottom="281"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;FWE_31_Result_HeightMeasurement&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="34" ActivityType="13" name="FWE_31_Result_HeightMeasurement">
+<Rect left="320" top="197" right="420" bottom="229"/>
+<TitleText Enable="1" Text="前束调整：高度测量"/>
+<FunctionRef id="FWE_31_Result_HeightMeasurement" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="MessgTyp" value="true"/>
+<Parameter id="StartDyn" value="false"/>
+<Parameter id="HeightMeasure" value="true"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="YPosRadhausVL" value="0" ret="IDT_YPosRadhausVL"/>
+<Parameter id="YPosRadhausVR" value="0" ret="IDT_YPosRadhausVR"/>
+<Parameter id="YPosRadhausHL" value="0" ret="IDT_YPosRadhausHL"/>
+<Parameter id="YPosRadhausHR" value="0" ret="IDT_YPosRadhausHR"/>
+<Parameter id="YPosRadhausDiffV" value="0" ret="IDT_YPosRadhausDiffV"/>
+<Parameter id="YPosRadhausDiffH" value="0" ret="IDT_YPosRadhausDiffH"/>
+<Parameter id="VL_Status" ret="IDT_VL_Status"/>
+<Parameter id="VR_Status" ret="IDT_VR_Status"/>
+<Parameter id="HL_Status" ret="IDT_HL_Status"/>
+<Parameter id="HR_Status" ret="IDT_HR_Status"/>
+<Parameter id="DV_Status" ret="IDT_DV_Status"/>
+<Parameter id="DH_Status" ret="IDT_DH_Status"/>
+</Parameters>
+</FunctionRef>
+<assessment no="6" name="DEP1379" type="8" flags="97"/>
+</Activity>
+<Activity id="35" ActivityType="3" name="统计">
+<Rect left="321" top="376" right="421" bottom="408"/>
+<Script>engine.StatValue = tostring(IDT_YPosRadhausVL)
+engine.LastError = 0</Script><assessment no="7" name="DEP1380" type="8" flags="97"/>
+</Activity>
+<Activity id="36" ActivityType="3" name="统计">
+<Rect left="320" top="434" right="420" bottom="466"/>
+<Script>engine.StatValue = tostring(IDT_YPosRadhausVR)
+engine.LastError = 0</Script><assessment no="8" name="DEP1381" type="8" flags="97"/>
+</Activity>
+<Activity id="37" ActivityType="3" name="统计">
+<Rect left="321" top="492" right="421" bottom="524"/>
+<Script>engine.StatValue = tostring(IDT_YPosRadhausHL)
+engine.LastError = 0</Script><assessment no="9" name="DEP1382" type="8" flags="97"/>
+</Activity>
+<Activity id="38" ActivityType="3" name="统计">
+<Rect left="321" top="552" right="421" bottom="584"/>
+<Script>engine.StatValue = tostring(IDT_YPosRadhausHR)
+engine.LastError = 0</Script><assessment no="10" name="DEP1383" type="8" flags="97"/>
+</Activity>
+<Activity id="39" ActivityType="3" name="统计">
+<Rect left="322" top="612" right="422" bottom="644"/>
+<Script>engine.StatValue = tostring(IDT_YPosRadhausDiffV)
+engine.LastError = 0</Script><assessment no="11" name="DEP1384" type="8" flags="97"/>
+</Activity>
+<Activity id="40" ActivityType="3" name="统计">
+<Rect left="323" top="677" right="423" bottom="709"/>
+<Script>engine.StatValue = tostring(IDT_YPosRadhausDiffH)
+engine.LastError = 0</Script><assessment no="12" name="DEP1385" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="35" type="0">
+</Transition>
+<Transition StartId="26" EndId="34" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="31" EndId="23" type="0">
+</Transition>
+<Transition StartId="31" EndId="33" type="1">
+<Expression>Ret ~= 1</Expression></Transition>
+<Transition StartId="32" EndId="34" type="0">
+</Transition>
+<Transition StartId="33" EndId="32" type="0">
+</Transition>
+<Transition StartId="33" EndId="21" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="34" EndId="31" type="0">
+</Transition>
+<Transition StartId="35" EndId="36" type="0">
+</Transition>
+<Transition StartId="36" EndId="37" type="0">
+</Transition>
+<Transition StartId="37" EndId="38" type="0">
+</Transition>
+<Transition StartId="38" EndId="39" type="0">
+</Transition>
+<Transition StartId="39" EndId="40" type="0">
+</Transition>
+<Transition StartId="40" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

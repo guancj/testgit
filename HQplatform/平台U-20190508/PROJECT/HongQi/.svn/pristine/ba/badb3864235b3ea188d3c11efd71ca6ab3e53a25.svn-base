@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtGetToggleTimes" description="获取接受返回报文的次数，该值是上次收到的返回报文第12字节值。由模型常量toggleTimes保存.">
+<Outputs>
+<Variable id="ret" type="8" data="" description="以&quot;\x10&quot;形式返回"/>
+</Outputs>
+<Script>ret = string.char(LibIDT.toggleTimes);
+
+--ret = string.char(toggleTimes);</Script></Function>
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="SWE_Test" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="SWEHndl" type="3" dir="0" data="SWEHndl"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="420" top="47" right="520" bottom="79"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="420" top="367" right="520" bottom="399"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="5" name="SWE_01_Start_Test">
+<Rect left="421" top="108" right="521" bottom="140"/>
+<SubProcesses>
+<SubProcess id="SWE_01_Start_Test">
+<Parameters>
+<Parameter id="Handl" value="SWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_SWE" ret="IDT_Default_Answer_SWE"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="4" ActivityType="3" name="普通节点">
+<Rect left="593" top="108" right="693" bottom="140"/>
+<Script>engine.println(" &lt;SWE_Test&gt; : SWE Service 01 Processed Execute failed")
+-- 大灯调整：与检测台通信失败</Script></Activity>
+<Activity id="5" ActivityType="5" name="SWE_22_Identity">
+<Rect left="421" top="171" right="521" bottom="203"/>
+<SubProcesses>
+<SubProcess id="SWE_22_Identity">
+<Parameters>
+<Parameter id="Handl" value="SWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_SWE" ret="IDT_Default_Answer_SWE"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="3" name="普通节点">
+<Rect left="595" top="171" right="695" bottom="203"/>
+<Script>engine.println(" &lt;SWE_Test&gt; : SWE Service 22 Processed Execute failed")
+-- 大灯身份：与检测台通信失败</Script></Activity>
+<Activity id="7" ActivityType="3" name="WAIT">
+<Rect left="421" top="233" right="521" bottom="265"/>
+<Line1Text Enable="1" Text="大灯调整：等待。。。"/>
+<Script></Script></Activity>
+<Activity id="8" ActivityType="3" name="设置同步量">
+<Rect left="420" top="298" right="520" bottom="330"/>
+<Script>engine.SharedVarSet("_a_flag2",1)</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="3" EndId="5" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="5" EndId="7" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

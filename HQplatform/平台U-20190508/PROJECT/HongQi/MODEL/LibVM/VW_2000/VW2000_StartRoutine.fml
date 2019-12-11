@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ReferenceID" type="3" data="0"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="RecvTel" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   Start Routine ;
+input parameter:ReferenceID;ECU_Handle
+output parameter :RecvTel
+
+02/02/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return ""
+end
+
+RecvTel = "";
+local Byte_1 = math.floor(ReferenceID/0x100);
+local Byte_2 = ReferenceID - Byte_1*0x100;
+
+#COMMEX ECU_Handle -1 0x31 0xb8 Byte_1 Byte_2
+RecvTel = @0-;
+engine.StatValue = LibGeneral.hex2str(RecvTel);
+if(0 ~= engine.LastError) then  return "" ;end</Script></Function>
+

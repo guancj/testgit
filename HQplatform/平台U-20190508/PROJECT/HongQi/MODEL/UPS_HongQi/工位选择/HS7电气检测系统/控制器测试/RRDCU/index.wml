@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="RRDCU_Common"/>
+<Process id="RRDCU_test"/>
+<Process id="RRDCU_ReadDTC"/>
+<Process id="RRDCU_FIN"/>
+</children>
+</Workplace>

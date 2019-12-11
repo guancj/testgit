@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlHandle" type="8" data="" description="XML handle"/>
+<Variable id="szPath" type="8" data="" description="xml 文件路径"/>
+</Inputs>
+<Outputs>
+<Variable id="result" type="11" data="" description="true-加载成功; false-加载失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to   load XML file
+output parameter: result
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+if(xmlHandle ~=nil) then
+	result = xmlHandle.load(szPath)
+else 
+	result = false
+end</Script></Function>
+

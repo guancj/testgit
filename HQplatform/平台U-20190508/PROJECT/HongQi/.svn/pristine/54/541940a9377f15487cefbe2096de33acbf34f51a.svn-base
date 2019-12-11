@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FWE_22_Fzg_ID_mit_Type" description="发送前束 身份 指令，service 22">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="ID_Typ" type="3" data="0"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="Vehicle_ID" type="8" data="engine.KNR" description="KNR"/>
+<Variable id="Typ_FWE_1" type="3" data="0"/>
+<Variable id="Typ_FWE_2" type="3" data="0"/>
+<Variable id="Typ_FWE_3" type="3" data="0"/>
+<Variable id="Typ_FWE_4" type="3" data="0"/>
+<Variable id="Typ_FWE_5" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FWE Service 22
+input parameter:pHndl,ID_Typ,IDT_Timeout,Vehicle_ID,Typ_FWE_1,Typ_FWE_2,Typ_FWE_3,Typ_FWE_4,Typ_FWE_5
+output parameter :ret;
+
+12/22/2016     created by viforce
+******************************************************************************--]]
+local idt_tel = ""
+local zero = "\x00"
+local ID_len = 0
+local Typ_FWE_High,Typ_FWE_Low,Typ_FWE_Middle,Typ_FWE_temp, Typ_FWE
+ret = -1
+engine.LastError = 0
+ID_len = #Vehicle_ID
+if(ID_Typ == 1 and ID_len == 7) then
+	engine.LastError = 0
+elseif(ID_Typ == 2 and ID_len == 14) then
+	engine.LastError = 0
+elseif(ID_Typ == 3 and ID_len == 17) then
+	engine.LastError = 0
+else
+	engine.LastError = 1
+end
+
+
+if(engine.LastError == 0) then
+	idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+	idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+	
+	idt_tel = LibIDT.idtSetBytes(idt_tel,21,ID_len,Vehicle_ID)   --  设置  VMT Name  第21 字节开始 长度15 
+	idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x16");    -- 设置service号,第2字节
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(ID_Typ));    -- 设置 ID_Typ
+        --Typ_FWE_1
+        Typ_FWE = bit32.band(Typ_FWE_1,0xffffff)
+        Typ_FWE_High = Typ_FWE / 0x10000
+        Typ_FWE_temp = Typ_FWE % 0x10000
+        Typ_FWE_Middle = Typ_FWE_temp / 0x100
+        Typ_FWE_Low = Typ_FWE_temp % 0x100        
+        idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(Typ_FWE_High)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(Typ_FWE_Middle)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,8,1,string.char(Typ_FWE_Low)); 
+        --Typ_FWE_2
+        Typ_FWE = bit32.band(Typ_FWE_2,0xffffff)
+        Typ_FWE_High = Typ_FWE / 0x10000
+        Typ_FWE_temp = Typ_FWE % 0x10000
+        Typ_FWE_Middle = Typ_FWE_temp / 0x100
+        Typ_FWE_Low = Typ_FWE_temp % 0x100        
+        idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,string.char(Typ_FWE_High)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,10,1,string.char(Typ_FWE_Middle)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,11,1,string.char(Typ_FWE_Low));  
+        --Typ_FWE_3
+        Typ_FWE = bit32.band(Typ_FWE_3,0xffffff)
+        Typ_FWE_High = Typ_FWE / 0x10000
+        Typ_FWE_temp = Typ_FWE % 0x10000
+        Typ_FWE_Middle = Typ_FWE_temp / 0x100
+        Typ_FWE_Low = Typ_FWE_temp % 0x100        
+        idt_tel = LibIDT.idtSetBytes(idt_tel,12,1,string.char(Typ_FWE_High)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,13,1,string.char(Typ_FWE_Middle)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,14,1,string.char(Typ_FWE_Low));          
+        --Typ_FWE_4
+        Typ_FWE = bit32.band(Typ_FWE_4,0xffffff)
+        Typ_FWE_High = Typ_FWE / 0x10000
+        Typ_FWE_temp = Typ_FWE % 0x10000
+        Typ_FWE_Middle = Typ_FWE_temp / 0x100
+        Typ_FWE_Low = Typ_FWE_temp % 0x100        
+        idt_tel = LibIDT.idtSetBytes(idt_tel,15,1,string.char(Typ_FWE_High)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,16,1,string.char(Typ_FWE_Middle)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,17,1,string.char(Typ_FWE_Low));  
+        --Typ_FWE_5
+        Typ_FWE = bit32.band(Typ_FWE_5,0xffffff)
+        Typ_FWE_High = Typ_FWE / 0x10000
+        Typ_FWE_temp = Typ_FWE % 0x10000
+        Typ_FWE_Middle = Typ_FWE_temp / 0x100
+        Typ_FWE_Low = Typ_FWE_temp % 0x100        
+        idt_tel = LibIDT.idtSetBytes(idt_tel,18,1,string.char(Typ_FWE_High)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,19,1,string.char(Typ_FWE_Middle)); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,20,1,string.char(Typ_FWE_Low));               
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+end
+
+engine.StatValue = tostring(Vehicle_ID)</Script></Function>
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="IDT_FWE_AUDI_V108" code="">
+
+<Functions>
+<Function id="FWE_01_Start_Check_Name"/>
+
+<Function id="FWE_02_End_Test"/>
+
+<Function id="FWE_05_Basic_State"/>
+
+<Function id="FWE_22_Fzg_ID_mit_Type"/>
+
+<Function id="FWE_28_Result_AxialOffset"/>
+
+<Function id="FWE_31_Result_HeightMeasurement"/>
+
+<Function id="FWE_51_Fzg_Check_Availability"/>
+
+<Function id="IDT_FWE_State_actual"/>
+
+<Function id="IDT_FWE_State_store"/>
+
+</Functions>
+</Workplace>

@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="c7_iel" description="UDS ODX&#13;&#10;--2016 - 12 - 6 created by viforce" flags="1" block="1" ptbtext="DEP47" group="54" pbltext="DEP1000" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS" odx="AU57X">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="1" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0x773" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0x7dd" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Exec_Tab" type="8" dir="0" data="{&quot;Connection&quot;}" description="执行步骤表请注意执行顺序"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="Exec_Finish" type="11" data="false" description="流程步骤结束标识  true / false"/>
+<Variable id="Exec_Step" type="3" data="0" description="流程步骤总数"/>
+<Variable id="Exec_i" type="3" data="1" description="流程步骤步进数"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="191" top="103" right="291" bottom="135"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="564" top="229" right="664" bottom="261"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="ECU测试开始">
+<Rect left="190" top="171" right="290" bottom="203"/>
+<Script>engine.println("=============ECU IEL ================")
+engine.StatValue = "C7_IEL Version 1.17"
+engine.LastError = 0</Script><assessment block="1" ptbtext="DEP47" group="200" pbltext="DEP1449" no="25" name="DEP1488" type="8" flags="97"/>
+</Activity>
+<Activity id="6" ActivityType="3" name="初始化步骤">
+<Rect left="189" top="230" right="289" bottom="262"/>
+<Script>Exec_Step = #Exec_Tab
+if(Exec_Step == 0) then
+-- 没有步骤操作
+	Exec_Finish = true
+else
+	Exec_Finish = false
+	Exec_i = 0
+end</Script></Activity>
+<Activity id="7" ActivityType="3" name="判断执行">
+<Rect left="190" top="291" right="290" bottom="323"/>
+<Script>
+if(Exec_i &lt; Exec_Step) then
+-- 步数累加，循环比较
+	Exec_i = Exec_i + 1
+        Exec_Finish = false
+        if(Exec_i == 1) then
+		engine.println("===ECU Exec Start===")
+        end
+else
+	Exec_Finish = true
+	engine.println("===ECU Exec Finish===")
+end</Script></Activity>
+<Activity id="8" ActivityType="4" name="路由节点">
+<Rect left="225" top="362" right="257" bottom="394"/>
+</Activity>
+<Activity id="9" ActivityType="3" name="预留">
+<Rect left="322" top="1589" right="422" bottom="1621"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="10" ActivityType="3" name="预留">
+<Rect left="323" top="1078" right="423" bottom="1110"/>
+<Script></Script></Activity>
+<Activity id="11" ActivityType="13" name="EV_Select">
+<Rect left="325" top="472" right="425" bottom="504"/>
+<FunctionRef id="EV_Select" model="LibVW">
+<Parameters>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+<Parameter id="Ev_variant_name" ret="Ev_variant_name1"/>
+<Parameter id="Ev_variant_version" ret="Ev_variant_version1"/>
+<Parameter id="Ev_object_name" ret="Ev_object_name1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="2" name="DEP1001" type="8" flags="97"/>
+</Activity>
+<Activity id="12" ActivityType="13" name="ECU_Open">
+<Rect left="325" top="410" right="425" bottom="442"/>
+<FunctionRef id="ECU_Open" model="LibGeneral">
+<Parameters>
+<Parameter id="ECU_Handle" ret="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="1" name="DEP1001" type="8" flags="97"/>
+</Activity>
+<Activity id="13" ActivityType="4" name="路由节点">
+<Rect left="225" top="1078" right="257" bottom="1110"/>
+</Activity>
+<Activity id="14" ActivityType="4" name="路由节点">
+<Rect left="598" top="411" right="630" bottom="443"/>
+</Activity>
+<Activity id="15" ActivityType="4" name="路由节点">
+<Rect left="599" top="473" right="631" bottom="505"/>
+</Activity>
+<Activity id="16" ActivityType="13" name="ECU_Close">
+<Rect left="565" top="293" right="665" bottom="325"/>
+<FunctionRef id="ECU_Close" model="LibGeneral">
+<Parameters>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="38" ActivityType="4" name="路由节点">
+<Rect left="224" top="1336" right="256" bottom="1368"/>
+</Activity>
+<Activity id="39" ActivityType="3" name="故障码检查">
+<Rect left="321" top="1418" right="421" bottom="1450"/>
+<Line1Text Enable="1" Text="检查故障码存储器"/>
+<Script></Script></Activity>
+<Activity id="40" ActivityType="12" name="ReporDTCByStatuMask" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS">
+<Rect left="320" top="1475" right="420" bottom="1507"/>
+<Odx service="DiagnServi_ReadDTCInforReporDTCByStatuMask" obd="vciHandle">
+<Request>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit7" value="&apos;Warning Indicator Off&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit6" value="&apos;Test Completed This Monitoring Cycle&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit5" value="&apos;Test Not Failed Since Last Clear&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit4" value="&apos;Test Completed Since Last Clear&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit3" value="&apos;Confirmed DTC&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit2" value="&apos;Pending DTC&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit1" value="&apos;Test Not Failed This Operation Cycle&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit0" value="&apos;passive&apos;"/>
+</Request>
+<PosResponse>
+<Param path="Param_DTCAndStatuRecor.Param_DTCUDS" value="UDS_Table_DTC_IEL"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="43" ActivityType="4" name="路由节点">
+<Rect left="225" top="1590" right="257" bottom="1622"/>
+</Activity>
+<Activity id="44" ActivityType="4" name="路由节点">
+<Rect left="121" top="2147" right="153" bottom="2179"/>
+</Activity>
+<Activity id="45" ActivityType="4" name="路由节点">
+<Rect left="120" top="290" right="152" bottom="322"/>
+</Activity>
+<Activity id="46" ActivityType="3" name="清除故障码">
+<Rect left="322" top="1158" right="422" bottom="1190"/>
+<Script></Script></Activity>
+<Activity id="47" ActivityType="12" name="ClearDiagnInfor" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS">
+<Rect left="322" top="1215" right="422" bottom="1247"/>
+<Odx service="DiagnServi_ClearDiagnInfor" obd="vciHandle">
+<Request>
+<Param path="Param_GroupOfDTC" value="All Groups (all DTCs)"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="48" ActivityType="3" name="统计">
+<Rect left="323" top="1275" right="423" bottom="1307"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=清除故障码#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "清除故障码";
+else
+engine.SetLineText(2,"#L=清除故障码#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "清除故障码失败";
+end</Script><assessment no="3" name="DEP1002" type="8" flags="97"/>
+</Activity>
+<Activity id="49" ActivityType="13" name="dlgWaitSecondBar">
+<Rect left="324" top="1335" right="424" bottom="1367"/>
+<FunctionRef id="dlgWaitSecondBar" model="LibUI">
+<Parameters>
+<Parameter id="LineNr" value="2"/>
+<Parameter id="Timeout" value="4"/>
+<Parameter id="Text" value="&quot;请等待&quot;"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="50" ActivityType="12" name="EndOfLineSessi" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS">
+<Rect left="324" top="530" right="424" bottom="562"/>
+<Odx service="DiagnServi_DiagnSessiContrVWEndOfLineSessi" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="51" ActivityType="3" name="等待两秒">
+<Rect left="322" top="659" right="422" bottom="691"/>
+<Script>engine.Delay(2000)</Script></Activity>
+<Activity id="53" ActivityType="3" name="统计">
+<Rect left="323" top="591" right="423" bottom="623"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=下线模式切换#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "下线模式";
+else
+engine.SetLineText(2,"#L=下线模式切换#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "下线模式";
+end</Script><assessment no="5" name="DEP991" type="8" flags="97"/>
+</Activity>
+<Activity id="54" ActivityType="12" name="WriteDataByIdentECUIdent" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS">
+<Rect left="322" top="774" right="422" bottom="806"/>
+<Odx service="DiagnServi_WriteDataByIdentECUIdent" obd="vciHandle">
+<Request>
+<Param path="Param_RecorDataIdent" value="Repair Shop Code Or Tester Serial Number"/>
+<Param path="Param_DataRecor.Param_VWDevicNumbe" value="Vmtd"/>
+<Param path="Param_DataRecor.Param_ImporNumbe" value="VW_ImporterNumber"/>
+<Param path="Param_DataRecor.Param_WorksNumbe" value="VW_WSC"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="55" ActivityType="3" name="Vmtd-写指纹">
+<Rect left="321" top="718" right="421" bottom="750"/>
+<Script>Vmtd = engine.VmtId;</Script></Activity>
+<Activity id="156" ActivityType="3" name="统计">
+<Rect left="322" top="833" right="422" bottom="865"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=写指纹#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "写指纹";
+else
+engine.SetLineText(2,"#L=写指纹#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "写指纹失败";
+end</Script><assessment no="6" name="DEP1004" type="8" flags="97"/>
+</Activity>
+<Activity id="157" ActivityType="13" name="GetLocalTime">
+<Rect left="322" top="897" right="422" bottom="929"/>
+<FunctionRef id="GetLocalTime" model="LibGeneral">
+<Parameters>
+<Parameter id="Day" value="0" ret="Int_Day"/>
+<Parameter id="Month" value="0" ret="Int_Month"/>
+<Parameter id="Year" value="0" ret="Int_Year"/>
+<Parameter id="Hour" value="0" ret="Int_Hour"/>
+<Parameter id="Minute" value="0" ret="Int_Minute"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="158" ActivityType="12" name="WriteDataByIdentECUIdent" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS">
+<Rect left="323" top="957" right="423" bottom="989"/>
+<Odx service="DiagnServi_WriteDataByIdentECUIdent" obd="vciHandle">
+<Request>
+<Param path="Param_RecorDataIdent" value="Programming Date"/>
+<Param path="Param_DataRecor.Param_Date.Param_Year" value="Int_Year"/>
+<Param path="Param_DataRecor.Param_Date.Param_Month" value="Int_Month"/>
+<Param path="Param_DataRecor.Param_Date.Param_Day" value="Int_Day"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="159" ActivityType="3" name="统计">
+<Rect left="323" top="1013" right="423" bottom="1045"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=写编程日期#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "写编程日期";
+else
+engine.SetLineText(2,"#L=写编程日期#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "写编程日期";
+end</Script><assessment no="7" name="DEP1005" type="8" flags="97"/>
+</Activity>
+<Activity id="160" ActivityType="3" name="Bedienteil sperren">
+<Rect left="321" top="1658" right="421" bottom="1690"/>
+<Script></Script></Activity>
+<Activity id="161" ActivityType="3" name="普通节点">
+<Rect left="322" top="1843" right="422" bottom="1875"/>
+<Script></Script></Activity>
+<Activity id="162" ActivityType="12" name="WriteDataByIdentCalibData" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS">
+<Rect left="321" top="1718" right="421" bottom="1750"/>
+<Odx service="DiagnServi_WriteDataByIdentCalibData" obd="vciHandle">
+<Request>
+<Param path="Param_RecorDataIdent" value="&apos;Productionmode&apos;"/>
+<Param path="Param_DataRecor" value="&apos;\h000010&apos;"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="163" ActivityType="3" name="统计">
+<Rect left="322" top="1780" right="422" bottom="1812"/>
+<Script>if(0 == engine.LastError) then
+engine.StatValue = "IEL生产模式激活";
+else
+engine.StatValue = "IEL生产模式激活失败";
+end</Script><assessment no="8" name="DEP1006" type="8" flags="97"/>
+</Activity>
+<Activity id="164" ActivityType="4" name="路由节点">
+<Rect left="226" top="1842" right="258" bottom="1874"/>
+</Activity>
+<Activity id="165" ActivityType="3" name="Bedienteil entsperren">
+<Rect left="321" top="1912" right="421" bottom="1944"/>
+<Script></Script></Activity>
+<Activity id="166" ActivityType="3" name="普通节点">
+<Rect left="322" top="2097" right="422" bottom="2129"/>
+<Script></Script></Activity>
+<Activity id="167" ActivityType="12" name="WriteDataByIdentCalibData" Ecu="EV_InforContrUnit1UDS_gl" bv="BV_InforContrUnit1UDS">
+<Rect left="321" top="1972" right="421" bottom="2004"/>
+<Odx service="DiagnServi_WriteDataByIdentCalibData" obd="vciHandle">
+<Request>
+<Param path="Param_RecorDataIdent" value="&apos;Productionmode&apos;"/>
+<Param path="Param_DataRecor" value="&apos;\h000000&apos;"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="168" ActivityType="3" name="统计">
+<Rect left="322" top="2034" right="422" bottom="2066"/>
+<Script>if(0 == engine.LastError) then
+engine.StatValue = "IEL生产模式关闭";
+else
+engine.StatValue = "IEL生产模式关闭失败";
+end</Script><assessment no="9" name="DEP1441" type="8" flags="97"/>
+</Activity>
+<Activity id="169" ActivityType="4" name="路由节点">
+<Rect left="226" top="2096" right="258" bottom="2128"/>
+</Activity>
+<Activity id="170" ActivityType="13" name="DTC_Filter_Mit_Audi">
+<Rect left="321" top="1532" right="421" bottom="1564"/>
+<FunctionRef id="DTC_Filter_Mit_Audi" model="LibVW">
+<Parameters>
+<Parameter id="SG_Name" value="&quot;IEL&quot;"/>
+<Parameter id="Process_Short" value="engine.SharedVarGet(&quot;_Fahrzeugstatus_FSP&quot;)"/>
+<Parameter id="Konfigfile" value="&quot;c7_fsp_filter.xml&quot;"/>
+<Parameter id="FSPReadStatus" value="3"/>
+<Parameter id="FSP_String" value="&quot;&quot;"/>
+<Parameter id="UDS_DTC_CODE" value="UDS_Table_DTC_IEL"/>
+<Parameter id="DTC_String_filtered" ret="dtc_string_filered"/>
+<Parameter id="DTC_Table_list_Pcode" ret="dtc_table_list_Pcode"/>
+</Parameters>
+</FunctionRef>
+<assessment no="4" name="DEP1003" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="7" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="1">
+<Expression>Exec_Finish == true</Expression></Transition>
+<Transition StartId="7" EndId="12" type="1">
+<Expression>Exec_Tab[Exec_i] == "Connection"</Expression></Transition>
+<Transition StartId="7" EndId="16" type="1">
+<Expression>Exec_Finish == true</Expression></Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="13" type="0">
+</Transition>
+<Transition StartId="9" EndId="43" type="0">
+</Transition>
+<Transition StartId="10" EndId="13" type="0">
+</Transition>
+<Transition StartId="11" EndId="15" type="4">
+</Transition>
+<Transition StartId="11" EndId="50" type="0">
+</Transition>
+<Transition StartId="12" EndId="11" type="3">
+</Transition>
+<Transition StartId="12" EndId="14" type="4">
+</Transition>
+<Transition StartId="13" EndId="46" type="1">
+<Expression>Exec_Tab[Exec_i] == "DTCClear"</Expression></Transition>
+<Transition StartId="13" EndId="38" type="0">
+</Transition>
+<Transition StartId="14" EndId="16" type="0">
+</Transition>
+<Transition StartId="15" EndId="14" type="0">
+</Transition>
+<Transition StartId="16" EndId="2" type="0">
+</Transition>
+<Transition StartId="38" EndId="39" type="1">
+<Expression>Exec_Tab[Exec_i] == "DTCCheck"</Expression></Transition>
+<Transition StartId="38" EndId="43" type="0">
+</Transition>
+<Transition StartId="39" EndId="40" type="0">
+</Transition>
+<Transition StartId="40" EndId="170" type="0">
+</Transition>
+<Transition StartId="43" EndId="160" type="1">
+<Expression>Exec_Tab[Exec_i] == "ProductionModeActive"</Expression></Transition>
+<Transition StartId="43" EndId="164" type="0">
+</Transition>
+<Transition StartId="44" EndId="45" type="0">
+</Transition>
+<Transition StartId="45" EndId="7" type="0">
+</Transition>
+<Transition StartId="46" EndId="47" type="0">
+</Transition>
+<Transition StartId="47" EndId="48" type="0">
+</Transition>
+<Transition StartId="48" EndId="49" type="0">
+</Transition>
+<Transition StartId="49" EndId="38" type="0">
+</Transition>
+<Transition StartId="50" EndId="53" type="0">
+</Transition>
+<Transition StartId="51" EndId="55" type="0">
+</Transition>
+<Transition StartId="53" EndId="51" type="0">
+</Transition>
+<Transition StartId="54" EndId="156" type="0">
+</Transition>
+<Transition StartId="55" EndId="54" type="0">
+</Transition>
+<Transition StartId="156" EndId="157" type="0">
+</Transition>
+<Transition StartId="157" EndId="158" type="0">
+</Transition>
+<Transition StartId="158" EndId="159" type="0">
+</Transition>
+<Transition StartId="159" EndId="10" type="0">
+</Transition>
+<Transition StartId="160" EndId="162" type="0">
+</Transition>
+<Transition StartId="161" EndId="164" type="0">
+</Transition>
+<Transition StartId="162" EndId="163" type="0">
+</Transition>
+<Transition StartId="163" EndId="161" type="0">
+</Transition>
+<Transition StartId="164" EndId="165" type="1">
+<Expression>Exec_Tab[Exec_i] == "ProductionModeDeactive"</Expression></Transition>
+<Transition StartId="164" EndId="169" type="0">
+</Transition>
+<Transition StartId="165" EndId="167" type="0">
+</Transition>
+<Transition StartId="166" EndId="169" type="0">
+</Transition>
+<Transition StartId="167" EndId="168" type="0">
+</Transition>
+<Transition StartId="168" EndId="166" type="0">
+</Transition>
+<Transition StartId="169" EndId="44" type="0">
+</Transition>
+<Transition StartId="170" EndId="9" type="0">
+</Transition>
+</Transitions>
+</Process>
+

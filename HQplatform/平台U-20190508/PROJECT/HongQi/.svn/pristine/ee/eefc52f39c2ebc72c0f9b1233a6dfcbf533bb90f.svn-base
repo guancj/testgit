@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VMDSEngineIniGetString" description="从配置文件（VMDSEngine.ini）读取文本型配置信息">
+<Inputs>
+<Variable id="strSection" type="8" data="" description="ini file section"/>
+<Variable id="strKey" type="8" data="" description="Key"/>
+<Variable id="strDefault" type="8" data="&quot;NULL&quot;" description="未找到相应结果的返回值"/>
+</Inputs>
+<Outputs>
+<Variable id="strValue" type="8" data="" description="文本型返回值"/>
+</Outputs>
+<Script>strValue = engine.IniGetString(strSection,strKey,strDefault)</Script></Function>
+

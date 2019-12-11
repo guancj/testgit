@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="获取转毂的速度">
+<Inputs>
+<Variable id="lastRequest" type="8" data="&quot;&quot;" description="上一个请求报文。"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+<Variable id="sendMode" type="3" data="4" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="rollerSpeedFL" type="5" data="0" description="左前轮毂速度，单位km/h"/>
+<Variable id="rollerSpeedFR" type="5" data="0" description="右前轮毂速度，单位km/h"/>
+<Variable id="rollerSpeedRL" type="5" data="0" description="左后轮毂速度，单位km/h"/>
+<Variable id="rollerSpeedRR" type="5" data="0" description="右后轮毂速度，单位km/h"/>
+<Variable id="rollerSpeedFront" type="5" data="0" description="前轮毂速度，单位km/h"/>
+<Variable id="rollerSpeedRear" type="5" data="0" description="后轮毂速度，单位km/h"/>
+</Outputs>
+<Script>sendMode = sendMode or 0
+
+local request = "";
+if(lastRequest ~= "") then
+    request = lastRequest;
+else
+    request = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+    if request == nil or request == "" then
+       request = LibIDT.idtInitRequestRTS(pHndl);
+    end;
+end
+
+rollerSpeedFL,rollerSpeedFR = 0,0;
+rollerSpeedRL,rollerSpeedRR = 0,0;
+rollerSpeedFront,rollerSpeedRear = 0,0;
+local factor = 0.01;
+
+--设置service号为0
+request = LibIDT.idtSetBytes(request,2,1,"\x00");
+
+
+if(LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl,sendMode) == true) then
+
+--获取左前轮毂速度
+rollerSpeedFL = LibIDT.idthilo2signed(@12,@13) * factor;
+
+--获取右前轮毂速度
+rollerSpeedFR = LibIDT.idthilo2signed(@14,@15) * factor;
+
+--获取左后轮毂速度
+rollerSpeedRL = LibIDT.idthilo2signed(@16,@17) * factor;
+
+--获取右后轮毂速度
+rollerSpeedRR = LibIDT.idthilo2signed(@18,@19) * factor;
+
+--计算前轮毂速度
+rollerSpeedFront = (rollerSpeedFL + rollerSpeedFR)/2;
+
+--计算后轮毂速度
+rollerSpeedRear = (rollerSpeedRL + rollerSpeedRR)/2;
+
+end;</Script></Function>
+

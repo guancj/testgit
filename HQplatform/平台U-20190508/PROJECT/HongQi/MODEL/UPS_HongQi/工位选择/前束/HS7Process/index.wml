@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="HS7_ALS_Process"/>
+<Process id="HS7_Calibration_Process"/>
+<Process id="HS7_FWE_ChassisSetupBefore"/>
+<Process id="HS7_TestProcess"/>
+<Process id="HS7_IDT_Ctrl_Monitor"/>
+<Process id="HS7_SWE_Process"/>
+<Process id="HS7_ESPCalibration"/>
+<Process id="HS7_ALSCalibration"/>
+<Process id="HS7_空气悬架调整后测量"/>
+<Process id="FWE_空气悬架调整后底盘调整前"/>
+</children>
+</Workplace>

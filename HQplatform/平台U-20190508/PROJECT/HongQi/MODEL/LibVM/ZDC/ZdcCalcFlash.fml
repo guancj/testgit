@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="zdcHndl" type="3" data="0" description="ZDC handle"/>
+<Variable id="modusFilter" type="8" data="&quot;&quot;" description="ZDC &apos;MODUSTEIL&apos; filter, e.g. &quot;F1&quot;. set empty return all MODUSTEIL value"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="flashFile" type="8" data="" description="The path of xml flash file"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to caculate zdc Flash file name which modus is 'F', the return flash file
+is just the file name not absolute path
+History:
+    02/16/2016, wuh : function created
+	04/11/2016, wuh : add debugLevel
+****************************************************************--]]
+	local err = 0
+	local flashFile =""
+	
+	-- **** precondition check **** --
+	if nil == zdcHndl then 
+		engine.StatValue = "input zdc handle is invalid"
+		engine.println("ERROR, ZdcCalcFlash : input zdc handle is invalid, zdcHndl= " .. tostring(zdcHndl))
+		engine.LastError = 1 ;  flashFile = ""
+		return flashFile
+	end
+	
+	-- **** get all 'TABELLE' which belong to modus 'F' ****--
+	local xpath = "/ZDC/VORSCHRIFT/DIREKT/TABELLEN/TABELLE/MODUS[text()='F']/.."
+	local nodeTabelles = zdcHndl.selectNodes(xpath)
+	if nil == nodeTabelles then 
+		engine.StatValue = "no zdc flash in zdc container"
+		engine.println("WARNING, ZdcCalcFlash : Modus tables not found , xpath = " .. xpath)
+		engine.LastError = 0 ;  flashFile = ""
+		return flashFile
+	end
+	
+	-- **** caculate all 'TABELLE's **** --
+	local  tmpResStr = ""
+	for i=0, nodeTabelles.length-1, 1 do
+		local nodeTabelle = nodeTabelles[i]
+		if "" == modusFilter or nodeTabelle.selectSingleNode("MODUSTEIL").text == modusFilter then 
+			if debugLevel &gt; 0 then
+				engine.println("ZdcCalcFlash, start caculate new table",
+					"MODUSTEIL=" .. tostring(nodeTabelle.selectSingleNode("MODUSTEIL").text),
+					"BESCHREIBUNG=" .. tostring(nodeTabelle.selectSingleNode("BESCHREIBUNG").text) )		
+			end
+			-- caculate flash file
+			local dt = LibVW.zdcOutContainerDataBuild(nodeTabelle, debugLevel)
+			if engine.LastError ~= 0 then
+				engine.StatValue = "zdc caculate failed, zdc data invalid"
+				engine.println("ERROR, ZdcCalcFlash : flash file caculate failed.")
+				engine.LastError = 1 ; flashFile=""
+				return flashFile
+			end
+			for _,v in ipairs(dt) do
+				engine.println("ZdcCalcFlash, add new flash file : " .. v)
+				tmpResStr = tmpResStr .. v .. ';'
+			end
+		end
+	end
+	engine.println("ZdcCalcFlash, caculated falsh file list : " .. tmpResStr)
+	
+	if nil  ~= string.find(tmpResStr:sub(1, -2), ';') then
+		engine.println("WARNING, ZdcCalcFlash : more than one matched flash file has been found in zdc file, file list is : " .. tmpResStr)
+	end
+	if 0 == err then flashFile = tmpResStr:sub(1,-2) end
+
+         tmpResStr = "zdc flash file=" .. flashFile ;
+     if (string.len(tmpResStr) &gt; 240)  then
+       tmpResStr = string.sub(tmpResStr,1,236) .. "...";  
+       engine.println("length control :"..tostring(tmpResStr)) ;
+     end;
+	
+	engine.StatValue = tmpResStr
+	engine.LastError = err</Script></Function>
+

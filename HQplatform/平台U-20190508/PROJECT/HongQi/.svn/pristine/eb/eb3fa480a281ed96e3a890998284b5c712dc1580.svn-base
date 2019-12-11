@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="KWP2000_GenericCode2pCode">
+<Inputs>
+<Variable id="Code" type="3" data="0" description="2byte length   from reponse tel"/>
+</Inputs>
+<Outputs>
+<Variable id="pCode" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to  Generic DTC  Code to pCode  for  kwp 2000;
+input parameter:Code
+output parameter :pCode;
+
+11/25/2016     created by viforce
+******************************************************************************--]]
+
+local codetmp 
+
+if(bit32.extract(Code,15,1) == 0 and bit32.extract(Code,14,1) == 0) then
+	codetmp = bit32.band(Code,0x3fff)
+	pCode = string.format("P%04X",codetmp)
+elseif(bit32.extract(Code,15,1) == 0 and bit32.extract(Code,14,1) == 1) then
+	codetmp = bit32.band(Code,0x3fff)
+	pCode = string.format("C%04X",codetmp)	
+elseif(bit32.extract(Code,15,1) == 1 and bit32.extract(Code,14,1) == 0) then
+	codetmp = bit32.band(Code,0x3fff)
+	pCode = string.format("B%04X",codetmp)
+elseif(bit32.extract(Code,15,1) == 1 and bit32.extract(Code,14,1) == 1) then
+	codetmp = bit32.band(Code,0x3fff)
+	pCode = string.format("U%04X",codetmp)
+end
+</Script></Function>
+

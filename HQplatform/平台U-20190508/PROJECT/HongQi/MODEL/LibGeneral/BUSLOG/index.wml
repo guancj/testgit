@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="Buslog_Open"/>
+
+<Function id="Buslog_Close"/>
+
+<Function id="Buslog_Start"/>
+
+<Function id="Buslog_Stop"/>
+
+<Function id="Buslog_ObdOpen"/>
+
+<Function id="Buslog_ObdClose"/>
+
+</children>
+</Workplace>

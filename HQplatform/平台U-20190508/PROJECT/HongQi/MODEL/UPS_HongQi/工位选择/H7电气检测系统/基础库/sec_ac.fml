@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s0" type="3" data="0"/>
+<Variable id="s1" type="3" data="0"/>
+</Inputs>
+<Script>		Enc0 = 0x85;
+		Enc1 = 0xD6;
+		key0=bit32.bxor(bit32.bxor(s0,Enc0),bit32.band(s0,Enc0));
+		key1=bit32.bxor(bit32.bxor(s1,Enc1),bit32.bor(s1,Enc1));
+                engine.println(string.format("%02x%02x",key0,key1));
+		return key0,key1; </Script></Function>
+

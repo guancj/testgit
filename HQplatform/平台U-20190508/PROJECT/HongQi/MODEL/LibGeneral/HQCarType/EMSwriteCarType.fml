@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>ret = true
+if(DString_C131_Car_Tpye=="CH1GM11" ) then
+elseif(DString_C131_Car_Tpye=="CH1GM12") then
+elseif(DString_C131_Car_Tpye=="CH1AM31") then
+elseif(DString_C131_Car_Tpye=="CH1AM32") then
+elseif(DString_C131_Car_Tpye=="CH1CM26") then
+elseif(DString_C131_Car_Tpye=="CH1CM27") then
+elseif(DString_C131_Car_Tpye=="CH1GM21") then
+elseif(DString_C131_Car_Tpye=="CH1GM22") then
+elseif(DString_C131_Car_Tpye=="CH1AM41") then
+elseif(DString_C131_Car_Tpye=="CH1AM42") then
+elseif(DString_C131_Car_Tpye=="CH1CM28") then
+elseif(DString_C131_Car_Tpye=="CH1CM29") then
+elseif(DString_C131_Car_Tpye=="CH1BM32") then
+elseif(DString_C131_Car_Tpye=="CH1BM33") then
+
+elseif(DString_C131_Car_Tpye=="CMNA02A") then
+elseif(DString_C131_Car_Tpye=="CMNA01A") then
+elseif(DString_C131_Car_Tpye=="CH1QM30") then
+elseif(DString_C131_Car_Tpye=="CH1QM40") then
+elseif(DString_C131_Car_Tpye=="CH1QM50") then
+elseif(DString_C131_Car_Tpye=="CNDA01A") then
+elseif(DString_C131_Car_Tpye=="CH1PM30") then
+elseif(DString_C131_Car_Tpye=="CH1PM20") then
+else
+	ret = false
+end</Script></Function>
+

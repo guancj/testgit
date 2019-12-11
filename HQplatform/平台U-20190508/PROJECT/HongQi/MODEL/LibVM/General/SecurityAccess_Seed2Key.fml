@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="algorithm" type="8" data="" description="十六进制的字串，如：&quot;6806814A07878A2A10E56B058493738001494C&quot;"/>
+<Variable id="seed" type="8" data="" description="十六进制值，如：0xda42e846"/>
+<Variable id="debugLevel" type="3" data="0" description="0-不输出debug，&gt;0输出"/>
+</Inputs>
+<Outputs>
+<Variable id="key" type="8" data=""/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to create security access key
+History:
+    12/07/2017, ChenZhiwei : function created
+****************************************************************--]]
+
+local index = 1
+--] declare fuction
+local ExecuteCommand
+
+
+local function CutString2Hex(aString, indexBegin, indexEnd)
+	local hexNum = tonumber(string.sub(aString,indexBegin, indexEnd),16)
+        return hexNum
+end
+
+local function Get4ByteOperend()
+	local ret = 0
+	ret = CutString2Hex(algorithm, 2*index+1, 2*(index+4))
+        if(debugLevel &gt; 0)then
+		print("4 byte operend is "..string.format("%X",ret))
+        end
+        return ret       
+end
+
+local function ExcuteForLoop(operend)
+	local loopCount = tonumber(string.sub(algorithm, (index+1)*2-1, 2*(index+1)))
+        local indexBegin = index       
+	local loopRet = operend
+        while(loopCount &gt;= 1)        
+        do
+		index = indexBegin + 2
+		loopCount = loopCount - 1
+		while(CutString2Hex(algorithm,index*2-1 , index*2) ~= 0x49)
+		do
+                        if(debugLevel &gt; 0)then
+				print("operend in loop is "..string.format("%X", loopRet))
+                         end
+			
+                        loopRet = ExecuteCommand(loopRet)
+                end
+                if(debugLevel &gt; 0)then
+			print("loop time")
+                end
+        end
+        index =index+ 1
+        return loopRet
+end
+
+ExecuteCommand = function(operend)
+local output = operend
+local operator = tonumber(string.sub(algorithm,index*2-1,index*2),16)
+
+if(debugLevel &gt; 0)then
+	print("operator is "..string.format("%X",operator))
+	print("openend is "..string.format("%X",operend))
+end
+ 
+if ( operator == 0x81)then
+	output = bit32.lshift(operend, 1)
+	if ((bit32.band(operend, 0x80000000))~= 0)then
+		carry_bit = 1
+		output = bit32.bor(output , 0x01)
+        else
+		carry_bit = 0
+        end
+	if(debugLevel &gt; 0)then
+		print("carry_bit is "..tostring(carry_bit).."after left shift")
+		print("operator 0x81")
+        end
+	index = index + 1
+elseif(operator == 0x82)then
+	output = bit32.rshift(operend,1)
+        if((bit32.band(operend, 0x01)) ~=0)then
+		carry_bit = 1
+		output = bit32.bor(output, 0x80000000)
+        else
+		carry_bit = 0
+	end
+	if(debugLevel &gt; 0)then
+		print("carry_bit is "..tostring(carry_bit).."after right shift")
+		print("operator 0x82")
+        end
+        index = index + 1
+ elseif(operator == 0x93)then	
+	output = operend + Get4ByteOperend()
+	if(output &gt; 0xFFFFFFFF)then
+		overflow = 1
+                output = bit32.band(output, 0xFFFFFFFF)
+        else
+		overflow = 0
+        end
+        if(debugLevel &gt; 0)then
+		print("overflow is "..tostring(overflow).."after operation add")
+		print("operator 0x93")
+        end
+        index = index + 5
+ elseif(operator == 0x84)then	
+        output = operend -Get4ByteOperend()
+        if(output &lt; 0)then
+		overflow = 1
+                output = bit32.band(output, 0xFFFFFFFF)
+        else
+		overflow = 0
+        end
+        if(debugLevel &gt; 0)then
+		print("overflow is "..tostring(overflow).."after operation minus")
+		print("operator 0x84")
+        end
+        index = index + 5     
+ elseif(operator == 0x87)then	
+	output = bit32.bxor(operend, Get4ByteOperend())
+        index = index + 5
+        if(debugLevel &gt; 0)then
+		print("operator 0x87")
+        end
+ elseif(operator == 0x68)then
+	output = ExcuteForLoop(operend)
+        if(debugLevel &gt; 0)then
+		print("operator 0x68")
+        end
+ elseif(operator == 0x49)then
+	if(debugLevel &gt; 0)then
+		print("operator 0x49")
+        end
+	return output
+ elseif(operator == 0x4A)then
+	if((carry_bit == 0) or (overflow == 0))then
+		index = index + tonumber(string.sub(algorithm,(index+1)*2-1, (index+1)*2) + 2)
+        else
+		index = index + 2
+        end
+        if(debugLevel &gt; 0)then
+		print("operator 0x4A")
+        end
+ elseif(operator == 0x6B)then
+	index = index + tonumber(string.sub(algorithm, (index+1)*2-1, (index+1)*2) + 2)
+        if(debugLevel &gt; 0)then
+		print("operator 0x6B")
+        end	
+ elseif(operator == 0x4C)then
+	if(debugLevel &gt; 0)then
+		print("operator 0x4C")
+        end
+	return output
+end
+
+if(debugLevel &gt; 0)then
+	print("output is "..string.format("%X", output))
+	print("index is "..tostring(index))
+end
+
+return output 
+end
+
+--]main
+--]]key = CutString2Hex(seed, 1, 8)
+key = bit32.band(seed,0xFFFFFFFF)
+while(CutString2Hex(algorithm, index*2-1, index*2) ~=0x4C)
+do
+	key = ExecuteCommand(key)
+end
+
+if(debugLevel &gt; 0)then
+	print("the key is "..string.format("%X", key))
+end
+
+
+     
+
+
+
+</Script></Function>
+

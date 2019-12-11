@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="发送报文用来获取制动力">
+<Inputs>
+<Variable id="lastRequest" type="8" data="&quot;&quot;" description="上一个请求报文"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+<Variable id="sendMode" type="3" data="4" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="brakeForceFL" type="5" data="0" description="左前轮制动力"/>
+<Variable id="brakeForceFR" type="5" data="0" description="右前轮制动力"/>
+<Variable id="brakeForceRL" type="5" data="0" description="左后轮制动力"/>
+<Variable id="brakeForceRR" type="5" data="0" description="右后轮制动力"/>
+<Variable id="brakePedal" type="5" data="0" description="脚刹踏板力"/>
+<Variable id="brakePedalH" type="5" data="0" description="手刹踏板力"/>
+</Outputs>
+<Script>
+
+local request = "";
+if(lastRequest ~= "") then
+    request = lastRequest;
+else
+    request = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+    if request == nil or request == "" then
+       request = LibIDT.idtInitRequestRTS(pHndl);
+    end
+
+end;
+
+brakeForceFL = 0;
+brakeForceFR = 0;
+brakeForceRL = 0;
+brakeForceRR = 0;
+brakePedal = 0;
+brakePedalH = 0;
+
+local factor = 1.0;
+
+--设置service号为0,第2字节
+--request = LibIDT.idtSetBytes(request,2,1,"\x00");
+
+lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+
+--if(LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl) == true) then
+
+if(lastRevTel ~= nil and lastRevTel ~= "") then
+
+
+--获取左前轮制动力
+brakeForceFL = LibIDT.idthilo2signed(lastRevTel:sub(29,29):byte(),lastRevTel:sub(30,30):byte()) * factor;
+
+--获取右前轮制动力
+brakeForceFR = LibIDT.idthilo2signed(lastRevTel:sub(31,31):byte(),lastRevTel:sub(32,32):byte()) * factor;
+
+--获取左后轮制动力
+brakeForceRL = LibIDT.idthilo2signed(lastRevTel:sub(33,33):byte(),lastRevTel:sub(34,34):byte()) * factor;
+
+--获取右后轮制动力
+brakeForceRR = LibIDT.idthilo2signed(lastRevTel:sub(35,35):byte(),lastRevTel:sub(36,36):byte()) * factor;
+
+--获取手刹踏板力
+brakePedalH = LibIDT.idthilo2signed(lastRevTel:sub(21,21):byte(),lastRevTel:sub(22,22):byte()) * factor;
+
+--获取脚刹踏板力
+brakePedal = LibIDT.idthilo2signed(lastRevTel:sub(23,23):byte(),lastRevTel:sub(24,24):byte()) * factor;
+
+
+end;
+
+
+--[[
+local request = "";
+if(lastRequest ~= "") then
+request = lastRequest;
+else
+request = LibIDT.idtInitRequest(pHndl);
+end;
+
+brakeForceFL = 0;
+brakeForceFR = 0;
+brakeForceRL = 0;
+brakeForceRR = 0;
+brakePedal = 0;
+brakePedalH = 0;
+
+local factor = 1.0;
+
+--设置service号为0,第2字节
+request = LibIDT.idtSetBytes(request,2,1,"\x00");
+
+
+--设置报文交换次数,第4字节
+request = LibIDT.idtSetBytes(request,4,1,LibIDT.idtGetToggleTimes());
+
+--设置报文序列号,第42字节
+request = LibIDT.idtSetBytes(request,42,1,LibIDT.idtGetSerialNumber());
+
+if(LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl) == true) then
+
+--获取左前轮制动力
+brakeForceFL = LibIDT.idthilo2signed(@28,@29) * factor;
+
+--获取右前轮制动力
+brakeForceFR = LibIDT.idthilo2signed(@30,@31) * factor;
+
+--获取左后轮制动力
+brakeForceRL = LibIDT.idthilo2signed(@32,@33) * factor;
+
+--获取右后轮制动力
+brakeForceRR = LibIDT.idthilo2signed(@34,@35) * factor;
+
+--获取手刹踏板力
+brakePedalH = LibIDT.idthilo2signed(@20,@21) * factor;
+
+--获取脚刹踏板力
+brakePedal = LibIDT.idthilo2signed(@22,@23) * factor;
+
+end;
+]]</Script></Function>
+

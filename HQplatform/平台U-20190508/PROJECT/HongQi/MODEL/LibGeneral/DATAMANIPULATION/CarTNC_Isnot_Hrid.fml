@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="Isnot_Hrid" type="11" data=""/>
+</Outputs>
+<Script>if(DString_C131_Car_Tpye=="CH1LM21" ) then
+	Isnot_Hrid = false
+elseif(DString_C131_Car_Tpye=="CH1LM11" ) then
+	Isnot_Hrid = false
+elseif(DString_C131_Car_Tpye=="CH1MM21" ) then
+	Isnot_Hrid = false
+elseif(DString_C131_Car_Tpye=="CH1LM13" ) then
+	Isnot_Hrid = false
+elseif(DString_C131_Car_Tpye=="CH1LM23" ) then
+	Isnot_Hrid = false
+elseif(DString_C131_Car_Tpye=="CH1MM41" ) then
+	Isnot_Hrid = false
+else
+	Isnot_Hrid = true
+end</Script></Function>
+

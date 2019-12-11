@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="path" type="8" data="&quot;&quot;" description="全路径路径名"/>
+<Variable id="content" type="8" data="&quot;&quot;" description="写入内容"/>
+<Variable id="mode" type="8" data="&quot;a+&quot;" description="写入模式"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to write file;
+input parameter:path,content,mode
+output parameter :ret
+
+03/10/2017     created by viforce
+******************************************************************************--]]
+
+  ret = false
+  mode = mode or "w+b"
+  local file = io.open(path, mode)
+  if file then
+	if file:write(content) == nil then
+		ret = false
+		return ret 
+        end
+	io.close(file)
+        ret = true
+  else
+	ret = false
+  end</Script></Function>
+

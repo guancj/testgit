@@ -1,0 +1,961 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_HUP_03" flags="1">
+<ProcessParameters>
+<Variable id="HUPHndl" type="3" dir="0" data="HUPHndl"/>
+<Variable id="isOK" type="11" dir="2" data="isOK"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="406" top="28" right="506" bottom="60"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="431" top="3478" right="531" bottom="3510"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="wait 2s">
+<Rect left="406" top="96" right="506" bottom="128"/>
+<Script>engine.Delay(2000)</Script></Activity>
+<Activity id="4" ActivityType="3" name="照相1">
+<Rect left="407" top="159" right="507" bottom="191"/>
+<Script></Script></Activity>
+<Activity id="10" ActivityType="5" name="HUP_91_Bild_Aufnahme">
+<Rect left="408" top="221" right="508" bottom="253"/>
+<SubProcesses>
+<SubProcess id="HUP_91_Bild_Aufnahme">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Bildtyp_shared" value="2"/>
+<Parameter id="DInt_HUP_Bildpos_shared" value="1"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="11" ActivityType="3" name="普通节点">
+<Rect left="568" top="221" right="668" bottom="253"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 91 1 failed")
+-- HUP调整：照相</Script></Activity>
+<Activity id="12" ActivityType="3" name="HUP_BGW_Berechnung_Start">
+<Rect left="409" top="284" right="509" bottom="316"/>
+<Script></Script></Activity>
+<Activity id="13" ActivityType="5" name="HUP_92_BGW_Berechnung_Start">
+<Rect left="410" top="352" right="510" bottom="384"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="1" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="25" ActivityType="3" name="普通节点">
+<Rect left="572" top="351" right="672" bottom="383"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="26" ActivityType="5" name="HUP_86_Kamera_Anfahren">
+<Rect left="411" top="485" right="511" bottom="517"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Anfahren">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="5"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="27" ActivityType="3" name="普通节点">
+<Rect left="572" top="485" right="672" bottom="517"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86 5  failed")
+-- HUP调整：相机移动 5 位置</Script></Activity>
+<Activity id="28" ActivityType="5" name="HUP_92_BGW_Berechnung_Ende">
+<Rect left="412" top="551" right="512" bottom="583"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="1" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="29" ActivityType="3" name="普通节点">
+<Rect left="573" top="550" right="673" bottom="582"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="30" ActivityType="3" name="Kam_Pos_5">
+<Rect left="410" top="419" right="510" bottom="451"/>
+<Script></Script></Activity>
+<Activity id="35" ActivityType="5" name="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Rect left="412" top="744" right="512" bottom="776"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="5"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="36" ActivityType="3" name="普通节点">
+<Rect left="569" top="743" right="669" bottom="775"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86 5  failed")
+-- HUP调整：照相机移动失败</Script></Activity>
+<Activity id="37" ActivityType="3" name="照相2">
+<Rect left="413" top="810" right="513" bottom="842"/>
+<Script></Script></Activity>
+<Activity id="38" ActivityType="5" name="HUP_91_Bild_Aufnahme">
+<Rect left="414" top="872" right="514" bottom="904"/>
+<SubProcesses>
+<SubProcess id="HUP_91_Bild_Aufnahme">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Bildtyp_shared" value="2"/>
+<Parameter id="DInt_HUP_Bildpos_shared" value="5"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="39" ActivityType="3" name="普通节点">
+<Rect left="574" top="872" right="674" bottom="904"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 91 5 failed")
+-- HUP调整：照相</Script></Activity>
+<Activity id="40" ActivityType="3" name="HUP_BGW_Berechnung_Start">
+<Rect left="415" top="935" right="515" bottom="967"/>
+<Script></Script></Activity>
+<Activity id="41" ActivityType="5" name="HUP_92_BGW_Berechnung_Start">
+<Rect left="416" top="1003" right="516" bottom="1035"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="5" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="42" ActivityType="3" name="普通节点">
+<Rect left="578" top="1002" right="678" bottom="1034"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="43" ActivityType="5" name="HUP_86_Kamera_Anfahren">
+<Rect left="417" top="1136" right="517" bottom="1168"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Anfahren">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="7"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="44" ActivityType="3" name="普通节点">
+<Rect left="578" top="1136" right="678" bottom="1168"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86 7  failed")
+-- HUP调整：相机移动 5 位置</Script></Activity>
+<Activity id="45" ActivityType="5" name="HUP_92_BGW_Berechnung_Ende">
+<Rect left="418" top="1202" right="518" bottom="1234"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="5" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="46" ActivityType="3" name="普通节点">
+<Rect left="579" top="1201" right="679" bottom="1233"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="47" ActivityType="3" name="Kam_Pos_7">
+<Rect left="416" top="1070" right="516" bottom="1102"/>
+<Script></Script></Activity>
+<Activity id="52" ActivityType="5" name="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Rect left="418" top="1395" right="518" bottom="1427"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="7"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="53" ActivityType="3" name="普通节点">
+<Rect left="575" top="1394" right="675" bottom="1426"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86 7  failed")
+-- HUP调整：照相机移动失败</Script></Activity>
+<Activity id="54" ActivityType="3" name="照相3">
+<Rect left="418" top="1458" right="518" bottom="1490"/>
+<Script></Script></Activity>
+<Activity id="55" ActivityType="5" name="HUP_91_Bild_Aufnahme">
+<Rect left="419" top="1520" right="519" bottom="1552"/>
+<SubProcesses>
+<SubProcess id="HUP_91_Bild_Aufnahme">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Bildtyp_shared" value="2"/>
+<Parameter id="DInt_HUP_Bildpos_shared" value="7"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="56" ActivityType="3" name="普通节点">
+<Rect left="579" top="1520" right="679" bottom="1552"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 91 7 failed")
+-- HUP调整：照相</Script></Activity>
+<Activity id="57" ActivityType="3" name="HUP_BGW_Berechnung_Start">
+<Rect left="420" top="1583" right="520" bottom="1615"/>
+<Script></Script></Activity>
+<Activity id="58" ActivityType="5" name="HUP_92_BGW_Berechnung_Start">
+<Rect left="421" top="1651" right="521" bottom="1683"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="7" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="59" ActivityType="3" name="普通节点">
+<Rect left="583" top="1650" right="683" bottom="1682"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="60" ActivityType="5" name="HUP_86_Kamera_Anfahren">
+<Rect left="422" top="1784" right="522" bottom="1816"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Anfahren">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="4"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="61" ActivityType="3" name="普通节点">
+<Rect left="583" top="1784" right="683" bottom="1816"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86  4  failed")
+-- HUP调整：相机移动 5 位置</Script></Activity>
+<Activity id="62" ActivityType="5" name="HUP_92_BGW_Berechnung_Ende">
+<Rect left="423" top="1850" right="523" bottom="1882"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="7" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="63" ActivityType="3" name="普通节点">
+<Rect left="584" top="1849" right="684" bottom="1881"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="64" ActivityType="3" name="Kam_Pos_4">
+<Rect left="421" top="1718" right="521" bottom="1750"/>
+<Script></Script></Activity>
+<Activity id="69" ActivityType="5" name="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Rect left="423" top="2043" right="523" bottom="2075"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="4"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="70" ActivityType="3" name="普通节点">
+<Rect left="580" top="2042" right="680" bottom="2074"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86 4  failed")
+-- HUP调整：照相机移动失败</Script></Activity>
+<Activity id="71" ActivityType="3" name="照相4">
+<Rect left="423" top="2107" right="523" bottom="2139"/>
+<Script></Script></Activity>
+<Activity id="72" ActivityType="5" name="HUP_91_Bild_Aufnahme">
+<Rect left="424" top="2169" right="524" bottom="2201"/>
+<SubProcesses>
+<SubProcess id="HUP_91_Bild_Aufnahme">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Bildtyp_shared" value="2"/>
+<Parameter id="DInt_HUP_Bildpos_shared" value="4"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="73" ActivityType="3" name="普通节点">
+<Rect left="584" top="2169" right="684" bottom="2201"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 91 4 failed")
+-- HUP调整：照相</Script></Activity>
+<Activity id="74" ActivityType="3" name="HUP_BGW_Berechnung_Start">
+<Rect left="425" top="2232" right="525" bottom="2264"/>
+<Script></Script></Activity>
+<Activity id="75" ActivityType="5" name="HUP_92_BGW_Berechnung_Start">
+<Rect left="426" top="2300" right="526" bottom="2332"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="4" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="76" ActivityType="3" name="普通节点">
+<Rect left="588" top="2299" right="688" bottom="2331"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="77" ActivityType="5" name="HUP_86_Kamera_Anfahren">
+<Rect left="427" top="2433" right="527" bottom="2465"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Anfahren">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="6"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="78" ActivityType="3" name="普通节点">
+<Rect left="588" top="2433" right="688" bottom="2465"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86  6  failed")
+-- HUP调整：相机移动 5 位置</Script></Activity>
+<Activity id="79" ActivityType="5" name="HUP_92_BGW_Berechnung_Ende">
+<Rect left="428" top="2499" right="528" bottom="2531"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="4" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="80" ActivityType="3" name="普通节点">
+<Rect left="589" top="2498" right="689" bottom="2530"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="81" ActivityType="3" name="Kam_Pos_6">
+<Rect left="426" top="2367" right="526" bottom="2399"/>
+<Script></Script></Activity>
+<Activity id="86" ActivityType="5" name="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Rect left="428" top="2692" right="528" bottom="2724"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="6"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="87" ActivityType="3" name="普通节点">
+<Rect left="585" top="2691" right="685" bottom="2723"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86 6  failed")
+-- HUP调整：照相机移动失败</Script></Activity>
+<Activity id="88" ActivityType="3" name="照相5">
+<Rect left="428" top="2758" right="528" bottom="2790"/>
+<Script></Script></Activity>
+<Activity id="89" ActivityType="5" name="HUP_91_Bild_Aufnahme">
+<Rect left="429" top="2820" right="529" bottom="2852"/>
+<SubProcesses>
+<SubProcess id="HUP_91_Bild_Aufnahme">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Bildtyp_shared" value="2"/>
+<Parameter id="DInt_HUP_Bildpos_shared" value="6"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="90" ActivityType="3" name="普通节点">
+<Rect left="589" top="2820" right="689" bottom="2852"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 91 6 failed")
+-- HUP调整：照相</Script></Activity>
+<Activity id="91" ActivityType="3" name="HUP_BGW_Berechnung_Start">
+<Rect left="430" top="2883" right="530" bottom="2915"/>
+<Script></Script></Activity>
+<Activity id="92" ActivityType="5" name="HUP_92_BGW_Berechnung_Start">
+<Rect left="431" top="2951" right="531" bottom="2983"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="6" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="93" ActivityType="3" name="普通节点">
+<Rect left="593" top="2950" right="693" bottom="2982"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="95" ActivityType="3" name="普通节点">
+<Rect left="593" top="3084" right="693" bottom="3116"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 86  workposition  failed")
+-- HUP调整：相机移动到工作位置</Script></Activity>
+<Activity id="97" ActivityType="3" name="普通节点">
+<Rect left="594" top="3149" right="694" bottom="3181"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="98" ActivityType="3" name="Kam working position">
+<Rect left="431" top="3018" right="531" bottom="3050"/>
+<Script></Script></Activity>
+<Activity id="106" ActivityType="3" name="统计">
+<Rect left="431" top="3409" right="531" bottom="3441"/>
+<Script>engine.StatValue = "HUP Ablauf kompett durchgefuehrt"
+engine.LastError = 0
+engine.println("&lt;Par_HUP_Process&gt; Start - HUP-Testsequenz")</Script><assessment block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511" no="1" name="DEP1512" type="8" flags="97"/>
+</Activity>
+<Activity id="108" ActivityType="5" name="HUP_86_Kamera_Arbeitsposition">
+<Rect left="431" top="3083" right="531" bottom="3115"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Arbeitsposition">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="109" ActivityType="5" name="HUP_92_BGW_Berechnung_Ende">
+<Rect left="432" top="3148" right="532" bottom="3180"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="3"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="6" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="110" ActivityType="3" name="同步量">
+<Rect left="432" top="3213" right="532" bottom="3245"/>
+<Script>engine.SharedVarSet("_DInt_HUD_Sync_shared",0)</Script></Activity>
+<Activity id="111" ActivityType="5" name="XML_BGW_Berechnung">
+<Rect left="412" top="615" right="512" bottom="647"/>
+<SubProcesses>
+<SubProcess id="XML_BGW_Berechnung">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="DFloatBGWTable32" ret="DFloatBGWTable32"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="112" ActivityType="3" name="普通节点">
+<Rect left="574" top="616" right="674" bottom="648"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : XML_BGW_Berechnung  1 ")
+-- HUP调整：XML BGW 读取</Script></Activity>
+<Activity id="113" ActivityType="5" name="c7_hud_xml">
+<Rect left="412" top="680" right="512" bottom="712"/>
+<SubProcesses>
+<SubProcess id="c7_hud_xml">
+<Parameters>
+<Parameter id="Prueftyp" value="&quot;BGW&quot;"/>
+<Parameter id="Positionsnummer" value="&quot;1&quot;"/>
+<Parameter id="DFloat_XML_BGW_Alpha_Rot_shared" value="DFloatBGWTable32[&quot;ALPHA_rot&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Horizontal_shared" value="DFloatBGWTable32[&quot;Y_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Vertikal_shared" value="DFloatBGWTable32[&quot;Z_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_links_shared" value="DFloatBGWTable32[&quot;BETA_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_vertikal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_rechts_shared" value="DFloatBGWTable32[&quot;BETA_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_oben_shared" value="DFloatBGWTable32[&quot;BETA_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_horizontal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_unten_shared" value="DFloatBGWTable32[&quot;BETA_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_horiz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_verti&quot;]"/>
+<Parameter id="DFloat_XML_BGW_A_aspekt_shared" value="DFloatBGWTable32[&quot;A_aspekt&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_1_shared" value="DFloatBGWTable32[&quot;Z_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_2_shared" value="DFloatBGWTable32[&quot;Z_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_3_shared" value="DFloatBGWTable32[&quot;Z_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_1_shared" value="DFloatBGWTable32[&quot;Y_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_2_shared" value="DFloatBGWTable32[&quot;Y_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_3_shared" value="DFloatBGWTable32[&quot;Y_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_max_shared" value="DFloatBGWTable32[&quot;Y_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_min_shared" value="DFloatBGWTable32[&quot;Y_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_max_shared" value="DFloatBGWTable32[&quot;Z_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_min_shared" value="DFloatBGWTable32[&quot;Z_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_links_shared" value="DFloatBGWTable32[&quot;B_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_oben_shared" value="DFloatBGWTable32[&quot;B_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_rechts_shared" value="DFloatBGWTable32[&quot;B_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_unten_shared" value="DFloatBGWTable32[&quot;B_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_y_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_y_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_y_Anz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_z_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_z_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_z_Anz&quot;]"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="114" ActivityType="5" name="XML_BGW_Berechnung">
+<Rect left="419" top="1266" right="519" bottom="1298"/>
+<SubProcesses>
+<SubProcess id="XML_BGW_Berechnung">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="DFloatBGWTable32" ret="DFloatBGWTable32"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="115" ActivityType="3" name="普通节点">
+<Rect left="581" top="1267" right="681" bottom="1299"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : XML_BGW_Berechnung  5 ")
+-- HUP调整：XML BGW 读取</Script></Activity>
+<Activity id="116" ActivityType="5" name="c7_hud_xml">
+<Rect left="419" top="1331" right="519" bottom="1363"/>
+<SubProcesses>
+<SubProcess id="c7_hud_xml">
+<Parameters>
+<Parameter id="Prueftyp" value="&quot;BGW&quot;"/>
+<Parameter id="Positionsnummer" value="&quot;5&quot;"/>
+<Parameter id="DFloat_XML_BGW_Alpha_Rot_shared" value="DFloatBGWTable32[&quot;ALPHA_rot&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Horizontal_shared" value="DFloatBGWTable32[&quot;Y_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Vertikal_shared" value="DFloatBGWTable32[&quot;Z_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_links_shared" value="DFloatBGWTable32[&quot;BETA_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_vertikal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_rechts_shared" value="DFloatBGWTable32[&quot;BETA_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_oben_shared" value="DFloatBGWTable32[&quot;BETA_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_horizontal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_unten_shared" value="DFloatBGWTable32[&quot;BETA_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_horiz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_verti&quot;]"/>
+<Parameter id="DFloat_XML_BGW_A_aspekt_shared" value="DFloatBGWTable32[&quot;A_aspekt&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_1_shared" value="DFloatBGWTable32[&quot;Z_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_2_shared" value="DFloatBGWTable32[&quot;Z_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_3_shared" value="DFloatBGWTable32[&quot;Z_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_1_shared" value="DFloatBGWTable32[&quot;Y_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_2_shared" value="DFloatBGWTable32[&quot;Y_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_3_shared" value="DFloatBGWTable32[&quot;Y_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_max_shared" value="DFloatBGWTable32[&quot;Y_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_min_shared" value="DFloatBGWTable32[&quot;Y_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_max_shared" value="DFloatBGWTable32[&quot;Z_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_min_shared" value="DFloatBGWTable32[&quot;Z_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_links_shared" value="DFloatBGWTable32[&quot;B_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_oben_shared" value="DFloatBGWTable32[&quot;B_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_rechts_shared" value="DFloatBGWTable32[&quot;B_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_unten_shared" value="DFloatBGWTable32[&quot;B_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_y_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_y_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_y_Anz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_z_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_z_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_z_Anz&quot;]"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="117" ActivityType="5" name="XML_BGW_Berechnung">
+<Rect left="424" top="1918" right="524" bottom="1950"/>
+<SubProcesses>
+<SubProcess id="XML_BGW_Berechnung">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="DFloatBGWTable32" ret="DFloatBGWTable32"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="118" ActivityType="3" name="普通节点">
+<Rect left="586" top="1919" right="686" bottom="1951"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : XML_BGW_Berechnung  7 ")
+-- HUP调整：XML BGW 读取</Script></Activity>
+<Activity id="119" ActivityType="5" name="c7_hud_xml">
+<Rect left="424" top="1983" right="524" bottom="2015"/>
+<SubProcesses>
+<SubProcess id="c7_hud_xml">
+<Parameters>
+<Parameter id="Prueftyp" value="&quot;BGW&quot;"/>
+<Parameter id="Positionsnummer" value="&quot;7&quot;"/>
+<Parameter id="DFloat_XML_BGW_Alpha_Rot_shared" value="DFloatBGWTable32[&quot;ALPHA_rot&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Horizontal_shared" value="DFloatBGWTable32[&quot;Y_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Vertikal_shared" value="DFloatBGWTable32[&quot;Z_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_links_shared" value="DFloatBGWTable32[&quot;BETA_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_vertikal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_rechts_shared" value="DFloatBGWTable32[&quot;BETA_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_oben_shared" value="DFloatBGWTable32[&quot;BETA_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_horizontal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_unten_shared" value="DFloatBGWTable32[&quot;BETA_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_horiz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_verti&quot;]"/>
+<Parameter id="DFloat_XML_BGW_A_aspekt_shared" value="DFloatBGWTable32[&quot;A_aspekt&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_1_shared" value="DFloatBGWTable32[&quot;Z_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_2_shared" value="DFloatBGWTable32[&quot;Z_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_3_shared" value="DFloatBGWTable32[&quot;Z_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_1_shared" value="DFloatBGWTable32[&quot;Y_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_2_shared" value="DFloatBGWTable32[&quot;Y_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_3_shared" value="DFloatBGWTable32[&quot;Y_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_max_shared" value="DFloatBGWTable32[&quot;Y_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_min_shared" value="DFloatBGWTable32[&quot;Y_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_max_shared" value="DFloatBGWTable32[&quot;Z_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_min_shared" value="DFloatBGWTable32[&quot;Z_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_links_shared" value="DFloatBGWTable32[&quot;B_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_oben_shared" value="DFloatBGWTable32[&quot;B_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_rechts_shared" value="DFloatBGWTable32[&quot;B_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_unten_shared" value="DFloatBGWTable32[&quot;B_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_y_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_y_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_y_Anz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_z_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_z_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_z_Anz&quot;]"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="120" ActivityType="5" name="XML_BGW_Berechnung">
+<Rect left="427" top="2562" right="527" bottom="2594"/>
+<SubProcesses>
+<SubProcess id="XML_BGW_Berechnung">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="DFloatBGWTable32" ret="DFloatBGWTable32"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="121" ActivityType="3" name="普通节点">
+<Rect left="589" top="2563" right="689" bottom="2595"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : XML_BGW_Berechnung  4 ")
+-- HUP调整：XML BGW 读取</Script></Activity>
+<Activity id="122" ActivityType="5" name="c7_hud_xml">
+<Rect left="427" top="2627" right="527" bottom="2659"/>
+<SubProcesses>
+<SubProcess id="c7_hud_xml">
+<Parameters>
+<Parameter id="Prueftyp" value="&quot;BGW&quot;"/>
+<Parameter id="Positionsnummer" value="&quot;4&quot;"/>
+<Parameter id="DFloat_XML_BGW_Alpha_Rot_shared" value="DFloatBGWTable32[&quot;ALPHA_rot&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Horizontal_shared" value="DFloatBGWTable32[&quot;Y_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Vertikal_shared" value="DFloatBGWTable32[&quot;Z_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_links_shared" value="DFloatBGWTable32[&quot;BETA_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_vertikal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_rechts_shared" value="DFloatBGWTable32[&quot;BETA_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_oben_shared" value="DFloatBGWTable32[&quot;BETA_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_horizontal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_unten_shared" value="DFloatBGWTable32[&quot;BETA_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_horiz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_verti&quot;]"/>
+<Parameter id="DFloat_XML_BGW_A_aspekt_shared" value="DFloatBGWTable32[&quot;A_aspekt&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_1_shared" value="DFloatBGWTable32[&quot;Z_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_2_shared" value="DFloatBGWTable32[&quot;Z_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_3_shared" value="DFloatBGWTable32[&quot;Z_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_1_shared" value="DFloatBGWTable32[&quot;Y_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_2_shared" value="DFloatBGWTable32[&quot;Y_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_3_shared" value="DFloatBGWTable32[&quot;Y_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_max_shared" value="DFloatBGWTable32[&quot;Y_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_min_shared" value="DFloatBGWTable32[&quot;Y_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_max_shared" value="DFloatBGWTable32[&quot;Z_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_min_shared" value="DFloatBGWTable32[&quot;Z_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_links_shared" value="DFloatBGWTable32[&quot;B_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_oben_shared" value="DFloatBGWTable32[&quot;B_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_rechts_shared" value="DFloatBGWTable32[&quot;B_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_unten_shared" value="DFloatBGWTable32[&quot;B_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_y_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_y_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_y_Anz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_z_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_z_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_z_Anz&quot;]"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="123" ActivityType="5" name="XML_BGW_Berechnung">
+<Rect left="433" top="3276" right="533" bottom="3308"/>
+<SubProcesses>
+<SubProcess id="XML_BGW_Berechnung">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="DFloatBGWTable32" ret="DFloatBGWTable32"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="124" ActivityType="3" name="普通节点">
+<Rect left="595" top="3277" right="695" bottom="3309"/>
+<Script>engine.println(" &lt;Par_HUP_03&gt; : XML_BGW_Berechnung  6 ")
+-- HUP调整：XML BGW 读取</Script></Activity>
+<Activity id="125" ActivityType="5" name="c7_hud_xml">
+<Rect left="433" top="3341" right="533" bottom="3373"/>
+<SubProcesses>
+<SubProcess id="c7_hud_xml">
+<Parameters>
+<Parameter id="Prueftyp" value="&quot;BGW&quot;"/>
+<Parameter id="Positionsnummer" value="&quot;6&quot;"/>
+<Parameter id="DFloat_XML_BGW_Alpha_Rot_shared" value="DFloatBGWTable32[&quot;ALPHA_rot&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Horizontal_shared" value="DFloatBGWTable32[&quot;Y_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Translation_Vertikal_shared" value="DFloatBGWTable32[&quot;Z_trans&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_links_shared" value="DFloatBGWTable32[&quot;BETA_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_vertikal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_rechts_shared" value="DFloatBGWTable32[&quot;BETA_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_oben_shared" value="DFloatBGWTable32[&quot;BETA_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_horizontal&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_unten_shared" value="DFloatBGWTable32[&quot;BETA_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_horizontal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_horiz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Beta_trapez_vertikal_shared" value="DFloatBGWTable32[&quot;BETA_trapez_verti&quot;]"/>
+<Parameter id="DFloat_XML_BGW_A_aspekt_shared" value="DFloatBGWTable32[&quot;A_aspekt&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_1_shared" value="DFloatBGWTable32[&quot;Z_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_2_shared" value="DFloatBGWTable32[&quot;Z_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_3_shared" value="DFloatBGWTable32[&quot;Z_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_1_shared" value="DFloatBGWTable32[&quot;Y_1&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_2_shared" value="DFloatBGWTable32[&quot;Y_2&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_3_shared" value="DFloatBGWTable32[&quot;Y_3&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_max_shared" value="DFloatBGWTable32[&quot;Y_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Y_min_shared" value="DFloatBGWTable32[&quot;Y_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_max_shared" value="DFloatBGWTable32[&quot;Z_max&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Z_min_shared" value="DFloatBGWTable32[&quot;Z_min&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_links_shared" value="DFloatBGWTable32[&quot;B_links&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_oben_shared" value="DFloatBGWTable32[&quot;B_oben&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_rechts_shared" value="DFloatBGWTable32[&quot;B_rechts&quot;]"/>
+<Parameter id="DFloat_XML_BGW_B_unten_shared" value="DFloatBGWTable32[&quot;B_unten&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_y_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_y_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_y_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_y_Anz&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Abstand_shared" value="DFloatBGWTable32[&quot;Ghost_z_Abstand&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Helligkeit_shared" value="DFloatBGWTable32[&quot;Ghost_z_Hell&quot;]"/>
+<Parameter id="DFloat_XML_BGW_Ghost_z_Anzahl_shared" value="DFloatBGWTable32[&quot;Ghost_z_Anz&quot;]"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="10" type="0">
+</Transition>
+<Transition StartId="10" EndId="11" type="0">
+</Transition>
+<Transition StartId="10" EndId="12" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="12" EndId="13" type="0">
+</Transition>
+<Transition StartId="13" EndId="25" type="0">
+</Transition>
+<Transition StartId="13" EndId="30" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="26" EndId="28" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="28" EndId="29" type="0">
+</Transition>
+<Transition StartId="28" EndId="111" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="30" EndId="26" type="0">
+</Transition>
+<Transition StartId="35" EndId="36" type="0">
+</Transition>
+<Transition StartId="35" EndId="37" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="37" EndId="38" type="0">
+</Transition>
+<Transition StartId="38" EndId="39" type="0">
+</Transition>
+<Transition StartId="38" EndId="40" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="40" EndId="41" type="0">
+</Transition>
+<Transition StartId="41" EndId="42" type="0">
+</Transition>
+<Transition StartId="41" EndId="47" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="43" EndId="44" type="0">
+</Transition>
+<Transition StartId="43" EndId="45" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="45" EndId="46" type="0">
+</Transition>
+<Transition StartId="45" EndId="114" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="47" EndId="43" type="0">
+</Transition>
+<Transition StartId="52" EndId="53" type="0">
+</Transition>
+<Transition StartId="52" EndId="54" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="54" EndId="55" type="0">
+</Transition>
+<Transition StartId="55" EndId="56" type="0">
+</Transition>
+<Transition StartId="55" EndId="57" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="57" EndId="58" type="0">
+</Transition>
+<Transition StartId="58" EndId="59" type="0">
+</Transition>
+<Transition StartId="58" EndId="64" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="60" EndId="61" type="0">
+</Transition>
+<Transition StartId="60" EndId="62" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="62" EndId="63" type="0">
+</Transition>
+<Transition StartId="62" EndId="117" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="64" EndId="60" type="0">
+</Transition>
+<Transition StartId="69" EndId="70" type="0">
+</Transition>
+<Transition StartId="69" EndId="71" type="0">
+</Transition>
+<Transition StartId="71" EndId="72" type="0">
+</Transition>
+<Transition StartId="72" EndId="73" type="0">
+</Transition>
+<Transition StartId="72" EndId="74" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="74" EndId="75" type="0">
+</Transition>
+<Transition StartId="75" EndId="76" type="0">
+</Transition>
+<Transition StartId="75" EndId="81" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="77" EndId="78" type="0">
+</Transition>
+<Transition StartId="77" EndId="79" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="79" EndId="80" type="0">
+</Transition>
+<Transition StartId="79" EndId="120" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="81" EndId="77" type="0">
+</Transition>
+<Transition StartId="86" EndId="87" type="0">
+</Transition>
+<Transition StartId="86" EndId="88" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="88" EndId="89" type="0">
+</Transition>
+<Transition StartId="89" EndId="90" type="0">
+</Transition>
+<Transition StartId="89" EndId="91" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="91" EndId="92" type="0">
+</Transition>
+<Transition StartId="92" EndId="93" type="0">
+</Transition>
+<Transition StartId="92" EndId="98" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="98" EndId="108" type="0">
+</Transition>
+<Transition StartId="106" EndId="2" type="0">
+</Transition>
+<Transition StartId="108" EndId="109" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="108" EndId="95" type="0">
+</Transition>
+<Transition StartId="109" EndId="110" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="109" EndId="97" type="0">
+</Transition>
+<Transition StartId="110" EndId="123" type="0">
+</Transition>
+<Transition StartId="111" EndId="113" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="111" EndId="112" type="0">
+</Transition>
+<Transition StartId="113" EndId="35" type="0">
+</Transition>
+<Transition StartId="114" EndId="116" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="114" EndId="115" type="0">
+</Transition>
+<Transition StartId="116" EndId="52" type="0">
+</Transition>
+<Transition StartId="117" EndId="119" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="117" EndId="118" type="0">
+</Transition>
+<Transition StartId="119" EndId="69" type="0">
+</Transition>
+<Transition StartId="120" EndId="122" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="120" EndId="121" type="0">
+</Transition>
+<Transition StartId="122" EndId="86" type="0">
+</Transition>
+<Transition StartId="123" EndId="125" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="123" EndId="124" type="0">
+</Transition>
+<Transition StartId="125" EndId="106" type="1">
+<Expression>isOK == true</Expression></Transition>
+</Transitions>
+</Process>
+

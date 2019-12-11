@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_Coding_Short">
+<Inputs>
+<Variable id="LineNr" type="3" data="1"/>
+<Variable id="vciExData" type="8" data="&quot;&quot;"/>
+<Variable id="Int_coding" type="3" data="0"/>
+<Variable id="Version" type="8" data="&quot;0000&quot;"/>
+<Variable id="Subsystem" type="3" data="0"/>
+<Variable id="P_WSC_VW" type="3" data="VW_WSC"/>
+<Variable id="P_VW_ImporterNumber" type="3" data="VW_ImporterNumber"/>
+<Variable id="Comment" type="8" data="&quot;&quot;"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[ ********************************************************************************************
+this function is used to  write Coding  short
+global value : engine.VmtId 
+input prameter : LineNr,vciExData,Int_coding,Version,Subsystem,P_WSC_VW,P_VW_ImporterNumber,Comment,ECU_Handle
+
+01/12/2016     created by viforce
+11/03/2016     changed by viforce
+*************************************************************************************************--]]
+
+local recbuf = "";
+local Tmp_Int = 0 ; 
+local CodeLen = 0;
+local Version_byte1;
+local Version_byte2;
+local tmp_Int_M;
+local byte_0;
+local byte_1;
+local byte_2;
+local byte_3;
+local byte_4;
+local byte_5;
+local byte_6;
+local CodingString;
+local CodingStringhex;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+if(vciExData == "") then
+engine.println("vciExData : receive failed ".."\n");
+end;
+local pos_0,pos_1 = string.find(vciExData,"\x01\x14");
+
+--engine.println(string.format("%d %x %x  %d",LineNr,Subsystem,Int_coding,pos_0).."\n");
+
+engine.SetLineText(LineNr,Comment);engine.ShowMessage();
+
+Tmp_Int = engine.VmtId * 8;
+Tmp_Int = math.floor(P_VW_ImporterNumber/0x80) - math.floor(P_VW_ImporterNumber/0x400) + Tmp_Int;
+
+byte_0  = math.floor(Tmp_Int/0x1000000);
+tmp_Int_M = Tmp_Int - byte_0 * 0x1000000;
+byte_1 = math.floor(tmp_Int_M/0x10000);
+tmp_Int_M = tmp_Int_M - byte_1 * 0x10000;
+byte_2 = math.floor(tmp_Int_M/0x100);
+byte_3 = tmp_Int_M - byte_2 * 0x100;
+
+Tmp_Int = P_VW_ImporterNumber * 2;
+if (P_WSC_VW &gt; 0xffff) then
+    Tmp_Int = Tmp_Int +1;end;
+
+byte_4 = Tmp_Int - math.floor(Tmp_Int/0x100) * 0x100
+
+Tmp_Int = P_WSC_VW;
+
+tmp_Int_M = Tmp_Int - math.floor(Tmp_Int/0x10000) * 0x10000;
+byte_5 = math.floor(tmp_Int_M/0x100);
+byte_6 = tmp_Int_M - byte_5 * 0x100;
+
+if (pos_0 ==nil or pos_0 &lt; 1 )	then
+
+    if (LineNr &gt; 0 ) then 
+	engine.SetLineText(LineNr,"");engine.ShowMessage();
+	end;
+
+if (((Subsystem &lt; 0x10) and (Subsystem ~= 0x03)) or (math.floor(Subsystem/0x10) == 1) or (math.floor(Subsystem/0x10) == 3) or (Subsystem &gt; 0x3f)) 	 then
+	engine.StatValue = string.format("%s:%02lx","subsystem NOK",Subsystem);
+	    if (LineNr &gt; 0 ) then 
+	engine.SetLineText(LineNr,"");engine.ShowMessage();
+	engine.LastError = 1;return;
+	end;
+end
+
+
+
+
+
+if (string.len(Version) ~= 4) then Version = "0000"; end;
+	
+Version_byte1 = string.byte(Version,1) ;
+Version_byte2 = string.byte(Version,2) ;
+Version_byte3 = string.byte(Version,3) ;
+Version_byte4 = string.byte(Version,4) ;
+
+if (Subsystem == 0x03) then
+	Tmp_Int = Int_coding - math.floor(Int_coding/0x400000)*0x400000;
+else
+	Tmp_Int = Int_coding - math.floor(Int_coding/0x1000000)*0x1000000;
+end;
+CodingString = string.format("%06x",Tmp_Int);
+CodingStringhex = LibGeneral.str2hex(CodingString);
+
+#COMMEX ECU_Handle -1 0x3b 0x9a byte_1 byte_2 byte_3 byte_4 byte_5 byte_6 Version_byte1 Version_byte2 Version_byte3 Version_byte4 Subsystem  CodingStringhex
+if (engine.LastError ~= 0) then engine.StatValue = "Service:3b  response err";engine.LastError = 1;
+        if (LineNr &gt; 0 ) then 
+		engine.SetLineText(LineNr,"");engine.ShowMessage();
+		engine.LastError = 1;return; 
+		end;
+
+end;
+	
+		
+else
+	if (LineNr &gt; 0 ) then 
+	engine.SetLineText(LineNr,Comment);engine.ShowMessage();
+	end;
+#COMMEX ECU_Handle -1 0x22 0x06 0x01
+	if (engine.LastError ~= 0)  then 
+		engine.StatValue = "Service:22 ID:06 01 response err";
+		if (LineNr &gt; 0 ) then 
+			engine.SetLineText(LineNr,"");engine.ShowMessage();
+		engine.LastError = 1;return; 
+		end;
+	end;
+recbuf = @0-;
+	
+	
+	CodeLen = string.byte(recbuf,4);
+	if (CodeLen &lt;= 4) then
+#COMMEX ECU_Handle -1 0x2E 0xf1 0x98 byte_1 byte_2 byte_3 byte_4 byte_5 byte_6
+		if (engine.LastError == 0) then 
+			CodingString = string.format("%08x",Int_coding);
+			CodingStringhex = LibGeneral.str2hex(CodingString);
+			CodingStringhex = string.sub(CodingStringhex,5-CodeLen,-1);
+			
+			
+#COMMEX ECU_Handle -1 0x2e 0x06 0x00 CodingStringhex
+        end
+	else
+	engine.StatValue = "coding length Mismatch";
+		if (LineNr &gt; 0 ) then 
+			engine.SetLineText(LineNr,"");engine.ShowMessage();
+		engine.LastError = 1;return ;end;
+	end
+end
+if (engine.LastError == 0) then   engine.StatValue = CodingString; end;
+if (LineNr &gt; 0 ) then 
+			engine.SetLineText(LineNr,"");engine.ShowMessage();
+return ;end;</Script></Function>
+

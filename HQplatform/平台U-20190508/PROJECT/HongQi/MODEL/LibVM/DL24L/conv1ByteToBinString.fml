@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="val" type="3" data="0" description="整数 0 ~ 255"/>
+</Inputs>
+<Outputs>
+<Variable id="outstr" type="8" data="" description="binString as &quot;00000001&quot;"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  transform val (0 - 255) to binstring ("00001001")
+input parameter:val
+output parameter:outstr
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+local IntText = ""
+local bitNum = 0
+if(val == nil) then val = 0 end
+for i = 0,7 do 
+	bitNum = bit32.extract(val,7-i,1);
+	IntText = IntText..tostring(bitNum);
+end
+
+outstr = IntText
+</Script></Function>
+

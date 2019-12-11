@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="UDS_DTC_CODE" type="8" data="" description="ODX 返回的DTC Table"/>
+<Variable id="Filter_Pcode" type="8" data="{}" description="过滤或者忽略相应的DTC   {} ：不过滤 例 {&quot;Bxxxxxx&quot;,&quot;&quot;}"/>
+<Variable id="ViewList_Flag" type="11" data="true" description="false--不需要显示  true-- 需要显示"/>
+<Variable id="Timeout" type="3" data="0" description="显示时长(MS)"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="DTC_Table_list_Pcode" type="8" data="" description="Pcode 列表"/>
+<Variable id="DTC_Table_list_Pcode_String" type="8" data="" description="Pcode 字符串"/>
+</Outputs>
+<Script>
+--[[*****************************************************************************
+this is used to UDS pcode statistic filter
+input parameter:UDS_DTC_CODE,  ODX 返回的DTC Table
+		Filter_Pcode,  过滤或者忽略相应的DTC   {} ：不过滤 表类型
+		ViewList_Flag,  false--不需要显示  true-- 需要显示
+		Timeout, 显示时长
+                ECU_Handle
+output parameter:DTC_Table_list_Pcode, Pcode 列表
+		 DTC_Table_list_Pcode_String, Pcode 字符串
+creat viforce 03/14/2016
+sText,sCode = engine.GetUdsDtcText(nCode)
+******************************************************************************--]]
+
+local Filter_Pcode_tmp  = Filter_Pcode;
+local UDS_DTC_CODE_tmp = UDS_DTC_CODE;
+local i,k,value;
+local sText,sCode;
+local j = 1;
+local statView = "";
+local err = 0;
+local statValue = "";
+local listElement,listElement_tmp;
+local FilterFlag = false;
+engine.println("&lt;filter uds code  ECU handle&gt;"..tostring(ECU_Handle))
+DTC_Table_list_Pcode = {};
+DTC_Table_list_Pcode_String = {};
+if (engine.LastError ~= 0) then engine.StatValue = "Service Error " ;engine.LastError = 1 ;return end;
+
+if(UDS_DTC_CODE_tmp == nil) then engine.StatValue = "No dtc" ; engine.LastError = 0 ;return end;
+
+
+if(next(UDS_DTC_CODE_tmp) ~= nil) then
+
+if(next(Filter_Pcode_tmp) ~= nil)then      --需要过滤
+
+for i, value in pairs(UDS_DTC_CODE_tmp) do 
+engine.println("&lt;filter uds code before&gt;"..tostring(value))
+sText,sCode = engine.GetUdsDtcText(value,ECU_Handle);
+FilterFlag = false;
+for i, value in pairs(Filter_Pcode_tmp) do 
+    if(sCode == value )  then  FilterFlag = true ;end;
+    engine.println("&lt;filter uds code&gt;"..tostring(sCode))
+end;
+
+if( FilterFlag == false) then 
+
+DTC_Table_list_Pcode[j] = sCode;
+DTC_Table_list_Pcode_String[j] = sText;
+j = j + 1;
+
+engine.println("sCode :"..tostring(sCode).."  sText :"..tostring(sText));
+--statView = statView .. "::"..tostring(sText)..":"..string.format("0x%x",value).."\x0a\x0d";
+statView = tostring(statView) .. tostring(sCode) .. "::"..tostring(sText)..":"..string.format("0x%x",value).."\x0a\x0d";
+engine.println(statView);
+end;
+
+end;
+
+if(next(DTC_Table_list_Pcode) ~= nil) then
+err = 1;
+statValue = statView;
+else
+err = 0;
+statValue = "No DTC";
+end;
+
+
+else
+
+for i, value in pairs(UDS_DTC_CODE_tmp) do 
+
+sText,sCode = engine.GetUdsDtcText(value,ECU_Handle);
+engine.println("sCode :"..tostring(sCode).."  sText :"..tostring(sText));
+
+
+DTC_Table_list_Pcode[j] = sCode;
+DTC_Table_list_Pcode_String[j] = sText;
+j = j + 1;
+statView = tostring(statView) .. tostring(sCode) .. "::"..tostring(sText)..":"..string.format("0x%x",value).."\x0a\x0d";
+--statView = statView .. "::"..tostring(sText)..":";
+engine.println(statView);
+end;
+
+err = 1;
+statValue = statView;
+
+end;
+
+
+else
+err = 0;
+statValue = "No DTC";
+
+end;
+engine.LastError = err;
+engine.StatValue = statView;
+engine.println("statView"..statView);
+
+if( err ~= 0 and ViewList_Flag == true) then
+
+
+--engine.SetTitleText("DTC");
+engine.ListClear();
+for i, listElement in pairs(DTC_Table_list_Pcode_String) do 
+   
+     listElement_tmp = DTC_Table_list_Pcode[i]..":"..listElement;
+     engine.ListAddString(listElement_tmp,false);
+     engine.println("element :"..tostring(listElement_tmp));
+
+end;
+
+engine.DialogBackColor = "red";
+engine.SelectLayout(1);
+engine.ShowMessage();
+engine.Delay(Timeout);
+engine.ListClear();
+engine.DialogBackColor = "snow";
+engine.SelectLayout(0);
+--engine.SetTitleText("");
+engine.ShowMessage();
+
+else
+
+if(err == 0) then
+
+engine.SetLineText(2,"#L=读取故障码#R=bmpok");
+engine.ShowMessage();
+
+end;
+
+
+end;
+
+
+engine.SetLineText(2,"");
+engine.ShowMessage();</Script></Function>
+

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="SWE_68_Result_ARE_ARE_02" description="service 68 主动巡航调整结果&#13;&#10;">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="ResAccAzimut" type="5" data="0" description="Z方向测量值"/>
+<Variable id="ResAccAzim_Slave" type="5" data="0" description="ARE 02调整后的Z方向值"/>
+<Variable id="ResAccElevation" type="5" data="0" description="ARE调整后的值"/>
+<Variable id="ResAccElev_Slave" type="5" data="0" description="ARE 02调整后的评估值"/>
+<Variable id="ResAccAzimutPre" type="5" data="0" description="ARE调整前的值"/>
+<Variable id="ResAccAziPreSLAV" type="5" data="0" description="ARE 02调整前的值"/>
+<Variable id="ResAccElevPre" type="5" data="0" description="ARE调整前的测量值"/>
+<Variable id="ResAccElevPreSLA" type="5" data="0" description="ARE 02校准前的评估值"/>
+<Variable id="ResultAcc" type="3" data="0" description="ARE 结果"/>
+<Variable id="ResultAccSlave" type="3" data="0" description="ARE 02 结果"/>
+<Variable id="ResultAccGESAMT" type="3" data="0" description="总结果"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FWE Service 68
+input parameter:pHndl,IDT_Timeout
+output parameter :ret,ResAccAzimut,ResAccAzim_Slave,ResAccElevation,ResAccElev_Slave,ResAccAzimutPre
+                           ResAccAzimutPre,ResAccAziPreSLAV,ResAccElevPre,ResAccElevPreSLA,ResultAcc,ResultAccSlave,
+                           ResultAccGESAMT
+
+12/29/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00";
+local factor = 1
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x44");    -- 设置service号,第2字节
+idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(2)); 
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+
+
+if(ret == 1) then
+
+local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+
+engine.println("### RESULT SERVER 68 :" ..LibIDT.idthex2str(lastRevTel));
+
+--ARE Z
+ResAccAzimut = LibIDT.idtSigned2float(lastRevTel:sub(13,13):byte(),lastRevTel:sub(14,14):byte(),factor);
+--ARE
+ResAccElevation = LibIDT.idtSigned2float(lastRevTel:sub(15,15):byte(),lastRevTel:sub(16,16):byte(),factor);
+--ARE pre
+ResAccAzimutPre = LibIDT.idtSigned2float(lastRevTel:sub(17,17):byte(),lastRevTel:sub(18,18):byte(),factor);
+--ARE pre
+ResAccElevPre = LibIDT.idtSigned2float(lastRevTel:sub(19,19):byte(),lastRevTel:sub(20,20):byte(),factor);
+-- ARE result
+ResultAcc = lastRevTel:sub(23,23):byte();
+--ARE 02 Z
+ResAccAzim_Slave = LibIDT.idtSigned2float(lastRevTel:sub(25,25):byte(),lastRevTel:sub(26,26):byte(),factor);
+--ARE 02
+ResAccElev_Slave = LibIDT.idtSigned2float(lastRevTel:sub(27,27):byte(),lastRevTel:sub(28,28):byte(),factor);
+--ARE 02 Z
+ResAccAzim_Slave = LibIDT.idtSigned2float(lastRevTel:sub(29,29):byte(),lastRevTel:sub(30,30):byte(),factor);
+--ARE 02
+ResAccElev_Slave = LibIDT.idtSigned2float(lastRevTel:sub(31,31):byte(),lastRevTel:sub(32,32):byte(),factor);
+-- ARE02 result
+ResultAccSlave = lastRevTel:sub(35,35):byte();
+-- total result
+ResultAccGESAMT = lastRevTel:sub(36,36):byte();
+engine.LastError = 0
+end</Script></Function>
+

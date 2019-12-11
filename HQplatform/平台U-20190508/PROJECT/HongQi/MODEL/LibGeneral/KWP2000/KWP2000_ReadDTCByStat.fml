@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+<Variable id="Status" type="8" data="&quot;&quot;" description="DTCStatus"/>
+<Variable id="Group" type="8" data="&quot;&quot;" description="DTCGroup"/>
+</Inputs>
+<Outputs>
+<Variable id="RecvString" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   read DTC  from ECU   for  kwp 2000;
+input parameter:ECU_Handle,Status,Group
+output parameter :RecvString;
+
+11/25/2016     created by viforce
+******************************************************************************--]]
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return ""
+end
+
+RecvString = LibGeneral.ECU_DataExchange(ECU_Handle,0x18,0x58,Status .. Group)
+
+if(nil == RecvString) then
+	RecvString = ""
+end
+</Script></Function>
+

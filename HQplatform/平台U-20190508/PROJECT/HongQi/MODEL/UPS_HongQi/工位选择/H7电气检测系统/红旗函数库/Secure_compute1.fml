@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="strInCode" type="8" data=""/>
+</Inputs>
+<Script>alg1 = alien.load("alg1.dll");
+
+--函数原型 void Trans_InputCode(uint8* InputCode, uint8* OutputCode);
+alg1.Trans_InputCode:types("void","string","string");
+
+strInCode  = strInCode;
+strOutCode = string.char(0x00,0x00,0x00);
+
+engine.println("strInCode = " ..strInCode);
+alg1.Trans_InputCode(strInCode,strOutCode);
+print("strOutCode = " ..strOutCode);
+
+return strOutCode;
+--engine.SetLineText(2,decstr(strOutCode));
+</Script></Function>
+

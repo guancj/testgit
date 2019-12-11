@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="4WD_Comm"/>
+<Process id="ACC_Comm"/>
+<Process id="AC_Comm"/>
+<Process id="AFS_Comm"/>
+<Process id="AT_Comm"/>
+<Process id="BCM1_Comm"/>
+<Process id="BCM2_Comm"/>
+<Process id="BMS_Comm"/>
+<Process id="BSD_Comm"/>
+<Process id="Charger_Comm"/>
+<Process id="DCDC_Comm"/>
+<Process id="DCT_Comm"/>
+<Process id="DDCU_Comm"/>
+<Process id="DSCU_Comm"/>
+<Process id="DVD_Comm"/>
+<Process id="EHPS_Comm"/>
+<Process id="EMS_Comm"/>
+<Process id="EPB_Comm"/>
+<Process id="ESP_Comm"/>
+<Process id="GW_Comm"/>
+<Process id="HCU_Comm"/>
+<Process id="IC_Comm"/>
+<Process id="LDW_Comm"/>
+<Process id="MCU_Comm"/>
+<Process id="OilPump_Comm"/>
+<Process id="PDCU_Comm"/>
+<Process id="PDC_Comm"/>
+<Process id="PEPS_Comm"/>
+<Process id="PLGM_Comm"/>
+<Process id="RLDCU_Comm"/>
+<Process id="RMAR_Comm"/>
+<Process id="RRDCU_Comm"/>
+<Process id="SAS_Comm"/>
+<Process id="SCM_Comm"/>
+<Process id="SDM_Comm"/>
+<Process id="TBOX_Comm"/>
+</children>
+</Workplace>

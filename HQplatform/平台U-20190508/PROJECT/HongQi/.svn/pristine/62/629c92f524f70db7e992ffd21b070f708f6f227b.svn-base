@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_Actuator_Selectively_StatusReading" description="VW2000_Stellglied_selektiv_StatusMesswerte">
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="PhraseStatus" type="3" data="0"/>
+<Variable id="RecvBuff" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this is used to   actutor selective Reading
+input parameter :ECU_Handle;
+output parameter:PhraseStatus;RecvBuff;
+
+01/15/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+RecvBuff = "";
+PhraseStatus = "";
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return PhraseStatus,RecvBuff
+end
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x07
+
+local RecelTmp = @0-;
+
+local Lprint = @5-;
+Lprint = LibGeneral.hex2str(Lprint);
+engine.println("RecelTmp"..tostring(Lprint));
+
+if(0 ~= engine.LastError) then return PhraseStatus,RecvBuff;end;
+
+if ((string.byte(RecelTmp,5) == 0x01 ) and (string.byte(RecelTmp,5) == 0x02 ))   then 
+
+return;end;
+
+PhraseStatus = @4;
+RecvBuff = @5-;
+
+</Script></Function>
+

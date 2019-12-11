@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="section" type="8" data=""/>
+<Variable id="key" type="8" data=""/>
+<Variable id="file_path" type="8" data=""/>
+</Inputs>
+<Script>local file = io.open(file_path, "r");
+
+				assert(file);
+
+				str_section="["..section.."]";
+
+				--print(str_section);
+		
+
+				--判断section
+
+				local line_data = DelS(file:read("*line")); -- 读取字符一行并去掉开头空格
+
+				while line_data do
+
+						if(line_data==str_section) then
+
+							break;
+
+						end
+
+						line_data = DelS(file:read("*line"));-- 接着上面读取
+
+						--print(line_data);
+
+				end
+
+				--判断key
+
+				line_data = DelS(file:read("*line"));-- 接着上面读取 
+
+				while line_data do
+
+										tmp_str=string.sub(line_data,1,1);
+
+										if(tmp_str=="[") then
+
+												return nil;
+
+										end
+
+										key_tmp=string.sub(line_data,1,#key);
+
+											if(key==key_tmp) then
+
+												--print(line_data);-- 可替换为VOID  SetLineText(INTEGER lineno,STRING szText),设置line0-3文字.(lineno=0-3)
+
+												break;
+
+											end
+
+								line_data =DelS(file:read("*line")); -- 接着上面读取
+
+			end
+
+			file:close();
+
+			key_value=string.sub(line_data,#key+2,#line_data);--不要等于号+2
+
+			return key_value;</Script></Function>
+

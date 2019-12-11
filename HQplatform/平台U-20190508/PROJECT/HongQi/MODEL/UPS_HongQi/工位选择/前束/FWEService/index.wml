@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="FWE_07_ChassisSetup_ALL"/>
+<Process id="FWE_10_RequestResultSpur"/>
+<Process id="FWE_11_RequestResultSturz"/>
+<Process id="FWE_28_TransversePositions"/>
+<Process id="FWE_31_WheelHousing"/>
+<Process id="FWE_33_TestReadiness"/>
+<Process id="FWE_51_TestReadiness"/>
+<Process id="FWE_52_TurnOverMeasure"/>
+<Process id="FWE_53_WheelCenter"/>
+<Process id="FWE_78_ResultTotal"/>
+<Process id="FWE_81_TransfertSteeringWheelAngle"/>
+<Process id="FWE_05_BasicState"/>
+<Process id="FWE_09_WheelWeight"/>
+<Process id="FWE_07_ChassisSetup_RA"/>
+<Process id="FWE_22_VehicleID"/>
+<Process id="FWE_26_Castor"/>
+<Process id="FWE_27_WheelTurn"/>
+<Process id="FWE_31_WheelHousing_forAirs"/>
+</children>
+</Workplace>

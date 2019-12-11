@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="HUD" code="">
+
+<Functions>
+<Function id="hudTestDemol"/>
+
+<Function id="HUDPrepXmlStruct"/>
+
+</Functions>
+</Workplace>

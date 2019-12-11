@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="iProtocolType" type="3" data="0" description="协议类型。J1939=4"/>
+<Variable id="iBaudrate" type="3" data="500000" description="波特率，例如：500000"/>
+<Variable id="iCanSId" type="3" data="0" description="请求ID，如果是监听模式，iCanSId和iCanRId只要有一个为0，即表示记录全部报文"/>
+<Variable id="iCanRId" type="3" data="0" description="响应ID"/>
+</Inputs>
+<Outputs>
+<Variable id="iObdHandle" type="3" data="0" description="句柄"/>
+</Outputs>
+<Script>iObdHandle = engine.Buslog_ObdOpen(iProtocolType, iBaudrate, iCanSId, iCanRId);
+if (iObdHandle  == nil or iObdHandle &lt; 0)  then 
+	engine.LastError = 1;
+	engine.StatValue = "OBD Handle nil ";
+	return iObdHandle;
+end
+engine.Delay(500);</Script></Function>
+

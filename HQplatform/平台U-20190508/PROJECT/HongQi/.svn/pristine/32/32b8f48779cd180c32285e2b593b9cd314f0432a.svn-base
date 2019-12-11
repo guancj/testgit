@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_83_Result_Coordinates" flags="1" block="4" ptbtext="DEP1368" group="122" pbltext="DEP1369">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="fFAS_DopplerL_X_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_DopplerL_Y_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_DopplerL_Z_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_DopplerR_X_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_DopplerR_Y_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_DopplerR_Z_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_RearView_X_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_RearView_Y_shared" type="5" dir="1" data="0"/>
+<Variable id="fFAS_RearView_Z_shared" type="5" dir="1" data="0"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="322" top="67" right="422" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="321" top="384" right="421" bottom="416"/>
+<Script></Script></End>
+<Activities>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="672" top="385" right="704" bottom="417"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="638" top="249" right="738" bottom="281"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="OK">
+<Rect left="320" top="311" right="420" bottom="343"/>
+<Script>isOK = true;
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : Result Coordinates get OK")
+</Script></Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="321" top="137" right="421" bottom="169"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="639" top="137" right="739" bottom="169"/>
+<Script>engine.println(" &lt;FAS_83_Result_Coordinates&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="31" ActivityType="3" name="数据收取">
+<Rect left="319" top="250" right="419" bottom="282"/>
+<Script>if(Ret == 1) then
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_DopplerL_X_shared --&gt;"..tostring(fFAS_DopplerL_X_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_DopplerL_Y_shared --&gt;"..tostring(fFAS_DopplerL_Y_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_DopplerL_Z_shared --&gt;"..tostring(fFAS_DopplerL_Z_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_DopplerR_X_shared --&gt;"..tostring(fFAS_DopplerR_X_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_DopplerR_Y_shared --&gt;"..tostring(fFAS_DopplerR_Y_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_DopplerR_Z_shared --&gt;"..tostring(fFAS_DopplerR_Z_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_RearView_X_shared --&gt;"..tostring(fFAS_RearView_X_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_RearView_Y_shared --&gt;"..tostring(fFAS_RearView_Y_shared))
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : fFAS_RearView_Z_shared --&gt;"..tostring(fFAS_RearView_Z_shared))
+end</Script></Activity>
+<Activity id="32" ActivityType="3" name="Delay">
+<Rect left="471" top="197" right="571" bottom="229"/>
+<Script>engine.Delay(100)</Script></Activity>
+<Activity id="33" ActivityType="3" name="finish_flag">
+<Rect left="471" top="249" right="571" bottom="281"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;FAS_83_Result_Coordinates&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="41" ActivityType="13" name="FAS_83_Result_Coordinates">
+<Rect left="320" top="196" right="420" bottom="228"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：1坐标"/>
+<FunctionRef id="FAS_83_Result_Coordinates" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="DopplerL_X" value="0" ret="fFAS_DopplerL_X_shared"/>
+<Parameter id="DopplerL_Y" value="0" ret="fFAS_DopplerL_Y_shared"/>
+<Parameter id="DopplerL_Z" value="0" ret="fFAS_DopplerL_Z_shared"/>
+<Parameter id="DopplerR_X" value="0" ret="fFAS_DopplerR_X_shared"/>
+<Parameter id="DopplerR_Y" value="0" ret="fFAS_DopplerR_Y_shared"/>
+<Parameter id="DopplerR_Z" value="0" ret="fFAS_DopplerR_Z_shared"/>
+<Parameter id="RearView_X" value="0" ret="fFAS_RearView_X_shared"/>
+<Parameter id="RearView_Y" value="0" ret="fFAS_RearView_Y_shared"/>
+<Parameter id="RearView_Z" value="0" ret="fFAS_RearView_Z_shared"/>
+</Parameters>
+</FunctionRef>
+<assessment no="16" name="DEP1394" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="2" type="0">
+</Transition>
+<Transition StartId="26" EndId="41" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="31" EndId="23" type="0">
+</Transition>
+<Transition StartId="31" EndId="33" type="1">
+<Expression>Ret ~= 1</Expression></Transition>
+<Transition StartId="32" EndId="41" type="0">
+</Transition>
+<Transition StartId="33" EndId="32" type="0">
+</Transition>
+<Transition StartId="33" EndId="21" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="41" EndId="31" type="0">
+</Transition>
+</Transitions>
+</Process>
+

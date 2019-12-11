@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="abcdef2dec"/>
+
+<Function id="bytesStr"/>
+
+<Function id="decstr"/>
+
+<Function id="DelS"/>
+
+<Function id="DTC_DEAL_LAST"/>
+
+<Function id="dtc_translate"/>
+
+<Function id="get_comm_str"/>
+
+<Function id="hex2dec"/>
+
+<Function id="hexstr"/>
+
+<Function id="read_fawcar_para"/>
+
+<Function id="read_ini"/>
+
+<Function id="sec_ac"/>
+
+<Function id="sec_acc_ldw"/>
+
+<Function id="sec_afs"/>
+
+<Function id="sec_airbag"/>
+
+<Function id="sec_dvd"/>
+
+<Function id="sec_epb"/>
+
+<Function id="sec_esp"/>
+
+<Function id="sec_Generic"/>
+
+<Function id="str2hex"/>
+
+<Function id="PcodeTransform"/>
+
+<Function id="SecAce_General_AT"/>
+
+<Function id="SecAce_General"/>
+
+<Function id="hex2str"/>
+
+</children>
+</Workplace>

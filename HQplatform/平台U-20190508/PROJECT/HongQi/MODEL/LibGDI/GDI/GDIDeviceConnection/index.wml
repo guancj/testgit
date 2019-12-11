@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="GDIDeviceConnectionCreate"/>
+
+<Function id="GDIDeviceConnectionCreateByInstancePath"/>
+
+<Function id="GDIDeviceConnectionDelete"/>
+
+<Function id="GDIDeviceConnectionDeleteByInstancePath"/>
+
+<Function id="GDIDeviceConnectionGetByInstanceName"/>
+
+<Function id="GDIEmergencyStopComObjectAdd"/>
+
+<Function id="GDIEmergencyStopOccurred"/>
+
+<Function id="GDIVDPreparationCheck"/>
+
+<Function id="GDIVDStatusGet"/>
+
+<Function id="GDIWorkingStop"/>
+
+<Function id="GDIWorkspaceGetAllDeviceConnectionInstanceNames"/>
+
+</children>
+</Workplace>

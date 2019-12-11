@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="SG_Name" type="8" data="&quot;xxx&quot;" description="as &quot;LWR&quot; 控制器 缩写"/>
+<Variable id="Process_Short" type="8" data="&quot;xxx&quot;" description="as &quot;FAS&quot; 过程缩写"/>
+<Variable id="Konfigfile" type="8" data="&quot;c7_fsp_filter.xml&quot;" description="as &quot;c7_fsp_filter.xml&quot;"/>
+<Variable id="FSPReadStatus" type="3" data="3" description="0  vw2000   3 MCD"/>
+<Variable id="FSP_String" type="8" data="&quot;&quot;" description="vw2000 read dtc string"/>
+<Variable id="UDS_DTC_CODE" type="8" data="{}" description="odx 返回 UDS 列表"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="DTC_String_filtered" type="8" data="" description="vw2000 过滤之后 的 dtc string"/>
+<Variable id="DTC_Table_list_Pcode" type="8" data="" description="Mcd过滤之后的 DTC 列表"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this is used to UDS pcode statistic filter for audi
+input parameter:SG_Name,Process_Short,Konfigfile,FSPReadStatus,FSP_String,UDS_DTC_CODE,ECU_Handle
+output parameter:DTC_String_filtered,DTC_Table_list_Pcode
+
+creat viforce 1/13/2017
+sText,sCode = engine.GetUdsDtcText(nCode)
+DTC_String_Filterd = VW2000_DTC_Filter(DTC_String,DTC_String_Filter)
+DTC_Table_list_Pcode,DTC_Table_list_Pcode_String = UDS_DTC_Filter_Statistic_List_VW(UDS_DTC_CODE,Filter_Pcode,ViewList_Flag,Timeout)
+******************************************************************************--]]
+
+local statStr = ""
+local version = ""
+local tup_bez = ""
+local handle = XmlDocment()
+local countFsp = 0
+local countStaus = 0
+local timeknr = 0
+local typ = ""
+local las = ""
+local einsatz = ""
+local entfall = ""
+local timevalid = 0
+local filter = ""
+FSP_Tab = {}
+FSP_Status = {}
+DTC_String_filtered = ""
+DTC_Table_list_Pcode = {}
+
+Konfigfile = engine.Dl24Path .. "\\" .. Konfigfile
+if(false == handle.load(Konfigfile)) then
+engine.println("!!!load xml file err ")
+statStr = "Konfigfile:"..tostring(Konfigfile).." Invalid !!!"
+engine.LastError = 1
+else
+
+statStr = "Data:"..tostring(Konfigfile)
+version = handle.selectSingleNode("/FSP_Filter/Version").text
+statStr = statStr .. "/ " .. "Version:" .. tostring(version) .. "/ " .. "SG:" .. tostring(SG_Name) .. "/ " .. "Process_Short:" .. tostring(Process_Short).."/ "
+--engine.println("engine.StatValue =&gt; "..tostring(statStr))
+nodelist = handle.selectNodes("/FSP_Filter/SG");
+--engine.println("type :"..type(nodelist[0].text))
+--engine.println(nodelist.length)
+
+pos1,pos2 = string.find(Process_Short,"+")
+if(pos1 ~= nil) then
+	tup_bez = string.sub(Process_Short,pos2 + 1, -1)
+	Process_Short = string.sub(Process_Short,1, pos1 - 1)
+end
+
+engine.println("tup_bez:"..tup_bez)
+engine.println("Process_Short:"..Process_Short)
+
+
+
+for i = 0 ,nodelist.length -1 do
+
+--engine.println(nodelist[i].xml)
+	if(nodelist[i].selectSingleNode("SG_Kurzbez").text == SG_Name) then
+		engine.println("SG_Name find")
+		subNodelist = nodelist[i].selectNodes("Prozessort")
+		for j = 0 ,subNodelist.length -1 do
+			--engine.println(subNodelist[0].xml)
+			if(subNodelist[j].selectSingleNode("Prozessort_Kurzbez").text == Process_Short or subNodelist[j].selectSingleNode("Prozessort_Kurzbez").text == tup_bez) then
+				engine.println("Prozessort find2")	
+				typ = subNodelist[j].selectSingleNode("Typ").text
+				las = subNodelist[j].selectSingleNode("Filter/LAS").text
+				einsatz = subNodelist[j].selectSingleNode("Filter/Einsatz").text
+				entfall = subNodelist[j].selectSingleNode("Filter/Entfall").text
+				timeknr = tonumber(string.sub(engine.KNR,3,8))
+				if(einsatz ~= "sofort" and entfall ~= "nie") then
+					if((einsatz &lt;= timeknr) and (timeknr &lt; entfall)) then
+						timevalid = 1
+					else
+						timevalid = 0
+					end
+				else
+					if(einsatz == "sofort" and entfall == "nie") then
+						timevalid = 1
+					elseif(((einsatz == "sofort") and (tonumber(entfall) &gt; timeknr)) or ((entfall == "nie") and (tonumber(einsatz) &lt;= timeknr ))) then
+						timevalid = 1
+					else
+						timevalid = 0
+					end				
+				end
+				
+				if(1 == timevalid) then
+
+					FSPsubNodelist = subNodelist[j].selectNodes("Filter/FSP")
+					for k = 0,FSPsubNodelist.length - 1 do 
+						--engine.println(FSPsubNodelist[k].selectSingleNode("Fehlerort").text)
+						--engine.println(FSPsubNodelist[k].selectSingleNode("Fehlerart").text)
+						countFsp = countFsp + 1
+						countStaus = countStaus + 1
+						FSP_Tab[countFsp] = FSPsubNodelist[k].selectSingleNode("Fehlerort").text
+						FSP_Status[countStaus] = FSPsubNodelist[k].selectSingleNode("Fehlerart").text
+					end
+					
+					if(tup_bez == "") then
+						engine.LastError = 0
+						break
+					else
+						engine.LastError = 0
+						if(subNodelist[j].selectSingleNode("Prozessort_Kurzbez").text == Process_Short) then
+							Process_Short = tup_bez
+						end
+						tup_bez = ""
+					end
+				
+				end
+			end
+		end
+		
+	end
+
+end
+
+for i = 1,#FSP_Tab do
+	if(FSP_Status[i] == "alle") then
+		FSP_Status[i] = ""
+	end
+	filter = filter .. FSP_Tab[i]..";"
+end
+
+if(FSPReadStatus == 1) then
+	statStr = statStr .. "Typ:" .. tostring(typ) .. "/ Filter:" .. tostring(filter) .. "/ UDS FSP:" 
+elseif(FSPReadStatus == 0) then
+	statStr = statStr .. "Typ:" .. tostring(typ) .. "/ Filter:" .. tostring(filter) .. "/ SAE FSP:" 
+elseif(FSPReadStatus == 2) then
+	statStr = statStr .. "Typ:" .. tostring(typ) .. "/ Filter:" .. tostring(filter) .. "/ VAG FSP:" 
+elseif(FSPReadStatus == 3) then
+	statStr = statStr .. "Typ:" .. tostring(typ) .. "/ Filter:" .. tostring(filter) .. "/ MCD FSP:" 
+else
+	statStr = statStr .. "Typ:" .. tostring(typ) .. "/ Filter:" .. tostring(filter) .. "/ FSP auslesen niO/" 
+end 
+
+--engine.println("engine.StatValue =&gt; "..tostring(statStr))
+
+if(typ == "zulaessig")then
+	if(FSPReadStatus == 0) then
+		DTC_String_filtered = LibVW.VW2000_DTC_Filter(FSP_String,filter)
+                local errText = LibVW.VW2000_DTC_ErrorCodes(0,DTC_String_filtered,0,"故障码",0)
+                engine.StatValue = statStr .. engine.StatValue
+	elseif(FSPReadStatus == 3) then
+		DTC_Table_list_Pcode,DTC_Table_list_Pcode_String = LibVW.UDS_DTC_Filter_Statistic_List_VW(UDS_DTC_CODE,FSP_Tab,false,0,ECU_Handle)
+                engine.StatValue = statStr .. engine.StatValue
+	else
+		engine.LastError = 1
+		statStr = statStr .. "out of xml range !!! need to update FSPReadStatus"
+                engine.StatValue = statStr
+	end
+elseif(typ == "dokumentieren") then
+	FSP_String = ""
+	if(FSPReadStatus == 3) then
+	DTC_Table = {}
+	end
+else
+	if(FSPReadStatus == 0) then
+                local errText = LibVW.VW2000_DTC_ErrorCodes(0,FSP_String,0,"故障码",0)
+                engine.StatValue = statStr .. engine.StatValue
+	elseif(FSPReadStatus == 3) then
+		DTC_Table_list_Pcode,DTC_Table_list_Pcode_String = LibVW.UDS_DTC_Filter_Statistic_List_VW(UDS_DTC_CODE,{},false,0,ECU_Handle)
+                engine.StatValue = statStr .. engine.StatValue
+                
+	else
+		engine.LastError = 1
+		statStr = statStr .. "out of xml range !!! need to update FSPReadStatus"
+                engine.StatValue = statStr
+	end
+end
+
+engine.println("engine.StatValue =&gt; "..tostring(engine.StatValue))
+engine.println("engine.LastError =&gt; "..tostring(engine.LastError))
+
+end</Script></Function>
+

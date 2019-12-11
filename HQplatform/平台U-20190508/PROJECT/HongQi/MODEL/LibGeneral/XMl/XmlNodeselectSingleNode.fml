@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlNode" type="8" data=""/>
+<Variable id="xPath" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="xmlSubNode" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+查找和xPath查询匹配的一个节点
+output parameter: xmlSubNode
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+xmlSubNode = xmlNode.selectSingleNode(xPath)</Script></Function>
+

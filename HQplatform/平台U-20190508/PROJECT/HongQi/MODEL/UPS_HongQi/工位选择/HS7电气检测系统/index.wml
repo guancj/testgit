@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Workplace id="控制器测试">
+</Workplace>
+<Workplace id="功能性节点">
+</Workplace>
+<Process id="终检线_HS7"/>
+<Process id="一次内饰_HS7"/>
+<Process id="返修线_HS7"/>
+<Process id="二次内饰_HS7"/>
+<Process id="机能线_HS7"/>
+<Workplace id="函数库">
+</Workplace>
+</children>
+</Workplace>

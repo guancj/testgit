@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW_Diag_Load_Path">
+<Inputs>
+<Variable id="File_Name" type="8" data="&quot;vw_diag.ini&quot;" description="文件名  &quot;vw_diag.ini&quot; 默认"/>
+</Inputs>
+<Script>
+
+--加载测量计算文件
+
+
+local path = engine.ProgPath .. File_Name;
+LibVW.vw_diag_load(path);</Script></Function>
+

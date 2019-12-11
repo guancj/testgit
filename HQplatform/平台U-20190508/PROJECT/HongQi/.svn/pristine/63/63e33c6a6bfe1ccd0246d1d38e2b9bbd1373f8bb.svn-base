@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="HUP_91_TakePicture" description="service 91 相机拍照">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="BildSpeichern" type="11" data="0" description="true or false"/>
+<Variable id="Bildtyp" type="3" data="0" description="0 = BH; 1 = HW; 2 = BGW; 3 = DB_6"/>
+<Variable id="Bildposition" type="3" data="0" description="Position des Bildes - derzeit 1 -9"/>
+<Variable id="Stablevel" type="3" data="0" description="vorgegebene max. Amplitude vor der Bildaufnahme"/>
+<Variable id="StabTime" type="3" data="0" description="Dauer der Stabilisierung vor der Bildaufnahme (in ms: 0 - 65536)"/>
+<Variable id="GrabLevel" type="3" data="0" description="max. Amplitude w?hrend der Bildaufnahme (in %)"/>
+<Variable id="GrabTime" type="3" data="0" description="Zeit der Bildaufnahme (in ms: 0 - 65536)"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="Ergebnis" type="3" data="0"/>
+<Variable id="Helligkeitswert" type="3" data="0"/>
+<Variable id="Kontrastwert" type="3" data="0"/>
+<Variable id="Anzahl_Punkte" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  HUP Service 91
+input parameter:pHndl,IDT_Timeout,BildSpeichern,Bildtyp,Bildposition,Stablevel,StabTime,GrabLevel
+                        GrabTime
+output parameter :ret,Ergebnis,Helligkeitswert,Kontrastwert,Anzahl_Punkte
+
+12/30/2016     created by viforce
+******************************************************************************--]]
+local idt_tel = ""
+local zero = "\x00"
+local ID_len = 0
+local tmpVal = 0
+local tmpByte11 = 0
+local tmpByte12 = 0
+local tmpByte13 = 0
+local tmpByte14 = 0
+local tmpByte15 = 0
+local tmpByte16 = 0
+local tmpByte17 = 0
+local tmpByte18 = 0
+ret = -1
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x5B");    -- 设置service号,第2字节
+
+if(BildSpeichern == true) then
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,"\x01");  
+else
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,"\x00");  
+end
+
+if(Bildtyp == 0) then
+-- Typ Beschnitt-Hoehenbild; ASCII: BH = 0x42, 0x48
+	idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,"\x42");  
+	idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,"\x48");  
+        idt_tel = LibIDT.idtSetBytes(idt_tel,8,1,"\x00"); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,"\x00");   
+elseif(Bildtyp == 1) then
+-- Typ Hoehen-Warpingbild, ASCII: HW = 0x42; 0x47; 0x57 
+	idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,"\x48");  
+	idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,"\x57");  
+        idt_tel = LibIDT.idtSetBytes(idt_tel,8,1,"\x00"); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,"\x00");  
+elseif(Bildtyp == 2) then
+-- Typ Beschnitt Ghost-Warpingbild, ASCII: BGW = 0x42; 0x47; 0x57
+	idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,"\x42");  
+	idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,"\x47");  
+        idt_tel = LibIDT.idtSetBytes(idt_tel,8,1,"\x57"); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,"\x00");  
+elseif(Bildtyp == 3) then
+-- Typ Testbild 6, ASCII: DB_6 = 0x44; 0x42; 0x5F; 0x36 
+	idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,"\x44");  
+	idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,"\x42");  
+        idt_tel = LibIDT.idtSetBytes(idt_tel,8,1,"\x5F"); 
+        idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,"\x36");  
+end
+
+-- setze uebergebene Bildposition
+idt_tel = LibIDT.idtSetBytes(idt_tel,10,1,string.char(Bildposition));
+
+-- setze StabLevel - da in Prozent - in beiden gleich?!?
+
+tmpVal = Stablevel
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte11 = math.floor(tmpVal / 0x100)
+tmpByte12 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,11,1,string.char(tmpByte11)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,12,1,string.char(tmpByte12)); 
+-- setze StabTime in den zwei Bytes entsprechend
+tmpVal = StabTime
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte13 = math.floor(tmpVal / 0x100)
+tmpByte14 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,13,1,string.char(tmpByte13)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,14,1,string.char(tmpByte14)); 
+-- setze GrabLevel - in Prozent
+tmpVal = GrabLevel
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte15 = math.floor(tmpVal / 0x100)
+tmpByte16 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,15,1,string.char(tmpByte15)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,16,1,string.char(tmpByte16)); 
+-- setze Grabtime in den zwei Bytes entsprechend
+tmpVal = GrabTime
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte17 = math.floor(tmpVal / 0x100)
+tmpByte18 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,17,1,string.char(tmpByte17)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,18,1,string.char(tmpByte18)); 
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+
+if(ret == 1) then
+
+local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+
+engine.println("### RESULT SERVER 91 :" ..LibIDT.idthex2str(lastRevTel));
+
+Ergebnis = lastRevTel:sub(13,13):byte();
+Helligkeitswert = lastRevTel:sub(14,14):byte();
+Anzahl_Punkte = lastRevTel:sub(15,15):byte();
+Kontrastwert = lastRevTel:sub(16,16):byte();
+
+end
+</Script></Function>
+

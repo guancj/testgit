@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_HUP_Process" description="Select camera parameter set" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<ProcessParameters>
+<Variable id="HUPHndl" type="3" dir="0" data="HUPHndl"/>
+<Variable id="fFWE_Achsversatz_VA_shared" type="5" dir="0" data="0"/>
+<Variable id="fFWE_Achsversatz_HA_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVR_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHR_shared" type="5" dir="0" data="0"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="398" top="42" right="498" bottom="74"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="423" top="2912" right="523" bottom="2944"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="统计">
+<Rect left="399" top="105" right="499" bottom="137"/>
+<Script>engine.StatValue = "HUP Ablauf nicht komplett durchgefuehrt"
+engine.LastError = 1
+engine.println("&lt;Par_HUP_Process&gt; Start - HUP-Testsequenz")</Script><assessment no="1" name="DEP1512" type="8" flags="97"/>
+</Activity>
+<Activity id="4" ActivityType="3" name="HUP初始化">
+<Rect left="399" top="167" right="499" bottom="199"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="5" name="HUP_22_Identity">
+<Rect left="398" top="229" right="498" bottom="261"/>
+<SubProcesses>
+<SubProcess id="HUP_22_Identity">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="3" name="普通节点">
+<Rect left="541" top="229" right="641" bottom="261"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 22 Identity failed")
+-- HUP调整：与检测台身份验证失败</Script></Activity>
+<Activity id="8" ActivityType="3" name="普通节点">
+<Rect left="543" top="292" right="643" bottom="324"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 86  failed")
+-- HUP调整：照相机移动到位置失败</Script></Activity>
+<Activity id="9" ActivityType="5" name="HUP_87_Anlage_einschwenken">
+<Rect left="399" top="358" right="499" bottom="390"/>
+<SubProcesses>
+<SubProcess id="HUP_87_Anlage_einschwenken">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="10" ActivityType="3" name="普通节点">
+<Rect left="545" top="359" right="645" bottom="391"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 87  failed")
+-- HUP调整：照相机移动到位置失败</Script></Activity>
+<Activity id="11" ActivityType="5" name="HUP_88_InY_Einfoerdern">
+<Rect left="399" top="417" right="499" bottom="449"/>
+<SubProcesses>
+<SubProcess id="HUP_88_InY_Einfoerdern">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="12" ActivityType="3" name="普通节点">
+<Rect left="546" top="420" right="646" bottom="452"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 88  failed")
+-- HUP调整：照相机Y方向移动到车内失败</Script></Activity>
+<Activity id="13" ActivityType="5" name="HUP_89_FWE_Pruefstandsdaten">
+<Rect left="400" top="484" right="500" bottom="516"/>
+<SubProcesses>
+<SubProcess id="HUP_89_FWE_Pruefstandsdaten">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="IDT_YPosRadhausVL" value="IDT_YPosRadhausVL_shared"/>
+<Parameter id="IDT_YPosRadhausVR" value="IDT_YPosRadhausVR_shared"/>
+<Parameter id="IDT_YPosRadhausHL" value="IDT_YPosRadhausHL_shared"/>
+<Parameter id="IDT_YPosRadhausHR" value="IDT_YPosRadhausHR_shared"/>
+<Parameter id="FWE_Achsversatz_VA_shared" value="fFWE_Achsversatz_VA_shared"/>
+<Parameter id="FWE_Achsversatz_HA_shared" value="fFWE_Achsversatz_HA_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="14" ActivityType="3" name="普通节点">
+<Rect left="549" top="483" right="649" bottom="515"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 89  failed")
+-- HUP调整：写前束数据</Script></Activity>
+<Activity id="15" ActivityType="5" name="HUP_90_Kameraparametersatz_auswaehlen">
+<Rect left="401" top="550" right="501" bottom="582"/>
+<SubProcesses>
+<SubProcess id="HUP_90_Kameraparametersatz_auswaehlen">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="16" ActivityType="3" name="普通节点">
+<Rect left="547" top="550" right="647" bottom="582"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 90  failed")
+-- HUP调整：选择照相机参数</Script></Activity>
+<Activity id="17" ActivityType="3" name="waitKascalib">
+<Rect left="402" top="617" right="502" bottom="649"/>
+<Script>while(engine.SharedVarGet("_a_flag_LDW") == 0 and engine.SharedVarGet("_GlobalFinishShared") == 0 )  do
+	engine.Delay(250)
+end</Script></Activity>
+<Activity id="18" ActivityType="5" name="2线程BH">
+<Rect left="403" top="738" right="503" bottom="770"/>
+<SubProcesses>
+<SubProcess id="Par_HUP_ECU_BH_Testbild_Start_01">
+</SubProcess>
+<SubProcess id="Par_HUP_01">
+<Parameters>
+<Parameter id="HUPHndl" value="HUPHndl"/>
+<Parameter id="isOK" value="isOK" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="19" ActivityType="3" name="HUP_BH_Berechnung_Hoehenanpassung">
+<Rect left="403" top="677" right="503" bottom="709"/>
+<Script></Script></Activity>
+<Activity id="20" ActivityType="5" name="c7_hud">
+<Rect left="402" top="874" right="502" bottom="906"/>
+<SubProcesses>
+<SubProcess id="c7_hud">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ReadReferencePoint&quot;}"/>
+<Parameter id="DString_HUP_WarpingMatrix_shared" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="21" ActivityType="4" name="路由节点">
+<Rect left="539" top="874" right="571" bottom="906"/>
+</Activity>
+<Activity id="22" ActivityType="3" name="ECU_RefPkt_Lesen">
+<Rect left="403" top="804" right="503" bottom="836"/>
+<Script></Script></Activity>
+<Activity id="23" ActivityType="3" name="HUP_BH_Berechnung_Start">
+<Rect left="402" top="946" right="502" bottom="978"/>
+<Script></Script></Activity>
+<Activity id="24" ActivityType="5" name="HUP_92_BH_Berechnung_Start">
+<Rect left="403" top="1011" right="503" bottom="1043"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="1"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="8" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="9" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="25" ActivityType="3" name="普通节点">
+<Rect left="557" top="1010" right="657" bottom="1042"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="26" ActivityType="5" name="HUP_86_Kamera_Anfahren">
+<Rect left="404" top="1078" right="504" bottom="1110"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Anfahren">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="1"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="27" ActivityType="3" name="普通节点">
+<Rect left="557" top="1078" right="657" bottom="1110"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 86 1  failed")
+-- HUP调整：相机移动 1 位置</Script></Activity>
+<Activity id="28" ActivityType="5" name="HUP_92_BH_Berechnung_Ende">
+<Rect left="405" top="1144" right="505" bottom="1176"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="1"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="8" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="9" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="29" ActivityType="3" name="普通节点">
+<Rect left="558" top="1143" right="658" bottom="1175"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="32" ActivityType="3" name="Calculation of the new formula">
+<Rect left="406" top="1278" right="506" bottom="1310"/>
+<Script>DInt_HUD_RefPkt_shared = engine.SharedVarGet("_DInt_HUD_RefPkt_shared") -- AK Z方向偏差</Script></Activity>
+<Activity id="33" ActivityType="13" name="Formel_HUD_Martin">
+<Rect left="405" top="1339" right="505" bottom="1371"/>
+<FunctionRef id="Formel_HUD_Martin" model="LibGeneral">
+<Parameters>
+<Parameter id="Cut_above" value="DFloat_XML_BH_Bildhoehe_oben_shared"/>
+<Parameter id="Cut_below" value="DFloat_XML_BH_Bildhoehe_unten_shared"/>
+<Parameter id="Refpkt_before" value="DInt_HUD_RefPkt_shared"/>
+<Parameter id="Refpkt" ret="DInt_HUD_RefPkt_shared"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="34" ActivityType="3" name="refpkt 处理">
+<Rect left="406" top="1405" right="506" bottom="1437"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : ###Ref Punkt vor Begrenzung ：" .. tostring(DInt_HUD_RefPkt_shared))
+
+if( DInt_HUD_RefPkt_shared &gt;= 3368 ) then
+	DInt_HUD_RefPkt_shared = 3368
+elseif(DInt_HUD_RefPkt_shared &lt;= 1610) then
+	DInt_HUD_RefPkt_shared = 1610
+end
+
+engine.println(" &lt;Par_HUP_Process&gt; : ###Ref Punkt nach Begrenzung ：" .. tostring(DInt_HUD_RefPkt_shared))
+engine.SharedVarSet("_DInt_HUD_RefPkt_shared",DInt_HUD_RefPkt_shared) -- AK Z方向偏差</Script></Activity>
+<Activity id="35" ActivityType="3" name="ECU_Login_Hoehenanpassung">
+<Rect left="407" top="1469" right="507" bottom="1501"/>
+<Script></Script></Activity>
+<Activity id="36" ActivityType="5" name="c7_hud">
+<Rect left="407" top="1531" right="507" bottom="1563"/>
+<SubProcesses>
+<SubProcess id="c7_hud">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ChangeEOL&quot;,&quot;Login&quot;,&quot;WriteReferencePoint&quot;}"/>
+<Parameter id="DString_HUP_WarpingMatrix_shared" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="37" ActivityType="4" name="路由节点">
+<Rect left="542" top="1530" right="574" bottom="1562"/>
+</Activity>
+<Activity id="39" ActivityType="3" name="BH 结束">
+<Rect left="408" top="1593" right="508" bottom="1625"/>
+<Script></Script></Activity>
+<Activity id="40" ActivityType="3" name="HUP_HW_Berechnung_HoehenWarping_Matrix">
+<Rect left="409" top="1660" right="509" bottom="1692"/>
+<Script></Script></Activity>
+<Activity id="41" ActivityType="5" name="2线程HW">
+<Rect left="409" top="1724" right="509" bottom="1756"/>
+<SubProcesses>
+<SubProcess id="Par_HUP_ECU_HW_Testbild_Start_02">
+</SubProcess>
+<SubProcess id="Par_HUP_02">
+<Parameters>
+<Parameter id="HUPHndl" value="HUPHndl"/>
+<Parameter id="isOK" value="isOK" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="42" ActivityType="5" name="HUP_92_Berechnung_Start">
+<Rect left="411" top="1855" right="511" bottom="1887"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="0"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="1" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="43" ActivityType="3" name="普通节点">
+<Rect left="565" top="1854" right="665" bottom="1886"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="46" ActivityType="5" name="HUP_92_Berechnung_Ende">
+<Rect left="412" top="1919" right="512" bottom="1951"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="0"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="1" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="47" ActivityType="3" name="普通节点">
+<Rect left="565" top="1918" right="665" bottom="1950"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="48" ActivityType="3" name="HUP_Warping_Berechnung_Start_Ende">
+<Rect left="410" top="1791" right="510" bottom="1823"/>
+<Script></Script></Activity>
+<Activity id="51" ActivityType="3" name="ECU_Warping_Matrix_Schreiben">
+<Rect left="413" top="2050" right="513" bottom="2082"/>
+<Script></Script></Activity>
+<Activity id="53" ActivityType="5" name="c7_hud">
+<Rect left="413" top="2115" right="513" bottom="2147"/>
+<SubProcesses>
+<SubProcess id="c7_hud">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ChangeEOL&quot;,&quot;Login&quot;,&quot;WriteWarpingMatrix&quot;}"/>
+<Parameter id="DString_HUP_WarpingMatrix_shared" value="DString_HUP_WarpingMatrix_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="54" ActivityType="4" name="路由节点">
+<Rect left="551" top="2115" right="583" bottom="2147"/>
+</Activity>
+<Activity id="55" ActivityType="3" name="HW 结束">
+<Rect left="414" top="2177" right="514" bottom="2209"/>
+<Script></Script></Activity>
+<Activity id="57" ActivityType="3" name="HUP_BGW_Berechnung_Beschnitt_Ghost_Warp">
+<Rect left="415" top="2242" right="515" bottom="2274"/>
+<Script></Script></Activity>
+<Activity id="58" ActivityType="3" name="DString_HUP_WarpingMatrix_shared">
+<Rect left="282" top="2114" right="382" bottom="2146"/>
+<Script></Script></Activity>
+<Activity id="59" ActivityType="5" name="HUP_86_Kamera_Arbeitsposition_Ex">
+<Rect left="399" top="293" right="499" bottom="325"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Arbeitsposition_Ex">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="101"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="60" ActivityType="5" name="2线程BGW">
+<Rect left="415" top="2310" right="515" bottom="2342"/>
+<SubProcesses>
+<SubProcess id="Par_HUP_ECU_BGW_Testbild_Start_03">
+</SubProcess>
+<SubProcess id="Par_HUP_03">
+<Parameters>
+<Parameter id="HUPHndl" value="HUPHndl"/>
+<Parameter id="isOK" value="isOK" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="61" ActivityType="3" name="HUP Deinitialization">
+<Rect left="416" top="2379" right="516" bottom="2411"/>
+<Script></Script></Activity>
+<Activity id="62" ActivityType="5" name="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Rect left="416" top="2445" right="516" bottom="2477"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="101"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="64" ActivityType="3" name="普通节点">
+<Rect left="558" top="738" right="658" bottom="770"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP BH 2 processes failed")
+-- HUP调整：BH 两线程NOK</Script></Activity>
+<Activity id="65" ActivityType="3" name="普通节点">
+<Rect left="564" top="1723" right="664" bottom="1755"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP HW 2 processes failed")
+-- HUP调整：HW 两线程NOK</Script></Activity>
+<Activity id="66" ActivityType="3" name="普通节点">
+<Rect left="569" top="2311" right="669" bottom="2343"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : HUP BGW 2 processes failed")
+-- HUP调整：BGW 两线程NOK</Script></Activity>
+<Activity id="67" ActivityType="3" name="同步量">
+<Rect left="417" top="2513" right="517" bottom="2545"/>
+<Script>engine.SharedVarSet("_a_flag4",1)</Script></Activity>
+<Activity id="68" ActivityType="5" name="HUP_88_InY_Ausfoerdern">
+<Rect left="418" top="2578" right="518" bottom="2610"/>
+<SubProcesses>
+<SubProcess id="HUP_88_InY_Ausfoerdern">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="69" ActivityType="5" name="HUP_87_Anlage_ausschwenken">
+<Rect left="419" top="2645" right="519" bottom="2677"/>
+<SubProcesses>
+<SubProcess id="HUP_87_Anlage_ausschwenken">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="70" ActivityType="3" name="同步量">
+<Rect left="420" top="2715" right="520" bottom="2747"/>
+<Script>engine.SharedVarSet("_a_flag1",1)</Script></Activity>
+<Activity id="71" ActivityType="5" name="HUP_86_Kamera_Ruheposition">
+<Rect left="421" top="2782" right="521" bottom="2814"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_Ruheposition">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="72" ActivityType="5" name="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Rect left="422" top="2846" right="522" bottom="2878"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="100"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="73" ActivityType="5" name="XML_BH_Berechnung">
+<Rect left="406" top="1214" right="506" bottom="1246"/>
+<SubProcesses>
+<SubProcess id="XML_BH_Berechnung">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="DFloat_XML_BH_Bildhoehe_oben" value="0" ret="DFloat_XML_BH_Bildhoehe_oben_shared"/>
+<Parameter id="DFloat_XML_BH_Bildhoehe_unten" value="0" ret="DFloat_XML_BH_Bildhoehe_unten_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="74" ActivityType="3" name="普通节点">
+<Rect left="558" top="1213" right="658" bottom="1245"/>
+<Script>engine.println(" &lt;Par_HUP_Process&gt; : XML_BH_Berechnung failed")
+-- HUP调整：XML_BH_Berechnung 获取数据范围</Script></Activity>
+<Activity id="75" ActivityType="5" name="XML_Warping_Berechnung">
+<Rect left="412" top="1986" right="512" bottom="2018"/>
+<SubProcesses>
+<SubProcess id="XML_Warping_Berechnung">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="DString_HUP_WarpingMatrix" ret="DString_HUP_WarpingMatrix_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="5" EndId="59" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="9" EndId="10" type="0">
+</Transition>
+<Transition StartId="9" EndId="11" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="11" EndId="12" type="0">
+</Transition>
+<Transition StartId="11" EndId="13" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="13" EndId="14" type="0">
+</Transition>
+<Transition StartId="13" EndId="15" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="15" EndId="16" type="0">
+</Transition>
+<Transition StartId="15" EndId="17" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="17" EndId="19" type="0">
+</Transition>
+<Transition StartId="18" EndId="22" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="18" EndId="64" type="0">
+</Transition>
+<Transition StartId="19" EndId="18" type="0">
+</Transition>
+<Transition StartId="20" EndId="23" type="0">
+</Transition>
+<Transition StartId="21" EndId="23" type="0">
+</Transition>
+<Transition StartId="22" EndId="20" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="22" EndId="21" type="0">
+</Transition>
+<Transition StartId="23" EndId="24" type="0">
+</Transition>
+<Transition StartId="24" EndId="25" type="0">
+</Transition>
+<Transition StartId="24" EndId="26" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="26" EndId="28" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="28" EndId="29" type="0">
+</Transition>
+<Transition StartId="28" EndId="73" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="32" EndId="33" type="0">
+</Transition>
+<Transition StartId="33" EndId="34" type="0">
+</Transition>
+<Transition StartId="34" EndId="35" type="0">
+</Transition>
+<Transition StartId="35" EndId="36" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="35" EndId="37" type="0">
+</Transition>
+<Transition StartId="36" EndId="39" type="0">
+</Transition>
+<Transition StartId="37" EndId="39" type="0">
+</Transition>
+<Transition StartId="39" EndId="40" type="0">
+</Transition>
+<Transition StartId="40" EndId="41" type="0">
+</Transition>
+<Transition StartId="41" EndId="48" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="41" EndId="65" type="0">
+</Transition>
+<Transition StartId="42" EndId="43" type="0">
+</Transition>
+<Transition StartId="42" EndId="46" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="46" EndId="47" type="0">
+</Transition>
+<Transition StartId="46" EndId="75" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="48" EndId="42" type="0">
+</Transition>
+<Transition StartId="51" EndId="54" type="0">
+</Transition>
+<Transition StartId="51" EndId="53" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="53" EndId="55" type="0">
+</Transition>
+<Transition StartId="54" EndId="55" type="0">
+</Transition>
+<Transition StartId="55" EndId="57" type="0">
+</Transition>
+<Transition StartId="57" EndId="60" type="0">
+</Transition>
+<Transition StartId="59" EndId="9" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="59" EndId="8" type="0">
+</Transition>
+<Transition StartId="60" EndId="61" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="60" EndId="66" type="0">
+</Transition>
+<Transition StartId="61" EndId="62" type="0">
+</Transition>
+<Transition StartId="62" EndId="67" type="0">
+</Transition>
+<Transition StartId="67" EndId="68" type="0">
+</Transition>
+<Transition StartId="68" EndId="69" type="0">
+</Transition>
+<Transition StartId="69" EndId="70" type="0">
+</Transition>
+<Transition StartId="70" EndId="71" type="0">
+</Transition>
+<Transition StartId="71" EndId="72" type="0">
+</Transition>
+<Transition StartId="72" EndId="2" type="0">
+</Transition>
+<Transition StartId="73" EndId="32" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="73" EndId="74" type="0">
+</Transition>
+<Transition StartId="75" EndId="51" type="0">
+</Transition>
+</Transitions>
+</Process>
+

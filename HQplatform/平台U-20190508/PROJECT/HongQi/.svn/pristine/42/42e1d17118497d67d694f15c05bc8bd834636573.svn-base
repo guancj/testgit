@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtDataExchange" description="封装engine.UdpExchange函数">
+<Inputs>
+<Variable id="request" type="8" data="&quot;&quot;" description="需要发送的报文,44字节"/>
+<Variable id="timeout" type="3" data="3" description="超时时间设置,以s(秒)为单位"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data="" description="发送报文、接受报文成功，并且校验接受报文，如果没问题则返回true，否则返回false"/>
+<Variable id="revTel" type="8" data="" description="回复报文"/>
+</Outputs>
+<Script>--[[ *************************************************************
+History :
+* 04/03/2016, wuh : 加入互斥锁，以免和Toggling进程冲突,保存所有相关值到pHndl变量
+* 05/27/2016, wuh : 回复报文取值方式改变，报文最后延时参数获取BUG修复
+* 02/17/2017, viforce :去掉 27 - 30 行当正响应及同服务时，理解为已经成功返回不再发送，但是有时候同服务、不同参数的情况会被误判丢弃
+* 02/17/2017, viforce :timeout 也做为正响应时间上限 100ms 间隔
+*************************************************************--]]
+    local err = 0;
+	local ret = false;
+	revTel = ""
+	--检查通讯句柄
+	if pHndl == nil or pHndl &lt; 0 then
+		engine.println("IdtLib:idtDataExchange:pHndl is invalid, pHndl= " .. tostring(pHndl));
+		engine.LastError = -1;
+		return ret;
+	end;
+
+	-- 锁定 IDT_GENERAL_SEMAPHORE 锁
+	engine.MutexOpen("IDT_GENERAL_SEMAPHORE" .. tostring(pHndl));
+	engine.MutexWait("IDT_GENERAL_SEMAPHORE" .. tostring(pHndl),-1);
+
+	--engine.println("###TESTONLY current service: " .. tostring(string.byte(engine.UdpHandleVarGet(pHndl, "_CURRENTSERVICE"))))
+	--engine.println("###TESTONLY current sevack : " .. tostring(engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")))
+	--engine.println("###TESTONLY request service: " .. tostring(string.byte(request:sub(2,2))))
+
+	-- if alreay at status '1' then just return. 
+        
+	--if request:sub(2,2) == engine.UdpHandleVarGet(pHndl, "_CURRENTSERVICE") and engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK") == 1 then
+		--engine.println("idtDataExchange, service is alreay done form device side, set service byte " ..tostring(string.byte(request:sub(2,2))) .. " to '00'")
+		--request = LibIDT.idtSetBytes(request,2,1,"\x00");
+	--end
+        
+	
+	do
+		local rept = timeout * 10;
+		for rp=1, rept do          
+		--设置Toggle Byte,第4字节,从1计数
+		request = LibIDT.idtSetBytes(request,4,1,string.char(engine.UdpHandleVarGet(pHndl, "_TOGGLECOUNTER")));
+		--设置报文序列号,第42字节,从1计数
+		request = LibIDT.idtSetBytes(request,42,1,LibIDT.idtGetSerialNumber());
+		--设置xor校验和,第43字节(从1开始计数）
+		request = LibIDT.idtSetBytes(request,43,1,LibIDT.idtchecksum(request));
+		--保存请求报文到共享变量中
+		engine.UdpHandleVarSet(pHndl, "_LASTSNDTEL", request);
+
+		--local rept = timeout * 10;
+		--for rp=1, rept do                
+			--发送报文
+			engine.println("###TESTONLY : dataexchange timeout : " .. tostring(timeout))
+			--err = engine.UdpExchange(pHndl,request,timeout*1000);
+			engine.UdpClear(pHndl);  -- TESTONLY
+			for i=1, 4 do 
+                                engine.UdpSend(pHndl,request)
+                        end;
+			err = engine.UdpExchange(pHndl,request,timeout*1000); --TESTONLY
+			if(err == 0) then  --1
+				local recieve = LibIDT.idtGetRecieveForCheck();
+			    --检验返回报文是否合法
+				if(string.byte(LibIDT.idtchecksum(recieve)) == @42 and @0 == engine.UdpHandleVarGet(pHndl,"_REVMARK")) then
+					-- 接收到的报文
+					revTel = engine.GetResponseString(0,43);
+					--保存共享变量中
+					engine.UdpHandleVarSet(pHndl, "_TOGGLECOUNTER", string.byte(revTel:sub(12,12)));
+					engine.UdpHandleVarSet(pHndl, "_LASTREVTEL", revTel);
+					--设置 _CURRENTSERVICE 和 _CURRENTSEVACK
+					if request:sub(2,2) ~= "\x00" then
+						if engine.UdpHandleVarGet(pHndl, "_CURRENTSERVICE") ~= request:sub(2,2) then
+							engine.UdpHandleVarSet(pHndl, "_CURRENTSEVACK", string.byte(revTel:sub(2,2)));
+							engine.UdpHandleVarSet(pHndl, "_CURRENTSERVICE", request:sub(2,2));
+							engine.println("idtDataExchange, service changed. _CURRENTSERVICE="
+								.. tostring(string.byte(engine.UdpHandleVarGet(pHndl, "_CURRENTSERVICE")))
+								.."_CURRENTSEVACK=".. tostring(engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")) )
+						else
+							--if engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK") ~= 1 then
+								engine.UdpHandleVarSet(pHndl, "_CURRENTSEVACK", string.byte(revTel:sub(2,2)));
+							--end
+						end
+                                                
+                                                if(string.byte(revTel:sub(2,2)) == 1) then
+                                                -- 收到正回复， 跳出循环
+							engine.UdpHandleVarSet(pHndl, "_CURRENTSEVACK", string.byte(revTel:sub(2,2)));
+                                                        ret = true;
+							break
+                                                end
+                                                
+					end
+                                        -- 结果OK
+                                        ret = true;
+                                        
+                                        if request:sub(2,2) == "\x00" then
+					-- 收到正回复， 跳出循环
+						break;
+                                        end
+					
+				end;
+				-- 收到正回复， 跳出循环
+                                
+				-- break;
+			end
+                        engine.Delay(100)
+			engine.println("### idtDataExchange udpexchange timeout!")
+		end
+		if err ~= 0 then
+			engine.println("IDT data exchange failed, after tried for " .. tostring(rept) .. " times");
+			ret = false;
+		end
+	end
+	
+	-- 释放互斥
+	engine.MutexRelease("IDT_GENERAL_SEMAPHORE" .. tostring(pHndl)); 
+	
+	-- set lasterror value
+	if(ret == true) then
+		engine.LastError = 0;
+	else
+		engine.LastError = -1;
+	end;
+
+	engine.Delay(LibIDT.DELAY_BETWEEN_SERVICE or 100);</Script></Function>
+

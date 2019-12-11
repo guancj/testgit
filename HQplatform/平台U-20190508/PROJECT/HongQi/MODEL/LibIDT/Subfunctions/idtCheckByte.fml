@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="检查单个字节的bit位。&#13;&#10;使用方法如下：&#13;&#10;被检测的字节&quot;\xC4&quot;:二进制表示&quot;\b11000100&quot;&#13;&#10;&#13;&#10;过滤字节：&quot;\xC2&quot;:二进制表示&quot;\b11000010&quot;,代表关心第7、8和2三个bit位的值，其它bit为不关心&#13;&#10;&#13;&#10;期望结果：&quot;\x82&quot;:二进制表示&quot;\b10000010&quot;,代表希望第8bit=1，第7bit=0，第2bit=1&#13;&#10;&#13;&#10;">
+<Inputs>
+<Variable id="sourceByte" type="3" data="0" description="源字节，要被检测的字节"/>
+<Variable id="filterByte" type="3" data="0" description="过滤字节，表示关心哪几个bit位"/>
+<Variable id="targetByte" type="3" data="0" description="目标字节，代表源字节被过滤后期望得到的结果，用于比较判断"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data="" description="源字节经过过滤得到的值与目标字节值相同，返回true，否则返回false"/>
+<Variable id="result" type="8" data="" description="源字节经过过滤后的值"/>
+</Outputs>
+<Script>ret = false;
+result = 0x00;
+
+result = bit32.band(sourceByte,filterByte);
+
+ret = (result == targetByte);</Script></Function>
+

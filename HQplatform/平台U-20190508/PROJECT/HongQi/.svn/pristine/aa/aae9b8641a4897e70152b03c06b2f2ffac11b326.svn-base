@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="zdcOutContainerDataBuild">
+<Inputs>
+<Variable id="nodeTabelle" type="3" data="0" description="the zdc &apos;TABELLE&apos; xml object"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="dt" type="3" data="0" description="a table which store all caculated data"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to collect data which type is "DATEINAME" for one 'TABELLE' element in zdc container.
+As the data is stored out side container as a independent file(like sgm file), the return value is just the data file name list.
+History:
+    02/16/2016, wuh : function created
+	04/11/2016, wuh : add debugLevel
+****************************************************************--]]
+	local err, dt = 0, {}
+	
+	-- build Knotens table
+	local knotens = LibVW.zdcGetKnotens(nodeTabelle,debugLevel)
+	if engine.LastError ~= 0 then
+		engine.println("ERROR, 'zdcOutContainerDataBuild' : zdcGetKnotens failed")
+		engine.LastError =1
+		return dt
+	end
+
+	-- data table build
+	for _,knoten in ipairs(knotens) do
+		if knoten.valueType == "DATEINAME" then
+			dt[#dt + 1] = knoten.value
+		else
+			engine.println("WARNING , zdcOutContainerDataBuild : the knoten value type is not fit for in container data caculating.",
+				"valueType= " .. knoten.valueType, "value= " .. knoten.value)		
+		end
+	end
+	
+	engine.LastError = err</Script></Function>
+

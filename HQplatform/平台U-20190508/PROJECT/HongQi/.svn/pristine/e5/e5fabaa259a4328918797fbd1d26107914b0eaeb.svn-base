@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="zdcCalcCodeWord">
+<Inputs>
+<Variable id="nodeTabelle" type="3" data="0" description="the zdc &apos;TABELLE&apos; xml object"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="cwt" type="3" data="0" description="a table which stores code word related information"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to caculate the code word of one 'TABELLE' element in zdc container.
+History:
+    02/01/2016, wuh : function created
+	03/10/2016, wuh : cwt not any more start fill with '-1' form index 0, use minValidByte and zdeNum to handle
+	04/11/2016, wuh : add debugLevel
+****************************************************************--]]
+	local err, cwt = 0, {}
+	
+	--  **** prepare for caculating **** --
+	-- build Zdstelles table
+	local zdstelles,zdeNum, minValidByte = LibVW.zdcGetZdstelles(nodeTabelle, debugLevel)
+	if engine.LastError ~= 0 then
+		engine.println("ERROR, 'zdcCalcCodeWord' : zdcGetZdstelles failed")
+		engine.LastError =1
+		return cwt
+	end
+	-- build Knotens table
+	local knotens = LibVW.zdcGetKnotens(nodeTabelle,debugLevel)
+	if engine.LastError ~= 0 then
+		engine.println("ERROR, 'zdcCalcCodeWord' : zdcGetKnotens failed")
+		engine.LastError =1
+		return cwt
+	end
+	
+	-- init code word table
+	for i=minValidByte, zdeNum+minValidByte-1,1 do
+		cwt[i] = {}
+		cwt[i].num = -1
+	end	
+	
+	--  **** caculate code word **** --
+	local knoten = nil
+	for _,knoten in ipairs(knotens) do
+		if knoten.valueType == "WERT" then
+			-- init the byte value as 0 for the first time
+			if cwt[knoten.stelle].num == -1 then cwt[knoten.stelle].num = 0 end
+			if debugLevel &gt; 1 then
+				engine.println("zdcCalcCodeWord : start caculate byte : " , knoten.stelle, 
+					"value before caculate : ", string.format("%02x", cwt[knoten.stelle].num))
+			end
+			-- replace bits
+			cwt[knoten.stelle].num = bit32.replace(cwt[knoten.stelle].num, knoten.value, knoten.lsb, 
+				zdstelles[knoten.stelle][knoten.lsb].zmsb - zdstelles[knoten.stelle][knoten.lsb].zlsb + 1)
+			if debugLevel &gt; 1 then
+				engine.println("zdcCalcCodeWord : end caculate byte :  ", knoten.stelle, 
+					"value after caculate : " , string.format("%02x", cwt[knoten.stelle].num))
+			end
+		else
+			engine.println("WARNING , zdcCalcCodeWord : the knoten value type is not fit for code word caculating.",
+				"valueType= " .. knoten.valueType, "value= " .. knoten.value)
+		end
+	end
+	-- set code word table values
+	local i, cw, tmpStr,codeLen = nil, nil, "",0
+	for i=minValidByte, zdeNum+minValidByte-1,1 do
+		cw = cwt[i]
+		if cw.num ~= -1 then
+			-- store num
+			cw.hexstr = string.format("%02x", cw.num)
+			cw.binstr = string.char(cw.num)
+			-- build code string
+			if nil ~= cwt[0] then	-- for short code situation
+				tmpStr = cw.hexstr .. tmpStr
+			else	-- -- for other situation
+				tmpStr = tmpStr .. cw.hexstr
+			end
+			codeLen = codeLen + 1
+		else
+			if i &gt;= minValidByte then
+				engine.println("ERROR, zdcCalcCodeWord : the byte " .. i 
+					.. " has no valid value. Check the PR number match for this byte")
+				err = 1; cwt = {}
+				break
+			end
+		end
+	end
+	if err == 0 then
+		cwt.codeString = tmpStr
+		cwt.codeLen = codeLen
+		cwt.minValidByte = minValidByte
+	end
+	print("zdcCalcCodeWord result ", "cwt.codeLen : ".. tostring(cwt.codeLen),"cwt.codeString : "
+		.. tostring(cwt.codeString), "minValidByte : " .. tostring(cwt.minValidByte))
+		
+	engine.LastError = err</Script></Function>
+

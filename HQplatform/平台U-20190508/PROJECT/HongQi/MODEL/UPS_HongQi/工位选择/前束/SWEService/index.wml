@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="SWE_22_VehicleID"/>
+<Process id="SWE_05_BasicState"/>
+<Process id="SWE_Process"/>
+<Process id="SWE_38_RequestResult_Lowleft"/>
+<Process id="SWE_38_RequestResult_Lowright"/>
+<Process id="SWE_38_RequestResult_Hightleft"/>
+<Process id="SWE_38_RequestResult_Hightright"/>
+<Process id="SWE_38_RequestResult_Fogleft"/>
+<Process id="SWE_38_RequestResult_Fogright"/>
+<Process id="SWE_38_RequestResult_Infraredleft"/>
+<Process id="SWE_38_RequestResult_Infraredright"/>
+<Process id="SWE_38_RequestResult_Matrixleft"/>
+<Process id="SWE_38_RequestResult_Matrixright"/>
+<Process id="SWE_08_SWEConfig_Lowleft"/>
+<Process id="SWE_08_SWEConfig_Lowright"/>
+<Process id="SWE_08_SWEConfig_Hightleft"/>
+<Process id="SWE_08_SWEConfig_Hightright"/>
+<Process id="SWE_08_SWEConfig_Fogleft"/>
+<Process id="SWE_08_SWEConfig_Fogright"/>
+<Process id="SWE_08_SWEConfig_Infraredleft"/>
+<Process id="SWE_08_SWEConfig_Infraredright"/>
+<Process id="SWE_08_SWEConfig_Matrixleft"/>
+<Process id="SWE_08_SWEConfig_Matrixright"/>
+<Process id="SWE_38_RequestResult_Intensityleft"/>
+<Process id="SWE_38_RequestResult_Intensityright"/>
+<Process id="SWE_Process_lowlamp"/>
+<Process id="SWE_Process_BKyya"/>
+</children>
+</Workplace>

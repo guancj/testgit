@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data=""/>
+<Variable id="XmlPath" type="8" data=""/>
+<Variable id="XmlTag" type="8" data=""/>
+<Variable id="XmlAttribFilter1" type="8" data=""/>
+<Variable id="SollValStr_1" type="8" data=""/>
+<Variable id="SollValStr_1_alt" type="8" data=""/>
+<Variable id="XmlAttribFilter2" type="8" data=""/>
+<Variable id="SollValStr_2" type="8" data=""/>
+<Variable id="SollValStr_2_alt" type="8" data=""/>
+<Variable id="XmlAttribFilter3" type="8" data=""/>
+<Variable id="SollValStr_3" type="8" data=""/>
+<Variable id="SollValStr_3_alt" type="8" data=""/>
+<Variable id="XmlAttribFilter4" type="8" data=""/>
+<Variable id="SollValStr_4" type="8" data=""/>
+<Variable id="SollValStr_4_alt" type="8" data=""/>
+<Variable id="FilterModus" type="3" data="16"/>
+</Inputs>
+<Outputs>
+<Variable id="bufTab" type="8" data="" description="返回匹配项的表"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+这个函数主要是匹配符合属性值的xml 对象放到表里并返回，根据不同的filterModus 可以选择匹配不同的属性方案
+
+-- FilterModus
+--10000 16 XmlAttribFilter1 XmlAttribFilter2 XmlAttribFilter3 XmlAttribFilter4
+-- 1111 15 
+-- 1110 14								                      XmlAttribFilter4
+-- 1101 13 			                         XmlAttribFilter3
+-- 1100 12      			                 XmlAttribFilter3 XmlAttribFilter4
+-- 1011 11                  XmlAttribFilter2
+-- 1010 10                  XmlAttribFilter2 				  XmlAttribFilter4
+-- 1001 9                   XmlAttribFilter2 XmlAttribFilter3
+-- 1000 8                   XmlAttribFilter2 XmlAttribFilter3 XmlAttribFilter4
+-- 0111 7  XmlAttribFilter1
+-- 0110 6  XmlAttribFilter1							          XmlAttribFilter4
+-- 0101 5  XmlAttribFilter1		             XmlAttribFilter3
+-- 0100 4  XmlAttribFilter1			         XmlAttribFilter3 XmlAttribFilter4
+-- 0011 3  XmlAttribFilter1 XmlAttribFilter2
+-- 0010 2  XmlAttribFilter1 XmlAttribFilter2				  XmlAttribFilter4
+-- 0001 1  XmlAttribFilter1 XmlAttribFilter2 XmlAttribFilter3
+
+input parameter:XmlHndl,XmlPath,XmlTag,XmlAttribFilter1,SollValStr_1,SollValStr_1_alt,XmlAttribFilter2,SollValStr_2,SollValStr_2_alt,XmlAttribFilter3,SollValStr_3,SollValStr_3_alt,XmlAttribFilter4, SollValStr_4,SollValStr_4_alt,FilterModus
+output parameter:bufTab
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+local xmlbuf;
+local xmlbuflist;
+local i = 0;
+local count = 1;
+local DEBUG = false
+print("GetFilteredBufByAttrQuadrupel1Altern: XmlHndl :"..tostring(XmlHndl))
+print("GetFilteredBufByAttrQuadrupel1Altern: XmlPath :"..tostring(XmlPath)..", XmlTag: "..tostring(XmlTag))
+print("GetFilteredBufByAttrQuadrupel1Altern: Attribute1 :"..tostring(XmlAttribFilter1)..", Value: "..tostring(SollValStr_1).. ", Value_alt: " .. tostring(SollValStr_1_alt))
+print("GetFilteredBufByAttrQuadrupel1Altern: Attribute2 :"..tostring(XmlAttribFilter2)..", Value: "..tostring(SollValStr_2).. ", Value_alt: " .. tostring(SollValStr_2_alt))
+print("GetFilteredBufByAttrQuadrupel1Altern: Attribute3 :"..tostring(XmlAttribFilter3)..", Value: "..tostring(SollValStr_3).. ", Value_alt: " .. tostring(SollValStr_3_alt))
+print("GetFilteredBufByAttrQuadrupel1Altern: Attribute4 :"..tostring(XmlAttribFilter4)..", Value: "..tostring(SollValStr_4).. ", Value_alt: " .. tostring(SollValStr_4_alt))
+print("GetFilteredBufByAttrQuadrupel1Altern: Filtermodus :"..tostring(FilterModus))
+
+bufTab = {}  -- return value Table xml nodes
+
+if(XmlAttribFilter1 == "") then
+	if(8 &lt;= FilterModus and FilterModus &lt;= 15) then
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter1 empty =&gt; ignored")
+	else
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter1 empty =&gt; Error")
+		engine.LastError = 1
+	end
+end
+
+if(XmlAttribFilter2 == "") then
+	if((3 &lt;= FilterModus and FilterModus &lt;= 7) or (12 &lt;= FilterModus and FilterModus &lt;= 15) ) then
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter2 empty =&gt; ignored")
+	else
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter2 empty =&gt; Error")
+		engine.LastError = 1	
+	end
+end
+
+if(XmlAttribFilter3 == "") then
+	if((2 &lt;= FilterModus and FilterModus &lt;= 3) or (6 &lt;= FilterModus and FilterModus &lt;= 7) or (10 &lt;= FilterModus and FilterModus &lt;= 11) or (14 &lt;= FilterModus and FilterModus &lt;= 15)) then
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter3 empty =&gt; ignored")
+	else
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter3 empty =&gt; Error")
+		engine.LastError = 1	
+	end
+end
+
+if(XmlAttribFilter4 == "") then
+	if(1 == FilterModus or 3 == FilterModus or 5 == FilterModus or 7 == FilterModus or 9 == FilterModus or 11 == FilterModus or 13 == FilterModus or 15 == FilterModus) then
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter4 empty =&gt; ignored")
+	else
+		print("GetFilteredBufByAttrQuadrupel1Altern: XmlAttribFilter4 empty =&gt; Error")
+		engine.LastError = 1
+	end
+end
+
+
+if(0 == engine.LastError) then
+	if(nil ~= XmlHndl) then
+		xmlbuflist = XmlHndl.selectNodes(XmlPath.."/"..XmlTag);
+                
+		if(xmlbuflist.length &gt; 0) then
+			for i = 0 ,xmlbuflist.length - 1  do 
+				-- print(xmlbuflist[i].xml)
+				if(DEBUG == true) then
+				print("getAttribute 1 :"..tostring(xmlbuflist[i].getAttribute(XmlAttribFilter1)).." =&gt; "..tostring(SollValStr_1))
+				print("getAttribute 2 :"..tostring(xmlbuflist[i].getAttribute(XmlAttribFilter2)).." =&gt; "..tostring(SollValStr_2))
+				print("getAttribute 3 :"..tostring(xmlbuflist[i].getAttribute(XmlAttribFilter3)).." =&gt; "..tostring(SollValStr_3))
+				print("getAttribute 4 :"..tostring(xmlbuflist[i].getAttribute(XmlAttribFilter4)).." =&gt; "..tostring(SollValStr_4))
+				end
+				if(16 == FilterModus) then
+					if((xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt)) then
+						bufTab[count] = xmlbuflist[i]
+						print("bufTab : "..bufTab[count].xml)
+						count = count + 1 						
+					end
+				elseif(15 == FilterModus) then
+						bufTab[count] = xmlbuflist[i]
+						print("bufTab : "..bufTab[count].xml)
+						count = count + 1 	
+				elseif(14 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(13 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end					
+				elseif(12 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(11 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(10 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(9 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end	
+				elseif(8 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end	
+				elseif(7 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end	
+				elseif(6 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end	
+				elseif(5 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end	
+				elseif(4 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end	
+				elseif(3 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4 or xmlbuflist[i].getAttribute(XmlAttribFilter4) == SollValStr_4_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end	
+				elseif(2 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end
+				elseif(1 == FilterModus) then
+						if((xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 or xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 or xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2_alt) and (xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3 or xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3_alt)) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end						
+				end	
+			end
+		end	
+	else
+		print("Error : XmlHndl is not valid")
+		engine.LastError = 1
+	end
+end
+if(#bufTab == 0) then
+	print("GetFilteredBufByAttrQuadrupel1Altern: xml filter does not find any valid data")
+end
+</Script></Function>
+

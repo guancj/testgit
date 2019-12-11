@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="GetCommand2can">
+<Inputs>
+<Variable id="tcphandle" type="8" data="" description="tcpHandle 通讯句柄"/>
+<Variable id="strTcpRev" type="3" data="0" description="当前Tcp command"/>
+<Variable id="shCommand1" type="8" data="" description="下一个命令 command1"/>
+<Variable id="shCommand2" type="8" data="" description="下一个命令 command2"/>
+<Variable id="timeout" type="3" data="0"/>
+<Variable id="sFlag" type="11" data="flase" description="控制如果是command89 则停止接收下一个命令"/>
+<Variable id="vciHandle" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="NextCommand" type="8" data=""/>
+<Variable id="returnResult" type="11" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+传入参数:  tcphandle,strTcpRev,shCommand1,shCommand2,timeout
+		   strTcpRev 传入的当前command2..command3  eg:08000003F2005904000100000008000003F20159040001000000
+		   shCommand1,shCommand2, 下2个命令的字符串 "08000003F20000043601000000"  "08000003F20100043601000000"
+		   timeout: SockRecv 超时参数
+                   sFlag:控制是否为command89
+                   
+返回参数:  NextCommand,returnResult
+******************************************************************************--]]
+
+
+local a = 0
+local TimeoutFlag
+local fecuData
+local secuData
+local response
+local strRep
+local fCommand
+local sCommand
+local RepMasterCanID = "0800000700"
+local RepSlaveCanID  = "0800000701"
+local RepCanID
+local RevCounter = 0
+
+RepMasterCanID = LibGeneral.str2hex(RepMasterCanID)
+RepSlaveCanID = LibGeneral.str2hex(RepSlaveCanID)
+
+fCommand = strTcpRev:sub(1,26)
+sCommand = strTcpRev:sub(27,52)
+
+print("fCommand:"..fCommand)
+print("sCommand:"..sCommand)
+
+
+fecuData = LibGeneral.str2hex(fCommand)
+secuData = LibGeneral.str2hex(sCommand)
+fecuData = fecuData:sub(6,13)
+secuData = secuData:sub(6,13)
+
+local requestData = "\x01\xE0\xD7"..fecuData
+
+repeat
+	recvTel = LibGeneral.ECU_DataExchange(vciHandle, 0x31, 0x71, requestData);
+	a = a + 1
+until(engine.LastError == 0 or a &gt;= 3)
+
+if (engine.LastError == 0) then
+	if(string.byte(recvTel:sub(5,5)) == 00) then
+		RepCanID = RepMasterCanID
+	end
+	if(string.byte(recvTel:sub(5,5)) == 01) then
+		RepCanID = RepSlaveCanID
+	end
+	SendData1 = RepCanID..recvTel:sub(7,14)
+	SendData2 = RepCanID..recvTel:sub(15,22)
+	SendData3 = RepCanID..recvTel:sub(23,30)
+	SendData4 = RepCanID..recvTel:sub(31,38)
+	SendData = SendData1..SendData2..SendData3..SendData4
+	returnResult = true		
+end
+
+if(engine.LastError ~= 0 and a &gt;= 3) then
+	returnResult = false
+	print("Ecu Negative Response!")
+end	
+
+
+if (returnResult == true) then
+	engine.Delay(2000)	
+	err = engine.SockSend(tcphandle,SendData)
+        
+	if (err == 0)then
+		returnResult = true
+	else
+		returnResult = false
+	end
+end
+
+
+
+if (returnResult == true) then		
+	requestData = "\x01\xE0\xD7"..secuData
+	a = 0
+	repeat
+		recvTel = LibGeneral.ECU_DataExchange(vciHandle, 0x31, 0x71, requestData);
+		a = a + 1
+	until(engine.LastError == 0 or a &gt;= 3)
+
+	if (engine.LastError == 0) then
+		if(string.byte(recvTel:sub(5,5)) == 00) then
+			RepCanID = RepMasterCanID
+		end
+		if(string.byte(recvTel:sub(5,5)) == 01) then
+			RepCanID = RepSlaveCanID
+		end		
+		SendData1 = RepCanID..recvTel:sub(7,14)
+		SendData2 = RepCanID..recvTel:sub(15,22)
+		SendData3 = RepCanID..recvTel:sub(23,30)
+		SendData4 = RepCanID..recvTel:sub(31,38)
+		SendData = SendData1..SendData2..SendData3..SendData4
+		returnResult = true		
+	end
+
+	if(engine.LastError ~= 0 and a &gt;= 3) then
+		returnResult = false
+		print("Ecu Negative Response!")
+	end	
+
+
+	if (returnResult == true) then
+		engine.Delay(2000)
+		err = engine.SockSend(tcphandle,SendData)
+		if (sFlag == false ) then
+			if (err == 0) then
+				repeat
+					err = engine.SockRecv(tcphandle,timeout)   --正常使用应该100ms就差不多
+					RevCounter  = RevCounter + 1
+					if (err == 0) then
+						NextCommand = engine.GetResponseString(0,-1)
+						NextCommand = LibGeneral.hex2str(NextCommand)
+
+						strpos,endpos = NextCommand:find(shCommand1) 
+						strpos1,endpos1 = NextCommand:find(shCommand2)                                                
+					else
+						print("SockRecv Error")			
+					end
+					print("command find times")
+				until((strpos ~= nil and strpos1 ~= nil) or RevCounter == 2)
+				
+				if(#shCommand1 == 18 and #shCommand2 == 18) then
+					endpos = endpos + 8
+					endpos1 = endpos1 + 8
+				end
+                                                         
+				if (strpos ~= nil and strpos1 ~= nil) then
+					if (strpos &lt; strpos1)then
+						NextCommand = NextCommand:sub(strpos,endpos1)
+					elseif(strpos &gt; strpos1)then
+						NextCommand = NextCommand:sub(strpos1,endpos)
+					else
+						returnResult = false
+						print("strpos error")
+					end
+					returnResult = true
+					print("the NextCommand  is:"..NextCommand)
+				else
+					returnResult = false
+					print("Don't find command2")
+				end	
+			else 
+				returnResult = false
+				print("SockSend Error:"..err)
+			end
+			print("SockRecv the NextCommand")
+		end
+	end
+end</Script></Function>
+

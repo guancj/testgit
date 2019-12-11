@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="为转毂发送报文创建一个初始报文">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回给转毂使用的初始化报文,格式:&quot;\x06\x01.....&quot;44个字节"/>
+</Outputs>
+<Script>ret = LibIDT.idtInitRequest(pHndl);</Script></Function>
+

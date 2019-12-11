@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DlgHndl" type="3" data="0" description="窗口句柄 reserve"/>
+<Variable id="Text" type="8" data="&quot;点火周期&quot;" description="title"/>
+<Variable id="OperatorText" type="8" data="&quot;开&quot;" description="like &quot;开&quot; or &quot;关&quot;"/>
+<Variable id="Status" type="11" data="true" description="Ignition state: false = OFF,true = ON"/>
+<Variable id="Timeout" type="3" data="0" description="Timeout[0 = Endless]"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to  get vci status loop for Igition
+output parameter:DlgHndl,Text,OperatorText,Status,Timeout
+
+07/21/2017     created by viforce
+******************************************************************************--]]
+
+local timeStart = os.clock()
+local timeEnd = 0
+local VCI_StatusIgnition = false
+
+
+engine.SetTitleText(tostring(Text))
+engine.SetLineText(0,"#L="..tostring(OperatorText).."#R=bmpnok")
+engine.SetLButtonText("")
+engine.SetRButtonText("")
+engine.ShowMessage()
+
+while (true) do
+
+	print("&lt;VciStatu_Ignition&gt; : " .. tostring(engine.VciStatus))
+	if(bit32.band(engine.VciStatus,0x00000002) ==  0x00000002) then
+		VCI_StatusIgnition = true
+	else
+		VCI_StatusIgnition = false
+	end
+        
+        if(VCI_StatusIgnition == Status) then
+		engine.SetLineText(0,"#L="..tostring(OperatorText).."#R=bmpok")    
+                engine.LastError = 0 
+                engine.StatValue = "Ignition"   
+                break
+        else
+		engine.SetLineText(0,"#L="..tostring(OperatorText).."#R=bmpnok")   
+                engine.LastError = 1
+                engine.StatValue = "Ignition"       
+        end
+
+
+        timeEnd = os.clock() - timeStart
+        
+        if((Timeout &gt; 0) and (timeEnd &gt;= Timeout)) then
+		engine.LastError = 1
+                engine.StatValue = "timeout"                
+		break
+        end  
+        
+end
+
+engine.SetTitleText("")
+engine.SetLineText(0,"")
+engine.ShowMessage()</Script></Function>
+

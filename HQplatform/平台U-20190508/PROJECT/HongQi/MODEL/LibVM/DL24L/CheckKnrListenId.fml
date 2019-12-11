@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data=""/>
+<Variable id="KnrListenId" type="8" data=""/>
+<Variable id="Knr" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="KnrListenIdStat" type="8" data=""/>
+<Variable id="errFlag" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This function used to check KNR Id
+input parameter:XmlHndl,KnrListenId,Knr
+output parameter:KnrListenIdStat,errFlag
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+
+
+local xmlPath = "/AsvListe/AsvDaten/KnrListen"
+local xmlTag = "KnrListe"
+local xmlAttribFilter = "KnrListenID"
+
+local xmlSubPathTagKnrListeEingeschlossen = "KnrListeEingeschlossen/Knr"
+local xmlSubPathTagKnrListeAusgeschlossen = "KnrListeAusgeschlossen/Knr"
+local xmlSubPathTagKnrListeAusgeschlossenLeer = "KnrListeAusgeschlossen"
+local xmlSubPathTagKnrBereichEingeschlossenStart = "KnrBereichEingeschlossen/KnrStart"
+local xmlSubPathTagKnrBereichEingeschlossenStop = "KnrBereichEingeschlossen/KnrEnde"
+local xmlSubPathTagKnrBereichAusgeschlossenStart = "KnrBereichAusgeschlossen/KnrStart"
+local xmlSubPathTagKnrBereichAusgeschlossenStop = "KnrBereichAusgeschlossen/KnrEnde"
+local xmlTab = {} 
+local xmlbuflist = ""
+local xmlbuf = ""
+local xmlbufstart = ""
+local xmlbufstop = ""
+local FilterModus = 3 
+
+local i = 0
+local j = 0
+
+-- return value
+KnrListenIdStat = 0
+errFlag = 0
+-- return value
+
+xmlTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, KnrListenId, "","","","", FilterModus)
+
+if(xmlTab == nil or #xmlTab == 0 ) then
+	errFlag = 1988;
+	print("CheckPRNRTermId:no KnrListenId:"..tostring(KnrListenId));
+	engine.LastError = 1;
+else
+	for i = 1,#xmlTab do
+		--print("CheckPRNRTermId:"..tostring(xmlTab[i].xml))
+		xmlbuflist = xmlTab[i].selectNodes("KnrListeEingeschlossen")
+		--print("CheckPRNRTermId : "..tostring("KnrListeEingeschlossen =&gt; ")..tostring(xmlbuflist.length))
+		xmlbuflist = xmlTab[i].selectNodes(xmlSubPathTagKnrListeEingeschlossen) -- Eingeschlossen Locked in
+		if(xmlbuflist.length &gt; 0) then
+			for j = 0,xmlbuflist.length - 1 do
+				-- print("CheckPRNRTermId:text:"..tostring(xmlbuflist[j].text))
+				if(xmlbuflist[j].text == Knr) then
+					KnrListenIdStat = 1;  -- is included
+					engine.LastError = 0 ;
+					print("CheckPRNRTermId:knr:"..tostring(Knr).." KnrListenIdStat:"..tostring(KnrListenIdStat))
+					break
+				else
+					engine.LastError = 1 ;
+				end
+			end
+		else
+			xmlbuflist = xmlTab[i].selectNodes(xmlSubPathTagKnrListeAusgeschlossenLeer)	
+			if(xmlbuflist.length &gt; 0) then
+				xmlbuflist = xmlTab[i].selectNodes(xmlSubPathTagKnrListeAusgeschlossen) -- Ausgeschlossen Locked out
+				if(xmlbuflist.length &gt; 0) then
+					for j = 0,xmlbuflist.length - 1 do
+						-- print("CheckPRNRTermId:text:"..tostring(xmlbuflist[j].text))
+						if(xmlbuflist[j].text == Knr) then
+							engine.LastError = 1 ;
+							print("CheckPRNRTermId:knr:"..tostring(Knr).." KnrListenIdStat:"..tostring(KnrListenIdStat))
+							break
+						else
+							engine.LastError = 0 ;
+						end
+					end
+					
+					if(engine.LastError == 1) then
+						KnrListenIdStat = 1;  -- not included		
+						engine.LastError = 0;		
+						print("Knr :"..tostring(Knr).." not excluded by KnrListeAusgeschlossen, because list is empty")
+					end					
+				else
+					KnrListenIdStat = 1;  -- Is not excluded, since list is empty; No exclusion, so valid!
+					engine.LastError = 0;
+					print("Knr :"..tostring(Knr).." not excluded by KnrListeAusgeschlossen, because list is empty")
+				end
+			else
+				xmlbufstart = xmlTab[i].selectSingleNode(xmlSubPathTagKnrBereichEingeschlossenStart)
+				print("CheckPRNRTermId:xmlbufstart:"..tostring(xmlbufstart.xml))
+				if(nil ~= xmlbufstart) then
+					xmlbufstop = xmlTab[i].selectSingleNode(xmlSubPathTagKnrBereichEingeschlossenStop)	
+					print("CheckPRNRTermId:xmlbufstart:"..tostring(xmlbufstop.xml))	
+					if(nil ~= xmlbufstop) then
+						if(type(xmlbufstart) == "string" and #xmlbufstart &gt; 8 and type(xmlbufstop) == "string" and #xmlbufstop &gt; 8) then
+							if(string.sub(xmlbufstart,3,8) &lt;= string.sub(Knr,3,8) and string.sub(Knr,3,8) &lt;= string.sub(xmlbufstop,3,8)) then
+								KnrListenIdStat = 1; -- is included
+								print("Knr:"..tostring(Knr).." included by KnrBereichEingeschlossen")								
+							end
+						else
+							print("Knr:"..tostring(Knr).." KnrBereichEingeschlossen/KnrStart or KnrEnde ==&gt; xml data not valid")
+						end
+					end	
+				else
+					xmlbufstart = xmlTab[i].selectSingleNode(xmlSubPathTagKnrBereichAusgeschlossenStart)
+					print("CheckPRNRTermId:xmlbufstart:"..tostring(xmlbufstart.xml))
+					if(nil ~= xmlbufstart) then
+						xmlbufstop = xmlTab[i].selectSingleNode(xmlSubPathTagKnrBereichAusgeschlossenStop)
+						print("CheckPRNRTermId:xmlbufstart:"..tostring(xmlbufstop.xml))	
+						if(nil ~= xmlbufstop) then
+							if(type(xmlbufstart) == "string" and #xmlbufstart &gt; 8 and type(xmlbufstop) == "string" and #xmlbufstop &gt; 8) then
+								if(string.sub(xmlbufstart,3,8) &gt; string.sub(Knr,3,8) or string.sub(Knr,3,8) &gt; string.sub(xmlbufstop,3,8)) then
+									KnrListenIdStat = 1; -- is not included
+									print("Knr:"..tostring(Knr).." not excluded by KnrBereichAusgeschlossen")								
+								end
+							else
+								print("Knr:"..tostring(Knr).." KnrBereichAusgeschlossen/KnrStart or KnrEnde ==&gt; xml data not valid")
+							end
+						end						
+					end					
+				end							
+			end
+		end
+	end
+	
+end</Script></Function>
+

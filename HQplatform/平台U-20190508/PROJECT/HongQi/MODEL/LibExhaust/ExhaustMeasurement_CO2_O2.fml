@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="the exhaust connection handle"/>
+</Inputs>
+<Outputs>
+<Variable id="CO2" type="5" data="0" description="CO2 value in %vol"/>
+<Variable id="O2" type="5" data="0" description="O2 value in %vol"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is used to read CO2 and O2
+History:
+    03/16/2016, wuh : function created
+	04/10/2016, wuh : protocal change
+****************************************************************--]]
+	local err = 0
+	local CO2 = -1
+	local O2 = -1
+
+	-- check connection handl
+	if nil == pHndl or pHndl &lt; 0 then
+		engine.println("ERROR, ExhaustMeasurement_CO2_O2 : input connection handl not valid, pHndl=" .. tostring(pHndl))
+		engine.LastError = 1
+		return CO2, O2
+	end
+	
+	-- set requst data
+	local reqData = 'Measure{"CO2";"O2";}'
+	-- send requst and receive response
+	err, revData  = LibExhaust.exhaustDataExchange(pHndl, reqData)
+	if err ~= 0  or revData == nil then
+		engine.println("ERROR, ExhaustMeasurement_CO2_O2 :  Read command failed, revData=" .. tostring(revData))
+		engine.LastError = 1;
+		return CO2, O2
+	end
+	engine.println("ExhaustMeasurement_CO2_O2,  revData : " .. revData)
+	
+	-- get result
+	local _,_,_,tmp1,tmp2 = revData:find('Measure{(.*);(.*);(.*);')		
+	CO2 = tonumber (tmp1)
+	O2 = tonumber (tmp2)
+
+	if CO2 == nil then err =1; CO2 = -1; end
+	if O2 == nil then err =1; O2 = -1; end
+	
+	--engine.LastError = err
+engine.LastError = 0</Script></Function>
+

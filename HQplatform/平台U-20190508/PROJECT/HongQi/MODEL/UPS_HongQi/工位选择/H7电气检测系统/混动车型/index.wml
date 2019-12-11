@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="C131_BMS"/>
+<Process id="C131_Charger"/>
+<Process id="C131_DCDC"/>
+<Process id="C131_DCT_ReadTmp"/>
+<Process id="C131_DCT_SelfLearning"/>
+<Process id="C131_EMS_Friction_Segment_Adapation"/>
+<Process id="C131_EMS_Friction_Segment_Adapation_Comm_HCU"/>
+<Process id="C131_HCU"/>
+<Process id="C131_HCU_BMS"/>
+<Process id="C131_HCU_BMS_OLD"/>
+<Process id="C131_HCU_C0_SelfLearning"/>
+<Process id="C131_HCU_DCT_SelfLearning"/>
+<Process id="C131_HCU_Flash"/>
+<Process id="C131_HCU_Flash_7DF"/>
+<Process id="C131_HCU_Flash_Check"/>
+<Process id="C131_HCU_Flash_F1"/>
+<Process id="C131_HCU_HighVoltage_PowerOff"/>
+<Process id="C131_MCU"/>
+<Process id="C131_MCU_ReadTmp"/>
+<Process id="C131_OilPump"/>
+<Process id="C131_TBOX"/>
+<Process id="Functional_Addressing"/>
+<Process id="Functional_Addressing_CloseAllECUComm"/>
+<Process id="Functional_Addressing_ResetAllECU"/>
+<Process id="IMMO_HCU"/>
+<Process id="IMMO_HCU_Comm_HCU"/>
+</children>
+</Workplace>

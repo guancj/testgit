@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="P_WSC_VW" type="3" data="0" description="工厂号"/>
+<Variable id="P_VW_ImporterNumber" type="3" data="0" description="供应商号"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[==============================================================================================
+this code is used to  write fingerprint  
+
+input parameter: engine.VmtId ,P_WSC_VW,P_VW_ImporterNumber,ECU_Handle
+
+01/12/2016     created by viforce
+11/03/2016     changed by viforce
+===============================================================================================--]]
+local Tmp_Int = 0;
+local byte_0;
+local byte_1;
+local byte_2;
+local byte_3;
+local byte_4;
+local byte_5;
+local byte_6;
+local tmp_Int_M;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+Tmp_Int = engine.VmtId * 8;
+Tmp_Int = math.floor(P_VW_ImporterNumber/0x80) - math.floor(P_VW_ImporterNumber/0x400) + Tmp_Int;
+
+byte_0  = math.floor(Tmp_Int/0x1000000);
+tmp_Int_M = Tmp_Int - byte_0 * 0x1000000;
+byte_1 = math.floor(tmp_Int_M/0x10000);
+tmp_Int_M = tmp_Int_M - byte_1 * 0x10000;
+byte_2 = math.floor(tmp_Int_M/0x100);
+byte_3 = tmp_Int_M - byte_2 * 0x100;
+
+Tmp_Int = P_VW_ImporterNumber * 2;
+if (P_WSC_VW &gt; 0xffff) then
+    Tmp_Int = Tmp_Int +1;end;
+
+byte_4 = Tmp_Int - math.floor(Tmp_Int/0x100) * 0x100
+
+Tmp_Int = P_WSC_VW;
+
+tmp_Int_M = Tmp_Int - math.floor(Tmp_Int/0x10000) * 0x10000;
+byte_5 = math.floor(tmp_Int_M/0x100);
+byte_6 = tmp_Int_M - byte_5 * 0x100;
+
+
+#COMMEX ECU_Handle -1 0x2E 0xf1 0x98 byte_1 byte_2 byte_3 byte_4 byte_5 byte_6
+
+if(engine.LastError ~= 0) then 
+engine.StatValue = "write fingerprint failed";
+else
+engine.StatValue = "write fingerprint successfully";
+end
+
+
+</Script></Function>
+

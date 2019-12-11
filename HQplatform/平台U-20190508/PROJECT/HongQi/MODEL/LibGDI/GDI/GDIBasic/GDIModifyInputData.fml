@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="inputData" type="8" data="" description="xmlString 的入参"/>
+<Variable id="node" type="8" data="" description="需要修改的节点 如：&quot;/path/subpath/&quot;"/>
+<Variable id="value" type="8" data="" description="节点的值"/>
+</Inputs>
+<Outputs>
+<Variable id="modifiedValue" type="8" data="" description="修改后的值"/>
+</Outputs>
+<Script>local strValue = tostring(value)
+modifiedValue = engine.GDI_ModifyInputdata(inputData,node,strValue)</Script></Function>
+

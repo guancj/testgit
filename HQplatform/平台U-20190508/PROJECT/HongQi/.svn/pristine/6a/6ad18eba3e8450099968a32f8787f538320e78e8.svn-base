@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="Subfunctions" code="">
+
+<Functions>
+<Function id="idtAdjustLastError"/>
+
+<Function id="idtCheckByte"/>
+
+<Function id="idtCheckResponseValid"/>
+
+<Function id="idtchecksum"/>
+
+<Function id="idtDataExchange"/>
+
+<Function id="idtGetKnrNumber"/>
+
+<Function id="idtGetReceiveMark"/>
+
+<Function id="idtGetRecieveForCheck"/>
+
+<Function id="idtGetSendMark"/>
+
+<Function id="idtGetSerialNumber"/>
+
+<Function id="idtGetTimeout"/>
+
+<Function id="idtGetToeType"/>
+
+<Function id="idtGetToggleTimes"/>
+
+<Function id="idtGetVmtId"/>
+
+<Function id="idthex2str"/>
+
+<Function id="idthilo2signed"/>
+
+<Function id="idtInitRequest"/>
+
+<Function id="idtInitRequestALS"/>
+
+<Function id="idtInitRequestRTS"/>
+
+<Function id="idtSendDatagramALS"/>
+
+<Function id="idtSendDatagramRTS"/>
+
+<Function id="idtSetBytes"/>
+
+<Function id="idtSetFilterByte"/>
+
+<Function id="idtSigned2float"/>
+
+<Function id="idtstr2hex"/>
+
+<Function id="idtToggleDataExchange"/>
+
+<Function id="idtword2hex"/>
+
+</Functions>
+</Workplace>

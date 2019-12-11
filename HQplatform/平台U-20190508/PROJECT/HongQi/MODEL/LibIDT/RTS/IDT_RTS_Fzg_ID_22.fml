@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="发送前束 身份 指令，service 22">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="ID_Typ" type="3" data="2"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="Vehicle_ID" type="8" data="engine.KNR" description="KNR"/>
+<Variable id="sendMode" type="3" data="0" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="revTel" type="8" data="" description="返回报文"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 22
+input parameter:pHndl,ID_Typ,IDT_Timeout,Vehicle_ID,Typ_FAS_1,Typ_FAS_2,Typ_FAS_3,Typ_FAS_4,Typ_FAS_5,sendMode
+output parameter :ret;revTel
+
+12/22/2016     created by viforce
+******************************************************************************--]]
+local idt_tel = ""
+local zero = "\x00"
+local ID_len = 0
+--local Typ_FAS_High,Typ_FAS_Low,Typ_FAS_Middle,Typ_FAS_temp, Typ_FAS
+
+sendMode = sendMode or 0
+
+ret = -1
+engine.LastError = 0
+ID_len = #Vehicle_ID
+if(ID_Typ == 1 and ID_len == 7) then
+	engine.LastError = 0
+elseif(ID_Typ == 2 and ID_len == 14) then
+	engine.LastError = 0
+elseif(ID_Typ == 3 and ID_len == 17) then
+	engine.LastError = 0
+else
+	engine.LastError = 1
+end
+
+
+if(engine.LastError == 0) then
+	idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+	idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+	
+	idt_tel = LibIDT.idtSetBytes(idt_tel,21,ID_len,Vehicle_ID)   --  设置  VMT Name  第21 字节开始 长度15 
+	idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x16");    -- 设置service号,第2字节
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(ID_Typ));    -- 设置 ID_Typ
+      
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl,sendMode)
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+end
+
+engine.StatValue = tostring(Vehicle_ID)</Script></Function>
+

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="ZDC" code="">
+
+<Functions>
+<Function id="ZdcCalcAdaptation"/>
+
+<Function id="ZdcCalcCalibration"/>
+
+<Function id="zdcCalcCodeWord"/>
+
+<Function id="ZdcCalcCoding"/>
+
+<Function id="ZdcCalcFlash"/>
+
+<Function id="ZdcCalcProgramming"/>
+
+<Function id="ZdcClose"/>
+
+<Function id="zdcGetKnotens"/>
+
+<Function id="ZdcGetVersionAndId"/>
+
+<Function id="zdcGetZdstelles"/>
+
+<Function id="zdcInContainerDataBuild"/>
+
+<Function id="ZdcOpen"/>
+
+<Function id="zdcOutContainerDataBuild"/>
+
+</Functions>
+</Workplace>

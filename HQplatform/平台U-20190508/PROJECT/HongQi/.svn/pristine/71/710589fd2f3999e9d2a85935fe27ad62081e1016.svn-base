@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtGetReceiveMark" description="获取返回报文第一个字节的值，以&quot;\x05&quot;形式返回">
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回发送报文使用的第一个字节，以&quot;\x05&quot;的方式。"/>
+</Outputs>
+<Script>ret = string.char(LibIDT.receiveMark);
+
+--ret = string.char(receiveMark);</Script></Function>
+

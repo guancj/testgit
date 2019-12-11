@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="SG_Name" type="8" data="" description="ECU short name (according to configfile)"/>
+<Variable id="Konfigfile" type="8" data="" description="config file DL24"/>
+<Variable id="DL24Pos" type="3" data="0" description="Position of DL24 data inside the vehicle data set"/>
+<Variable id="DL24Laenge" type="3" data="0" description="length of DL24 data inside the vehicle data set"/>
+<Variable id="Fzd" type="8" data="" description="vehicle data set"/>
+<Variable id="Knr" type="8" data="" description="production number"/>
+<Variable id="DL24Path" type="8" data="" description="path to DL24 directory (ASV list, ZDC, ...)"/>
+<Variable id="ASVListfile" type="8" data="" description="ASV list file"/>
+<Variable id="ASVCorrected" type="3" data="0" description="d.c. (only existing for compatibility)"/>
+<Variable id="HW_REF_Tnr" type="8" data="" description="HW REF Number from ECU (1f91)"/>
+</Inputs>
+<Outputs>
+<Variable id="ModusFTab" type="3" data="0" description="Activation of FTab process"/>
+<Variable id="FlashContainer" type="8" data="" description="filename of flash container"/>
+<Variable id="XmlVersion" type="8" data="" description="d.c. (only existing for compatibility)"/>
+<Variable id="ZdcVersionInhalt" type="8" data="" description="d.c. (only existing for compatibility)"/>
+<Variable id="ErgebnisVektor" type="3" data="0" description="result vector according to specification"/>
+<Variable id="StatResult" type="3" data="0" description="Statitic result"/>
+<Variable id="StatTextValue" type="8" data="" description="Text Value of statistic"/>
+<Variable id="StatErrorCode" type="3" data="0" description="Error code of statistic"/>
+<Variable id="StatNominalValue" type="8" data="" description="Nominal value of statistic"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+
+This template gets the file name of the flash container for the selected ECU part number out of the 
+data inside the vehicle data set.
+
+input parameter:SG_Name,Konfigfile,DL24Pos,DL24Laenge,Fzd,Knr,DL24Path,ASVListfile,ASVCorrected,HW_REF_Tnr
+output parameter:ModusFTab,FlashContainer,XmlVersion,ZdcVersionInhalt,ErgebnisVektor,StatResult,StatTextValue,StatErrorCode,StatNominalValue
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+
+local xmlTagKonfigVerbaupruefung = "KonfigurationVerbaupruefung"
+local teilenummer
+local ZdcName
+local ZdcVersion
+local ZdcDateiName
+local statstr
+local teilenummerZDC
+local SollTeilenummerFZD
+local sollTeilenummer_tmp
+
+local BGSG
+local BGZDC
+local BGSWaP
+local VersionKonfgFile
+local SW_Version = ""
+local flashcontName
+local SollTeilenummerAlternativen = ""
+
+local modusKorrektur = "Korrektur"
+local modusAufbrauch = "Teileaufbrauch"
+local modusZDC = "Zdc"
+local modusFlash="Flash"
+local swapTnr
+local keyID
+local swapDCName
+local swapDCVersion
+
+local aktivSwv
+local aktivHwv
+local aktivHkz
+local aktivASV
+local aktVorserie
+
+local xmlHndl = -1
+local listhndl = -1
+local errFlag
+local asvCorrectedZDC
+local swapDCCorrectedLocal
+local verbauSg = -1
+
+local aktKorrSgTnr = -1
+local aktTeileaufbr = -1
+local aktTeileFreiPrf = -1
+local aktFlashen = -1
+local aktKorrZDC = -1
+local aktZdcProzess = -1
+local FlagZdcGeraten = -1
+
+local aktSWaP = -1
+local vorserienFzg = -1
+local flagSWaPGeraten = -1
+
+local xmlHndl = XmlDocment()
+
+-- return value
+ModusFTab = -1
+FlashContainer = ""
+XmlVersion = ""
+ZdcVersionInhalt = ""
+ErgebnisVektor = 0x00
+StatResult = -1
+StatTextValue = ""
+StatErrorCode = -1
+StatNominalValue = ""
+-- return value 
+
+
+teilenummer,teilenummerZDC,swapTnr,aktivSwv,aktivHwv,aktivHkz,ModusFTab,aktivASV,aktKorrSgTnr,aktTeileaufbr,aktTeileFreiPrf,aktFlashen,aktKorrZDC,aktZdcProzess,aktSWaP,aktVorserie,BGSG,BGZDC,BGSWaP,VersionKonfgFile,vorserienFzg,errFlag = LibVW.GetPartNoFromVehicleData_ASV123(SG_Name,Konfigfile,DL24Pos,DL24Laenge,xmlTagKonfigVerbaupruefung,Fzd)
+
+if((engine.LastError == 0) and (ModusFTab ~= 1)) then
+	SollTeilenummerFZD = teilenummer
+	if((#SollTeilenummerFZD == 11) and string.sub(SollTeilenummerFZD,11,11) == " ") then
+		if(string.sub(SollTeilenummerFZD,10,10) == " ") then
+			SollTeilenummerFZD = string.sub(SollTeilenummerFZD,1,9)
+		else
+			SollTeilenummerFZD = string.sub(SollTeilenummerFZD,1,10)
+		end
+	elseif((#SollTeilenummerFZD == 10) and (string.sub(SollTeilenummerFZD,10,10) == " ")) then
+		SollTeilenummerFZD = string.sub(SollTeilenummerFZD,1,9)
+	end	
+	SollTeilenummerFZD,__ = string.gsub(SollTeilenummerFZD," ","")	
+	if(aktivASV == 0) then
+		print("AktivierungASV is false, no Flash")
+		engine.LastError = 1
+		errFlag = 1969
+		ErgebnisVektor = bit32.bor(ErgebnisVektor,0x80)
+	else
+		print("teilenummer Flash_TNR: " .. tostring(teilenummer) .. " Len: " .. tostring(#teilenummer))
+		
+		ASVListfile = tostring(DL24Path) .. "\\" .. tostring(ASVListfile)
+		
+		if(false == xmlHndl.load(ASVListfile)) then
+			print("!!!load xml file err ")
+			engine.LastError = 1
+			errFlag = 1986
+			ErgebnisVektor = bit32.bor(ErgebnisVektor,0x40)
+		else
+			if(VersionKonfgFile &gt;= "V16") then
+				if(aktFlashen == 1) then
+					if(aktKorrSgTnr == 1) then
+						sollTeilenummer_tmp = SollTeilenummerFZD
+						if(VersionKonfgFile &lt; "V18") then
+							asvCorrectedZDC,SollTeilenummerFZD,SollTeilenummerAlternativen,teilenummerZDC,ZdcName,ZdcVersion,FlagZdcGeraten,SW_Version,flashcontName,errFlag = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusKorrektur,SollTeilenummerFZD,BGSG,teilenummerZDC,BGZDC,SollTeilenummerFZD,HW_REF_Tnr)
+						else
+							asvCorrectedZDC,swapDCCorrectedLocal,SollTeilenummerFZD,teilenummerZDC,swapTnr,errFlag = LibVW.Korrektur_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummerFZD,BGSG,teilenummerZDC,swapTnr,BGSWaP,vorserienFzg)
+						end	
+						
+						print("viforce Flash:" .. tostring(SollTeilenummerFZD))
+						if(SollTeilenummerFZD == "") then
+							SollTeilenummerFZD = sollTeilenummer_tmp
+							asvCorrectedZDC = 0
+							engine.LastError = 0
+						end
+						
+						if(engine.LastError == 0 and asvCorrectedZDC == 1) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x20)
+						end					
+					end
+					
+					if(engine.LastError == 0) then
+						if(VersionKonfgFile &lt; "V18") then
+							asvCorrectedZDC,SollTeilenummerFZD,SollTeilenummerAlternativen,teilenummerZDC,ZdcName,ZdcVersion,FlagZdcGeraten,SW_Version,flashcontName,errFlag = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusFlash,SollTeilenummerFZD,BGSG,teilenummerZDC,BGZDC,SollTeilenummerFZD,HW_REF_Tnr)
+						else
+							SW_Version,flashcontName,errFlag = LibVW.Flash_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummerFZD,HW_REF_Tnr,vorserienFzg)
+						end
+						FlashContainer = flashcontName
+						if(SollTeilenummerFZD == "") then
+							SollTeilenummerFZD = sollTeilenummer_tmp
+						end
+						print("Flashcontainer: " .. tostring(flashcontName) .. " SW-Version: " .. tostring(SW_Version))
+						if(engine.LastError ~= 0) then
+							print("could not find Flashcontainer with partno.: " .. tostring(SollTeilenummerFZD))
+							engine.LastError = 1
+							errFlag = 1968
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x40)
+							if(asvCorrectedZDC == 1) then
+								ErgebnisVektor = bit32.bor(ErgebnisVektor,0x60)
+							end							
+						end
+					end
+					
+				else
+					print("flash not activated in configfile for SG: " .. tostring(SG_Name))
+					engine.LastError = 1
+					errFlag = 1969
+					ErgebnisVektor = bit32.bor(ErgebnisVektor,0x40)				
+				end
+			
+			else
+			-- VersionKonfgFile &lt; "V16"
+				print("VersionKonfgFile &lt; V16 !!!")
+			end				
+		end						
+	end
+
+else
+	print("could not find Flashpartnumber in VehicleData !!!")
+	engine.LastError = 1
+	ErgebnisVektor = bit32.bor(ErgebnisVektor,0x40)
+end
+
+StatTarget = tostring(FlashContainer)
+StatNominalValue = tostring(FlashContainer)
+
+engine.StatValue = "Flashcontainer:" .. tostring(FlashContainer) .. "/EV:" .. tostring(LibVW.conv1ByteToBinString(ErgebnisVektor)) .. "/"
+
+if(engine.LastError == 0) then
+	StatErrorCode = 0
+	StatTextValue = engine.StatValue;
+	StatResult = 0
+else
+	engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag,engine.StatValue)
+	if(VersionKonfgFile &gt;= "V16") then	
+		engine.StatValue = engine.StatValue .. "/SG-TNR: " .. tostring(SollTeilenummerFZD) .. ", HW-Ref-TNR: " .. tostring(HW_REF_Tnr)
+	end
+	StatErrorCode = 1
+	StatTextValue = engine.StatValue
+	engine.LastError = 1
+end</Script></Function>
+

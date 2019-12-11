@@ -1,0 +1,1132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="c7_ndr" description="UDS ODX&#13;&#10;--2016 - 12 - 6 created by viforce" flags="1" block="1" ptbtext="DEP47" group="34" pbltext="DEP987" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS" odx="AU57X">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="1" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0x755" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0x7bf" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Exec_Tab" type="8" dir="0" data="{&quot;Connection&quot;}" description="执行步骤表请注意执行顺序"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="Exec_Finish" type="11" data="false" description="流程步骤结束标识  true / false"/>
+<Variable id="Exec_Step" type="3" data="0" description="流程步骤总数"/>
+<Variable id="Exec_i" type="3" data="1" description="流程步骤步进数"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="191" top="103" right="291" bottom="135"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="564" top="229" right="664" bottom="261"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="ECU测试开始">
+<Rect left="190" top="171" right="290" bottom="203"/>
+<Script>engine.println("=============ECU NDR ================")
+engine.StatValue = "C7_NDR Version 3.2"
+engine.LastError = 0</Script><assessment block="1" ptbtext="DEP47" group="200" pbltext="DEP1449" no="39" name="DEP1502" type="8" flags="97"/>
+</Activity>
+<Activity id="6" ActivityType="3" name="初始化步骤">
+<Rect left="189" top="230" right="289" bottom="262"/>
+<Script>Exec_Step = #Exec_Tab
+if(Exec_Step == 0) then
+-- 没有步骤操作
+	Exec_Finish = true
+else
+	Exec_Finish = false
+	Exec_i = 0
+end</Script></Activity>
+<Activity id="7" ActivityType="3" name="判断执行">
+<Rect left="190" top="291" right="290" bottom="323"/>
+<Script>
+if(Exec_i &lt; Exec_Step) then
+-- 步数累加，循环比较
+	Exec_i = Exec_i + 1
+        Exec_Finish = false
+        if(Exec_i == 1) then
+		engine.println("===ECU Exec Start===")
+        end
+else
+	Exec_Finish = true
+	engine.println("===ECU Exec Finish===")
+end</Script></Activity>
+<Activity id="8" ActivityType="4" name="路由节点">
+<Rect left="225" top="362" right="257" bottom="394"/>
+</Activity>
+<Activity id="9" ActivityType="3" name="预留">
+<Rect left="323" top="1043" right="423" bottom="1075"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="10" ActivityType="3" name="预留">
+<Rect left="325" top="532" right="425" bottom="564"/>
+<Script></Script></Activity>
+<Activity id="11" ActivityType="13" name="EV_Select">
+<Rect left="325" top="472" right="425" bottom="504"/>
+<FunctionRef id="EV_Select" model="LibVW">
+<Parameters>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+<Parameter id="Ev_variant_name" ret="Ev_variant_name1"/>
+<Parameter id="Ev_variant_version" ret="Ev_variant_version1"/>
+<Parameter id="Ev_object_name" ret="Ev_object_name1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="2" name="DEP988" type="8" flags="97"/>
+</Activity>
+<Activity id="12" ActivityType="13" name="ECU_Open">
+<Rect left="325" top="410" right="425" bottom="442"/>
+<FunctionRef id="ECU_Open" model="LibGeneral">
+<Parameters>
+<Parameter id="ECU_Handle" ret="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="1" name="DEP988" type="8" flags="97"/>
+</Activity>
+<Activity id="13" ActivityType="4" name="路由节点">
+<Rect left="226" top="532" right="258" bottom="564"/>
+</Activity>
+<Activity id="14" ActivityType="4" name="路由节点">
+<Rect left="598" top="411" right="630" bottom="443"/>
+</Activity>
+<Activity id="15" ActivityType="4" name="路由节点">
+<Rect left="599" top="473" right="631" bottom="505"/>
+</Activity>
+<Activity id="16" ActivityType="13" name="ECU_Close">
+<Rect left="565" top="293" right="665" bottom="325"/>
+<FunctionRef id="ECU_Close" model="LibGeneral">
+<Parameters>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="38" ActivityType="4" name="路由节点">
+<Rect left="225" top="790" right="257" bottom="822"/>
+</Activity>
+<Activity id="39" ActivityType="3" name="故障码检查">
+<Rect left="322" top="872" right="422" bottom="904"/>
+<Line1Text Enable="1" Text="检查故障码存储器"/>
+<Script></Script></Activity>
+<Activity id="40" ActivityType="12" name="ReporDTCByStatuMask" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="321" top="929" right="421" bottom="961"/>
+<Odx service="DiagnServi_ReadDTCInforReporDTCByStatuMask" obd="vciHandle">
+<Request>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit7" value="&apos;Warning Indicator Off&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit6" value="&apos;Test Completed This Monitoring Cycle&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit5" value="&apos;Test Failed Since Last Clear&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit4" value="&apos;Test Completed Since Last Clear&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit3" value="&apos;Confirmed DTC&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit2" value="&apos;Pending DTC&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit1" value="&apos;Test Not Failed This Operation Cycle&apos;"/>
+<Param path="Param_DTCStatuMaskStatuOfDTCBit0" value="&apos;passive&apos;"/>
+</Request>
+<PosResponse>
+<Param path="Param_DTCAndStatuRecor.Param_DTCUDS" value="UDS_Table_DTC_NDR"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="43" ActivityType="4" name="路由节点">
+<Rect left="226" top="1044" right="258" bottom="1076"/>
+</Activity>
+<Activity id="44" ActivityType="4" name="路由节点">
+<Rect left="119" top="1695" right="151" bottom="1727"/>
+</Activity>
+<Activity id="45" ActivityType="4" name="路由节点">
+<Rect left="120" top="290" right="152" bottom="322"/>
+</Activity>
+<Activity id="46" ActivityType="3" name="清除故障码">
+<Rect left="323" top="612" right="423" bottom="644"/>
+<Script></Script></Activity>
+<Activity id="47" ActivityType="12" name="ClearDiagnInfor" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="323" top="669" right="423" bottom="701"/>
+<Odx service="DiagnServi_ClearDiagnInfor" obd="vciHandle">
+<Request>
+<Param path="Param_GroupOfDTC" value="All Groups (all DTCs)"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="48" ActivityType="3" name="统计">
+<Rect left="324" top="729" right="424" bottom="761"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=清除故障码#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "清除故障码";
+else
+engine.SetLineText(2,"#L=清除故障码#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "清除故障码失败";
+end</Script><assessment no="3" name="DEP989" type="8" flags="97"/>
+</Activity>
+<Activity id="49" ActivityType="13" name="dlgWaitSecondBar">
+<Rect left="325" top="789" right="425" bottom="821"/>
+<FunctionRef id="dlgWaitSecondBar" model="LibUI">
+<Parameters>
+<Parameter id="LineNr" value="2"/>
+<Parameter id="Timeout" value="4"/>
+<Parameter id="Text" value="&quot;请等待&quot;"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="50" ActivityType="3" name="Regelung aktivieren">
+<Rect left="323" top="1666" right="423" bottom="1698"/>
+<Script></Script></Activity>
+<Activity id="51" ActivityType="3" name="预留">
+<Rect left="322" top="1572" right="422" bottom="1604"/>
+<Script></Script></Activity>
+<Activity id="52" ActivityType="3" name="Login">
+<Rect left="324" top="1106" right="424" bottom="1138"/>
+<Script></Script></Activity>
+<Activity id="53" ActivityType="12" name="EndOfLineSessi" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="324" top="1161" right="424" bottom="1193"/>
+<Odx service="DiagnServi_DiagnSessiContrVWEndOfLineSessi" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_DiagnSessiType" value="DMCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="153" ActivityType="3" name="统计">
+<Rect left="323" top="1221" right="423" bottom="1253"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=下线模式切换#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "下线模式";
+else
+engine.SetLineText(2,"#L=下线模式切换#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "下线模式";
+end</Script><assessment no="5" name="DEP991" type="8" flags="97"/>
+</Activity>
+<Activity id="154" ActivityType="12" name="WriteDataByIdentECUIdent" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="322" top="1337" right="422" bottom="1369"/>
+<Odx service="DiagnServi_WriteDataByIdentECUIdent" obd="vciHandle">
+<Request>
+<Param path="Param_RecorDataIdent" value="Repair Shop Code Or Tester Serial Number"/>
+<Param path="Param_DataRecor.Param_VWDevicNumbe" value="Vmtd"/>
+<Param path="Param_DataRecor.Param_ImporNumbe" value="VW_ImporterNumber"/>
+<Param path="Param_DataRecor.Param_WorksNumbe" value="VW_WSC"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="155" ActivityType="3" name="Vmtd-写指纹">
+<Rect left="322" top="1277" right="422" bottom="1309"/>
+<Script>Vmtd = engine.VmtId;</Script></Activity>
+<Activity id="156" ActivityType="3" name="统计">
+<Rect left="322" top="1392" right="422" bottom="1424"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=写指纹#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "写指纹";
+else
+engine.SetLineText(2,"#L=写指纹#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "写指纹失败";
+end</Script><assessment no="6" name="DEP992" type="8" flags="97"/>
+</Activity>
+<Activity id="157" ActivityType="12" name="SinglJob_SecurAcces" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="322" top="1460" right="422" bottom="1492"/>
+<Odx>
+<Request>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="158" ActivityType="3" name="Login 判断">
+<Rect left="513" top="1572" right="613" bottom="1604"/>
+<Script>if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=登录#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "登录";
+Login_Flag = true
+else
+engine.SetLineText(2,"#L=登录#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "登录失败";
+Login_Flag = false
+end</Script><assessment no="7" name="DEP993" type="8" flags="97"/>
+</Activity>
+<Activity id="159" ActivityType="4" name="路由节点">
+<Rect left="227" top="1612" right="259" bottom="1644"/>
+</Activity>
+<Activity id="160" ActivityType="3" name="预留">
+<Rect left="324" top="2121" right="424" bottom="2153"/>
+<Script></Script></Activity>
+<Activity id="161" ActivityType="3" name="判断Login">
+<Rect left="323" top="1722" right="423" bottom="1754"/>
+<Script>if(Login_Flag == true) then
+engine.LastError = 0
+engine.StatValue = "1"
+else
+engine.LastError = 1
+engine.StatValue = "0"
+end</Script><assessment no="8" name="DEP994" type="8" flags="97"/>
+</Activity>
+<Activity id="162" ActivityType="4" name="路由节点">
+<Rect left="228" top="1760" right="260" bottom="1792"/>
+</Activity>
+<Activity id="163" ActivityType="12" name="RoutiContrStartBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="324" top="1786" right="424" bottom="1818"/>
+<Odx service="DiagnServi_RoutiContrStartBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Self-levelling_suspension_activation"/>
+<Param path="Param_RoutiContrOptio23.Param_DefauParamValue" value="Default Parameter Value"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="164" ActivityType="3" name="LoopStart">
+<Rect left="325" top="1842" right="425" bottom="1874"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="165" ActivityType="3" name="LoopEnd">
+<Rect left="325" top="2008" right="425" bottom="2040"/>
+<Script></Script></Activity>
+<Activity id="166" ActivityType="12" name="ReadDataByIdentBasicSettiStatu" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="325" top="1895" right="425" bottom="1927"/>
+<Odx service="DiagnServi_ReadDataByIdentBasicSettiStatu" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="167" ActivityType="13" name="Status_Check_view_String">
+<Rect left="326" top="1951" right="426" bottom="1983"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;basic setting routine - finished correctly&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;基础设定&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="7"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="9" name="DEP995" type="8" flags="97"/>
+</Activity>
+<Activity id="168" ActivityType="4" name="路由节点">
+<Rect left="457" top="1953" right="489" bottom="1985"/>
+</Activity>
+<Activity id="169" ActivityType="12" name="RoutiContrStopBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="324" top="2063" right="424" bottom="2095"/>
+<Odx service="DiagnServi_RoutiContrStopBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Self-levelling_suspension_activation"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="170" ActivityType="4" name="路由节点">
+<Rect left="228" top="2171" right="260" bottom="2203"/>
+</Activity>
+<Activity id="171" ActivityType="3" name="Load 模式关闭">
+<Rect left="325" top="2953" right="425" bottom="2985"/>
+<Script></Script></Activity>
+<Activity id="172" ActivityType="3" name="Verlademodus deaktivieren">
+<Rect left="324" top="2212" right="424" bottom="2244"/>
+<Script></Script></Activity>
+<Activity id="173" ActivityType="3" name="判断Login">
+<Rect left="325" top="2270" right="425" bottom="2302"/>
+<Script>if(Login_Flag == true) then
+engine.LastError = 0
+engine.StatValue = "1"
+else
+engine.LastError = 1
+engine.StatValue = "0"
+end</Script><assessment no="10" name="DEP996" type="8" flags="97"/>
+</Activity>
+<Activity id="174" ActivityType="4" name="路由节点">
+<Rect left="228" top="2311" right="260" bottom="2343"/>
+</Activity>
+<Activity id="175" ActivityType="3" name="LoopStart">
+<Rect left="325" top="2335" right="425" bottom="2367"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="176" ActivityType="3" name="LoopEnd">
+<Rect left="325" top="2501" right="425" bottom="2533"/>
+<Script></Script></Activity>
+<Activity id="177" ActivityType="12" name="ReadDataByIdentMeasuValue" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="325" top="2388" right="425" bottom="2420"/>
+<Odx service="DiagnServi_ReadDataByIdentMeasuValue" obd="vciHandle">
+<Request>
+<Param path="Param_RecorDataIdent" value="Conditions_niveau_regulator"/>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor.Param_ShippMode" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="178" ActivityType="13" name="Status_Check_view_String">
+<Rect left="326" top="2444" right="426" bottom="2476"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;not active&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;模式检测&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="10"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="11" name="DEP997" type="8" flags="97"/>
+</Activity>
+<Activity id="179" ActivityType="4" name="路由节点">
+<Rect left="462" top="2443" right="494" bottom="2475"/>
+</Activity>
+<Activity id="180" ActivityType="12" name="RoutiContrStartBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="325" top="2618" right="425" bottom="2650"/>
+<Odx service="DiagnServi_RoutiContrStartBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Self-levelling_suspension_activation"/>
+<Param path="Param_RoutiContrOptio23.Param_DefauParamValue" value="Default Parameter Value"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="181" ActivityType="3" name="LoopStart">
+<Rect left="326" top="2674" right="426" bottom="2706"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="182" ActivityType="3" name="LoopEnd">
+<Rect left="326" top="2840" right="426" bottom="2872"/>
+<Script></Script></Activity>
+<Activity id="183" ActivityType="12" name="ReadDataByIdentBasicSettiStatu" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="326" top="2727" right="426" bottom="2759"/>
+<Odx service="DiagnServi_ReadDataByIdentBasicSettiStatu" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="184" ActivityType="13" name="Status_Check_view_String">
+<Rect left="327" top="2783" right="427" bottom="2815"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;basic setting routine - finish correctly&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;基础设定&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="7"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="12" name="DEP995" type="8" flags="97"/>
+</Activity>
+<Activity id="185" ActivityType="4" name="路由节点">
+<Rect left="451" top="2782" right="483" bottom="2814"/>
+</Activity>
+<Activity id="186" ActivityType="12" name="RoutiContrStopBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="325" top="2895" right="425" bottom="2927"/>
+<Odx service="DiagnServi_RoutiContrStopBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Self-levelling_suspension_activation"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="187" ActivityType="3" name="NDR 模式关闭">
+<Rect left="324" top="2561" right="424" bottom="2593"/>
+<Script></Script></Activity>
+<Activity id="188" ActivityType="4" name="路由节点">
+<Rect left="228" top="2603" right="260" bottom="2635"/>
+</Activity>
+<Activity id="189" ActivityType="3" name="预留">
+<Rect left="323" top="3574" right="423" bottom="3606"/>
+<Script></Script></Activity>
+<Activity id="190" ActivityType="12" name="RoutiContrStartBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="324" top="3014" right="424" bottom="3046"/>
+<Odx service="DiagnServi_RoutiContrStartBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Deactivate_shipping_mode"/>
+<Param path="Param_RoutiContrOptio23.Param_DefauParamValue" value="Default Parameter Value"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="191" ActivityType="3" name="LoopStart">
+<Rect left="325" top="3070" right="425" bottom="3102"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="192" ActivityType="3" name="LoopEnd">
+<Rect left="325" top="3236" right="425" bottom="3268"/>
+<Script></Script></Activity>
+<Activity id="193" ActivityType="12" name="ReadDataByIdentBasicSettiStatu" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="325" top="3123" right="425" bottom="3155"/>
+<Odx service="DiagnServi_ReadDataByIdentBasicSettiStatu" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="194" ActivityType="13" name="Status_Check_view_String">
+<Rect left="326" top="3179" right="426" bottom="3211"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;basic setting routine - finish correctly&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;基础设定&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="7"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="13" name="DEP997" type="8" flags="97"/>
+</Activity>
+<Activity id="195" ActivityType="4" name="路由节点">
+<Rect left="454" top="3177" right="486" bottom="3209"/>
+</Activity>
+<Activity id="196" ActivityType="12" name="RoutiContrStopBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="324" top="3291" right="424" bottom="3323"/>
+<Odx service="DiagnServi_RoutiContrStopBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Deactivate_shipping_mode"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="197" ActivityType="3" name="LoopStart">
+<Rect left="323" top="3351" right="423" bottom="3383"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="198" ActivityType="3" name="LoopEnd">
+<Rect left="323" top="3517" right="423" bottom="3549"/>
+<Script></Script></Activity>
+<Activity id="199" ActivityType="12" name="ReadDataByIdentMeasuValue" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="323" top="3404" right="423" bottom="3436"/>
+<Odx service="DiagnServi_ReadDataByIdentMeasuValue" obd="vciHandle">
+<Request>
+<Param path="Param_RecorDataIdent" value="Conditions_niveau_regulator"/>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor.Param_ShippMode" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="200" ActivityType="13" name="Status_Check_view_String">
+<Rect left="324" top="3460" right="424" bottom="3492"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;not active&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;模式检测&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="10"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="14" name="DEP997" type="8" flags="97"/>
+</Activity>
+<Activity id="201" ActivityType="4" name="路由节点">
+<Rect left="453" top="3460" right="485" bottom="3492"/>
+</Activity>
+<Activity id="202" ActivityType="4" name="路由节点">
+<Rect left="227" top="3611" right="259" bottom="3643"/>
+</Activity>
+<Activity id="203" ActivityType="3" name="Normalniv. Regler nicht sperren">
+<Rect left="322" top="3648" right="422" bottom="3680"/>
+<Script></Script></Activity>
+<Activity id="204" ActivityType="3" name="预留">
+<Rect left="321" top="4694" right="421" bottom="4726"/>
+<Script></Script></Activity>
+<Activity id="205" ActivityType="3" name="判断Login">
+<Rect left="322" top="3707" right="422" bottom="3739"/>
+<Script>if(Login_Flag == true) then
+engine.LastError = 0
+engine.StatValue = "1"
+else
+engine.LastError = 1
+engine.StatValue = "0"
+end</Script><assessment no="15" name="DEP998" type="8" flags="97"/>
+</Activity>
+<Activity id="206" ActivityType="12" name="RoutiContrStartBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="323" top="3764" right="423" bottom="3796"/>
+<Odx service="DiagnServi_RoutiContrStartBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Self-levelling_suspension_activation"/>
+<Param path="Param_RoutiContrOptio23.Param_DefauParamValue" value="Default Parameter Value"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="207" ActivityType="3" name="LoopStart">
+<Rect left="323" top="3826" right="423" bottom="3858"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="208" ActivityType="3" name="LoopEnd">
+<Rect left="323" top="3992" right="423" bottom="4024"/>
+<Script>engine.println("&lt;c7_ndr&gt;"..tostring(MCDResultTextTableString1).." I W &lt;basic setting routine - finish correctly&gt;")</Script></Activity>
+<Activity id="209" ActivityType="12" name="ReadDataByIdentBasicSettiStatu" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="323" top="3879" right="423" bottom="3911"/>
+<Odx service="DiagnServi_ReadDataByIdentBasicSettiStatu" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="210" ActivityType="13" name="Status_Check_view_String">
+<Rect left="324" top="3935" right="424" bottom="3967"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;basic setting routine - finished correctly&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;基础设定&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="7"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="16" name="DEP995" type="8" flags="97"/>
+</Activity>
+<Activity id="211" ActivityType="4" name="路由节点">
+<Rect left="455" top="3935" right="487" bottom="3967"/>
+</Activity>
+<Activity id="212" ActivityType="12" name="RoutiContrStopBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="322" top="4047" right="422" bottom="4079"/>
+<Odx service="DiagnServi_RoutiContrStopBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Self-levelling_suspension_activation"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="213" ActivityType="4" name="路由节点">
+<Rect left="226" top="3739" right="258" bottom="3771"/>
+</Activity>
+<Activity id="214" ActivityType="12" name="RoutiContrStartBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="323" top="4121" right="423" bottom="4153"/>
+<Odx service="DiagnServi_RoutiContrStartBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Go_to_normal_level_and_deactivate_self-levelling_permanent"/>
+<Param path="Param_RoutiContrOptio23.Param_DefauParamValue" value="Default Parameter Value"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="215" ActivityType="3" name="LoopStart">
+<Rect left="322" top="4174" right="422" bottom="4206"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="216" ActivityType="3" name="LoopEnd">
+<Rect left="322" top="4340" right="422" bottom="4372"/>
+<Script>engine.println("&lt;c7_ndr&gt;"..tostring(MCDResultTextTableString1).." I W &lt;basic setting routine running&gt;")</Script></Activity>
+<Activity id="217" ActivityType="12" name="ReadDataByIdentBasicSettiStatu" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="322" top="4227" right="422" bottom="4259"/>
+<Odx service="DiagnServi_ReadDataByIdentBasicSettiStatu" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="218" ActivityType="13" name="Status_Check_view_String">
+<Rect left="323" top="4283" right="423" bottom="4315"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;basic setting routine running&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;基础设定&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="6"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="17" name="DEP999" type="8" flags="97"/>
+</Activity>
+<Activity id="219" ActivityType="4" name="路由节点">
+<Rect left="453" top="4284" right="485" bottom="4316"/>
+</Activity>
+<Activity id="220" ActivityType="3" name="LoopStart">
+<Rect left="322" top="4398" right="422" bottom="4430"/>
+<Script>Pram_1 = nil;</Script></Activity>
+<Activity id="221" ActivityType="3" name="LoopEnd">
+<Rect left="321" top="4577" right="421" bottom="4609"/>
+<Script>engine.println("&lt;c7_ndr&gt;"..tostring(MCDResultTextTableString1).." I W &lt;basic setting routine - finish correctly&gt;")</Script></Activity>
+<Activity id="222" ActivityType="12" name="ReadDataByIdentBasicSettiStatu" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="321" top="4464" right="421" bottom="4496"/>
+<Odx service="DiagnServi_ReadDataByIdentBasicSettiStatu" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_DataRecor" value="MCDResultTextTableString1"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="223" ActivityType="13" name="Status_Check_view_String">
+<Rect left="322" top="4520" right="422" bottom="4552"/>
+<FunctionRef id="Status_Check_view_String" model="LibGeneral">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="TextCmp" value="&quot;basic setting routine - finished correctly&quot;"/>
+<Parameter id="MeasText" value="MCDResultTextTableString1"/>
+<Parameter id="RightViewText" value="&quot;基础设定&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="6"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="18" name="DEP999" type="8" flags="97"/>
+</Activity>
+<Activity id="224" ActivityType="4" name="路由节点">
+<Rect left="453" top="4520" right="485" bottom="4552"/>
+</Activity>
+<Activity id="225" ActivityType="12" name="RoutiContrStopBasicSetti" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="321" top="4636" right="421" bottom="4668"/>
+<Odx service="DiagnServi_RoutiContrStopBasicSetti" obd="vciHandle">
+<Request>
+<Param path="Param_RoutiIdent" value="Go_to_normal_level_and_deactivate_self-levelling_permanent"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="226" ActivityType="4" name="路由节点">
+<Rect left="228" top="4693" right="260" bottom="4725"/>
+</Activity>
+<Activity id="227" ActivityType="4" name="路由节点">
+<Rect left="119" top="4753" right="151" bottom="4785"/>
+</Activity>
+<Activity id="228" ActivityType="12" name="SecurAccess" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="510" top="1392" right="610" bottom="1424"/>
+<Odx service="DiagnServi_SecurAccesRequeSeedLogin" obd="vciHandle">
+<Request>
+</Request>
+<PosResponse>
+<Param path="Param_SecurAccesSeed" value="Result_Seed"/>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="285" ActivityType="3" name="add key">
+<Rect left="511" top="1452" right="611" bottom="1484"/>
+<Script>SecurityAccess_Key =Result_Seed+ 20103;
+
+engine.println("#####Result seed :"..tostring(Result_Seed));
+engine.println("#####SecurityAccess Key :"..tostring(SecurityAccess_Key));</Script></Activity>
+<Activity id="286" ActivityType="12" name="SendKeyLogin" Ecu="EV_RideContrSysteUDS_gl" bv="BV_RideContrSysteUDS">
+<Rect left="512" top="1509" right="612" bottom="1541"/>
+<Odx service="DiagnServi_SecurAccesSendKeyLogin" obd="vciHandle">
+<Request>
+<Param path="Param_SecurAccesKey" value="SecurityAccess_Key"/>
+</Request>
+<PosResponse>
+</PosResponse>
+<NegResponse>
+</NegResponse>
+</Odx>
+</Activity>
+<Activity id="287" ActivityType="3" name="统计">
+<Rect left="322" top="1519" right="422" bottom="1551"/>
+<Script>if (engine.LastError ~= 0) then
+engine.StatValue = "Security Access failed";
+else
+engine.StatValue = "Security Access";
+end;</Script><assessment no="7" name="DEP993" type="8" flags="97"/>
+</Activity>
+<Activity id="288" ActivityType="13" name="DTC_Filter_Mit_Audi">
+<Rect left="322" top="986" right="422" bottom="1018"/>
+<FunctionRef id="DTC_Filter_Mit_Audi" model="LibVW">
+<Parameters>
+<Parameter id="SG_Name" value="&quot;NDR&quot;"/>
+<Parameter id="Process_Short" value="engine.SharedVarGet(&quot;_Fahrzeugstatus_FSP&quot;)"/>
+<Parameter id="Konfigfile" value="&quot;c7_fsp_filter.xml&quot;"/>
+<Parameter id="FSPReadStatus" value="3"/>
+<Parameter id="FSP_String" value="&quot;&quot;"/>
+<Parameter id="UDS_DTC_CODE" value="UDS_Table_DTC_NDR"/>
+<Parameter id="DTC_String_filtered" ret="dtc_string_filered"/>
+<Parameter id="DTC_Table_list_Pcode" ret="dtc_table_list_Pcode"/>
+</Parameters>
+</FunctionRef>
+<assessment no="4" name="DEP990" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="7" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="1">
+<Expression>Exec_Finish == true</Expression></Transition>
+<Transition StartId="7" EndId="12" type="1">
+<Expression>Exec_Tab[Exec_i] == "Connection"</Expression></Transition>
+<Transition StartId="7" EndId="16" type="1">
+<Expression>Exec_Finish == true</Expression></Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="13" type="0">
+</Transition>
+<Transition StartId="9" EndId="43" type="0">
+</Transition>
+<Transition StartId="10" EndId="13" type="0">
+</Transition>
+<Transition StartId="11" EndId="15" type="4">
+</Transition>
+<Transition StartId="11" EndId="10" type="0">
+</Transition>
+<Transition StartId="12" EndId="11" type="3">
+</Transition>
+<Transition StartId="12" EndId="14" type="4">
+</Transition>
+<Transition StartId="13" EndId="46" type="1">
+<Expression>Exec_Tab[Exec_i] == "DTCClear"</Expression></Transition>
+<Transition StartId="13" EndId="38" type="0">
+</Transition>
+<Transition StartId="14" EndId="16" type="0">
+</Transition>
+<Transition StartId="15" EndId="14" type="0">
+</Transition>
+<Transition StartId="16" EndId="2" type="0">
+</Transition>
+<Transition StartId="38" EndId="39" type="1">
+<Expression>Exec_Tab[Exec_i] == "DTCCheck"</Expression></Transition>
+<Transition StartId="38" EndId="43" type="0">
+</Transition>
+<Transition StartId="39" EndId="40" type="0">
+</Transition>
+<Transition StartId="40" EndId="288" type="0">
+</Transition>
+<Transition StartId="43" EndId="52" type="1">
+<Expression>Exec_Tab[Exec_i] == "ActivateControl" or Exec_Tab[Exec_i] == "LoadingModeDeactive" or Exec_Tab[Exec_i] == "Normal_Not_Lock_Controller"</Expression></Transition>
+<Transition StartId="43" EndId="159" type="0">
+</Transition>
+<Transition StartId="44" EndId="45" type="0">
+</Transition>
+<Transition StartId="45" EndId="7" type="0">
+</Transition>
+<Transition StartId="46" EndId="47" type="0">
+</Transition>
+<Transition StartId="47" EndId="48" type="0">
+</Transition>
+<Transition StartId="48" EndId="49" type="0">
+</Transition>
+<Transition StartId="49" EndId="38" type="0">
+</Transition>
+<Transition StartId="50" EndId="161" type="0">
+</Transition>
+<Transition StartId="51" EndId="159" type="0">
+</Transition>
+<Transition StartId="52" EndId="53" type="0">
+</Transition>
+<Transition StartId="53" EndId="153" type="0">
+</Transition>
+<Transition StartId="153" EndId="155" type="0">
+</Transition>
+<Transition StartId="154" EndId="156" type="0">
+</Transition>
+<Transition StartId="155" EndId="154" type="0">
+</Transition>
+<Transition StartId="156" EndId="228" type="0">
+</Transition>
+<Transition StartId="158" EndId="51" type="0">
+</Transition>
+<Transition StartId="159" EndId="50" type="1">
+<Expression>Exec_Tab[Exec_i] == "ActivateControl"</Expression></Transition>
+<Transition StartId="159" EndId="162" type="0">
+</Transition>
+<Transition StartId="160" EndId="170" type="0">
+</Transition>
+<Transition StartId="161" EndId="162" type="0">
+</Transition>
+<Transition StartId="161" EndId="163" type="3">
+</Transition>
+<Transition StartId="162" EndId="170" type="0">
+</Transition>
+<Transition StartId="163" EndId="164" type="0">
+</Transition>
+<Transition StartId="164" EndId="166" type="0">
+</Transition>
+<Transition StartId="165" EndId="168" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="165" EndId="169" type="0">
+</Transition>
+<Transition StartId="166" EndId="167" type="0">
+</Transition>
+<Transition StartId="167" EndId="165" type="0">
+</Transition>
+<Transition StartId="168" EndId="166" type="0">
+</Transition>
+<Transition StartId="169" EndId="160" type="0">
+</Transition>
+<Transition StartId="170" EndId="172" type="1">
+<Expression>Exec_Tab[Exec_i] == "LoadingModeDeactive"</Expression></Transition>
+<Transition StartId="170" EndId="174" type="0">
+</Transition>
+<Transition StartId="171" EndId="190" type="0">
+</Transition>
+<Transition StartId="172" EndId="173" type="0">
+</Transition>
+<Transition StartId="173" EndId="174" type="0">
+</Transition>
+<Transition StartId="173" EndId="175" type="3">
+</Transition>
+<Transition StartId="174" EndId="188" type="0">
+</Transition>
+<Transition StartId="175" EndId="177" type="0">
+</Transition>
+<Transition StartId="176" EndId="179" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="176" EndId="187" type="0">
+</Transition>
+<Transition StartId="177" EndId="178" type="0">
+</Transition>
+<Transition StartId="178" EndId="176" type="0">
+</Transition>
+<Transition StartId="179" EndId="177" type="0">
+</Transition>
+<Transition StartId="180" EndId="181" type="0">
+</Transition>
+<Transition StartId="181" EndId="183" type="0">
+</Transition>
+<Transition StartId="182" EndId="185" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="182" EndId="186" type="0">
+</Transition>
+<Transition StartId="183" EndId="184" type="0">
+</Transition>
+<Transition StartId="184" EndId="182" type="0">
+</Transition>
+<Transition StartId="185" EndId="183" type="0">
+</Transition>
+<Transition StartId="186" EndId="171" type="0">
+</Transition>
+<Transition StartId="187" EndId="188" type="0">
+</Transition>
+<Transition StartId="187" EndId="180" type="4">
+</Transition>
+<Transition StartId="188" EndId="202" type="0">
+</Transition>
+<Transition StartId="189" EndId="202" type="0">
+</Transition>
+<Transition StartId="190" EndId="191" type="0">
+</Transition>
+<Transition StartId="191" EndId="193" type="0">
+</Transition>
+<Transition StartId="192" EndId="195" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="192" EndId="196" type="0">
+</Transition>
+<Transition StartId="193" EndId="194" type="0">
+</Transition>
+<Transition StartId="194" EndId="192" type="0">
+</Transition>
+<Transition StartId="195" EndId="193" type="0">
+</Transition>
+<Transition StartId="196" EndId="197" type="0">
+</Transition>
+<Transition StartId="197" EndId="199" type="0">
+</Transition>
+<Transition StartId="198" EndId="201" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="198" EndId="189" type="0">
+</Transition>
+<Transition StartId="199" EndId="200" type="0">
+</Transition>
+<Transition StartId="200" EndId="198" type="0">
+</Transition>
+<Transition StartId="201" EndId="199" type="0">
+</Transition>
+<Transition StartId="202" EndId="203" type="1">
+<Expression>Exec_Tab[Exec_i] == "Normal_Not_Lock_Controller"</Expression></Transition>
+<Transition StartId="202" EndId="213" type="0">
+</Transition>
+<Transition StartId="203" EndId="205" type="0">
+</Transition>
+<Transition StartId="204" EndId="226" type="0">
+</Transition>
+<Transition StartId="205" EndId="206" type="3">
+</Transition>
+<Transition StartId="205" EndId="213" type="0">
+</Transition>
+<Transition StartId="206" EndId="207" type="0">
+</Transition>
+<Transition StartId="207" EndId="209" type="0">
+</Transition>
+<Transition StartId="208" EndId="211" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="208" EndId="212" type="0">
+</Transition>
+<Transition StartId="209" EndId="210" type="0">
+</Transition>
+<Transition StartId="210" EndId="208" type="0">
+</Transition>
+<Transition StartId="211" EndId="209" type="0">
+</Transition>
+<Transition StartId="212" EndId="214" type="0">
+</Transition>
+<Transition StartId="213" EndId="226" type="0">
+</Transition>
+<Transition StartId="214" EndId="215" type="0">
+</Transition>
+<Transition StartId="215" EndId="217" type="0">
+</Transition>
+<Transition StartId="216" EndId="219" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="216" EndId="220" type="0">
+</Transition>
+<Transition StartId="217" EndId="218" type="0">
+</Transition>
+<Transition StartId="218" EndId="216" type="0">
+</Transition>
+<Transition StartId="219" EndId="217" type="0">
+</Transition>
+<Transition StartId="220" EndId="222" type="0">
+</Transition>
+<Transition StartId="221" EndId="224" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="221" EndId="225" type="0">
+</Transition>
+<Transition StartId="222" EndId="223" type="0">
+</Transition>
+<Transition StartId="223" EndId="221" type="0">
+</Transition>
+<Transition StartId="224" EndId="222" type="0">
+</Transition>
+<Transition StartId="225" EndId="204" type="0">
+</Transition>
+<Transition StartId="226" EndId="227" type="0">
+</Transition>
+<Transition StartId="227" EndId="44" type="0">
+</Transition>
+<Transition StartId="228" EndId="285" type="0">
+</Transition>
+<Transition StartId="285" EndId="286" type="0">
+</Transition>
+<Transition StartId="286" EndId="158" type="0">
+</Transition>
+<Transition StartId="288" EndId="9" type="0">
+</Transition>
+</Transitions>
+</Process>
+

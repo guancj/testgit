@@ -1,0 +1,413 @@
+﻿<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by DSA (DSA Daten- und Systemtechnik GmbH) -->
+<ROLLER_CONFIG>
+	<DEVICE_DRIVER_LOAD>
+		<DCD_NAME>"roll/Duerr_1_0_3_3/20110215_Duerr_1_0_3_3/DCD Chassisdyno/ChassisDyno.dcd"</DCD_NAME>
+		<DRIVER_NAME>"roll/Duerr_1_0_3_3/20110215_Duerr_1_0_3_3/libChassisDynoDriver432.so.1.0.3.3.so"</DRIVER_NAME>
+		<DIT_LANGUAGE>"de"</DIT_LANGUAGE>
+	</DEVICE_DRIVER_LOAD>
+	<DEVICE_CONNECTION>
+		<!-- TIoData used for TCP
+    <TIoData>
+        <PhysInterface>
+          <SELECTOR>1</SELECTOR>
+          <TCP_Values>
+            <Address>
+              <nAddressOctett_1>192</nAddressOctett_1>
+              <nAddressOctett_2>168</nAddressOctett_2>
+              <nAddressOctett_3>1</nAddressOctett_3>
+              <nAddressOctett_4>106</nAddressOctett_4>
+            </Address>
+            <SubnetMask>
+              <nAddressOctett_1>255</nAddressOctett_1>
+              <nAddressOctett_2>255</nAddressOctett_2>
+              <nAddressOctett_3>255</nAddressOctett_3>
+              <nAddressOctett_4>0</nAddressOctett_4>
+            </SubnetMask>
+            <nPort>3000</nPort>
+          </TCP_Values>
+          <UDP_Values>
+            <Address></Address>
+            <SubnetMask></SubnetMask>
+          </UDP_Values>
+        </PhysInterface>
+        <bDeviceConnect>1</bDeviceConnect>
+        <szDeviceID></szDeviceID>
+      </TIoData> -->
+		<!-- TIoData used for Chengdu FIRAP -->
+		<TIoData>
+			<PhysInterface>
+				<SELECTOR>2</SELECTOR>
+				<UDP_Values>
+					<Address>
+						<nAddressOctett_1>10</nAddressOctett_1>
+						<nAddressOctett_2>1</nAddressOctett_2>
+						<nAddressOctett_3>3</nAddressOctett_3>
+						<nAddressOctett_4>1</nAddressOctett_4>
+					</Address>
+					<SubnetMask>
+						<nAddressOctett_1>255</nAddressOctett_1>
+						<nAddressOctett_2>255</nAddressOctett_2>
+						<nAddressOctett_3>0</nAddressOctett_3>
+						<nAddressOctett_4>0</nAddressOctett_4>
+					</SubnetMask>
+					<nPort>7000</nPort>
+				</UDP_Values>
+			</PhysInterface>
+			<bDeviceConnect>1</bDeviceConnect>
+			<szDeviceID/>
+		</TIoData>
+	</DEVICE_CONNECTION>
+	<DEVICE_CONNECTION1>
+		<TIoData>
+			<PhysInterface>
+				<SELECTOR>1</SELECTOR>
+				<TCP_Values>
+					<Address>
+						<nAddressOctett_1>10</nAddressOctett_1>
+						<nAddressOctett_2>238</nAddressOctett_2>
+						<nAddressOctett_3>145</nAddressOctett_3>
+						<nAddressOctett_4>50</nAddressOctett_4>
+					</Address>
+					<SubnetMask>
+						<nAddressOctett_1>255</nAddressOctett_1>
+						<nAddressOctett_2>255</nAddressOctett_2>
+						<nAddressOctett_3>255</nAddressOctett_3>
+						<nAddressOctett_4>0</nAddressOctett_4>
+					</SubnetMask>
+					<nPort>7000</nPort>
+				</TCP_Values>
+			</PhysInterface>
+			<bDeviceConnect>1</bDeviceConnect>
+			<szDeviceID/>
+		</TIoData>
+	</DEVICE_CONNECTION1>	
+	<DEVICE_CONNECTION2>
+		<TIoData>
+			<PhysInterface>
+				<SELECTOR>1</SELECTOR>
+				<TCP_Values>
+					<Address>
+						<nAddressOctett_1>10</nAddressOctett_1>
+						<nAddressOctett_2>238</nAddressOctett_2>
+						<nAddressOctett_3>145</nAddressOctett_3>
+						<nAddressOctett_4>51</nAddressOctett_4>
+					</Address>
+					<SubnetMask>
+						<nAddressOctett_1>255</nAddressOctett_1>
+						<nAddressOctett_2>255</nAddressOctett_2>
+						<nAddressOctett_3>255</nAddressOctett_3>
+						<nAddressOctett_4>0</nAddressOctett_4>
+					</SubnetMask>
+					<nPort>7000</nPort>
+				</TCP_Values>
+			</PhysInterface>
+			<bDeviceConnect>1</bDeviceConnect>
+			<szDeviceID/>
+		</TIoData>
+	</DEVICE_CONNECTION2>
+	<DEVICE_CONNECTION3>
+		<TIoData>
+			<PhysInterface>
+				<SELECTOR>1</SELECTOR>
+				<TCP_Values>
+					<Address>
+						<nAddressOctett_1>10</nAddressOctett_1>
+						<nAddressOctett_2>238</nAddressOctett_2>
+						<nAddressOctett_3>145</nAddressOctett_3>
+						<nAddressOctett_4>52</nAddressOctett_4>
+					</Address>
+					<SubnetMask>
+						<nAddressOctett_1>255</nAddressOctett_1>
+						<nAddressOctett_2>255</nAddressOctett_2>
+						<nAddressOctett_3>255</nAddressOctett_3>
+						<nAddressOctett_4>0</nAddressOctett_4>
+					</SubnetMask>
+					<nPort>7000</nPort>
+				</TCP_Values>
+			</PhysInterface>
+			<bDeviceConnect>1</bDeviceConnect>
+			<szDeviceID/>
+		</TIoData>
+	</DEVICE_CONNECTION3>
+	<DEVICE_CONNECTION4>
+		<TIoData>
+			<PhysInterface>
+				<SELECTOR>1</SELECTOR>
+				<TCP_Values>
+					<Address>
+						<nAddressOctett_1>10</nAddressOctett_1>
+						<nAddressOctett_2>238</nAddressOctett_2>
+						<nAddressOctett_3>145</nAddressOctett_3>
+						<nAddressOctett_4>53</nAddressOctett_4>
+					</Address>
+					<SubnetMask>
+						<nAddressOctett_1>255</nAddressOctett_1>
+						<nAddressOctett_2>255</nAddressOctett_2>
+						<nAddressOctett_3>255</nAddressOctett_3>
+						<nAddressOctett_4>0</nAddressOctett_4>
+					</SubnetMask>
+					<nPort>7000</nPort>
+				</TCP_Values>
+			</PhysInterface>
+			<bDeviceConnect>1</bDeviceConnect>
+			<szDeviceID/>
+		</TIoData>
+	</DEVICE_CONNECTION4>
+	<DEVICE_CONNECTION5>
+		<TIoData>
+			<PhysInterface>
+				<SELECTOR>1</SELECTOR>
+				<TCP_Values>
+					<Address>
+						<nAddressOctett_1>10</nAddressOctett_1>
+						<nAddressOctett_2>238</nAddressOctett_2>
+						<nAddressOctett_3>145</nAddressOctett_3>
+						<nAddressOctett_4>54</nAddressOctett_4>
+					</Address>
+					<SubnetMask>
+						<nAddressOctett_1>255</nAddressOctett_1>
+						<nAddressOctett_2>255</nAddressOctett_2>
+						<nAddressOctett_3>255</nAddressOctett_3>
+						<nAddressOctett_4>0</nAddressOctett_4>
+					</SubnetMask>
+					<nPort>7000</nPort>
+				</TCP_Values>
+			</PhysInterface>
+			<bDeviceConnect>1</bDeviceConnect>
+			<szDeviceID/>
+		</TIoData>
+	</DEVICE_CONNECTION5>	
+	<DEVICE_CONNECTION6>
+		<TIoData>
+			<PhysInterface>
+				<SELECTOR>1</SELECTOR>
+				<TCP_Values>
+					<Address>
+						<nAddressOctett_1>10</nAddressOctett_1>
+						<nAddressOctett_2>238</nAddressOctett_2>
+						<nAddressOctett_3>145</nAddressOctett_3>
+						<nAddressOctett_4>55</nAddressOctett_4>
+					</Address>
+					<SubnetMask>
+						<nAddressOctett_1>255</nAddressOctett_1>
+						<nAddressOctett_2>255</nAddressOctett_2>
+						<nAddressOctett_3>255</nAddressOctett_3>
+						<nAddressOctett_4>0</nAddressOctett_4>
+					</SubnetMask>
+					<nPort>7000</nPort>
+				</TCP_Values>
+			</PhysInterface>
+			<bDeviceConnect>1</bDeviceConnect>
+			<szDeviceID/>
+		</TIoData>
+	</DEVICE_CONNECTION6>	
+	<GDI_LOG_SETTING>
+		<GDI_CLIENT_LOG>
+			<LOG_NAME>"gdiclientlog"</LOG_NAME>
+			<!-- Client Log File Name -->
+			<LOG_LEVEL>5</LOG_LEVEL>
+			<!-- Client Debug Level 0-15 -->
+		</GDI_CLIENT_LOG>
+		<GDI_COORDINATOR_LOG>
+			<ACTIVATE_MONITOR>1</ACTIVATE_MONITOR>
+			<!-- Mornitoring of GDI Coordinator 0=off, 1=off-->
+			<TRACE_LOG_LEVEL>1</TRACE_LOG_LEVEL>
+			<LOGGING_LOG_LEVEL>1</LOGGING_LOG_LEVEL>
+		</GDI_COORDINATOR_LOG>
+	</GDI_LOG_SETTING>
+	<VEHICLE_PARAMS>
+		<!--Vehicle Parameter for NCS_Sagitar -->
+		<VW_361>
+			<VEHICLE_ID>"2651_VA"</VEHICLE_ID>
+			<!--Wheel Base -->
+			<AX_WEIGHTS>
+				<AX_WEIGHT VEHICLE_TYPE="DEFAULT">
+					<FA>8000.0</FA>
+					<RA>5500.0</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$D16+$G0C">
+					<!--1.4TSI MT5 -->
+					<FA>7893.5</FA>
+					<RA>5834.3</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$D16+$G1C">
+					<!--1.4TSI AT7 -->
+					<FA>8135.8</FA>
+					<RA>5794.0</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DG6+$G1C">
+					<!--1.4TSI AT7 -->
+					<FA>8246.8</FA>
+					<RA>5834.3</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DG6+$G1C+$7L6">
+					<!--1.4TSI AT7+STSTO -->
+					<FA>8246.8</FA>
+					<RA>5834.3</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DP7+$G0C">
+					<!--1.6L MT -->
+					<FA>7368.6</FA>
+					<RA>5753.6</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DP7+$0ID">
+					<!--1.6L AT6 -->
+					<FA>7671.4</FA>
+					<RA>5753.6</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$D67+$G1C">
+					<!--1.8T AT7 -->
+					<FA>8559.7</FA>
+					<RA>5814.1</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$D2L+$G1A">
+					<!--2.0T AT6 -->
+					<FA>8882.7</FA>
+					<RA>5804.1</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DB8+$G0C">
+					<!--1.2TSI MT5 -->
+					<FA>7893.5</FA>
+					<RA>5834.3</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DB8+$G1C">
+					<!--1.2TSI AT7 -->
+					<FA>8055.0</FA>
+					<RA>5773.8</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DB8+$0ID">
+					<!--1.2TSI AT6 -->
+					<FA>8135.8</FA>
+					<RA>5794.0</RA>
+				</AX_WEIGHT>				
+			</AX_WEIGHTS>
+		</VW_361>
+		<VW_253>
+			<VEHICLE_ID>"2602_VA"</VEHICLE_ID>
+			<VEHICLE_ID_PA>"2604_VA"</VEHICLE_ID_PA>
+			<!--Wheel Base -->
+			<AX_WEIGHTS>
+				<AX_WEIGHT VEHICLE_TYPE="DEFAULT">
+					<FA>6700.0</FA>
+					<RA>4730.0</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DP5+$G0C">
+					<!--1.4L 66KW MQ200 -->
+					<FA>6510.6</FA>
+					<RA>4794.7</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DP7+$G0C">
+					<!--1.6L 81KW MQ200-->
+					<FA>6510.6</FA>
+					<RA>4794.7</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$G0C+$DM1">
+					<!--1.6L 81KW MQ200 CNG-->
+					<FA>6409.7</FA>
+					<RA>6308.8</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DP7+$G1A">
+					<!--1.6L 81KW AQ160-->
+					<FA>6863.9</FA>
+					<RA>4845.1</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$D16+$G1C">
+					<!--1.4L 66KW AQ160-->
+					<FA>7368.6</FA>
+					<RA>4895.6</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DV3+$G1C">
+					<!--1.5L 69KW DQ200-->
+					<FA>7368.6</FA>
+					<RA>4895.6</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DV3+$G0C+$1AC">
+					<!--1.5L 69KW MQ200-->
+					<FA>6540.9</FA>
+					<RA>4713.9</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DV3+$G0C+$1AT">
+					<!--1.5L 69KW MQ200-->
+					<FA>6662.0</FA>
+					<RA>4845.1</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DV3+$G1A+$1AC">
+					<!--1.5L 69KW AQ160-->
+					<FA>6863.9</FA>
+					<RA>4643.2</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$DV3+$G1A+$1AT">
+					<!--1.5L 69KW AQ160-->
+					<FA>7015.3</FA>
+					<RA>4794.7</RA>
+				</AX_WEIGHT>				
+			</AX_WEIGHTS>
+		</VW_253>
+		<VW_250>
+			<VEHICLE_ID>"2471_VA"</VEHICLE_ID>
+			<!--Wheel Base -->
+			<AX_WEIGHTS>
+				<AX_WEIGHT VEHICLE_TYPE="DEFAULT">
+					<FA>6468.0</FA>
+					<RA>4361.0</RA>
+				</AX_WEIGHT>
+				<AX_WEIGHT VEHICLE_TYPE="$D3T+$G0B">
+					<!--1.6L 77KW MQ200 -->
+					<FA>6468.0</FA>
+					<RA>4361.0</RA>
+				</AX_WEIGHT>
+			</AX_WEIGHTS>
+		</VW_250>
+	</VEHICLE_PARAMS>
+	<PROCESS_PARAMS>
+		<FISEQS>1</FISEQS>
+		<Y_POS>
+			<MIDDLE_SIDE>0.0</MIDDLE_SIDE>
+			<HALF_SIDE>0.02</HALF_SIDE>
+			<OFF_SIDE>0.05</OFF_SIDE>
+		</Y_POS>
+		<STATIC_BRAKE_TEST>
+			<STATIC_BRAKE_FORCE>
+				<FORCE_WEIGHT_RATIO_BA>0.6</FORCE_WEIGHT_RATIO_BA>
+				<!--Lower limit of the brake force for both axle -->
+				<FORCE_WEIGHT_RATIO_FA>0.6</FORCE_WEIGHT_RATIO_FA>
+				<!--Lower limit of the brake force for front axle -->
+				<FORCE_WEIGHT_RATIO_RA TYPE="LOW">0.2</FORCE_WEIGHT_RATIO_RA>
+				<!--Lower limit of the brake force for rear axle -->
+				<FORCE_WEIGHT_RATIO_RA TYPE="HIGH">0.6</FORCE_WEIGHT_RATIO_RA>
+				<FORCE_WEIGHT_RATIO_PARKING>0.2</FORCE_WEIGHT_RATIO_PARKING>
+				<!--Lower limit of the parking brake force for both axle -->
+				<FORCE_DIFF_FORCE_MAX_RATIO_FA >0.2</FORCE_DIFF_FORCE_MAX_RATIO_FA>
+				<!--Upperer limit of the brake force differencebetween FL and FR against their Max value during the test-->
+				<FORCE_DIFF_FORCE_MAX_RATIO_RA>0.24</FORCE_DIFF_FORCE_MAX_RATIO_RA>
+				<!--Upperer limit of the brake force difference between RL and RR against their Max value during the test, if the brake force of RA greater than 60% of the axle weight-->
+				<FORCE_DIFF_WEIGHT_RATIO_RA>0.08</FORCE_DIFF_WEIGHT_RATIO_RA>
+				<!--Upperer limit of the brake force difference between RL and RR against axle weight during the test, if the brake force of RA smaller than 60% of the axle weight-->
+				<FORCE_DIFF_WEIGHT_RATIO_PARKING>0.2</FORCE_DIFF_WEIGHT_RATIO_PARKING>
+				<!--Upperer limit of the absolut difference of parking brake force between RL and RR against axle weight-->
+			</STATIC_BRAKE_FORCE>
+			<DRAG_FORCE>
+				<FORCE_WEIGHT_RATIO_FA>0.05</FORCE_WEIGHT_RATIO_FA>
+				<!--Upper limit of drag force for front axle -->
+				<FORCE_WEIGHT_RATIO_RA>0.05</FORCE_WEIGHT_RATIO_RA>
+				<!--Upper limit of drag force for rear axle -->
+			</DRAG_FORCE>
+			<BRAKE_PEDAL_FORCE>
+				<LIMIT_LOW>50.0</LIMIT_LOW>
+				<LIMIT_HIGH>400.0</LIMIT_HIGH>
+			</BRAKE_PEDAL_FORCE>
+			<HAND_BRAKE_FORCE>
+				<LIMIT_LOW>50.0</LIMIT_LOW>
+				<LIMIT_HIGH>400.0</LIMIT_HIGH>
+			</HAND_BRAKE_FORCE>
+		</STATIC_BRAKE_TEST>
+	</PROCESS_PARAMS>
+</ROLLER_CONFIG>

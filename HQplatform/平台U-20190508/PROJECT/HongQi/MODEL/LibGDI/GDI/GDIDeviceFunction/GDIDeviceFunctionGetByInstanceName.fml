@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiDeviceConnection" type="8" data=""/>
+<Variable id="instanceName" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiDeviceFunction" type="8" data=""/>
+</Outputs>
+<Script>gdiDeviceFunction = engine.GDI_GetDeviceFunctionByInstanceName(gdiDeviceConnection, instanceName)</Script></Function>
+

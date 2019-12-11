@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="Datapath" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="content" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to read file;
+input parameter:Datapath
+output parameter :content,ret
+
+03/10/2017     created by viforce
+******************************************************************************--]]
+ret = false
+
+local mode = "r"
+local content = ""
+local file = io.open(Datapath,mode)
+if(file) then
+    content = file:read("*all")
+    ret = true
+else
+    content = ""
+    ret = false
+end
+io.close(file)</Script></Function>
+

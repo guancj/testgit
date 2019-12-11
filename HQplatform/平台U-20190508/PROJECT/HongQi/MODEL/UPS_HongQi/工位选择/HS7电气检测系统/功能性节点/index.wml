@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="ECU_List_HS7"/>
+<Process id="ECU_HS7_Repair"/>
+<Process id="Flash_Select"/>
+<Process id="Force_Power_Off"/>
+<Process id="Force_Power_On"/>
+<Process id="Get_Vehicle_Data_HS7"/>
+<Process id="Read_ECU_Infor"/>
+<Process id="Repair_List_HS7"/>
+<Process id="Scan_KNR_HS7"/>
+<Process id="Write_All_ECU_Config"/>
+<Process id="HS7_ClearAllDTC"/>
+<Process id="HS7_Read_TR1_ECU_DTC"/>
+<Process id="HS7_Read_All_ECU_DTC"/>
+<Process id="All_CarType"/>
+<Process id="Scan_KNR_DoorKombi"/>
+<Process id="All_CarType-DoorKombi"/>
+<Process id="Get_Vehicle_DoorKombi"/>
+</children>
+</Workplace>

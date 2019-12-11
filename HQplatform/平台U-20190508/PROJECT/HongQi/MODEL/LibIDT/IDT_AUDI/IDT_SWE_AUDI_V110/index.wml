@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="IDT_SWE_State_actual"/>
+
+<Function id="IDT_SWE_State_store"/>
+
+<Function id="SWE_01_Start_Test"/>
+
+<Function id="SWE_02_End_Test"/>
+
+<Function id="SWE_22_Fzg_ID_mit_Type"/>
+
+<Function id="SWE_50_Prepositioning"/>
+
+<Function id="SWE_64_ACC_Setting"/>
+
+<Function id="SWE_64_ACC_Setting_LSK_NV"/>
+
+<Function id="SWE_68_Result_ARE_ARE_02"/>
+
+<Function id="SWE_05_GroundStand"/>
+
+<Function id="SWE_02_End_Test_0"/>
+
+</children>
+</Workplace>

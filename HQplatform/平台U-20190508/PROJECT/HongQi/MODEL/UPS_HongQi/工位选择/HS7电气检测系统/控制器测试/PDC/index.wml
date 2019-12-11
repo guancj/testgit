@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="PDC_ReadDTC"/>
+<Process id="PDC_Common"/>
+<Process id="PDC_Test"/>
+<Process id="PDC_二次内饰"/>
+<Process id="PDC_机能线"/>
+<Process id="PDC_FIN"/>
+</children>
+</Workplace>

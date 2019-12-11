@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_ABA_GWA_1" description="Line 2 显示为主" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="340" top="70" right="440" bottom="102"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="339" top="776" right="439" bottom="808"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="准备">
+<Rect left="341" top="135" right="441" bottom="167"/>
+<Script></Script></Activity>
+<Activity id="21" ActivityType="3" name="ABA">
+<Rect left="340" top="196" right="440" bottom="228"/>
+<Line2Text Enable="1" Text="气囊控制器"/>
+<Script></Script></Activity>
+<Activity id="23" ActivityType="3" name="Clear">
+<Rect left="340" top="323" right="440" bottom="355"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="25" ActivityType="5" name="c7_aba">
+<Rect left="341" top="262" right="441" bottom="294"/>
+<SubProcesses>
+<SubProcess id="c7_aba">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="26" ActivityType="3" name="GWA">
+<Rect left="341" top="388" right="441" bottom="420"/>
+<Line2Text Enable="1" Text="GWA"/>
+<Script></Script></Activity>
+<Activity id="27" ActivityType="3" name="Clear">
+<Rect left="341" top="515" right="441" bottom="547"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="29" ActivityType="5" name="c7_gwa">
+<Rect left="340" top="453" right="440" bottom="485"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Transportmodus_Active_Check&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="ResultString"/>
+<Parameter id="TransportMode" value="&quot;&quot;" ret="Transportmode_GWA"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="30" ActivityType="3" name="判定">
+<Rect left="341" top="578" right="441" bottom="610"/>
+<Script></Script></Activity>
+<Activity id="31" ActivityType="3" name="deaktivieren">
+<Rect left="341" top="644" right="441" bottom="676"/>
+<Script></Script></Activity>
+<Activity id="32" ActivityType="5" name="c7_gwa">
+<Rect left="340" top="709" right="440" bottom="741"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Transportmodus_Deactive&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="ResultString"/>
+<Parameter id="TransportMode" value="&quot;&quot;" ret="Transportmode_GWA"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="33" ActivityType="4" name="路由节点">
+<Rect left="260" top="628" right="292" bottom="660"/>
+</Activity>
+<Activity id="34" ActivityType="4" name="路由节点">
+<Rect left="259" top="721" right="291" bottom="753"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="21" type="0">
+</Transition>
+<Transition StartId="21" EndId="25" type="0">
+</Transition>
+<Transition StartId="23" EndId="26" type="0">
+</Transition>
+<Transition StartId="25" EndId="23" type="0">
+</Transition>
+<Transition StartId="26" EndId="29" type="0">
+</Transition>
+<Transition StartId="27" EndId="30" type="0">
+</Transition>
+<Transition StartId="29" EndId="27" type="0">
+</Transition>
+<Transition StartId="30" EndId="31" type="1">
+<Expression>Transportmode_GWA == "ON"</Expression></Transition>
+<Transition StartId="30" EndId="33" type="0">
+</Transition>
+<Transition StartId="31" EndId="32" type="0">
+</Transition>
+<Transition StartId="32" EndId="2" type="0">
+</Transition>
+<Transition StartId="33" EndId="34" type="0">
+</Transition>
+<Transition StartId="34" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

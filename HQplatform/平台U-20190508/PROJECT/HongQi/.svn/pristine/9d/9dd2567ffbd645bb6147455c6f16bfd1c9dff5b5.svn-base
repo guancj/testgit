@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_Adaptation_Read" description="VW2000_Adaptation_read">
+<Inputs>
+<Variable id="channel" type="3" data="0" description="通道号"/>
+<Variable id="Text" type="8" data="&quot;&quot;" description="提示信息"/>
+<Variable id="LineNr" type="3" data="1" description="行号"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="adaptation_value" type="3" data="0" description="value"/>
+<Variable id="adaptation" type="8" data="" description="stat description"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to   read adaptation to  ECU by channel  
+input parameter:channel;Text;LineNr;ECU_Handle
+output parameer :adaptation_value;adaptation;
+
+01/25/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+local  RecvBuf;
+local  TmpStr;
+local  pos;
+local  Scaling;
+
+local FN;
+local NW;
+local MW;
+local tmpStrText = "";
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return -1,"" 
+end
+
+engine.SetLineText (LineNr , Text); engine.ShowMessage();
+
+if ((channel &lt; 0) or (channel &gt; 255)) then
+	engine.StatValue = "NOK";
+	adaptation = "";
+	return -1,"" ;end;
+	
+
+engine.println(string.format("channel %d",channel));
+
+#COMMEX ECU_Handle -1 0x31 0xb8 0x01 0x03
+if (engine.LastError ~= 0) then 
+engine.StatValue = "NOK";
+adaptation = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+engine.LastError = 1;
+return -1,"";
+end;
+
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x03
+if (engine.LastError ~= 0) then 
+engine.StatValue = "NOK";
+adaptation = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+engine.LastError = 1;
+return -1,"";
+end;
+
+
+-- Test Waiting for input channel
+
+if ( @4 ~= 0x81 ) then 
+	adaptation = "Error during execution";
+	engine.StatValue = "NOK : "..adaptation;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+engine.LastError = 1;
+return -1,"" ;
+end;
+
+#COMMEX ECU_Handle -1 0x31 0xb9 0x01 0x03 channel
+if (engine.LastError ~= 0) then 
+engine.StatValue = "NOK";
+adaptation = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+engine.LastError = 1;
+return -1,"";
+end;
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x03
+if (engine.LastError ~= 0) then 
+engine.StatValue = "NOK";
+adaptation = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+engine.LastError = 1;
+return -1,"";
+end;
+
+if ( @4 ~= 0x82 )  then
+	adaptation = "Error during execution";
+	engine.StatValue = "NOK : "..adaptation;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+engine.LastError = 1;
+return -1,"" ;
+end;
+
+  
+adaptation_value = math.floor(@6*256 + @7);
+engine.println("read adaptation value: "..string.format("%d",adaptation_value).."\n");
+
+local path = engine.ProgPath .. "vw_diag.ini";
+LibVW.vw_diag_load(path);
+
+
+pos = 9;
+adaptation = "";
+RecvBuf = @0-;
+while ( pos &lt; string.len(RecvBuf) ) do
+	Scaling = string.byte(RecvBuf,pos);
+	if (Scaling == 0xff) then
+		break;end;
+	TmpStr = string.sub(RecvBuf, pos+1 , pos + Scaling - 1);
+	while( string.len(TmpStr) &gt;= 3) do 
+	FN = string.byte(TmpStr,1);
+	NW = string.byte(TmpStr,2);
+	MW = string.byte(TmpStr,3);
+	tmpStrText = vx_diag(ID,NW,MW);
+	adaptation = adaptation..tmpStrText;
+	TmpStr = string.sub(TmpStr,4,-1);
+	end;
+
+	engine.println(LibGeneral.hex2str(TmpStr).."\n");
+    engine.println("adaption stat description :"..LibGeneral.hex2str(adaptation).."\n");
+	pos = pos + Scaling;	
+end;
+
+engine.StatValue = "OK"..adaptation;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+
+
+engine.SetLineText ( LineNr ,""); engine.ShowMessage()</Script></Function>
+

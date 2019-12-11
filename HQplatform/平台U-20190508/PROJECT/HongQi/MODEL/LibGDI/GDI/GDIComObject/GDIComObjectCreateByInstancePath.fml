@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="instancePath" type="8" data=""/>
+<Variable id="inforReportBufferSize" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiComObject" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>--gdiDeviceFunctionPath = getPath(instancePath)
+deviceFuction  = engine.GDI_GetDeviceFunctionByInstancePath(workspace, gdiDeviceFunctionPath)
+gdiComObject,gdiError = engine.GDI_CreateComObject(comObjectName, comObjectName, inforReportBufferSize)
+print("CreateComObjectResult of "..instanceName.." is "..tostring(gdiError))</Script></Function>
+

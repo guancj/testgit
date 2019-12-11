@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="FAS标定"/>
+<Process id="FAS_Process"/>
+<Process id="IFC_Calibration"/>
+<Process id="FailureStopOEMEOL"/>
+<Workplace id="H7">
+</Workplace>
+<Workplace id="HS7">
+</Workplace>
+<Workplace id="BBKservice">
+</Workplace>
+<Workplace id="宝克FAS标定新流程">
+</Workplace>
+</children>
+</Workplace>

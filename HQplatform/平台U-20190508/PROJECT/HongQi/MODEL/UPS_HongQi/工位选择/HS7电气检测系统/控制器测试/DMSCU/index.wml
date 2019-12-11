@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="DMSCU_Common"/>
+<Process id="DMSCU_Test"/>
+<Process id="DMSCU_ReadDTC"/>
+<Process id="DMSCU_FIN"/>
+<Process id="DMSCU_SWcheck"/>
+</children>
+</Workplace>

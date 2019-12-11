@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="CarTNC_Isnot_CFace"/>
+
+<Function id="CarTNC_Isnot_CFaceAndHrid"/>
+
+<Function id="CarTNC_Isnot_Hrid"/>
+
+<Function id="CarTNC_Is_CFace"/>
+
+<Function id="CarTNC_Is_Hrid"/>
+
+<Function id="Deal_hex_file"/>
+
+<Function id="Deal_xml_file"/>
+
+<Function id="Dtc_Extract"/>
+
+<Function id="Dtc_Filter"/>
+
+<Function id="Dtc_Find"/>
+
+<Function id="isChangeFace"/>
+
+<Function id="Secure_compute1"/>
+
+<Function id="Secure_compute3"/>
+
+<Function id="Sec_4wd"/>
+
+<Function id="Seedtokey"/>
+
+<Function id="Signed_bit16"/>
+
+</children>
+</Workplace>

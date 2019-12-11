@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="T-BOX_Common"/>
+<Process id="T-BOX_ReadDTC"/>
+<Process id="T-BOX_EOL"/>
+<Process id="T-BOX_FIN"/>
+</children>
+</Workplace>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="UDS_GenericCode2pCode">
+<Inputs>
+<Variable id="Code" type="3" data="0" description="2byte length   from reponse tel"/>
+</Inputs>
+<Outputs>
+<Variable id="pCode" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to  Generic DTC  Code to pCode  for  kwp 2000;
+input parameter:Code
+output parameter :pCode;
+
+11/25/2016     created by viforce
+******************************************************************************--]]
+local codetmp 
+
+if(bit32.extract(Code,23,1) == 0 and bit32.extract(Code,22,1) == 0) then
+	codetmp = bit32.band(Code,0x3fffff)
+	pCode = string.format("P%06X",codetmp)
+elseif(bit32.extract(Code,23,1) == 0 and bit32.extract(Code,22,1) == 1) then
+	codetmp = bit32.band(Code,0x3fffff)
+	pCode = string.format("C%06X",codetmp)	
+elseif(bit32.extract(Code,23,1) == 1 and bit32.extract(Code,22,1) == 0) then
+	codetmp = bit32.band(Code,0x3fffff)
+	pCode = string.format("B%06X",codetmp)
+elseif(bit32.extract(Code,23,1) == 1 and bit32.extract(Code,22,1) == 1) then
+	codetmp = bit32.band(Code,0x3fffff)
+	pCode = string.format("U%06X",codetmp)
+end</Script></Function>
+

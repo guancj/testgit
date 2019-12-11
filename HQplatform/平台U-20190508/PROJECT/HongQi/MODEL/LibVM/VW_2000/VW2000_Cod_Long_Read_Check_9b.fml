@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="VW2000_Cod_Long_Read_Evaluate">
+<Inputs>
+<Variable id="ID_String" type="8" data="&quot;&quot;" description="1a 9b ID string"/>
+<Variable id="LongCodingStrID" type="8" data="&quot;&quot;" description="ZDC Coding str （Long）"/>
+<Variable id="IdNr" type="8" data="1" description="偏移量"/>
+<Variable id="ViewText" type="8" data="&quot;编码检查(Long)&quot;" description="显示文字"/>
+<Variable id="LineNr" type="8" data="1" description="行号"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>
+--[[*****************************************************************************
+this function  is used to  programming  data  
+input parameter:ID_String;LongCodingStrID;IdNr;ViewText;LineNr;ECU_Handle
+
+01/25/2016     created by viforce
+******************************************************************************--]]
+
+local  TmpIdStr = "";
+local  IdNr = 1;
+local  LongCodingStr = "";
+local  StgRes;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,ViewText);
+    engine.ShowMessage();
+	end;
+
+if(ID_String == nil or ID_String == "") then  engine.StatValue ="Coding From ECU NULL" ; engine.LastError = 1 ; 
+                  engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpnok");engine.ShowMessage(); return end;
+
+							  
+if(IdNr &lt; 1) then IdNr = 1 end;
+
+	if ((string.len(ID_String) &gt; 47) and (string.byte(ID_String,48) == 0x9b)) then	
+		TmpIdStr = string.sub(ID_String, (IdNr-1)*47+1, 47);	
+	else	
+		TmpIdStr = string.sub(ID_String, (IdNr-1)*46+1, 47);	
+	end;
+
+    Subsystem = string.byte(TmpIdStr,17);	
+	if ((Subsystem == 0x10) or (bit32.band(Subsystem,0xf0) == 0x30) ) 	then
+#COMMEX ECU_Handle -1 0x1a 0x9b
+		 StgRes = @2-;
+	--	_err = _vciDataExchange (Hndl, 0x1a, 0x5a, "\x9a", &amp;StgRes);
+	else 
+		LongCodingStr = "";
+	    engine.StatValue = "Subsystem value not match ";
+		engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpnok");engine.ShowMessage();
+		engine.LastError = 1;
+                return;
+	end
+
+	if ((engine.LastError == 0) and (#StgRes-13) &gt;= string.byte(StgRes,13) )  then
+		LongCodingStr = string.sub (StgRes, 14, 13 + string.byte(StgRes,13));	
+		if(LongCodingStr == LongCodingStrID) then engine.StatValue = "Coding Check Successfully SV :"..tostring(LongCodingStrID)..": MV"..tostring(LongCodingStr);
+		engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpok");engine.ShowMessage();
+		engine.LastError = 0 ;
+        else
+		engine.StatValue = "Coding Check failed SV :"..tostring(LongCodingStrID)..": MV"..tostring(LongCodingStr); 
+		engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpnok");engine.ShowMessage();
+		engine.LastError = 1 ;
+    	end;
+	else	
+		LongCodingStr = "";
+		engine.StatValue = "服务未回应或编码长度不足";
+		engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpnok");engine.ShowMessage();
+		engine.LastError = 1;
+	end</Script></Function>
+

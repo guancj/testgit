@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_C7_Process" flags="1">
+<ProcessParameters>
+<Variable id="FWEHndl" type="3" dir="0" data="FWEHndl"/>
+<Variable id="FASHndl" type="3" dir="0" data="FASHndl"/>
+<Variable id="SWEHndl" type="3" dir="0" data="SWEHndl"/>
+<Variable id="HUPHndl" type="3" dir="0" data="HUPHndl"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="310" top="48" right="410" bottom="80"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="312" top="996" right="412" bottom="1028"/>
+<Script></Script></End>
+<Activities>
+<Activity id="8" ActivityType="5" name="准备 FAS">
+<Rect left="311" top="475" right="411" bottom="507"/>
+<SubProcesses>
+<SubProcess id="Par_P_Modes_deaktiveren_FAS_2">
+</SubProcess>
+<SubProcess id="FAS_PreparationStart">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="IDT_YPosRadhausVL" value="0" ret="IDT_YPosRadhausVL"/>
+<Parameter id="IDT_YPosRadhausVR" value="0" ret="IDT_YPosRadhausVR"/>
+<Parameter id="IDT_YPosRadhausHL" value="0" ret="IDT_YPosRadhausHL"/>
+<Parameter id="IDT_YPosRadhausHR" value="0" ret="IDT_YPosRadhausHR"/>
+<Parameter id="FWE_Achsversatz_VA_shared" value="0" ret="FWE_Achsversatz_VA_shared"/>
+<Parameter id="FWE_Achsversatz_HA_shared" value="0" ret="FWE_Achsversatz_HA_shared"/>
+<Parameter id="FWE_Symmetriewinkel_shared" value="0" ret="FWE_Symmetriewinkel_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="9" ActivityType="5" name="标定过程">
+<Rect left="312" top="605" right="412" bottom="637"/>
+<SubProcesses>
+<SubProcess id="Par_SWE_FAS_RFK_SWA_ARE_ARE_02_NSS_3">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="FWE_Achsversatz_VA_shared"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="FWE_Dackelwinkel_shared"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="FWE_Achsversatz_HA_shared"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="IDT_YPosRadhausVL"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="IDT_YPosRadhausVR"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="IDT_YPosRadhausHL"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="IDT_YPosRadhausHR"/>
+<Parameter id="FWE_Symmetriewinkel_shared" value="FWE_Symmetriewinkel_shared"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="Par_HUP">
+<Parameters>
+<Parameter id="HUPHndl" value="HUPHndl"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="FWE_Achsversatz_VA_shared"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="FWE_Achsversatz_HA_shared"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="IDT_YPosRadhausVL"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="IDT_YPosRadhausVR"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="IDT_YPosRadhausHL"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="IDT_YPosRadhausHR"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="10" ActivityType="3" name="同步变量init">
+<Rect left="311" top="540" right="411" bottom="572"/>
+<Script>
+-- 同步变量的初始化 置 1 结束
+engine.SharedVarSet("_DInt_RFK_Bildaufnahme_beendet",0) -- 拍照结束标志
+engine.SharedVarSet("_DInt_Ablaufsteuerung_shared",0) -- KAS 结束
+engine.SharedVarSet("_a_flag1",0) -- hup 结束
+engine.SharedVarSet("_a_flag2",0) -- 大灯准备标志
+engine.SharedVarSet("_a_flag3",0) -- RFK SWA 标定结束
+engine.SharedVarSet("_a_flag4",0) -- hup 结束
+engine.SharedVarSet("_a_flag_LDW",0) -- KAS BVE 标定结束</Script></Activity>
+<Activity id="11" ActivityType="5" name="FAS_PRE">
+<Rect left="311" top="416" right="411" bottom="448"/>
+<SubProcesses>
+<SubProcess id="FAS_PRE">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="12" ActivityType="3" name="故障码检查">
+<Rect left="313" top="668" right="413" bottom="700"/>
+<Line1Text Enable="1" Text="控制器：故障存储器检测"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="13" ActivityType="5" name="ABS_CheckResult">
+<Rect left="310" top="109" right="410" bottom="141"/>
+<SubProcesses>
+<SubProcess id="ABS_CheckResult">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="14" ActivityType="5" name="MOP_CheckResult">
+<Rect left="310" top="169" right="410" bottom="201"/>
+<SubProcesses>
+<SubProcess id="MOP_CheckResult">
+<Parameters>
+<Parameter id="isOK" value="false" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="15" ActivityType="3" name="直接退出">
+<Rect left="154" top="109" right="254" bottom="141"/>
+<Script>engine.println("&lt;FAS_C7_Process&gt;Error : ABSCheck !!!")</Script></Activity>
+<Activity id="16" ActivityType="3" name="检测准备">
+<Rect left="310" top="231" right="410" bottom="263"/>
+<TitleText Enable="1" Text="检测准备"/>
+<Script></Script></Activity>
+<Activity id="17" ActivityType="5" name="检测准备">
+<Rect left="311" top="292" right="411" bottom="324"/>
+<SubProcesses>
+<SubProcess id="Par_GET_EZE_FTU_KEL_1">
+</SubProcess>
+<SubProcess id="Par_ABA_GWA_1">
+</SubProcess>
+<SubProcess id="Par_NDR_1">
+</SubProcess>
+<SubProcess id="Par_Dackelwinkel_1">
+<Parameters>
+<Parameter id="fFWE_Dackelwinkel_shared" ret="FWE_Dackelwinkel_shared"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="Par_IEL_1">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="18" ActivityType="3" name="结果判定">
+<Rect left="311" top="353" right="411" bottom="385"/>
+<Script></Script></Activity>
+<Activity id="19" ActivityType="3" name="暂时不写">
+<Rect left="445" top="353" right="545" bottom="385"/>
+<Script></Script></Activity>
+<Activity id="20" ActivityType="3" name="直接退出">
+<Rect left="154" top="170" right="254" bottom="202"/>
+<Script>engine.println("&lt;FAS_C7_Process&gt;Error : MOPCheck !!!")</Script></Activity>
+<Activity id="21" ActivityType="3" name="ARE盖板安装">
+<Rect left="314" top="736" right="414" bottom="768"/>
+<TitleText Enable="1"/>
+<Line1Text Enable="1" Text="两个ARE盖板安装了吗？"/>
+<Line2Text Enable="1" Text="合格吗？"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<ButtonLText Enable="1" Text="NOK"/>
+<ButtonRText Enable="1" Text="OK"/>
+<Script>engine.SetLineText(1,"#L=" .. "可以吗？" .. "#R=BMPEYE");
+engine.ShowMessage();
+
+#PRESSBUTTON
+engine.SetLButtonText("");
+engine.SetRButtonText("");
+
+if (engine.LButtonPressed == true) then
+
+engine.SetLineText(1,"#L=" .. "可以吗？" .. "#R=BMPNOK");
+engine.ShowMessage();
+engine.LastError = 1;
+engine.StatValue = "NOK";
+
+elseif (engine.RButtonPressed == true) then
+
+engine.SetLineText(1,"#L=" .. "可以吗？" .. "#R=BMPOK");
+engine.ShowMessage();
+engine.LastError = 0;
+engine.StatValue = "OK";
+
+end;
+
+engine.SetLineText(0,"");
+engine.SetLineText(1,"");
+engine.SetLineText(2,"");
+engine.SetLineText(3,"");
+engine.ShowMessage();</Script><assessment block="1" ptbtext="DEP47" group="13" pbltext="DEP1134" no="50" name="DEP1459" type="8" flags="97"/>
+</Activity>
+<Activity id="22" ActivityType="5" name="FSP检测">
+<Rect left="314" top="804" right="414" bottom="836"/>
+<SubProcesses>
+<SubProcess id="Par_SWE_4">
+<Parameters>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="Par_DTC_KEL_FBE_HKL_MOT_ABA_ADP_NDR_4">
+</SubProcess>
+<SubProcess id="Par_DTC_ARE_ARE_02_BSV_BTU_RAD_BVE_4">
+</SubProcess>
+<SubProcess id="Par_DTC_ESP_EUL_EZE_RGS_LV_NSS_4">
+</SubProcess>
+<SubProcess id="Par_DTC_FSV_FTR_LI_FTR_RE_RGS_RV_DWE_EFB_4">
+</SubProcess>
+<SubProcess id="Par_DTC_FTU_GET_GWA_HGE_SDV_EHI_4">
+</SubProcess>
+<SubProcess id="Par_DTC_HKL_HUD_IEL_KAS_SGR_RFK_4">
+</SubProcess>
+<SubProcess id="Par_DTC_KIN_KRE_KRE_HI_SWA_MKF_HI_4">
+</SubProcess>
+<SubProcess id="Par_DTC_LHI_LSE_LWR_MKB_MKF_TTU_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="23" ActivityType="5" name="ReviewsDocument">
+<Rect left="314" top="860" right="414" bottom="892"/>
+<SubProcesses>
+<SubProcess id="ReviewsDocument">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="24" ActivityType="3" name="SET finish">
+<Rect left="313" top="917" right="413" bottom="949"/>
+<Script>engine.UdpHandleVarSet(FWEHndl, "_FINISHFLAG", true);
+engine.UdpHandleVarSet(FASHndl, "_FINISHFLAG", true);
+engine.UdpHandleVarSet(SWEHndl, "_FINISHFLAG", true);
+engine.UdpHandleVarSet(HUPHndl, "_FINISHFLAG", true);</Script></Activity>
+<Activity id="25" ActivityType="3" name="普通节点">
+<Rect left="153" top="916" right="253" bottom="948"/>
+<Script></Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="13" type="0">
+</Transition>
+<Transition StartId="8" EndId="10" type="0">
+</Transition>
+<Transition StartId="9" EndId="12" type="0">
+</Transition>
+<Transition StartId="10" EndId="9" type="0">
+</Transition>
+<Transition StartId="11" EndId="8" type="0">
+</Transition>
+<Transition StartId="12" EndId="21" type="0">
+</Transition>
+<Transition StartId="13" EndId="14" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="13" EndId="15" type="0">
+</Transition>
+<Transition StartId="14" EndId="16" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="14" EndId="20" type="0">
+</Transition>
+<Transition StartId="15" EndId="20" type="0">
+</Transition>
+<Transition StartId="16" EndId="17" type="0">
+</Transition>
+<Transition StartId="17" EndId="18" type="0">
+</Transition>
+<Transition StartId="18" EndId="11" type="0">
+</Transition>
+<Transition StartId="20" EndId="25" type="0">
+</Transition>
+<Transition StartId="21" EndId="22" type="0">
+</Transition>
+<Transition StartId="22" EndId="23" type="0">
+</Transition>
+<Transition StartId="23" EndId="24" type="0">
+</Transition>
+<Transition StartId="24" EndId="2" type="0">
+</Transition>
+<Transition StartId="25" EndId="24" type="0">
+</Transition>
+</Transitions>
+</Process>
+

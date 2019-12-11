@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Outputs>
+<Variable id="headerInfo" type="8" data=""/>
+<Variable id="FKL" type="8" data=""/>
+<Variable id="werk" type="8" data=""/>
+<Variable id="assemblyLine" type="8" data=""/>
+<Variable id="version" type="8" data=""/>
+<Variable id="creator" type="8" data=""/>
+<Variable id="fileName" type="8" data=""/>
+<Variable id="date" type="8" data=""/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to get dl24 ASV file header information
+History:
+    12/31/2015, wuh : function created
+****************************************************************--]]
+
+
+headerInfo,FKL,werk,assemblyLine,version,creator,fileName,date = engine.DL24_GetInfoASVHeader()
+</Script></Function>
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s" type="8" data=""/>
+</Inputs>
+<Script>--去除字符串首尾的空格
+  return (string.gsub(s, "^%s*(.-)%s*$", "%1")) 
+</Script></Function>
+

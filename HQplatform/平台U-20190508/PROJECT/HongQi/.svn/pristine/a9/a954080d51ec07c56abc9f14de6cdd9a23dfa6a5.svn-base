@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_DestroyConnection" description="断开UDP通信连接">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>--local error = engine.UdpClose(LibIDT.UdpId);
+local error = engine.UdpClose(pHndl);
+
+ret = false;
+
+if(error == 0) then
+
+ret = true;
+
+end;</Script></Function>
+

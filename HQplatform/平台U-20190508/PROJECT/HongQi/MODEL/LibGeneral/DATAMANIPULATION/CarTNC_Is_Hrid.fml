@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>--混动
+if (DString_C131_Car_Tpye=="CH1LM21") then
+	ret = true
+elseif (DString_C131_Car_Tpye=="CH1LM11") then
+	ret = true
+elseif (DString_C131_Car_Tpye=="CH1MM21") then
+	ret = true
+elseif (DString_C131_Car_Tpye=="CH1LM13") then
+	ret = true
+elseif (DString_C131_Car_Tpye=="CH1LM23") then
+	ret = true
+elseif (DString_C131_Car_Tpye=="CH1MM41") then
+	ret = true
+else
+	ret = false
+end</Script></Function>
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="LineNr" type="8" data="1" description="显示行号（0 - 3）"/>
+<Variable id="Timeout" type="8" data="5" description="time wait  Second"/>
+<Variable id="Text" type="8" data="&quot;请等待&quot;"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this is used to wait some seconds
+input parameter:LineNr;Timeout;Text;
+created by viforce 02/17/2016
+******************************************************************************--]]
+
+
+local timeTmp = Timeout;
+
+
+while(timeTmp &gt; 0) do 
+
+engine.SetLineText(LineNr,"#L=bmpbar,0,"..tostring(Timeout)..","..tostring(0)..","..tostring(timeTmp).."#R="..tostring(Text));
+timeTmp = timeTmp - 1 ;
+engine.ShowMessage();
+engine.Delay(1000);
+
+end;
+
+
+engine.SetLineText(LineNr,"");</Script></Function>
+

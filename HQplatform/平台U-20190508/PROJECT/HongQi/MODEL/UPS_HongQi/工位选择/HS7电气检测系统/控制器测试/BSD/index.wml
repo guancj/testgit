@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="BSD_Common"/>
+<Process id="BSD_ReadDTC"/>
+<Process id="BSD_FIN"/>
+</children>
+</Workplace>

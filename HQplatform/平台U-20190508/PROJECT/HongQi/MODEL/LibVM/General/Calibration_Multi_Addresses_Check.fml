@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="MCD_CodefileKonfigurationPruefen_UDS">
+<Inputs>
+<Variable id="LineNr" type="3" data="1" description="window set line text Nr"/>
+<Variable id="Config_String" type="8" data="&quot;&quot;" description="ZDC calibration string"/>
+<Variable id="Comment" type="8" data="&quot;检查编码 Calibration&quot;" description="configration check"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to   Check calibration from ECU  
+input parameter:LineNr,Config_String,Comment;ECU_Handle
+
+01/22/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+local ConfigCount;
+local Service;
+local LID;
+local ConfigLen;
+local PartConfigStr,PartConfigStrIst;
+local recbuf;
+local ConfigCountStr;
+local ConfigLenStr;
+local StatString = "";
+local CommentNOK = "NOK";
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+engine.LastError = 1;
+if (LineNr &gt; 0) then engine.SetLineText ( LineNr , Comment); engine.ShowMessage(); end;
+
+
+engine.println("Config_String from ZDC: "..Config_String.."\n");
+
+
+if (string.len(Config_String) &lt;= 4)   then engine.StatValue = CommentNOK..":KonfigString&lt;4"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);return ; end;
+
+
+ConfigCountStr  = string.sub(Config_String,1,4);
+ConfigCount = string.byte(ConfigCountStr,1) * 0x1000000 + string.byte(ConfigCountStr,2) * 0x10000 + string.byte(ConfigCountStr,3)*0x100 + string.byte(ConfigCountStr,4);
+
+Config_String = string.sub(Config_String,5,-1);
+
+
+if (ConfigCount &lt; 1) then engine.StatValue = CommentNOK..":ConfigCount&lt;1"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);return ;end;
+
+engine.LastError = 0;
+
+while ((ConfigCount &gt; 0) and (engine.LastError == 0))  do
+
+	if (string.len(Config_String) &lt;= 8)  then  engine.StatValue = CommentNOK..":KonfigString"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);return ;end;
+
+    Service = string.byte(Config_String,4);
+	Config_String = string.sub(Config_String,5,-1);
+
+	if (Service == 0x2e)  then
+	    Service = 0x22; LID = string.sub(Config_String, 3, 4);
+	else
+        engine.StatValue = string.format("Service not defined: %x", Service); engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);return ;end;
+
+
+	Config_String = string.sub(Config_String,5,-1);
+
+	ConfigLenStr  = string.sub(Config_String,1,4);
+        ConfigLen = string.byte(ConfigLenStr,1) * 0x1000000 + string.byte(ConfigLenStr,2) * 0x10000 + string.byte(ConfigLenStr,3)*0x100 + string.byte(ConfigLenStr,4);
+
+	Config_String = string.sub(Config_String,5,-1);
+
+	PartConfigStr = string.sub(Config_String,1,ConfigLen);
+
+	Config_String = string.sub(Config_String,ConfigLen + 1,-1);
+
+
+	engine.println(string.format("Count Konfig: %d \n",ConfigCount));
+	engine.println(string.format("Service: %x",Service).." LID: "..LibGeneral.hex2str(LID).." Data: "..LibGeneral.hex2str(PartConfigStr).."\n");
+
+
+	if (string.len(PartConfigStr) &lt; ConfigLen)	then engine.StatValue = CommentNOK..":ConfigLen"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);return ;end;
+
+	local LID_1 = string.byte(LID,1);
+	local LID_2 = string.byte(LID,2);
+#COMMEX ECU_Handle -1 Service  LID_1 LID_2
+	recbuf = @0-;
+
+	if (engine.LastError ~= 0) then engine.StatValue = Service.."：Comm err "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);return ;end;
+
+	PartConfigStrIst = string.sub(recbuf,4,-1);
+
+	if (PartConfigStrIst ~= PartConfigStr) then
+		engine.StatValue = string.format("%s: %x:%s %s:%s != %s:%s","errcontext",Service,LibGeneral.hex2str(LID),"SW",LibGeneral.hex2str(PartConfigStr),"MW",LibGeneral.hex2str(PartConfigStrIst));engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();return;end;
+
+
+	if (string.len(StatString) &gt; 0 )  then
+		StatString = StatString..";";
+	else
+		StatString = Comment..": ";
+        end;
+
+	StatString = StatString..string.format("%x",Service)..":"..LibGeneral.hex2str(LID).."="..LibGeneral.hex2str(PartConfigStr);
+        engine.println(StatString);
+
+	ConfigCount = ConfigCount - 1;
+
+end
+
+if (string.len(StatString) &gt; 236) then
+	StatString = string.sub(StatString,1,236).."...";
+	end
+
+engine.StatValue = StatString ;
+engine.println("check ok :"..engine.StatValue.."\n");
+engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpok"); engine.ShowMessage();engine.Delay(1);
+if (LineNr &gt; 0 ) then 
+			engine.SetLineText(LineNr,"");engine.ShowMessage();
+		return ;end;</Script></Function>
+

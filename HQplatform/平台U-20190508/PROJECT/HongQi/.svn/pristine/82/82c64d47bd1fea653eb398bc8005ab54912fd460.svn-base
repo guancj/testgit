@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="7" library="1" module="LibVW" version="" description="" engine="VMDSEngine" language="javascript">
+<Workplaces>
+<Workplace id="DL24"/>
+<Workplace id="General"/>
+<Workplace id="Others"/>
+<Workplace id="VW_2000"/>
+<Workplace id="VW_FISeQS"/>
+<Workplace id="ZDC"/>
+</Workplaces>
+</Model>

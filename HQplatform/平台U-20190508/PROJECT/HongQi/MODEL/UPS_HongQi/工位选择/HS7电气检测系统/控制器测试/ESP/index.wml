@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="ESP_common"/>
+<Process id="ESP_ReadDTC"/>
+<Process id="ESP_FIN"/>
+</children>
+</Workplace>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="sFile" type="8" data=""/>
+</Inputs>
+<Script>  local ini;
+  local numFormel;
+  local sFormel,sValue;
+  local sScript;
+  local bOpened;
+  
+  ini = IniFile(sFile);
+
+  numFormel = ini.getInt("Formel","max",0);
+  --print("numFormel = " .. tostring(numFormel));
+
+  sScript = "vx_diag = function(ID,NW,MW)\n";
+  bOpened = false;
+
+  for i = 1,numFormel do
+    sFormel = string.format("Formel[%d]",i);
+    sValue  = ini.getString("Formel",sFormel,"");
+    if ("" == sValue) then
+      sFormel = string.format("Filter[%d]",i);
+      sValue  = ini.getString("Filter",sFormel,"");
+      if ("" ~= sValue) then
+        sValue = string.upper(sValue);
+        if ("MW&amp;NW" == sValue) then
+          sValue = "bit32.band(MW,NW)";
+        else
+          sValue = '"unknown {' .. sValue .. '}"';
+        end
+      else
+        sFormel = string.format("Text[%d]",i);
+        sValue  = ini.getString("Text",sFormel,"");
+        if ("" ~= sValue) then
+          sValue = string.upper(sValue);
+
+          if ("CHAR(NW) CHAR(MW)" == sValue) then
+            sValue = "string.char(NW,MW)";
+          elseif ("CHAR(MW)" == sValue) then
+            sValue = "string.char(MW)";
+          elseif ("TABL(NW,MW)" == sValue) then
+            sValue = "vx_diag_txttab(NW * 256 + MW)";
+          else
+            sValue = '"unknown {' .. sValue .. '}"';
+          end
+        end
+      end
+    end
+
+    if ("" ~= sValue) then      
+      if (bOpened) then
+        sScript = sScript .. '  elseif (' .. tostring(i) .. ' == ID) then\n';
+      else
+        bOpened = true;
+        sScript = sScript .. '  if (' .. tostring(i) .. ' == ID) then\n';
+      end
+      sScript = sScript .. '    mw=MW;\n    nw=NW;\n    if (mw&gt;127) then\n      mw=mw-256;\n    end\n    if (nw&gt;127) then\n      nw=nw-256;\n    end\n';
+      sScript = sScript .. '    do return ' .. sValue .. '; end\n';
+    end
+  end
+
+  sScript = sScript .. '  else\n    do return "Formula_ID_Not_Found"; end\n  end\nend\n';
+
+  numFormel = ini.getInt("TxtTab","max",0);
+  --print("numFormel = " .. tostring(numFormel));
+
+  sScript = sScript .. "\nvx_diag_txttab = function(ID)\n";
+  bOpened = false;
+
+  for i = 1,numFormel do
+    sFormel = string.format("TxtTab[%d]",i);
+    sValue  = ini.getString("TxtTab",sFormel,"");
+    if ("" ~= sValue) then      
+      if (bOpened) then
+        sScript = sScript .. '  elseif (' .. tostring(i) .. ' == ID) then\n';
+      else
+        bOpened = true;
+        sScript = sScript .. '  if (' .. tostring(i) .. ' == ID) then\n';
+      end
+      sScript = sScript .. '    do return "' .. sValue .. '"; end\n';
+    end
+  end
+
+  sValue  = ini.getString("TxtTab","Default","");
+  sScript = sScript .. '  else\n    do return "' .. sValue .. '"; end\n  end\nend\n';
+
+  --print("");
+  --print("sScript = ");
+  --print(sScript);
+  assert(loadstring(sScript))();</Script></Function>
+

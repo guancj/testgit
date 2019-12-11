@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_DTC_Filter" description="VW2000_DTC_Filter">
+<Inputs>
+<Variable id="DTC_String" type="8" data="&quot;&quot;" description="Source string"/>
+<Variable id="DTC_String_Filter" type="8" data="&quot;&quot;" description="要过滤的故障码 like &quot;059b;030a;058f;04ff&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="DTC_String_Filterd" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this is used to   DTC Filter 
+intput parameter:DTC_String;DTC_String_Filter;
+output parameter:DTC_String_Filterd(hex);
+
+01/20/2016     created by viforce
+******************************************************************************--]]
+
+DTC_String_Filterd = "";
+if (DTC_String == "") then
+engine.println("#ERROR# DTC_String : get no DTC ".."\n") ;return DTC_String_Filterd;
+elseif(DTC_String == "NG") then
+engine.println("#ERROR# DTC_String : NG service ERR ".."\n") ;return DTC_String_Filterd;
+end;
+
+if(DTC_String_Filter == "") then
+engine.println("#ERROR# DTC_String_Filter :set no value".."\n");return DTC_String_Filterd;
+end;
+
+
+local iFSP_Filter = DTC_String_Filter..";";
+--local Tmp_DTC_String = string.sub(DTC_String, 2, -1);
+local Tmp_DTC_String = LibGeneral.hex2str(DTC_String);
+local pos_0,pos_1,pos_2,pos_3;
+local errStr;
+local errText;
+local pos_offset;
+local str_Count;
+local Tmp_Count;
+
+engine.println("iFSP_Filter : "..iFSP_Filter.."DTC_String : "..LibGeneral.hex2str(DTC_String).."\n");
+while true do
+
+	pos_0,pos_1 = string.find(iFSP_Filter,";;");
+	if (pos_0 == nil) then
+		break;
+	end
+	if (pos_1 == string.len(iFSP_Filter)) then
+	iFSP_Filter = string.sub(iFSP_Filter,1,pos_0);
+	break;
+	end
+	iFSP_Filter = string.sub(iFSP_Filter,1,pos_0)..string.sub(iFSP_Filter,pos_1+1,-1);
+
+end
+
+
+if (string.sub(iFSP_Filter,1,1) == ";") then
+	iFSP_Filter = string.sub(iFSP_Filter,2,-1);
+	end
+
+while true do
+    
+    engine.println("while :"..iFSP_Filter.."\n");
+	if(iFSP_Filter == nil) then break;end;
+	pos_0,pos_1 = string.find(iFSP_Filter,";");
+if(pos_0 == nil) then break;end;
+	errText = string.sub(iFSP_Filter,1,pos_0 - 1);
+	engine.println("errtext :  "..errText.."  ".."pos_0 ::: "..tostring(pos_0).."\n");
+if(pos_1 &lt;= string.len(iFSP_Filter)) then
+	iFSP_Filter = string.sub(iFSP_Filter,pos_1+1,-1);
+end
+        errStr = string.upper(errText);
+	
+        engine.println("Tmp_DTC_String :transfered :"..tostring(Tmp_DTC_String).."\n");
+	    engine.println("errStr transfered: "..errStr);
+	    pos_2,pos_3 = string.find(Tmp_DTC_String,errStr);
+        if(pos_2 ~= nil ) then 
+
+        engine.println("pos_2 : "..tostring(pos_2).."pos_3: "..tostring(pos_3).."\n");
+        engine.println("dtc string : "..tostring(Tmp_DTC_String).." :".."errStr : "..tostring(errStr).."\n");
+	    pos_offset = pos_2 - 3;
+        engine.println("while :"..tostring(pos_offset - (math.floor(pos_offset/6)*6)));
+	while (pos_offset - (math.floor(pos_offset/6)*6) == 0 ) do
+		    if(pos_3 == string.len(Tmp_DTC_String)) then
+			Tmp_DTC_String = string.sub(Tmp_DTC_String,1,(pos_2-1));
+			str_Count = string.sub(Tmp_DTC_String,1,2);
+			Tmp_Count = string.byte(LibGeneral.str2hex(str_Count),1) - 1;
+			str_Count = string.format("%02X",Tmp_Count);
+			Tmp_DTC_String = str_Count..string.sub(Tmp_DTC_String,3,-1);break;
+		    else
+                        Tmp_DTC_String = string.sub(Tmp_DTC_String,1,(pos_2-1))..string.sub(Tmp_DTC_String,pos_3+3,-1);
+			str_Count = string.sub(Tmp_DTC_String,1,2);
+			Tmp_Count = string.byte(LibGeneral.str2hex(str_Count),1) - 1;
+			if(Tmp_Count == 0)  then Tmp_DTC_String = ""; break;end;
+			str_Count = string.format("%02X",Tmp_Count);
+			Tmp_DTC_String = str_Count..string.sub(Tmp_DTC_String,3,-1);
+		    end
+                pos_2,pos_3 = string.find(Tmp_DTC_String,errStr);
+                
+		if(pos_2 == nil) then break;end;
+                engine.println("in pos_2 : "..tostring(pos_2).."in pos_3: "..tostring(pos_3).."\n");
+		pos_offset = pos_2 - 3;
+
+      	end
+		
+		end;
+		if(Tmp_DTC_String == "") then break ;end;
+
+end
+
+engine.println("Tmp_DTC_String :Last :"..Tmp_DTC_String.."\n");
+Tmp_DTC_String = LibGeneral.str2hex(Tmp_DTC_String);
+DTC_String_Filterd = Tmp_DTC_String;</Script></Function>
+

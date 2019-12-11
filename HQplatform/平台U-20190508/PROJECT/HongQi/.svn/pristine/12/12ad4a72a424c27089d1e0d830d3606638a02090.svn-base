@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="BG_FZG_TranspoderCodes" description="BG_FZG_TranspoderCodes">
+<Inputs>
+<Variable id="assemblies" type="8" data="&quot;&quot;" description="BaugruppenNr"/>
+<Variable id="TransponderCode" type="8" data="&quot;&quot;" description="TransponderCode"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this is used to  TransponderCode
+input parameter:assemblies;TransponderCode
+create by zhouxh 01/18/2016
+******************************************************************************--]]
+
+local content = "";
+
+if(TransponderCode == nil) then 
+TransponderCode = "\x00\x00\x00\x00";
+end;
+
+content  = string.sub(TransponderCode,1,4);
+content  = assemblies..LibGeneral.hex2str(content) .. "0";
+
+
+
+engine.StatValue = "BAUTEIL".."{".."\\\""..assemblies.."\\\";".."\\\""..content.."\\\""..";}";
+engine.LastError = 0;
+
+--engine.StatValue = "BAUTEIL".."{".."\""..assemblies.."\";".."\""..content.."\""..";}";
+engine.println("###TransponderCode:"..engine.StatValue.."\n");
+
+
+</Script></Function>
+

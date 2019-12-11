@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="pucOutCode" type="8" data=""/>
+<Variable id="pucAuth" type="8" data=""/>
+</Inputs>
+<Script>
+alg3 = alien.load("alg3.dll");
+print(alg3);
+
+--函数原型 EXTERN int CalcInCode(uint8* pucOutCode, uint8* pucAuth);
+alg3.CalcInCode:types("int","string","string");
+pucOutCode=pucOutCode;
+pucAuth=pucAuth;
+--pucOutCode = string.char(0x0B,0xCE,0x16);
+--pucAuth    = string.char(0x69,0xE4,0x0F);
+
+ret = alg3.CalcInCode(pucOutCode,pucAuth);
+print("ret="..ret);
+return ret;
+</Script></Function>
+

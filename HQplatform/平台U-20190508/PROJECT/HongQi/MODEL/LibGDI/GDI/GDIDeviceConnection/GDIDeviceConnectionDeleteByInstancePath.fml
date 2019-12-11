@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="instancePath" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>deviceConection = engine.GDI_GetDeviceConnectionByInstancePath(gdiWorkspace,instancePath)
+if deviceConection~= nil then
+	gdiError = engine.GDI_DeleteConnection(deviceConection)
+ else
+	print("GDIDeviceConnectionDelete: GDI device connection is not set")
+end</Script></Function>
+

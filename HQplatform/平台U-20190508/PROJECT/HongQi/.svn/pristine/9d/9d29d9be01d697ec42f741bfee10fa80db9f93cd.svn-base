@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="SWE_64_ACC_Setting" description="service 64 ,大灯调整：主动巡航 ACC 设置&#13;&#10;">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="DackelWinkel" type="5" data="0"/>
+<Variable id="SymWinkel" type="5" data="0"/>
+<Variable id="ACC_L_Azimut" type="5" data="0"/>
+<Variable id="ACC_L_Elevation" type="5" data="0"/>
+<Variable id="ACC_R_Azimut" type="5" data="0"/>
+<Variable id="ACC_R_Elevation" type="5" data="0"/>
+<Variable id="LSK" type="3" data="0"/>
+<Variable id="ACC_Seite" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  SWE Service 64 ACC Setting
+input parameter:pHndl,IDT_Timeout,DackelWinkel,SymWinkel,ACC_L_Azimut,ACC_L_Elevation,
+                         ACC_R_Azimut ,ACC_R_Elevation,LSK ,ACC_Seite
+output parameter :ret;
+
+12/29/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00"
+local tmpVal = 0
+local tmpByte5 = 0
+local tmpByte6 = 0
+local tmpByte30 = 0
+local tmpByte31 = 0
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x40");    -- 设置service号,第2字节
+idt_tel = LibIDT.idtSetBytes(idt_tel,25,1,string.char(LSK)); 
+
+if(ACC_Seite == 1) then
+	idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,string.char(bit32.bor(string.byte(idt_tel,9),0x01)));
+elseif(ACC_Seite == 2) then
+	idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,string.char(bit32.bor(string.byte(idt_tel,9),0x10)));
+end
+
+tmpVal = DackelWinkel * 10.0
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte5 = math.floor(tmpVal/0x100)
+tmpByte6 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(tmpByte5))
+idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(tmpByte6)) 
+
+tmpVal = SymWinkel * 100.0
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte30 = math.floor(tmpVal/0x100)
+tmpByte31 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,30,1,string.char(tmpByte30))
+idt_tel = LibIDT.idtSetBytes(idt_tel,31,1,string.char(tmpByte31))
+
+ACC_L_Azimut = bit32.band(ACC_L_Azimut,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,35,1,string.char(ACC_L_Azimut))
+ACC_L_Elevation = bit32.band(ACC_L_Elevation,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,36,1,string.char(ACC_L_Elevation))
+ACC_R_Azimut = bit32.band(ACC_R_Azimut,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,37,1,string.char(ACC_R_Azimut))
+ACC_R_Elevation = bit32.band(ACC_R_Elevation,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,38,1,string.char(ACC_R_Elevation))
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+
+</Script></Function>
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="EV_Select"/>
+
+<Function id="exec"/>
+
+<Function id="GetByteBitPosition_AUDI"/>
+
+<Function id="Get_DTC_Status_Infor"/>
+
+<Function id="vw_diag_load"/>
+
+<Function id="VW_Diag_Load_Path"/>
+
+</children>
+</Workplace>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="HS7process"/>
+<Process id="HS7WheelSpeedSensor"/>
+<Process id="HS7Roller_esp_value_test"/>
+<Process id="HS7SpeedMeter"/>
+<Process id="HS7dynamicTest"/>
+<Process id="HS7ConstDrive"/>
+</children>
+</Workplace>

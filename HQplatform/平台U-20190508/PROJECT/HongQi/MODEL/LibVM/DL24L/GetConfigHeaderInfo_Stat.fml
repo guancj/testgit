@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="Konfigfile" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="HeaderInfo" type="8" data=""/>
+<Variable id="Fahrzeugmodell" type="8" data=""/>
+<Variable id="Werk" type="8" data=""/>
+<Variable id="Version" type="8" data=""/>
+<Variable id="DatumZeit" type="8" data=""/>
+<Variable id="AenderungDurch" type="8" data=""/>
+<Variable id="Aenderungsbeschr" type="8" data=""/>
+<Variable id="SchemaVersion" type="8" data=""/>
+<Variable id="StatResult" type="8" data=""/>
+<Variable id="StatTextValue" type="8" data=""/>
+<Variable id="StatErrorCode" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Konfigfile - Konfigurationsdatei DL24
+HeaderInfo - Kopfdaten der Konfigdatei als String formatiert - wird in Statistik geschrieben
+Fahrzeugmodell - Fahrzeugmodell aus Header der Konfigdatei
+Werk - Werk aus Header der Konfigdatei
+Version - Version der Konfigdatei
+DatumZeit - Datum und Zeit der letzten ?nderung in Konfigdatei
+AenderungDurch - letzter Bearbeiter der Konfigdatei
+Aenderungsbeschr - ?nderungsbeschreibung
+SchemaVersion - Version des Schemas der Konfigdatei
+
+input parameter:Konfigfile
+output parameter:HeaderInfo,Fahrzeugmodell,Werk,Version,DatumZeit,AenderungDurch,Aenderungsbeschr,SchemaVersion,StatResult,StatTextValue,StatErrorCode
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+-- return value
+HeaderInfo = ""
+Fahrzeugmodell = ""
+Werk = ""
+Version = ""
+DatumZeit = ""
+AenderungDurch = ""
+Aenderungsbeschr = ""
+SchemaVersion = ""
+StatResult = ""
+StatTextValue = ""
+StatErrorCode = ""
+-- return value
+
+local xmlHndl = XmlDocment()
+local errFlag = 0
+local AktivierungAsv = 0
+
+
+local xmlPath = "/DL24Konfiguration";
+local xmlTagKopfdaten = "Kopfdaten";
+local xmlTagFahrzeugmodell = "FKL";
+local xmlTagWerk = "Werk";
+local xmlTagVersion = "Version";
+local xmlTagDatumZeitAenderung = "DatumZeitAenderung";
+local xmlTagAenderungDurch = "AenderungDurch";
+local xmlTagAenderungsbeschreibung = "Aenderungsbeschreibung";
+local xmlTagAktASV = "Steuerungsparameter/AktivierungAsv";
+local DL24UpsKonfigFileVersion = "DL24UpsKonfigFileSchemaVersion";
+
+if(false == xmlHndl.load(Konfigfile)) then
+	print("!!!load xml file err :" .. tostring(Konfigfile))
+	engine.LastError = 1
+	errFlag = 1983
+else
+	-- FKL
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagFahrzeugmodell)
+	if(tmpbuf ~= nil) then
+		Fahrzeugmodell = tmpbuf.text
+	else
+		Fahrzeugmodell = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagFahrzeugmodell) .. ": " .. tostring(Fahrzeugmodell) .. "/ "
+	-- Werk
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagWerk)
+	if(tmpbuf ~= nil) then
+		Werk = tmpbuf.text
+	else
+		Werk = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagWerk) .. ": " .. tostring(Werk) .. "/ "	
+	-- Version
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagVersion)
+	if(tmpbuf ~= nil) then
+		Version = tmpbuf.text
+	else
+		Version = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagVersion) .. ": " .. tostring(Version) .. "/ "	
+	-- DatumZeitAenderung
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagDatumZeitAenderung)
+	if(tmpbuf ~= nil) then
+		DatumZeit = tmpbuf.text
+	else
+		DatumZeit = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagDatumZeitAenderung) .. ": " .. tostring(DatumZeit) .. "/ "		
+	-- AenderungDurch
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagAenderungDurch)
+	if(tmpbuf ~= nil) then
+		AenderungDurch = tmpbuf.text
+	else
+		AenderungDurch = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagAenderungDurch) .. ": " .. tostring(AenderungDurch) .. "/ "	
+	-- Aenderungsbeschreibung
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagAenderungsbeschreibung)
+	if(tmpbuf ~= nil) then
+		Aenderungsbeschr = tmpbuf.text
+	else
+		Aenderungsbeschr = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagAenderungsbeschreibung) .. ": " .. tostring(Aenderungsbeschr) .. "/ "	
+	-- DL24UpsKonfigFileSchemaVersion
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. DL24UpsKonfigFileVersion)
+	if(tmpbuf ~= nil) then
+		SchemaVersion = tmpbuf.text
+	else
+		SchemaVersion = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(DL24UpsKonfigFileVersion) .. ": " .. tostring(SchemaVersion) .. "/ "	
+	-- Steuerungsparameter/AktivierungAsv
+	tmpbuf = xmlHndl.selectSingleNode(xmlPath.. "/" .. xmlTagKopfdaten .. "/" .. xmlTagAktASV)
+	if(tmpbuf ~= nil) then
+		AktivierungAsv = tmpbuf.text
+	else
+		AktivierungAsv = ""
+		engine.LastError = 1
+	end
+	HeaderInfo = HeaderInfo .. tostring(xmlTagAktASV) .. ": " .. tostring(AktivierungAsv) .. "/ "		
+end
+print("HeaderInfo: " .. tostring(HeaderInfo))
+
+if(engine.LastError == 0) then
+	engine.StatValue = HeaderInfo
+    StatErrorCode = 0
+    StatTextValue = HeaderInfo
+    StatResult = 0		
+else
+	if(errFlag == 1983) then
+		engine.StatValue = LibVW.DL24_Errflag2Statstr(1983,"")
+		StatErrorCode = 1
+		StatTextValue = LibVW.DL24_Errflag2Statstr(1983,"")
+		StatResult = 1
+	else
+		engine.StatValue = HeaderInfo
+		StatErrorCode = 1
+		StatTextValue = ""
+		StatResult = 1
+	end
+end
+</Script></Function>
+

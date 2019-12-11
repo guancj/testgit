@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="GDICreateSemaphoreForCreateWorkspace"/>
+
+<Function id="GDIDriverInformationGet"/>
+
+<Function id="GDIDriverLoad"/>
+
+<Function id="GDIDriverUnload"/>
+
+<Function id="GDIWorkspaceCreate"/>
+
+<Function id="GDIWorkspaceCreateByName"/>
+
+<Function id="GDIWorkspaceCreateByNameWithSemaphore"/>
+
+<Function id="GDIWorkspaceDelete"/>
+
+<Function id="GDIWorkspaceGetByName"/>
+
+</children>
+</Workplace>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="HUP_86_Kamera_AnfahrenPos_erreicht" flags="1" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="iHUP_Kamera_Pos_No_shared" type="3" dir="0" data="101"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="301" top="155" right="401" bottom="187"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="305" top="868" right="405" bottom="900"/>
+<Script></Script></End>
+<Activities>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="656" top="867" right="688" bottom="899"/>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="302" top="217" right="402" bottom="249"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="623" top="216" right="723" bottom="248"/>
+<Script>engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="37" ActivityType="3" name="不合格">
+<Rect left="622" top="475" right="722" bottom="507"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="39" ActivityType="3" name="HUP：到达照相机位置">
+<Rect left="302" top="280" right="402" bottom="312"/>
+<Line3Text Enable="1" Text="HUP：到达照相机位置"/>
+<Script>engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : HUP: Kamera anfahren POS erreicht--&gt;")
+</Script></Activity>
+<Activity id="41" ActivityType="3" name="数据收取">
+<Rect left="302" top="476" right="402" bottom="508"/>
+<Script>if(Ret == 1) then
+engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : +++HUP 86 Arbeitsstellung KameraPos IO --&gt;"..tostring(DInt_Kamera_Pos_IO))
+engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : +++HUP 86 Arbeitsstellung KameraPos Nr --&gt;"..tostring(DInt_Kamera_Pos_Nr))
+end</Script></Activity>
+<Activity id="42" ActivityType="3" name="Delay">
+<Rect left="450" top="409" right="550" bottom="441"/>
+<Script>engine.Delay(100)</Script></Activity>
+<Activity id="43" ActivityType="3" name="finish_flag">
+<Rect left="450" top="475" right="550" bottom="507"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="44" ActivityType="13" name="HUP_86_KamPos_Driving">
+<Rect left="303" top="409" right="403" bottom="441"/>
+<FunctionRef id="HUP_86_KamPos_Driving" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="Kamera_Position" value="iHUP_Kamera_Pos_No_shared"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="Kamera_Pos_IO" value="0" ret="DInt_Kamera_Pos_IO"/>
+<Parameter id="Kamera_Pos_Nr" value="0" ret="DInt_Kamera_Pos_Nr"/>
+</Parameters>
+</FunctionRef>
+<assessment no="4" name="DEP1514" type="8" flags="97"/>
+</Activity>
+<Activity id="45" ActivityType="3" name="初始化">
+<Rect left="303" top="345" right="403" bottom="377"/>
+<Script>DTime_timeout = 360
+DTestTime1 = 0
+DTestTime2 = 0
+DeltaTime = 0
+DTestTime1 = os.clock()</Script></Activity>
+<Activity id="46" ActivityType="3" name="OK">
+<Rect left="303" top="541" right="403" bottom="573"/>
+<Script>isOK = true;
+engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : ret --&gt;"..tostring(Ret))
+engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : HUP: HUP: Kamera anfahren IO ")
+</Script></Activity>
+<Activity id="47" ActivityType="3" name="照相机调整位置">
+<Rect left="304" top="606" right="404" bottom="638"/>
+<Script>engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : +++HUP 86 Kamera Fahren Kamera Position  iHUP_Kamera_Pos_No_shared --&gt;"..tostring(iHUP_Kamera_Pos_No_shared))
+
+local  DString_Temp = engine.SharedVarGet("_DStr_HUP_Kam_Pos_Anfahren")
+DString_Temp = DString_Temp .. tostring(iHUP_Kamera_Pos_No_shared) .. ";"
+engine.SharedVarSet("_DStr_HUP_Kam_Pos_Anfahren",DString_Temp)  -- 设置相机位置
+
+engine.StatValue = tostring(DString_Temp)
+engine.LastError = 0</Script><assessment no="5" name="DEP1515" type="8" flags="97"/>
+</Activity>
+<Activity id="48" ActivityType="3" name="照相机调整位置">
+<Rect left="304" top="669" right="404" bottom="701"/>
+<Script>engine.println(" &lt;HUP_86_Kamera_AnfahrenPos_erreicht&gt; : +++HUP 86 Kamera Fahren Kamera Position  iHUP_Kamera_Pos_No_shared --&gt;"..tostring(iHUP_Kamera_Pos_No_shared))
+
+
+local  DString_Temp = engine.SharedVarGet("_DStr_HUP_Kam_Pos_Anfahren_ERG")
+DString_Temp = DString_Temp .. tostring(DInt_Kamera_Pos_Nr) .. ";"
+engine.SharedVarSet("_DStr_HUP_Kam_Pos_Anfahren_ERG",DString_Temp)  -- 设置相机ERG位置
+
+engine.StatValue = tostring(DString_Temp)
+engine.LastError = 0</Script><assessment no="6" name="DEP1516" type="8" flags="97"/>
+</Activity>
+<Activity id="49" ActivityType="3" name="setLine">
+<Rect left="143" top="669" right="243" bottom="701"/>
+<Line3Text Enable="1" Text="照相机位置没有变换"/>
+<Script></Script></Activity>
+<Activity id="50" ActivityType="3" name="setLine">
+<Rect left="236" top="736" right="336" bottom="768"/>
+<Line3Text Enable="1" Text="照相机已经变换位置"/>
+<Script></Script></Activity>
+<Activity id="51" ActivityType="3" name="setLine">
+<Rect left="385" top="737" right="485" bottom="769"/>
+<Line3Text Enable="1" Text="照相机位置将要变换"/>
+<Script></Script></Activity>
+<Activity id="52" ActivityType="3" name="判断">
+<Rect left="304" top="797" right="404" bottom="829"/>
+<Script>DTestTime2 = os.clock()
+DeltaTime = DTestTime2 - DTestTime1</Script></Activity>
+<Activity id="54" ActivityType="4" name="路由节点">
+<Rect left="176" top="797" right="208" bottom="829"/>
+</Activity>
+<Activity id="55" ActivityType="3" name="Delay">
+<Rect left="451" top="798" right="551" bottom="830"/>
+<Script>engine.Delay(750)</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="26" EndId="39" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="37" type="0">
+</Transition>
+<Transition StartId="37" EndId="6" type="0">
+</Transition>
+<Transition StartId="39" EndId="45" type="0">
+</Transition>
+<Transition StartId="41" EndId="43" type="1">
+<Expression>Ret ~= 1</Expression></Transition>
+<Transition StartId="41" EndId="46" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="42" EndId="44" type="0">
+</Transition>
+<Transition StartId="43" EndId="42" type="0">
+</Transition>
+<Transition StartId="43" EndId="37" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="44" EndId="41" type="0">
+</Transition>
+<Transition StartId="45" EndId="44" type="0">
+</Transition>
+<Transition StartId="46" EndId="47" type="0">
+</Transition>
+<Transition StartId="47" EndId="48" type="0">
+</Transition>
+<Transition StartId="48" EndId="49" type="1">
+<Expression>DInt_Kamera_Pos_IO == 0</Expression></Transition>
+<Transition StartId="48" EndId="50" type="1">
+<Expression>DInt_Kamera_Pos_IO == 1</Expression></Transition>
+<Transition StartId="48" EndId="51" type="1">
+<Expression>DInt_Kamera_Pos_IO == 2</Expression></Transition>
+<Transition StartId="48" EndId="52" type="0">
+</Transition>
+<Transition StartId="49" EndId="54" type="0">
+</Transition>
+<Transition StartId="50" EndId="52" type="0">
+</Transition>
+<Transition StartId="51" EndId="52" type="0">
+</Transition>
+<Transition StartId="52" EndId="2" type="0">
+</Transition>
+<Transition StartId="52" EndId="55" type="1">
+<Expression>DInt_Kamera_Pos_IO ~= 1 and DeltaTime &lt;= DTime_timeout</Expression></Transition>
+<Transition StartId="54" EndId="52" type="0">
+</Transition>
+<Transition StartId="55" EndId="43" type="0">
+</Transition>
+</Transitions>
+</Process>
+

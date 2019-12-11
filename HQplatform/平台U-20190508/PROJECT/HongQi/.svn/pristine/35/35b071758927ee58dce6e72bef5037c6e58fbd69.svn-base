@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="IDT_Toggling" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="通讯协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="接口号"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="Tester地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="波特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CANId"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CANId"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="pHndl" type="3" dir="0" data="-1" description="通讯句柄"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="toggleCounter" type="3" data="0" description="toggleCounter 计数"/>
+<Variable id="lastSndTel" type="8" data="&quot;&quot;" description="lastSndTel"/>
+<Variable id="lastRevTel" type="8" data="&quot;&quot;" description="lastRevTel"/>
+<Variable id="toggleTel" type="8" data="&quot;&quot;" description="toggleTel"/>
+<Variable id="QUITE" type="11" data="false" description="是否退出循环"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="137" right="237" bottom="32"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="132" top="716" right="232" bottom="748"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="判断通讯端口有效">
+<Rect left="137" top="105" right="237" bottom="137"/>
+<Script>engine.LastError = 0
+
+if pHndl &lt; 0 then
+    engine.println("IDT_Toggling, input idt handl is invalid, pHandl : " .. tostring(pHandl));
+    engine.LastError = -1;
+end</Script></Activity>
+<Activity id="4" ActivityType="4" name="路由节点">
+<Rect left="382" top="104" right="414" bottom="136"/>
+</Activity>
+<Activity id="5" ActivityType="3" name="获取ToggleCounter">
+<Rect left="134" top="207" right="234" bottom="239"/>
+<Script>toggleCounter = engine.UdpHandleVarGet(pHndl, "_TOGGLECOUNTER");
+if toggleCounter == nil then
+    engine.println("IDT_Toggling, _TOGGLECOUNTER reset to 0 !")
+    toggleCounter = 0;
+end</Script></Activity>
+<Activity id="6" ActivityType="3" name="获取上一次发送报文">
+<Rect left="135" top="263" right="235" bottom="295"/>
+<Script>lastSndTel = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+if lastSndTel == nil then
+    lastSndTel = LibIDT.idtInitRequest(pHndl)
+end
+
+lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+local zero = "\x00"
+if lastRevTel == nil then
+    lastRevTel = zero:rep(44);
+end
+</Script></Activity>
+<Activity id="7" ActivityType="3" name="初始化toggle报文">
+<Rect left="136" top="314" right="236" bottom="346"/>
+<Script>toggleTel = lastSndTel;</Script></Activity>
+<Activity id="10" ActivityType="13" name="Service字节使用00">
+<Rect left="275" top="317" right="375" bottom="349"/>
+<FunctionRef id="idtSetBytes">
+<Parameters>
+<Parameter id="request" value="toggleTel"/>
+<Parameter id="pos" value="2"/>
+<Parameter id="nByte" value="1"/>
+<Parameter id="modifyBytes" value="&quot;\x00&quot;"/>
+<Parameter id="ret" ret="toggleTel"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="12" ActivityType="3" name="设置togglebyte">
+<Rect left="136" top="387" right="236" bottom="419"/>
+<Script>toggleTel = LibIDT.idtSetBytes(toggleTel,4,1,lastRevTel:sub(12,12))</Script></Activity>
+<Activity id="15" ActivityType="4" name="路由节点">
+<Rect left="47" top="578" right="79" bottom="610"/>
+</Activity>
+<Activity id="16" ActivityType="4" name="路由节点">
+<Rect left="48" top="105" right="80" bottom="137"/>
+</Activity>
+<Activity id="17" ActivityType="3" name="检测退出标识">
+<Rect left="135" top="579" right="235" bottom="611"/>
+<Script>QUITE = engine.UdpHandleVarGet(pHndl, "_FINISHFLAG");
+if nil == QUITE then
+    QUITE = false;
+end</Script></Activity>
+<Activity id="18" ActivityType="4" name="路由节点">
+<Rect left="384" top="715" right="416" bottom="747"/>
+</Activity>
+<Activity id="19" ActivityType="3" name="Deay">
+<Rect left="12" top="355" right="112" bottom="387"/>
+<Script>engine.Delay(31);</Script></Activity>
+<Activity id="20" ActivityType="13" name="idtToggleDataExchange">
+<Rect left="135" top="454" right="235" bottom="486"/>
+<FunctionRef id="idtToggleDataExchange">
+<Parameters>
+<Parameter id="request" value="toggleTel"/>
+<Parameter id="timeout" value="1"/>
+<Parameter id="pHndl" value="pHndl"/>
+<Parameter id="ret"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="21" ActivityType="3" name="互斥锁定IDT_GENERAL_SEMAPHORE">
+<Rect left="137" top="160" right="237" bottom="192"/>
+<Script>engine.MutexOpen("IDT_GENERAL_SEMAPHORE" .. tostring(pHndl))
+engine.MutexWait("IDT_GENERAL_SEMAPHORE" .. tostring(pHndl),-1)</Script></Activity>
+<Activity id="22" ActivityType="3" name="互斥解锁IDT_GENERAL_SEMAPHORE">
+<Rect left="135" top="515" right="235" bottom="547"/>
+<Script>engine.MutexRelease("IDT_GENERAL_SEMAPHORE" .. tostring(pHndl))</Script></Activity>
+<Activity id="23" ActivityType="3" name="DEBUG Into Toggle">
+<Rect left="137" top="54" right="237" bottom="86"/>
+<Script>engine.println("### Start Toggling ...");</Script></Activity>
+<Activity id="24" ActivityType="3" name="ToggleFinished">
+<Rect left="133" top="651" right="233" bottom="683"/>
+<Script>engine.println("### Stop toggling");</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="23" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="4">
+</Transition>
+<Transition StartId="3" EndId="21" type="0">
+</Transition>
+<Transition StartId="4" EndId="18" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="7" type="0">
+</Transition>
+<Transition StartId="7" EndId="12" type="0">
+</Transition>
+<Transition StartId="7" EndId="10" type="1">
+<Expression>lastRevTel:sub(2,2) == "\x01" and lastSndTel:sub(2,2) ~= "\x00"</Expression></Transition>
+<Transition StartId="10" EndId="12" type="0">
+</Transition>
+<Transition StartId="12" EndId="20" type="0">
+</Transition>
+<Transition StartId="15" EndId="19" type="0">
+</Transition>
+<Transition StartId="16" EndId="3" type="0">
+</Transition>
+<Transition StartId="17" EndId="15" type="1">
+<Expression>QUITE == false</Expression></Transition>
+<Transition StartId="17" EndId="24" type="0">
+</Transition>
+<Transition StartId="18" EndId="2" type="0">
+</Transition>
+<Transition StartId="19" EndId="16" type="0">
+</Transition>
+<Transition StartId="20" EndId="22" type="0">
+</Transition>
+<Transition StartId="21" EndId="5" type="0">
+</Transition>
+<Transition StartId="22" EndId="17" type="0">
+</Transition>
+<Transition StartId="23" EndId="3" type="0">
+</Transition>
+<Transition StartId="24" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

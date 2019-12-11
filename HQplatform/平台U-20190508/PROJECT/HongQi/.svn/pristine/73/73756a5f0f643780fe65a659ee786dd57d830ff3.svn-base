@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_DTC_ErrorCodes" description="VW2000_DTC_Evaluate_ErrorCodes">
+<Inputs>
+<Variable id="LineNr" type="3" data="0" description="行号"/>
+<Variable id="DTC_String" type="8" data="&quot;&quot;" description="VW2000_DTC_Read_Quantity  的返回值"/>
+<Variable id="DTC_Typ" type="3" data="0" description="区分不同的ID读到的DTC--VW2000_DTC_Read_Quantity  的返回值"/>
+<Variable id="Comment" type="8" data="&quot;读故障码&quot;" description="显示"/>
+<Variable id="Timeout" type="3" data="1" description="Err Text 列表显示的时间 /ms"/>
+</Inputs>
+<Outputs>
+<Variable id="errText" type="8" data="" description="所有故障码的Text的"/>
+</Outputs>
+<Script>
+--[[*****************************************************************************
+this function is used to  translate DTC code 
+input parameter:LineNr;DTC_String;DTC_Typ;Comment;Timeout
+output parameter:errText;
+
+03/08/2016     created by viforce
+03/14/2016     changed by viforce
+******************************************************************************--]]
+
+local errStr = "";
+
+local Dtc_codeInt = 0;
+local Dtc_code = "";
+local Dtc_state = "";
+local Dtc_state_Text = "";
+local Dtc_code_Text = "";
+
+errText = "";
+
+if ((DTC_Typ ~= 0) and (DTC_Typ ~= 2)) then
+
+	engine.StatValue = "Read DTC Err ;negative response";
+	engine.LastError = 1;
+	return "";	
+	
+end;
+
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,Comment);
+    engine.ShowMessage();
+
+end;
+
+if(DTC_String  == "") then engine.StatValue = "NO DTC"; engine.LastError = 0; return "";end;
+
+
+local i = 1;
+local length = string.len (DTC_String);
+engine.ListClear();
+DTC_String = string.sub(DTC_String,2,-1);
+while (i &lt; length)  do
+
+	errStr = string.sub (DTC_String, i, i+2);
+    if(errStr == nil ) then break; end;
+	if (string.len(errStr) &lt; 3) then break;end;
+        Dtc_codeInt = string.byte(errStr,1)*256 + string.byte(errStr,2);
+        Dtc_code = string.format ("%04x", string.byte(errStr,1)*256 + string.byte(errStr,2));
+	Dtc_state = string.format ("%02x", string.byte(errStr,3));
+    engine.println("######DTC CODE :"..Dtc_code.."  ".."DTC STATE :"..Dtc_state);
+
+	Dtc_state_Text = LibVW.Get_DTC_Status_Infor(string.byte(errStr,3));
+        engine.println("Dtc_state_Text :"..tostring(Dtc_state_Text));
+
+        Dtc_code = string.upper(Dtc_code);
+        Dtc_code_Text = engine.GetTp20DtcText(Dtc_code);
+
+	StringListTmp = Dtc_code_Text;
+	engine.ListAddString(Dtc_code_Text,false);
+	engine.ListAddString(Dtc_state_Text,false);
+	errText = errText..Dtc_code_Text.."\x0a\x0d"..Dtc_state_Text.."\x0a\x0d";
+	engine.println(tostring(errText));
+	i = i + 3;
+end;
+
+	
+if(errText ~= "" and Timeout ~= 0) then 
+	engine.StatValue = errText;	
+	engine.DialogBackColor = "red";
+	engine.SelectLayout(1);
+	
+	engine.Delay(Timeout);
+	
+        engine.SelectLayout(0);
+	engine.DialogBackColor = "white";
+	engine.LastError = 1;
+	
+else
+
+if(errText == "") then
+    engine.StatValue = "NO DTC";
+    engine.SetLineText(1,"#L=" .. "读取故障码" .. "#R=BMPOK");
+    engine.ShowMessage();
+    engine.LastError = 0;
+end; 
+	
+end;	
+
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,"");
+    engine.ShowMessage();
+
+end;
+
+</Script></Function>
+

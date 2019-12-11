@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="dtc_from_vci" type="8" data=""/>
+</Inputs>
+<Script>DTC_value=string.sub(dtc_from_vci,1,#dtc_from_vci-2);
+			--状态位
+			DTC_STATUE_value=string.sub(dtc_from_vci,#dtc_from_vci-1,#dtc_from_vci);
+			tmp=string.sub(DTC_value,1,1);
+			tmp2=string.sub(DTC_value,2,#DTC_value);--#DTC_value取出长度
+			aa=0;
+		if(tmp=='F' or tmp=='f') then
+			aa=0xf;str='U';
+		elseif(tmp=='E' or tmp=='e')	then
+			aa=0xE;str='U';
+		elseif(tmp=='D' or tmp=='d')	then
+			aa=0xD;str='U';
+		elseif(tmp=='C' or tmp=='c')	then
+			aa=0xC;str='U';
+		elseif(tmp=='B' or tmp=='b')	then
+			aa=0xB;str='B';
+		elseif(tmp=='A' or tmp=='a')	then
+			aa=0xA;str='B';
+		elseif(tmp=='9')	then
+			aa=0x9;str='B';
+		elseif(tmp=='8')	then
+			aa=0x8;str='B';
+		elseif(tmp=='7')	then
+			aa=0x7;str='C';
+		elseif(tmp=='6')	then
+			aa=0x6;str='C';
+		elseif(tmp=='5')	then
+			aa=0x5;str='C';
+		elseif(tmp=='4')	then
+			aa=0x4;str='C';
+		elseif(tmp=='3')	then
+			aa=0x3;str='P';
+		elseif(tmp=='2')	then
+			aa=0x2;str='P';
+		elseif(tmp=='1')	then
+			aa=0x1;str='P';
+		elseif(tmp=='0')	then
+			aa=0x0;str='P';
+		else
+			error("invalid operation");
+		end
+		str=str..(aa%4)..tmp2;
+		key_str=str.."-"..DTC_STATUE_value;
+--print("key="..key_str)
+		return key_str;</Script></Function>
+

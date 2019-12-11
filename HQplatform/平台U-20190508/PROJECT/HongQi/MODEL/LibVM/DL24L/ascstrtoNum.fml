@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="str" type="8" data="" description="as &quot;0000001&quot; 二进制的字符串"/>
+</Inputs>
+<Outputs>
+<Variable id="Num" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This function used to transform binstring  to integer value 
+把二进制的字符串转换成对应的数值
+input parameter:str
+output parameter:Num
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+Num = 0
+
+local m = 0
+local length = 0
+local tmpval = 0
+if(type(str) ~= "string") then
+return nil
+end
+
+length = string.len(str)
+while(m &lt; length) do
+	tmpval = tonumber(string.sub(str,(length - m),(length - m)))
+	if(tmpval &gt; 1) then
+		tmpval = 1
+	end
+	Num = Num + tmpval * math.pow(2,m);
+	m = m + 1
+end </Script></Function>
+

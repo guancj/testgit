@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ZdcOpen">
+<Inputs>
+<Variable id="containerFile" type="8" data="" description="The absolute path of zdc container xml file"/>
+</Inputs>
+<Outputs>
+<Variable id="zdcHndl" type="3" data="0" description="ZDC handle"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to open zdc file and return a zdcHndl xml object
+History:
+    02/01/2016, wuh : function created
+****************************************************************--]]
+	local zdcVersion = ""
+	local zdcHndl = XmlDocment()
+	if false == zdcHndl.load(containerFile) then
+			engine.StatValue = "Zdc open failed, zdc file : " .. tostring(containerFile)
+			engine.println("ZdcOpen, load zdc file failed. file = " .. tostring(containerFile))
+			engine.LastError = 1; zdcHndl = nil
+			return zdcHndl
+	end
+	
+	if nil ~= zdcHndl.selectSingleNode("/ZDC/IDENT/VERSION-TYP") then
+		zdcVersion = zdcHndl.selectSingleNode("/ZDC/IDENT/VERSION-TYP").text
+		engine.println("ZdcOpen, ZDC VERSION : " .. tostring(zdcVersion))
+	end
+	if  not ("0202" == zdcVersion or  "0203" == zdcVersion 
+		or  "0204" == zdcVersion or  "020401" == zdcVersion or  "0205" == zdcVersion) then
+		engine.StatValue = "Zdc version wrong, version : " .. tostring(zdcVersion)
+		engine.println("ZdcOpen, version wrong, version = " .. tostring(zdcVersion))
+		engine.LastError = 1; zdcHndl = nil
+		return zdcHndl
+	end
+	
+	engine.StatValue = "Zdc open successfully, version : " .. tostring(zdcVersion)
+	engine.LastError = 0</Script></Function>
+

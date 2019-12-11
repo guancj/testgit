@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="SWE_01_Start_Test" flags="1" block="4" ptbtext="DEP1368" group="115" pbltext="DEP1390">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="322" top="67" right="422" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="321" top="387" right="421" bottom="419"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="错误">
+<Rect left="491" top="250" right="591" bottom="282"/>
+<Line2Text Enable="1" Text="SWE SERVICE 01 ERROR"/>
+<Script>engine.println(" &lt;SWE_01_Start_Test&gt; : SWE Status: Error --&gt;"..tostring(Ret))</Script></Activity>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="671" top="386" right="703" bottom="418"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="636" top="251" right="736" bottom="283"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="OK">
+<Rect left="320" top="311" right="420" bottom="343"/>
+<Script>isOK = true;
+engine.println(" &lt;SWE_01_Start_Test&gt; : OK "..tostring(Ret))
+</Script></Activity>
+<Activity id="25" ActivityType="13" name="IDT_WaitForServiceFinish">
+<Rect left="319" top="250" right="419" bottom="282"/>
+<FunctionRef id="IDT_WaitForServiceFinish" model="LibIDT">
+<Parameters>
+<Parameter id="serviceNum" value="1"/>
+<Parameter id="timeOut" value="0"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="revTel" ret="RecvData"/>
+</Parameters>
+</FunctionRef>
+<assessment no="1" name="DEP1391" type="8" flags="97"/>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="321" top="137" right="421" bottom="169"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="635" top="137" right="735" bottom="169"/>
+<Script>engine.println(" &lt;SWE_01_Start_Test&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="29" ActivityType="13" name="SWE_01_Start_Test">
+<Rect left="320" top="195" right="420" bottom="227"/>
+<TitleText Enable="1" Text="大灯调整：检测开始"/>
+<FunctionRef id="SWE_01_Start_Test" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="VMTID" value="engine.VmtId"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="5" EndId="21" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="2" type="0">
+</Transition>
+<Transition StartId="25" EndId="23" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="25" EndId="5" type="0">
+</Transition>
+<Transition StartId="26" EndId="29" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="29" EndId="25" type="0">
+</Transition>
+</Transitions>
+</Process>
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="发送获取左侧灯光检测结果指令并返回结果值，service 12">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="lowBeamHeight" type="5" data="0" description="近光灯高度值"/>
+<Variable id="lowBeamHeightReview" type="3" data="0" description="近光灯高度值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="lowBeamLevel" type="5" data="0" description="近光灯水平值"/>
+<Variable id="lowBeamLevelReview" type="3" data="0" description="近光灯水平值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="highBeamHeight" type="5" data="0" description="远光灯高度值"/>
+<Variable id="highBeamHeightReview" type="3" data="0" description="远光灯高度值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="highBeamLevel" type="5" data="0" description="远光灯水平值"/>
+<Variable id="highBeamLevelReview" type="3" data="0" description="远光灯水平值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="highBeamIntensity" type="5" data="0" description="远光灯强光值"/>
+<Variable id="highBeamIntensityReview" type="3" data="0" description="远光灯强光值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="fogLampHeight" type="5" data="0" description="雾灯高度值"/>
+<Variable id="fogLampHeightReview" type="3" data="0" description="雾灯高度值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+</Outputs>
+<Script>lowBeamHeight,lowBeamHeightReview,lowBeamLevel,lowBeamLevelReview = 0,0,0,0;
+highBeamHeight,highBeamHeightReview,highBeamLevel,highBeamLevelReview,highBeamIntensity,highBeamIntensityReview = 0,0,0,0,0,0;
+fogLampHeight,fogLampHeightReview = 0,0;
+
+local factor = 0.01
+
+ret = LibIDT.idtSendDatagramALS("\x0C",LibIDT.idtGetTimeout(),pHndl);
+
+if(ret == 1) then
+local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+
+engine.println("### RESULT SERVER 12 :" ..LibIDT.idthex2str(lastRevTel));
+
+lowBeamHeight = LibIDT.idthilo2signed(string.byte(lastRevTel:sub(13,13)),string.byte(lastRevTel:sub(14,14))) * factor;
+lowBeamHeightReview = string.byte(lastRevTel:sub(29,29));
+
+--获取近光灯水平值和评估值
+lowBeamLevel = LibIDT.idthilo2signed(string.byte(lastRevTel:sub(15,15)),string.byte(lastRevTel:sub(16,16))) * factor;
+lowBeamLevelReview = string.byte(lastRevTel:sub(30,30));
+
+--获取远光灯高度值和评估值
+highBeamHeight = LibIDT.idthilo2signed(string.byte(lastRevTel:sub(17,17)),string.byte(lastRevTel:sub(18,18))) * factor;
+highBeamHeightReview = string.byte(lastRevTel:sub(31,31));
+
+--获取远光灯水平值和评估值
+highBeamLevel = LibIDT.idthilo2signed(string.byte(lastRevTel:sub(19,19)),string.byte(lastRevTel:sub(20,20))) * factor;
+highBeamLevelReview = string.byte(lastRevTel:sub(32,32));
+
+--获取远光灯强度值和评估值
+highBeamIntensity = LibIDT.idthilo2signed(string.byte(lastRevTel:sub(23,23)),string.byte(lastRevTel:sub(24,24))) * factor;
+highBeamIntensityReview = string.byte(lastRevTel:sub(34,34));
+
+--获取雾灯高度值和评估值
+fogLampHeight = LibIDT.idthilo2signed(string.byte(lastRevTel:sub(21,21)),string.byte(lastRevTel:sub(22,22))) * factor;
+fogLampHeightReview = string.byte(lastRevTel:sub(33,33));
+
+
+--[[
+--获取近光灯高度值和评估值
+lowBeamHeight = LibIDT.idthilo2signed(@12,@13) * factor;
+lowBeamHeightReview = @28;
+
+--获取近光灯水平值和评估值
+lowBeamLevel = LibIDT.idthilo2signed(@14,@15) * factor;
+lowBeamLevelReview = @29;
+
+--获取远光灯高度值和评估值
+highBeamHeight = LibIDT.idthilo2signed(@16,@17) * factor;
+highBeamHeightReview = @30;
+
+--获取远光灯水平值和评估值
+highBeamLevel = LibIDT.idthilo2signed(@18,@19) * factor;
+highBeamLevelReview = @31;
+
+--获取远光灯强度值和评估值
+highBeamIntensity = LibIDT.idthilo2signed(@22,@23) * factor;
+highBeamIntensityReview = @33;
+
+--获取雾灯高度值和评估值
+fogLampHeight = LibIDT.idthilo2signed(@20,@21) * factor;
+fogLampHeightReview = @32;
+]]
+end;</Script></Function>
+

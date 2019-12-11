@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="hex" type="8" data=""/>
+<Variable id="n" type="8" data=""/>
+</Inputs>
+<Script>--字符中n和n+1
+ var1=string.sub(hex,n,n);
+ var2=string.sub(hex,n+1,n+1);
+ dec=abcdef2dec((string.sub(hex,n,n)))*16+abcdef2dec((string.sub(hex,n+1,n+1)));
+ return dec;
+</Script></Function>
+

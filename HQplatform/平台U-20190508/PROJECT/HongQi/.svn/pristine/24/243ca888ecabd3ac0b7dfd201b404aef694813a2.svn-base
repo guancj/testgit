@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtGetTimeout" description="获取超时时间全局变量">
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回IDTLib.timeout的值"/>
+</Outputs>
+<Script>ret = LibIDT.timeout;
+
+--ret = timeout;</Script></Function>
+

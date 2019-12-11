@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_22_Identity" flags="1" block="4" ptbtext="DEP1368" group="122" pbltext="DEP1369">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="FASType" type="3" data="0"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="322" top="67" right="422" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="321" top="472" right="421" bottom="504"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="错误">
+<Rect left="489" top="336" right="589" bottom="368"/>
+<Line2Text Enable="1" Text="FWE SERVICE 22 ERROR"/>
+<Script>engine.println(" &lt;FAS_22_Identity&gt; : FAS Status: Error --&gt;"..tostring(Ret))</Script></Activity>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="672" top="471" right="704" bottom="503"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="637" top="336" right="737" bottom="368"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="OK">
+<Rect left="320" top="405" right="420" bottom="437"/>
+<Script>isOK = true;
+engine.println(" &lt;FAS_22_Identity&gt; : ret --&gt;"..tostring(Ret))
+</Script></Activity>
+<Activity id="25" ActivityType="13" name="IDT_WaitForServiceFinish">
+<Rect left="135" top="344" right="235" bottom="376"/>
+<FunctionRef id="IDT_WaitForServiceFinish" model="LibIDT">
+<Parameters>
+<Parameter id="serviceNum" value="22"/>
+<Parameter id="timeOut" value="0"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="revTel" ret="RecvData"/>
+</Parameters>
+</FunctionRef>
+<assessment no="13" name="DEP1388" type="8" flags="97"/>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="321" top="137" right="421" bottom="169"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="638" top="138" right="738" bottom="170"/>
+<Script>engine.println(" &lt;FAS_22_Identity&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="29" ActivityType="3" name="驾驶辅助：身份">
+<Rect left="321" top="201" right="421" bottom="233"/>
+<TitleText Enable="1" Text="驾驶辅助：身份"/>
+<Script>engine.println(" &lt;FAS_22_Identity&gt; : 驾驶辅助调整身份 --&gt;")
+
+--#### Neue Montage ####
+--# C6CN; Luftfederung Air suspension 空气悬架
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BK" ) then FASType = 10 end
+--# C6CN; Schlechtwegefahrwerk Mobility  重型悬挂
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BB" ) then FASType = 11 end
+--# C6CN; Komfortschlechtwegefahrwerk  Comfort Mobility  舒适重型悬挂
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BR" ) then FASType = 12 end
+
+--# C7CN; 4 Corner Luftfederung, Schlechtwegeausf黨rung  Corner air suspension, bad road version
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$7JV&amp;$1BS" ) then FASType = 20 end
+--# C7CN; Schlechtwegefahrwerk Mobility
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$7JV&amp;$1BR" ) then FASType = 21 end
+--# C7CN; Komfortschlechtwegefahrwerk  Comfort Mobility
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$7JV&amp;$1BB" ) then FASType = 22 end
+
+engine.println(" &lt;FAS_22_Identity&gt; : 驾驶辅助调整身份 FWE-Typ --&gt;"..tostring(FASType))</Script></Activity>
+<Activity id="30" ActivityType="3" name="统计FAS TYPE">
+<Rect left="321" top="263" right="421" bottom="295"/>
+<Script>engine.StatValue = tostring(FASType)
+engine.LastError = 0</Script><assessment no="12" name="DEP1387" type="8" flags="97"/>
+</Activity>
+<Activity id="32" ActivityType="13" name="FAS_22_Fzg_ID_mit_Type">
+<Rect left="322" top="336" right="422" bottom="368"/>
+<FunctionRef id="FAS_22_Fzg_ID_mit_Type" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="ID_Typ" value="2"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="Vehicle_ID" value="engine.KNR"/>
+<Parameter id="Typ_FAS_1" value="FASType"/>
+<Parameter id="Typ_FAS_2" value="0"/>
+<Parameter id="Typ_FAS_3" value="0"/>
+<Parameter id="Typ_FAS_4" value="0"/>
+<Parameter id="Typ_FAS_5" value="0"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+</Parameters>
+</FunctionRef>
+<assessment no="13" name="DEP1388" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="5" EndId="21" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="2" type="0">
+</Transition>
+<Transition StartId="26" EndId="29" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="29" EndId="30" type="0">
+</Transition>
+<Transition StartId="30" EndId="32" type="0">
+</Transition>
+<Transition StartId="32" EndId="23" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="32" EndId="5" type="0">
+</Transition>
+</Transitions>
+</Process>
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DopplerLeft_X_Axis_Working" type="3" data="0"/>
+<Variable id="DopplerLeft_Y_Axis_Working" type="3" data="0"/>
+<Variable id="DopplerLeft_Z_Axis_Working" type="3" data="0"/>
+<Variable id="DopplerRight_X_Axis_Working" type="3" data="0"/>
+<Variable id="DopplerRight_Y_Axis_Working" type="3" data="0"/>
+<Variable id="DopplerRight_Z_Axis_Working" type="3" data="0"/>
+<Variable id="factor" type="3" data="0"/>
+<Variable id="idt_tel_input" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="idt_tel" type="8" data=""/>
+</Outputs>
+<Script>DopplerLeft_X_Axis_Working = DopplerLeft_X_Axis_Working * factor
+DopplerLeft_X_2hex = LibIDT.idtword2hex(DopplerLeft_X_Axis_Working)
+--strx = LibIDT.idthex2str(DopplerLeft_X_2hex)
+--print("strx"..strx)
+idt_tel = LibIDT.idtSetBytes(idt_tel_input,6,2,DopplerLeft_X_2hex)
+
+DopplerLeft_Y_Axis_Working = DopplerLeft_Y_Axis_Working * factor
+DopplerLeft_Y_2hex = LibIDT.idtword2hex(DopplerLeft_Y_Axis_Working)
+idt_tel = LibIDT.idtSetBytes(idt_tel,8,2,DopplerLeft_Y_2hex)
+
+DopplerLeft_Z_Axis_Working = DopplerLeft_Z_Axis_Working * factor
+DopplerLeft_Z_2hex = LibIDT.idtword2hex(DopplerLeft_Z_Axis_Working)
+idt_tel = LibIDT.idtSetBytes(idt_tel,10,2,DopplerLeft_Z_2hex)
+
+
+DopplerRight_X_Axis_Working = DopplerRight_X_Axis_Working * factor
+DopplerRight_X_2hex = LibIDT.idtword2hex(DopplerRight_X_Axis_Working)
+idt_tel = LibIDT.idtSetBytes(idt_tel,12,2,DopplerRight_X_2hex)
+
+DopplerRight_Y_Axis_Working = DopplerRight_Y_Axis_Working * factor
+DopplerRight_Y_2hex = LibIDT.idtword2hex(DopplerRight_Y_Axis_Working)
+idt_tel = LibIDT.idtSetBytes(idt_tel,14,2,DopplerRight_Y_2hex)
+
+
+DopplerRight_Z_Axis_Working = DopplerRight_Z_Axis_Working * factor
+DopplerRight_Z_2hex = LibIDT.idtword2hex(DopplerRight_Z_Axis_Working)
+idt_tel = LibIDT.idtSetBytes(idt_tel,16,2,DopplerRight_Z_2hex)</Script></Function>
+

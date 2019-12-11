@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CATALOG xsi:noNamespaceSchemaLocation="odx-cc.xsd" F-DTD-VERSION="ODX-2.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <SHORT-NAME>VW311</SHORT-NAME>
+    <ADMIN-DATA>
+        <DOC-REVISIONS>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.1</REVISION-LABEL>
+                <STATE>NEW</STATE>
+                <DATE>2015-07-27T11:34:17</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>ES KWP2000</CHANGE>
+                        <REASON>Add New ES KWP2000</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>UNIT LIB</CHANGE>
+                        <REASON>Add Unit Lib odx-d</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>DOP LIB</CHANGE>
+                        <REASON>Add DOP Lib odx-d</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.2</REVISION-LABEL>
+                <STATE>ADD</STATE>
+                <DATE>2015-07-27T11:23:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Add ECUs</CHANGE>
+                        <REASON>Add BV and EV(BCM, ESP, Motor, Audio, GSG, Klima, GW)</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Add VIS</CHANGE>
+                        <REASON>Add VIS for exist ecus</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Add Functional Groups</CHANGE>
+                        <REASON>Add KWP2000 FG and UDS FG</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Add Protocols</CHANGE>
+                        <REASON>Add KWP2000OnCAN, OnKline and UDS</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Add OBD ISO</CHANGE>
+                        <REASON>Add OBD Comparams</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.3</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-07-30T22:09:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Implement ES KWP200</CHANGE>
+                        <REASON>implement Read and Write Service (22, 2e, 3b, 1a)</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.4</REVISION-LABEL>
+                <STATE>UPDATE</STATE>
+                <DATE>2015-08-11T13:07:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Imp Servce 21</CHANGE>
+                        <REASON>Imp Service 21(Read Data By Local ID) in FG</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.5</REVISION-LABEL>
+                <STATE>UPDATE</STATE>
+                <DATE>2015-08-17T23:29:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Add KOMBI ECU</CHANGE>
+                        <REASON>Add Kombi BV and EV Default</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Add DTCs</CHANGE>
+                        <REASON>Add DTCs for KOMBI and MOTOR</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.6</REVISION-LABEL>
+                <STATE>UPDATE</STATE>
+                <DATE>2015-10-04T19:41:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Redefined all BV and FG</CHANGE>
+                        <REASON>all BV and FG</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Support TP2.0 Comparam Specs</CHANGE>
+                        <REASON>Add &quot;ISO 15765-2 with VW TP2.0&quot; and &quot;ISO 14230-2 with VW TP2.0&quot;</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.7</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-10-14T22:52:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Disable Service</CHANGE>
+                        <REASON>Disable Not Defined Service in KWP2000</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Fix Service 27</CHANGE>
+                        <REASON>Delete Level 3 and Level 4</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.8</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-10-26T20:07:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Fixed Bugs</CHANGE>
+                        <REASON>Disable service, Rework same service</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.0.9</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-10-28T06:46:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Stop Routine ID</CHANGE>
+                        <REASON>Change BA to B8</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Add Parameter for SID36</CHANGE>
+                        <REASON>Transfer Data Download and Upload</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.0</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-10-28T20:40:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Fault Entry</CHANGE>
+                        <REASON>Change the Length to 3 Bytes</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.1</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-10-29T21:35:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>3B 9A</CHANGE>
+                        <REASON>Defined Structure for 3B 9A</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.2</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-11-01T21:55:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Change SID Name</CHANGE>
+                        <REASON>Used Service ID to instead Request Service ID</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.3</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-11-21T17:40:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Fix Routines</CHANGE>
+                        <REASON>Fix Routines</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.4</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-11-24T22:33:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Fix Bug #57, #59, #67</CHANGE>
+                        <REASON>add jar, add Basic Setting Stop Service</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.5</REVISION-LABEL>
+                <STATE>UPDATE</STATE>
+                <DATE>2015-12-12T22:00:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Update CompuCodeLib.jar</CHANGE>
+                        <REASON>Change Formel</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Upate BCM Slave ECUs</CHANGE>
+                        <REASON>Add Slave Door IDs</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.6</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-12-14T21:56:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Fix Server Short Name</CHANGE>
+                        <REASON>Chang Short Name &quot;DS&quot; to &quot;DC&quot;</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.7</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-12-25T23:14:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Update F181 and F182</CHANGE>
+                        <REASON>Add and update F181 and F182</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.8</REVISION-LABEL>
+                <STATE>UPDATE</STATE>
+                <DATE>2015-12-26T23:15:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Add Compu for F181 and F182</CHANGE>
+                        <REASON>Add Compu for F181 and F182</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.1.9</REVISION-LABEL>
+                <STATE>UPDATE</STATE>
+                <DATE>2015-12-26T23:16:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Disable Service in KWP TP2.0 on CAN</CHANGE>
+                        <REASON>Disable Start Comm and Stop Comm (Service 81 and 82)</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.2.0</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-12-26T23:18:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Fix Bugs</CHANGE>
+                        <REASON>Fix Q63, Q72, Q73</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+                <REVISION-LABEL>0.3.0</REVISION-LABEL>
+                <STATE>FIXBUG</STATE>
+                <DATE>2015-12-30T15:41:00</DATE>
+                <TOOL>XMLSpy</TOOL>
+                <MODIFICATIONS>
+                    <MODIFICATION>
+                        <CHANGE>Fix Bug #63</CHANGE>
+                        <REASON>add Adaption Value, change PA_PDUValue Start at 0 byte</REASON>
+                    </MODIFICATION>
+                    <MODIFICATION>
+                        <CHANGE>Update Bug #63</CHANGE>
+                        <REASON>Change To Mux Case</REASON>
+                    </MODIFICATION>
+                </MODIFICATIONS>
+            </DOC-REVISION>
+        </DOC-REVISIONS>
+    </ADMIN-DATA>
+    <ABLOCKS>
+        <ABLOCK>
+            <SHORT-NAME>ASAMJavaInterfaces_jar</SHORT-NAME>
+            <CATEGORY>LIB</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="">Libs/ASAMJavaInterfaces.jar</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ODXLibraryJobs_jar</SHORT-NAME>
+            <CATEGORY>LIB</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="">Libs/ODXLibraryJobs.jar</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_BCM_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_BCM.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_ELV_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_ELV.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_EPS_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_EPS.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_ESP_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_ESP.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_GSG_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_GSG.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_GW_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_GW.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_IMMO_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_IMMO.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_KESSY_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_KESSY.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_KLIMA_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_KLIMA.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_KOMBI_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_KOMBI.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_MSG_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_MSG.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_PDC_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_PDC.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_RADIO_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_RADIO.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ES_KWP2000_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ES_KWP2000.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ES_KWP2000GlobaNegatRespo_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ES_KWP2000GlobaNegatRespo.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ES_UDS_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ES_UDS.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ES_UDSGlobaNegatRespo_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ES_UDSGlobaNegatRespo.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_ABAZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_ABAZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_BCMZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_BCMZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_ELVZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_ELVZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_EPSZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_EPSZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_ESPZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_ESPZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_GSGZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_GSGZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_GWZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_GWZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_IMMOZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_IMMOZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_KESSYZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_KESSYZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_KLIMAZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_KLIMAZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_KOMBIZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_KOMBIZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_MSGZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_MSGZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_PDCZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_PDCZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>EV_RADIOZDefau_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">EV_RADIOZDefau.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>FG_KWP2000CAN20VW311_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">FG_KWP2000CAN20VW311.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>FG_UDSVW311_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">FG_UDSVW311.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_11898_2_DWCAN_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_11898_2_DWCAN.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_11898_3_DWFTCAN_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_11898_3_DWFTCAN.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_11898_RAW_CAN_odx_c</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_11898_RAW_CAN.odx-c</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_11898_RAW_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_11898_RAW.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_1_UART_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_1_UART.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_2_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_2.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_2_with_VW_TP20_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_2_with_VW_TP20.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_3_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_3.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_3_on_ISO_14230_2_odx_c</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_3_on_ISO_14230_2.odx-c</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_3_on_ISO_14230_2_with_VW_TP20_odx_c</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_3_on_ISO_14230_2_with_VW_TP20.odx-c</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_3_on_ISO_15765_2_odx_c</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_3_on_ISO_15765_2.odx-c</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_14230_3_on_ISO_15765_2_with_VW_TP20_odx_c</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_14230_3_on_ISO_15765_2_with_VW_TP20.odx-c</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_15031_5_on_ISO_15765_4_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_15031_5_on_ISO_15765_4.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_15765_2_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_15765_2.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_15765_2_with_VW_TP20_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_15765_2_with_VW_TP20.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_15765_3_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_15765_3.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_15765_3_on_ISO_15765_2_odx_c</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_15765_3_on_ISO_15765_2.odx-c</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_15765_4_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_15765_4.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ISO_OBD_on_ISO_15765_4_odx_c</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ISO_OBD_on_ISO_15765_4.odx-c</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>BV_ABA_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">BV_ABA.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ODX_RS_DOP_LIB_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ODX_RS_DOP_LIB.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>ODX_RS_UNIT_LIB_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">ODX_RS_UNIT_LIB.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>PR_KWPOnCAN_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">PR_KWPOnCAN.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>PR_KWPOnKLine_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">PR_KWPOnKLine.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>PR_KWPTP20OnCAN_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">PR_KWPTP20OnCAN.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>PR_KWPTP20OnKLine_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">PR_KWPTP20OnKLine.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>PR_UDSOnCAN_odx_d</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">PR_UDSOnCAN.odx-d</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>SAE_J2411_SWCAN_odx_cs</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">SAE_J2411_SWCAN.odx-cs</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>VIS_VW311_odx_v</SHORT-NAME>
+            <CATEGORY>ODX-DATA</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="text/xml">VIS_VW311.odx-v</FILE>
+            </FILES>
+        </ABLOCK>
+        <ABLOCK>
+            <SHORT-NAME>CompuCodeLib_jar</SHORT-NAME>
+            <CATEGORY>ODX-JOB</CATEGORY>
+            <FILES>
+                <FILE CREATION-DATE="2015-10-26T20:41:33" MIME-TYPE="">Jobs/CompuCodeLib.jar</FILE>
+            </FILES>
+        </ABLOCK>
+    </ABLOCKS>
+</CATALOG>

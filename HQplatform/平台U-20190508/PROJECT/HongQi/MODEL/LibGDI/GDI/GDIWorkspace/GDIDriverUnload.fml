@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+</Inputs>
+<Script>if gdiWorkspace~=nil then
+	engine.GDI_UnloadDriver(gdiWorkspace)
+ else
+	print("GDIDriverUnload: workspace is not set")
+ end</Script></Function>
+

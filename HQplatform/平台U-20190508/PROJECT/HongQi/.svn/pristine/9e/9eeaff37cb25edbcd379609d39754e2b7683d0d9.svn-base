@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="IDT_Ctrl_Monitor" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="FWEHndl" type="3" dir="0" data="FWEHndl"/>
+<Variable id="FASHndl" type="3" dir="0" data="FASHndl"/>
+<Variable id="SWEHndl" type="3" dir="0" data="SWEHndl"/>
+<Variable id="HUPHndl" type="3" dir="0" data="HUPHndl"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="247" top="84" right="347" bottom="116"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="247" top="306" right="347" bottom="338"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="5" name="进行检测">
+<Rect left="155" top="227" right="255" bottom="259"/>
+<SubProcesses>
+<SubProcess id="SWE_ErrorMonitor">
+<Parameters>
+<Parameter id="AutoMode" value="true"/>
+<Parameter id="Error" value="true"/>
+<Parameter id="Emergency" value="true"/>
+<Parameter id="Ready" value="true"/>
+<Parameter id="Handl" value="SWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FWE_ErrorMonitor">
+<Parameters>
+<Parameter id="AutoMode" value="true"/>
+<Parameter id="Error" value="true"/>
+<Parameter id="Emergency" value="true"/>
+<Parameter id="Ready" value="true"/>
+<Parameter id="Handl" value="FWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="IDT_Toggling" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="FWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="IDT_Toggling" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="SWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FAS_ErrorMonitor">
+<Parameters>
+<Parameter id="AutoMode" value="true"/>
+<Parameter id="Error" value="true"/>
+<Parameter id="Emergency" value="true"/>
+<Parameter id="Ready" value="true"/>
+<Parameter id="Handl" value="FASHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="IDT_Toggling" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="FASHndl"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="271" ActivityType="3" name="分支判断">
+<Rect left="248" top="146" right="348" bottom="178"/>
+<Script></Script></Activity>
+<Activity id="272" ActivityType="5" name="进行检测">
+<Rect left="335" top="225" right="435" bottom="257"/>
+<SubProcesses>
+<SubProcess id="SWE_ErrorMonitor">
+<Parameters>
+<Parameter id="AutoMode" value="true"/>
+<Parameter id="Error" value="true"/>
+<Parameter id="Emergency" value="true"/>
+<Parameter id="Ready" value="true"/>
+<Parameter id="Handl" value="SWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FWE_ErrorMonitor">
+<Parameters>
+<Parameter id="AutoMode" value="true"/>
+<Parameter id="Error" value="true"/>
+<Parameter id="Emergency" value="true"/>
+<Parameter id="Ready" value="true"/>
+<Parameter id="Handl" value="FWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="IDT_Toggling" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="FWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="IDT_Toggling" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="SWEHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FAS_ErrorMonitor">
+<Parameters>
+<Parameter id="AutoMode" value="true"/>
+<Parameter id="Error" value="true"/>
+<Parameter id="Emergency" value="true"/>
+<Parameter id="Ready" value="true"/>
+<Parameter id="Handl" value="FASHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="IDT_Toggling" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="FASHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="HUP_ErrorMonitor">
+<Parameters>
+<Parameter id="AutoMode" value="true"/>
+<Parameter id="Error" value="true"/>
+<Parameter id="Emergency" value="true"/>
+<Parameter id="Ready" value="true"/>
+<Parameter id="Handl" value="HUPHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="IDT_Toggling" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="HUPHndl"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="271" type="0">
+</Transition>
+<Transition StartId="3" EndId="2" type="0">
+</Transition>
+<Transition StartId="271" EndId="3" type="0">
+</Transition>
+<Transition StartId="271" EndId="272" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="272" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

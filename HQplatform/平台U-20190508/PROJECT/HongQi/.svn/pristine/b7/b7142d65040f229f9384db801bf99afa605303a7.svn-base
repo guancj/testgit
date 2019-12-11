@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_HUP_02" flags="1">
+<ProcessParameters>
+<Variable id="HUPHndl" type="3" dir="0" data="HUPHndl"/>
+<Variable id="isOK" type="11" dir="2" data="isOK"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="389" top="109" right="489" bottom="141"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="390" top="696" right="490" bottom="728"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="Pos 1 check">
+<Rect left="389" top="177" right="489" bottom="209"/>
+<Script></Script></Activity>
+<Activity id="7" ActivityType="5" name="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Rect left="389" top="240" right="489" bottom="272"/>
+<SubProcesses>
+<SubProcess id="HUP_86_Kamera_AnfahrenPos_erreicht">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="iHUP_Kamera_Pos_No_shared" value="1"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="8" ActivityType="3" name="普通节点">
+<Rect left="546" top="239" right="646" bottom="271"/>
+<Script>engine.println(" &lt;Par_HUP_02&gt; : HUP Service 86 9  failed")
+-- HUP调整：照相机移动失败</Script></Activity>
+<Activity id="9" ActivityType="3" name="照相">
+<Rect left="390" top="306" right="490" bottom="338"/>
+<Script></Script></Activity>
+<Activity id="10" ActivityType="5" name="HUP_91_Bild_Aufnahme">
+<Rect left="391" top="368" right="491" bottom="400"/>
+<SubProcesses>
+<SubProcess id="HUP_91_Bild_Aufnahme">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Bildtyp_shared" value="1"/>
+<Parameter id="DInt_HUP_Bildpos_shared" value="1"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="11" ActivityType="3" name="普通节点">
+<Rect left="551" top="368" right="651" bottom="400"/>
+<Script>engine.println(" &lt;Par_HUP_02&gt; : HUP Service 91 9 failed")
+-- HUP调整：照相</Script></Activity>
+<Activity id="20" ActivityType="3" name="同步量">
+<Rect left="391" top="629" right="491" bottom="661"/>
+<Script>engine.SharedVarSet("_DInt_HUD_Sync_shared",0)</Script></Activity>
+<Activity id="21" ActivityType="3" name="HUP_HW_Berechnung_Start_Ende">
+<Rect left="390" top="435" right="490" bottom="467"/>
+<Script></Script></Activity>
+<Activity id="22" ActivityType="5" name="HUP_92_HW_Berechnung_Start">
+<Rect left="391" top="499" right="491" bottom="531"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Start">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="2"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="1" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="25" ActivityType="3" name="普通节点">
+<Rect left="552" top="498" right="652" bottom="530"/>
+<Script>engine.println(" &lt;Par_HUP_02&gt; : HUP Service 92 start failed")
+-- HUP调整：执行计算</Script></Activity>
+<Activity id="28" ActivityType="5" name="HUP_92_HW_Berechnung_Ende">
+<Rect left="391" top="564" right="491" bottom="596"/>
+<SubProcesses>
+<SubProcess id="HUP_92_Berechnung_Ende">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_HUP" ret="IDT_Default_Answer_HUP"/>
+<Parameter id="DInt_HUP_Berechnungsart_shared" value="2"/>
+<Parameter id="DInt_HUP_BerechnungBildNr1_shared" value="1" ret="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="DInt_HUP_BerechnungBildNr2_shared" value="0" ret="DInt_HUP_BerechnungBildNr2_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="29" ActivityType="3" name="普通节点">
+<Rect left="551" top="563" right="651" bottom="595"/>
+<Script>engine.println(" &lt;Par_HUP_02&gt; : HUP Service 92 end  failed")
+-- HUP调整：执行计算</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="7" type="0">
+</Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="7" EndId="9" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="9" EndId="10" type="0">
+</Transition>
+<Transition StartId="10" EndId="11" type="0">
+</Transition>
+<Transition StartId="10" EndId="21" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="20" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="22" type="0">
+</Transition>
+<Transition StartId="22" EndId="25" type="0">
+</Transition>
+<Transition StartId="22" EndId="28" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="28" EndId="29" type="0">
+</Transition>
+<Transition StartId="28" EndId="20" type="1">
+<Expression>isOK == true</Expression></Transition>
+</Transitions>
+</Process>
+

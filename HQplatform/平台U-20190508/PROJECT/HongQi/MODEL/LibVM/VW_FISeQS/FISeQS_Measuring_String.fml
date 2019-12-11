@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="MeasuredID" type="3" data="0" description="测量号"/>
+<Variable id="Result" type="3" data="0" description="结果"/>
+<Variable id="MeasureValue" type="8" data="" description="测量值"/>
+<Variable id="Unit" type="8" data="&quot;&quot;" description="单位"/>
+</Inputs>
+<Script>--engine.LastError = Result;
+engine.LastError = 0;
+--engine.StatValue = "MESSWERT".."{"..tostring(MeasuredID)..";"..tostring(Result)..";".."\""..MeasureValue.."\""..";".."\""..Unit.."\""..";}";
+engine.StatValue = "MESSWERT".."{"..tostring(MeasuredID)..";"..tostring(Result)..";".."\\\""..MeasureValue.."\\\""..";".."\\\""..Unit.."\\\""..";}";
+engine.println("###BZD MessureValue :"..engine.StatValue.."\n");	</Script></Function>
+

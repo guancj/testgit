@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="Status_Check_view_8bit"/>
+
+<Function id="Status_Check_view_String"/>
+
+<Function id="Tolerance_view_Float_A"/>
+
+<Function id="Tolerance_view_Float_B"/>
+
+<Function id="FloatToleranceCheck"/>
+
+<Function id="Tolerance_view_Float_Atime"/>
+
+</children>
+</Workplace>

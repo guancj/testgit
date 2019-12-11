@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ecuName" type="8" data=""/>
+<Variable id="dl24FzdPos" type="3" data="0"/>
+<Variable id="dl24FzdLen" type="3" data="0"/>
+<Variable id="mPartNumber" type="8" data=""/>
+<Variable id="mSwVersion" type="8" data=""/>
+<Variable id="mHwVersion" type="8" data=""/>
+<Variable id="mManufId" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="asvCorrectedFlag" type="8" data=""/>
+<Variable id="tPartNumber" type="8" data=""/>
+<Variable id="modeFTab" type="8" data=""/>
+<Variable id="resVector" type="8" data=""/>
+<Variable id="ecuBg" type="8" data=""/>
+<Variable id="tZdcNumber" type="8" data=""/>
+<Variable id="zdcBg" type="8" data=""/>
+<Variable id="tSwapDcPN" type="8" data=""/>
+<Variable id="swapBg" type="8" data=""/>
+<Variable id="swapCorrectedFlag" type="8" data=""/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to do the part number check
+History:
+    12/31/2015, wuh : function created
+****************************************************************--]]
+
+
+asvCorrectedFlag,tPartNumber,modeFTab,resVector,ecuBg,tZdcNumber,zdcBg,tSwapDcPN,swapBg,swapCorrectedFlag = engine.DL24_PartnumberCheck(ecuName,dl24FzdPos,dl24FzdLen,mPartNumber,mSwVersion,mHwVersion,mManufId)</Script></Function>
+

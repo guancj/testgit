@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XXX" type="8" data="" description="pre - production 相关"/>
+</Inputs>
+<Outputs>
+<Variable id="result" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+此功能函数内部处理暂不明，参考多数log，都返回数值 1
+input parameter:XXX
+output parameter:result
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+result = 1</Script></Function>
+

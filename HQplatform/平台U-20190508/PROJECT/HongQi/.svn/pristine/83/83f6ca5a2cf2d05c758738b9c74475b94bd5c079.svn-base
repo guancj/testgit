@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<workspace>
+<models>
+<model name="LibExhaust"/>
+<model name="LibGeneral"/>
+<model name="LibIDT"/>
+<model name="LibUI"/>
+<model name="LibVW"/>
+<model name="Test"/>
+<model name="UPS_CA1"/>
+</models>
+</workspace>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>require 'alien'
+ret = false
+local loopTime = 0
+local loopin =0
+local hasPPP_connection = 0
+local user = alien.load('Kernel32.dll') 
+user.WinExec:types{ret = 'int','string','int'}
+
+while(loopTime&lt;2) do
+	ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe 拨号连接",0,true)
+        user.WinExec("cmd.exe /c ipconfig &gt;tmp_config.log",0)
+        for step=1,5 do
+            engine.Delay(400)
+            local file_config = io.open("tmp_config.log","r")
+            local doc_config = file_config:read("*a")
+            --print("ipconfig is "..tostring(doc_config))
+            a,b = string.find(doc_config,"PPP")
+	    file_config:close() 
+            if a~= nil then
+                break
+            end
+        end
+	if a~=nil then
+             hasPPP_connection = 1
+             print("ppp 连接建立")
+         else
+             print("ppp连接未建立")  
+        end
+        if hasPPP_connection ==1 then  
+		user.WinExec("cmd.exe /c ping -n 1 10.1.3.1 &gt;tmp.log",0)
+		while(true) do
+		    engine.Delay(500)
+		    local file = io.open("tmp.log","r")
+		    local doc = file:read("*a")
+		    print("doc is "..tostring(doc))
+		    i,j = string.find(doc,"回复")
+		    m,n = string.find(doc,"统计信息")
+		    file:close()
+		    if i~=nil or m~=nil then
+			break
+		     end
+		     if loopin&gt;8 then
+			 break
+		      end
+		      loopin = loopin +1
+		end
+		if i~=nil then
+		    ret = true
+		    break
+		else
+		    ret = false
+		    ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe /disconnect",0,true)
+		    engine.Delay(50)
+		    loopTime = loopTime+1
+		 end  
+		print("i is"..tostring(i))
+        else
+		ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe /disconnect",0,true)
+                loopTime = loopTime+1
+                engine.Delay(50)
+        end
+        if ret == true then
+            break
+         end       	
+	--engine.Delay(100000)
+ end
+ print("loop time is "..loopTime)
+ --user.WinExec("cmd.exe /c rm tmp.log",0)</Script></Function>
+

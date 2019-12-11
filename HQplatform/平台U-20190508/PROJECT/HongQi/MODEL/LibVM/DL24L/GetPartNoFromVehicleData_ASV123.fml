@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="SG_Name" type="8" data="" description="ECU Shortname"/>
+<Variable id="Konfigfile" type="8" data="" description="Configfile DL24"/>
+<Variable id="DL24Pos" type="3" data="0" description="Position of DL24-Data in Vehicle Data Set (VW: 2200, AUDI: 1660)"/>
+<Variable id="DL24Laenge" type="3" data="0" description="Length of DL24-Data (VW: 2400, AUDI: 2400)"/>
+<Variable id="Konfigtyp" type="8" data="" description="Tag Name: &quot;KonfigurationVerbaupruefung&quot; or &quot;KonfigurationInbetriebnahme&quot;"/>
+<Variable id="Fzd" type="8" data="" description="Vehicle Data"/>
+</Inputs>
+<Outputs>
+<Variable id="SollSgTnr" type="8" data="" description="SollSgTnr, without Blanks at Position 10, 11"/>
+<Variable id="SollZDCTnr" type="8" data="" description="SollZDCTnr, without Blanks at Position 10, 11"/>
+<Variable id="SollSWaPDCTnr" type="8" data="" description="SollSWaPDCTnr, without Blanks at Position 10, 11"/>
+<Variable id="SwvPruefung" type="3" data="0" description="Activation of SW Version Check (-1 = undefined)"/>
+<Variable id="HwvPruefung" type="3" data="0" description="Activation of HW Version Check (-1 = undefined)"/>
+<Variable id="HkzUnterscheidng" type="3" data="0" description="Activation of HKZ differentiation (-1 = undefined)"/>
+<Variable id="ModusFTab" type="3" data="0" description="Activation of FTab-Process"/>
+<Variable id="AktivierungASV" type="3" data="0" description="Activation of ASV list (-1 = undefined)"/>
+<Variable id="AktKorrektur" type="3" data="0" description="Activation of correction (ECU and ZDC partnumber) (-1 = undefined)"/>
+<Variable id="AktTeileaufbr" type="3" data="0" description="Activation of Teileaufbrauch (consumption of remaining parts) (-1 = undefined)"/>
+<Variable id="AktTeileFreiPrf" type="3" data="0" description="Activation of &quot;Teile-Frei-Pruefung&quot; (-1 = undefined)"/>
+<Variable id="AktFlashen" type="3" data="0" description="Activation of &quot;Flashing&quot; (-1 = undefined)"/>
+<Variable id="AktKorrZDC" type="3" data="0" description="Activation of ZDC correction (Compatibility to Configfile V13)"/>
+<Variable id="AktZdcProzess" type="3" data="0" description="Activation of ZDC-process (-1 = undefined)"/>
+<Variable id="AktSWaP" type="3" data="0" description="Activation of SWaP (-1 = undefined)"/>
+<Variable id="AktVorserie" type="3" data="0" description="Combines AktivierungVorseriensteuerung  of ProcessConfigfile with evaluation PrnrVorserie"/>
+<Variable id="BGSG" type="8" data="" description="ECU-Baugruppennummer from Konfigfile"/>
+<Variable id="BGZDC" type="8" data="" description="ZDC-Baugruppennummer from Konfigfile"/>
+<Variable id="BGSWaP" type="8" data="" description="SWaP-Baugruppennummer from Konfigfile"/>
+<Variable id="VersionKonfgFile" type="8" data="" description="Version of Config file"/>
+<Variable id="VorserienFzg" type="3" data="0" description="0 = no pre-series vehicle, 1 = pre-series vehicle (according to PR-Nr from configfile)"/>
+<Variable id="errFlag" type="3" data="0" description="error code"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This template determines ECU, ZDC and SWaP part numbers according to the DL24 configuration from the
+vehicle data set.
+
+input parameter:SG_Name,Konfigfile,DL24Pos,DL24Laenge,Konfigtyp,Fzd
+output parameter:SollSgTnr,SollZDCTnr,SollSWaPDCTnr,SwvPruefung,HwvPruefung,HkzUnterscheidng,ModusFTab,
+			AktivierungASV,AktKorrektur,AktTeileaufbr,AktTeileFreiPrf,AktFlashen,AktKorrZDC,AktZdcProzess,
+                        AktSWaP,AktVorserie,BGSG,BGZDC,BGSWaP,VersionKonfgFile,VorserienFzg,errFlag
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+
+Konfigtyp = Konfigtyp or "KonfigurationVerbaupruefung"
+print("Konfigtyp :"..tostring(Konfigtyp))
+local datenProzess = ""
+local datenSchluessel1 = ""
+local vorserienFzg = -1
+local prnrVorserie = ""
+local lenSchluessel_default = 4
+local lenSchluessel
+local fzd_dl24 = ""
+local found = false
+local lenTNr = 11
+local fzdBgpTnr = ""
+local zdcBgpTnr = ""
+local swapBgpTnr = ""
+local pos_start,pos_end
+local pos = 1
+local tmpbuf = ""
+local xmlTagKonfigurationVerbaupruefung = "KonfigurationVerbaupruefung"
+local xmlTagKonfigurationInbetriebnahme = "KonfigurationInbetriebnahme"
+
+-- return value
+SollSgTnr = ""
+SollZDCTnr = ""
+SollSWaPDCTnr = ""
+SwvPruefung = -1
+HwvPruefung = -1
+HkzUnterscheidng = -1
+ModusFTab = -1
+AktivierungASV = -1
+AktKorrektur = -1
+AktTeileaufbr = -1
+AktTeileFreiPrf = -1
+AktFlashen = -1
+AktKorrZDC = -1
+AktZdcProzess = -1
+AktSWaP = -1
+AktVorserie = -1
+BGSG = ""
+BGZDC = ""
+BGSWaP = ""
+VersionKonfgFile = ""
+VorserienFzg = -1
+errFlag = 0
+-- return value
+lenSchluessel = lenSchluessel_default
+
+datenProzess,datenSchluessel1,SwvPruefung, HwvPruefung, HkzUnterscheidng, AktivierungASV, AktKorrektur, AktTeileaufbr, AktTeileFreiPrf,AktFlashen, AktKorrZDC, AktZdcProzess, AktSWaP, vorserienFzg, prnrVorserie, BGSG, BGZDC, BGSWaP,VersionKonfgFile, errFlag = LibVW.ProcessConfigfile_ASV123(SG_Name,Konfigfile,Konfigtyp)
+
+print("GetPartNoFromVehicleData_ASV123: BGSG aus Configfile: "..tostring(BGSG))
+print("GetPartNoFromVehicleData_ASV123: BGZDC aus Configfile: "..tostring(BGZDC))
+print("GetPartNoFromVehicleData_ASV123: BGSWaP aus Configfile: "..tostring(BGSWaP))
+print("GetPartNoFromVehicleData_ASV123: PrnrVorserie aus Configfile: "..tostring(prnrVorserie))
+
+if(datenProzess == "DL24") then
+	print(datenProzess..": "..datenProzess)
+	ModusFTab = 0;
+	if(0 == engine.LastError) then
+		if(VersionKonfgFile &gt;= "V16") then
+-- Ermittlung Vorserienfahrzeug	 
+-- Determination pre-production vehicle	
+			AktVorserie = 0;
+			VorserienFzg = LibVW.codepartExecute (prnrVorserie);
+			print("GetPartNoFromVehicleData_ASV123: VorserienFzg: "..tostring(VorserienFzg))
+			print("GetPartNoFromVehicleData_ASV123: Vorserienaktivierung aus Konfigdatei, vorserienFzg: "..tostring(vorserienFzg))
+			if(vorserienFzg == 1) then				
+				if(VorserienFzg == 1) then
+					AktVorserie = 1;
+				else
+					AktVorserie = 0;
+				end
+			end
+			print("GetPartNoFromVehicleData_ASV123: AktVorserie: "..tostring(AktVorserie))
+-- Bestimmung SG-TNR
+			lenSchluessel = string.len(BGSG);
+			fzd_dl24 = string.sub(Fzd, DL24Pos + 1, DL24Pos + DL24Laenge);
+			print("GetPartNoFromVehicleData_ASV123: DL24Pos: "..tostring(DL24Pos))
+			print("GetPartNoFromVehicleData_ASV123: Len DL24Laenge: "..tostring(DL24Laenge))
+			print("GetPartNoFromVehicleData_ASV123: DL24Data:"..tostring(fzd_dl24))
+			print("GetPartNoFromVehicleData_ASV123: Len DL24Data: "..#tostring(fzd_dl24))
+			print("GetPartNoFromVehicleData_ASV123: Len Fzd: "..#tostring(Fzd))
+			
+			if(lenSchluessel ~= lenSchluessel_default) then
+				engine.LastError = 1;
+				print("unexpected length of Baugruppe: "..tostring(lenSchluessel))
+				errFlag = 1960;			
+			end
+--[[
+			pos_start,pos_end = string.find(fzd_dl24,BGSG);
+			print("BGSG:"..tostring(BGSG).." pos_start "..tostring(pos_start).." pos_end "..tostring(pos_end))
+			SollSgTnr = string.sub(fzd_dl24,pos_end + 1,pos_end + lenTNr)
+--]]			
+			while(pos &lt;= #tostring(fzd_dl24) and false == found and 0 == engine.LastError) do
+				fzdBgpTnr = string.sub(fzd_dl24,pos,pos + lenSchluessel + lenTNr - 1)
+				-- print("GetPartNoFromVehicleData_ASV123: Test BG (SG): "..tostring(fzdBgpTnr))
+				if(nil ~= fzdBgpTnr and BGSG == string.sub(fzdBgpTnr,1,lenSchluessel)) then
+					SollSgTnr = string.sub(fzdBgpTnr,lenSchluessel + 1,-1)
+					if(nil ~= SollSgTnr) then
+						if(string.byte(SollSgTnr,11) == 0x20 ) then
+							if(string.byte(SollSgTnr,10) == 0x20) then
+								SollSgTnr = string.sub(SollSgTnr,1,9)
+							else
+								SollSgTnr = string.sub(SollSgTnr,1,10)
+							end
+						end
+						found = true;
+					end					
+				end	
+				pos = pos + lenSchluessel + lenTNr ;
+			end
+			
+			print("SollSgTnr:"..tostring(SollSgTnr))
+			print("SollSgTnr:found :"..tostring(found))
+			if(false == found) then
+				engine.LastError = 1;
+				print("PartNo not found, key ="..tostring(BGSG))
+				errFlag = 1984;	
+			end
+
+-- Bestimmung ZDC-TNR		
+			if(0 == engine.LastError) then
+				pos = 1;
+				found = false;
+				lenSchluessel = string.len(BGZDC);	
+				if("0000" == BGZDC or 0 == lenSchluessel) then
+					SollZDCTnr = "000000000"
+				end
+				
+				if(0 ~= lenSchluessel and "0000" ~= BGZDC and "000000000" ~=  SollZDCTnr) then
+					if(lenSchluessel ~= lenSchluessel_default) then
+						engine.LastError = 1;
+						print("unexpected length of Baugruppe: "..tostring(lenSchluessel))
+						errFlag = 1960;						
+					end
+
+					if(0 == engine.LastError) then
+						while(pos &lt;= #tostring(fzd_dl24) and false == found and 0 == engine.LastError) do
+							zdcBgpTnr = string.sub(fzd_dl24,pos,pos + lenSchluessel + lenTNr - 1)
+							--print("GetPartNoFromVehicleData_ASV123: Test BG (ZDC): "..tostring(zdcBgpTnr))
+							if(nil ~= zdcBgpTnr and BGZDC == string.sub(zdcBgpTnr,1,lenSchluessel)) then
+								SollZDCTnr = string.sub(zdcBgpTnr,lenSchluessel + 1,-1)
+								if(nil ~= SollZDCTnr) then
+									if(string.byte(SollZDCTnr,11) == 0x20 ) then
+										if(string.byte(SollZDCTnr,10) == 0x20) then
+											SollZDCTnr = string.sub(SollZDCTnr,1,9)
+										else
+											SollZDCTnr = string.sub(SollZDCTnr,1,10)
+										end
+									end
+									found = true;
+								end
+							end
+							pos = pos + lenSchluessel + lenTNr ;
+						end
+						if(false == found) then
+							SollZDCTnr = "000000000"
+						end
+					end
+				end
+				print("SollZDCTnr:"..tostring(SollZDCTnr))
+				print("SollZDCTnr:found :"..tostring(found))			
+			end
+
+-- Bestimmung SWaPDC-TNR			
+			if(0 == engine.LastError) then
+				pos = 1;
+				found = false;
+				if("0000" == BGSWaP or 0 == lenSchluessel) then
+					SollSWaPDCTnr = "000000000";
+				end
+				if(0 ~= lenSchluessel and "0000" ~= BGSWaP and "" ~= BGSWaP and "000000000" ~= SollSWaPDCTnr) then
+					if(lenSchluessel ~= lenSchluessel_default) then
+						engine.LastError = 1;
+						print("unexpected length of Baugruppe: "..tostring(lenSchluessel))
+						errFlag = 1960;						
+					end					
+				
+				
+					if(0 == engine.LastError) then
+						while(pos &lt;= #tostring(fzd_dl24) and false == found and 0 == engine.LastError) do
+							swapBgpTnr = string.sub(fzd_dl24,pos,pos + lenSchluessel + lenTNr - 1)
+							--print("GetPartNoFromVehicleData_ASV123: Test BG (SWaP):"..tostring(swapBgpTnr))
+							if(nil ~= swapBgpTnr and BGSWaP == string.sub(swapBgpTnr,1,lenSchluessel)) then
+								SollSWaPDCTnr = string.sub(swapBgpTnr,lenSchluessel + 1,-1)
+								if(nil ~= SollSWaPDCTnr) then
+									if(string.byte(SollSWaPDCTnr,11) == 0x20 ) then
+										if(string.byte(SollSWaPDCTnr,10) == 0x20) then
+											SollSWaPDCTnr = string.sub(SollSWaPDCTnr,1,9)
+										else
+											SollSWaPDCTnr = string.sub(SollSWaPDCTnr,1,10)
+										end
+									end
+									found = true;
+								end
+							end
+							pos = pos + lenSchluessel + lenTNr ;						
+						end
+						if(false == found) then
+							SollSWaPDCTnr = "000000000";
+						end
+					end
+				end
+				print("SollSWaPDCTnr:"..tostring(SollSWaPDCTnr))
+				print("SollSWaPDCTnr:found :"..tostring(found))				
+			end	
+		else
+			lenSchluessel = string.len(datenSchluessel1)
+			fzd_dl24 = string.sub(Fzd, DL24Pos + 1, DL24Pos + DL24Laenge);
+			while(pos &lt;= #tostring(fzd_dl24) and false == found) do
+				tmpbuf = string.sub(fzd_dl24,pos,lenSchluessel);
+				if(nil ~= tmpbuf and datenSchluessel1 == tmpbuf) then
+					if(Konfigtyp == xmlTagKonfigurationInbetriebnahme) then
+						SollZDCTnr = string.sub(fzd_dl24,pos + lenSchluessel,lenTNr)
+						if(nil ~= SollZDCTnr and string.byte(SollZDCTnr,11) == 0x20) then
+							if(string.byte(SollZDCTnr,10) == 0x20) then
+								SollZDCTnr = string.sub(SollZDCTnr,1,9)
+							else
+								SollZDCTnr = string.sub(SollZDCTnr,1,10)
+							end
+							
+							found = true
+						end
+						
+					else
+						SollSgTnr = string.sub(fzd_dl24,pos + lenSchluessel,lenTNr)
+						if(nil ~= SollSgTnr and string.byte(SollSgTnr,11) == 0x20) then
+							if(string.byte(SollSgTnr,10) == 0x20) then
+								SollSgTnr = string.sub(SollSgTnr,1,9)
+							else
+								SollSgTnr = string.sub(SollSgTnr,1,10)
+							end
+							
+							found = true
+						end						
+						
+					end
+				end
+				pos = pos + lenSchluessel + lenTNr;
+			end
+			
+			if(false == found) then
+				engine.LastError = 1;
+				print("PartNo not found, key ="..tostring(datenSchluessel1))
+				errFlag = 1984;					
+			end
+		
+		end
+	
+	end
+	
+elseif(datenProzess == "FTAB") then
+	ModusFTab = 1;
+	engine.LastError  = 0;
+end</Script></Function>
+

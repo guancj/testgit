@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ID_String" type="8" data="&quot;&quot;" description="1a 9b ID string"/>
+<Variable id="CodingShortID" type="3" data="-1" description="ZDC Coding Value （short）"/>
+<Variable id="IdNr" type="3" data="1" description="偏移量"/>
+<Variable id="ViewText" type="8" data="&quot;编码检查（S）&quot;" description="显示文字"/>
+<Variable id="LineNr" type="3" data="1" description="行号"/>
+</Inputs>
+<Script>
+--[[*****************************************************************************
+this function  is used to  programming  data  
+input parameter:ID_String;CodingShortID;IdNr;ViewText;LineNr;
+
+01/25/2016     created by viforce
+******************************************************************************--]]
+
+local  TmpIdStr = "";
+local  IdNr = 1;
+local  TmpStr = "";
+local CodingShort = 0;
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,ViewText);
+    engine.ShowMessage();
+	end;
+
+
+
+if(ID_String == nil or ID_String == "") then  engine.StatValue ="Coding From ECU NULL" ; engine.LastError = 1 ; 
+                  engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpnok");engine.ShowMessage(); return end;
+
+							  
+if(IdNr &lt; 1) then IdNr = 1 end;
+
+
+	if ((string.len(ID_String) &gt; 47) and (string.byte(ID_String,48) == 0x9b)) then	
+		TmpIdStr = string.sub(ID_String, (IdNr-1)*47+1, 47);	
+	else	
+		TmpIdStr = string.sub(ID_String, (IdNr-1)*46+1, 47);	
+	end;
+	
+
+	if (string.len(TmpIdStr) &gt; 20) then	
+		TmpStr = string.sub(TmpIdStr, 18, 20);
+		Subsystem = string.byte(TmpIdStr,17);
+		
+		if (Subsystem == 0x03)	then
+            CodingShort = LibGeneral.binStr2Int(TmpStr)	;	
+			CodingShort = bit32.band(CodingShort,0x7fffff); 
+		end; 
+
+		
+		if (bit32.band(Subsystem,0xf0) == 0x20) 	then
+		    CodingShort = LibGeneral.binStr2Int(TmpStr)	;	
+			CodingShort = bit32.band(CodingShort,0xffffff); 
+		end;
+		
+		if (Subsystem == 0)	then				
+			CodingShort = 0;
+		end;
+		
+		engine.println("CodingShort :"..tostring(CodingShort));
+		if(CodingShort == CodingShortID) then engine.StatValue = "编码检查正确 SV :"..tostring(CodingShortID)..": MV :"..tostring(CodingShort);
+		engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpok");engine.ShowMessage();
+		engine.LastError = 0 ;
+        else
+		engine.StatValue = "编码检查不正确 SV :"..tostring(CodingShortID)..": MV :"..tostring(CodingShort); 
+		engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpnok");engine.ShowMessage();
+		engine.LastError = 1 ;
+    	end;
+		
+	else	
+        CodingShort = -1;
+		engine.StatValue = "0x0a9b ID String length not enough ";
+		engine.SetLineText ( LineNr ,"#L="..ViewText.."#R=bmpnok");engine.ShowMessage();
+		engine.LastError = 1;
+	end;
+</Script></Function>
+

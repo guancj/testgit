@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="IDT_Service_22"/>
+<Process id="IDT_Service_21"/>
+<Process id="IDT_Service_19"/>
+<Process id="IDT_Service_17"/>
+<Process id="IDT_Service_18"/>
+<Process id="IDT_Service_16"/>
+<Process id="IDT_Service_15"/>
+<Process id="IDT_Service_02"/>
+<Process id="IDT_Service_04"/>
+<Process id="IDT_Service_01"/>
+<Process id="IDT_Service_05"/>
+<Process id="IDT_Service_04_发送标定项"/>
+</children>
+</Workplace>

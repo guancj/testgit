@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_Messwert">
+<Inputs>
+<Variable id="LocalIdent" type="3" data="0" description="group ID"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="RecvTel" type="8" data="" description="group data"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this is used to read by LocalIdent
+input parameter:LocalIdent;ECU_Handle
+output parameter:RecvTel;
+
+01/14/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+RecvTel = "";
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return RecvTel
+end
+
+#COMMEX ECU_Handle -1 0x21 LocalIdent
+
+
+if (0 == engine.LastError) then
+
+RecvTel = @2-;
+
+end
+
+engine.println("Receive :"..LibGeneral.hex2str(RecvTel));</Script></Function>
+

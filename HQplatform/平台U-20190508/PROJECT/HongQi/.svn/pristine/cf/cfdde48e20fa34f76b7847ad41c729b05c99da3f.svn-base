@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtSendDatagramRTS" description="发送转毂报文，主要针对转毂的service2和service5">
+<Inputs>
+<Variable id="serviceNum" type="8" data="" description="service号，形式如:&quot;\x02&quot;"/>
+<Variable id="timeout" type="3" data="3" description="超时时间,以s(秒)为单位"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>ret = -1;
+local err;
+local request = "";
+
+--初始化发送报文
+request = LibIDT.idtInitRequestRTS(pHndl);
+
+--设置service号,第2字节
+request = LibIDT.idtSetBytes(request,2,1,serviceNum);
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(request,timeout,pHndl)
+if(err ~= nil and err == true) then
+    ret = engine.UdpHandleVarGet(Handl, "_CURRENTSEVACK")
+end;</Script></Function>
+

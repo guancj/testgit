@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ecuName" type="8" data=""/>
+<Variable id="dl24FzdPos" type="3" data="0"/>
+<Variable id="dl24FzdLen" type="3" data="0"/>
+<Variable id="asvCorrectedFlag" type="3" data="0"/>
+<Variable id="tPartNumber" type="8" data=""/>
+<Variable id="tZdcNr" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="modeFTab" type="8" data=""/>
+<Variable id="xmlContainer" type="8" data=""/>
+<Variable id="xmlVersion" type="8" data=""/>
+<Variable id="zdcContentVersion" type="8" data=""/>
+<Variable id="resVector" type="8" data=""/>
+<Variable id="tZdcNumber" type="8" data=""/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to process zdc, get zdc container information.
+History:
+    12/31/2015, wuh : function created
+****************************************************************--]]
+
+engine.println(type(ecuName))
+engine.println(type(dl24FzdPos))
+engine.println(type(dl24FzdLen))
+engine.println(type(asvCorrectedFlag))
+engine.println(type(tPartNumber))
+engine.println(type(tZdcNr))
+
+modeFTab,xmlContainer,xmlVersion,zdcContentVersion,resVector,tZdcNumber= engine.DL24_ProcessZDC(ecuName,dl24FzdPos,dl24FzdLen,asvCorrectedFlag,tPartNumber,tZdcNr)</Script></Function>
+

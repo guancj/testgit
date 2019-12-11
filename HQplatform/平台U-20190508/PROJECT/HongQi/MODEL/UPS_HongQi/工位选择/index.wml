@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Workplace id="H7电气检测系统">
+</Workplace>
+<Workplace id="HS7电气检测系统">
+</Workplace>
+<Workplace id="车门检测">
+</Workplace>
+<Workplace id="仪表检测">
+</Workplace>
+<Workplace id="前束">
+</Workplace>
+<Workplace id="转毂">
+</Workplace>
+<Workplace id="BSD">
+</Workplace>
+<Workplace id="功能类">
+</Workplace>
+<Workplace id="红外连接">
+</Workplace>
+<Process id="一次内饰工位"/>
+<Process id="二次内饰工位"/>
+<Process id="左侧车门检测"/>
+<Process id="右侧车门检测"/>
+<Process id="仪表检测工位"/>
+<Process id="机能线工位"/>
+<Process id="终检线工位"/>
+<Process id="返修工位"/>
+<Process id="前束工位"/>
+<Process id="转毂工位-检测踏板力"/>
+<Process id="驾驶辅助工位"/>
+<Process id="EMISSION"/>
+<Process id="全景影像工位"/>
+<Process id="Buslog测试"/>
+<Process id="新流程"/>
+<Process id="转毂工位"/>
+</children>
+</Workplace>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="TOD_Common"/>
+<Process id="TOD_ReadDTC"/>
+<Process id="TOD_FIN"/>
+</children>
+</Workplace>

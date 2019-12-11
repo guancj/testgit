@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="HUP_92_Berechnung_Start" description="Image recording" flags="1" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+<Variable id="DInt_HUP_Berechnungsart_shared" type="3" dir="0" data="0"/>
+<Variable id="DInt_HUP_BerechnungBildNr1_shared" type="3" dir="2" data="0"/>
+<Variable id="DInt_HUP_BerechnungBildNr2_shared" type="3" dir="2" data="0"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="301" top="155" right="401" bottom="187"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="302" top="550" right="402" bottom="582"/>
+<Script></Script></End>
+<Activities>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="654" top="551" right="686" bottom="583"/>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="302" top="217" right="402" bottom="249"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="622" top="217" right="722" bottom="249"/>
+<Script>engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="37" ActivityType="3" name="不合格">
+<Rect left="621" top="416" right="721" bottom="448"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : HUP: Berechnung NIO ")</Script></Activity>
+<Activity id="39" ActivityType="3" name="HUP：执行计算">
+<Rect left="302" top="289" right="402" bottom="321"/>
+<Line3Text Enable="1" Text="HUP：执行计算"/>
+<Script>engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : HUP: Kamera anfahren --&gt;")
+</Script></Activity>
+<Activity id="41" ActivityType="3" name="数据收取">
+<Rect left="301" top="417" right="401" bottom="449"/>
+<Script>if(Ret == 1) then
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Berechnungsart --&gt;"..tostring(DInt_HUP_Berechnungsart_shared))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 BerechnungBildNr1 --&gt;"..tostring(DInt_HUP_BerechnungBildNr1_shared))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 BerechnungBildNr2 --&gt;"..tostring(DInt_HUP_BerechnungBildNr2_shared))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Ergebnis vorhanden --&gt;"..tostring(DInt_Ergebnis_vorhanden))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Ergebnis Berechnungsart --&gt;"..tostring(DInt_Ergebnis_Berechnungsart))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Ergebnis BildPos1 --&gt;"..tostring(DInt_Ergebnis_BildPos_1))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Ergebnis BildPos2 --&gt;"..tostring(DInt_Ergebnis_BildPos_2))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Ergebnis BildPos3 --&gt;"..tostring(DInt_Ergebnis_BildPos_3))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Ergebnis BildPos4 --&gt;"..tostring(DInt_Ergebnis_BildPos_4))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : +++HUP 92 Ergebnis BildPos5 --&gt;"..tostring(DInt_Ergebnis_BildPos_5))
+end</Script></Activity>
+<Activity id="42" ActivityType="3" name="Delay">
+<Rect left="448" top="348" right="548" bottom="380"/>
+<Script>engine.Delay(100)</Script></Activity>
+<Activity id="43" ActivityType="3" name="finish_flag">
+<Rect left="449" top="416" right="549" bottom="448"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="46" ActivityType="3" name="OK">
+<Rect left="302" top="482" right="402" bottom="514"/>
+<Script>isOK = true;
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : ret --&gt;"..tostring(Ret))
+engine.println(" &lt;HUP_92_BH_Berechnung_Start&gt; : HUP: Berechnung IO ")
+
+
+DInt_HUP_BerechnungBildNr1_shared = 0
+DInt_HUP_BerechnungBildNr2_shared = 0
+</Script></Activity>
+<Activity id="51" ActivityType="13" name="HUP_92_Calculation">
+<Rect left="302" top="347" right="402" bottom="379"/>
+<FunctionRef id="HUP_92_Calculation" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="Berechnungsart" value="DInt_HUP_Berechnungsart_shared"/>
+<Parameter id="Bildposition_1" value="DInt_HUP_BerechnungBildNr1_shared"/>
+<Parameter id="Bildposition_2" value="DInt_HUP_BerechnungBildNr2_shared"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="Ergebnis_fertig" value="0" ret="DInt_Ergebnis_vorhanden"/>
+<Parameter id="Berechnart_Out" value="0" ret="DInt_Ergebnis_Berechnungsart"/>
+<Parameter id="Bild_Pos_1_Out" value="0" ret="DInt_Ergebnis_BildPos_1"/>
+<Parameter id="Bild_Pos_2_Out" value="0" ret="DInt_Ergebnis_BildPos_2"/>
+<Parameter id="Bild_Pos_3_Out" value="0" ret="DInt_Ergebnis_BildPos_3"/>
+<Parameter id="Bild_Pos_4_Out" value="0" ret="DInt_Ergebnis_BildPos_4"/>
+<Parameter id="Bild_Pos_5_Out" value="0" ret="DInt_Ergebnis_BildPos_5"/>
+</Parameters>
+</FunctionRef>
+<assessment no="15" name="DEP1524" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="26" EndId="39" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="27" EndId="37" type="0">
+</Transition>
+<Transition StartId="37" EndId="6" type="0">
+</Transition>
+<Transition StartId="39" EndId="51" type="0">
+</Transition>
+<Transition StartId="41" EndId="43" type="1">
+<Expression>Ret ~= 1</Expression></Transition>
+<Transition StartId="41" EndId="46" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="42" EndId="51" type="0">
+</Transition>
+<Transition StartId="43" EndId="42" type="0">
+</Transition>
+<Transition StartId="43" EndId="37" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="46" EndId="2" type="0">
+</Transition>
+<Transition StartId="51" EndId="41" type="0">
+</Transition>
+</Transitions>
+</Process>
+

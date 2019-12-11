@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="float2int" description="浮点转整形 Round == true   需要四舍五入">
+<Inputs>
+<Variable id="SrcFloat" type="5" data="0" description="浮点"/>
+<Variable id="Round" type="11" data="true" description="true --四舍无入  false -- 向下取整"/>
+</Inputs>
+<Outputs>
+<Variable id="DestInt" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   convert float to int  
+input parameter:SrcFloat;Round
+output parameter :DestInt;
+
+12/12/2016     created by viforce
+******************************************************************************--]]
+
+if(true == Round) then
+	if(SrcFloat % 1 &gt; 0.5) then
+		DestInt = math.ceil(SrcFloat)
+ --       elseif(SrcFloat &lt; 0.0) then
+	else
+		DestInt = math.floor(SrcFloat)
+        end
+else
+
+DestInt = math.floor(SrcFloat)
+end</Script></Function>
+

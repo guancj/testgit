@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="9" library="1" module="LibExhaust" version="" engine="VMDSEngine" language="javascript">
+<children>
+<Function id="exhaustDataExchange"/>
+
+<Function id="ExhaustMeasurement_CO2_O2"/>
+
+<Function id="ExhaustMeasurement_HC_CO"/>
+
+<Function id="ExhaustMeasurement_Lambda"/>
+
+<Function id="ExhaustMeasurement_NO"/>
+
+<Function id="ExhaustStart"/>
+
+<Function id="ExhaustStatus"/>
+
+<Function id="ExhaustStop"/>
+
+</children>
+</Model>

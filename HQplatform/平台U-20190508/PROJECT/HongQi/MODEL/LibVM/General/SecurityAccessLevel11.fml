@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+<Variable id="algorithm" type="8" data="" description="登录码算法:如&quot;6806814A07878A2A10E56B058493738001494C&quot;,来自刷新文件"/>
+<Variable id="debugLevel" type="3" data="0" description="0-不输出debug，&gt;0输出"/>
+</Inputs>
+<Script>--[[ ***************************************************************
+The function is use to login by security access level 11
+History:
+    14/07/2017, ChenZhiwei : function created
+****************************************************************--]]
+
+local Key;
+local seed;
+local Key_Byte1;
+local Key_Byte2;
+local Key_Byte3;
+local Key_Byte4;
+local Result;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+#COMMEX ECU_Handle -1  0x27 0x11 
+if (0 == engine.LastError)  then
+   engine.SetLineText(1,"请求密钥成功");
+   engine.ShowMessage();
+   seed = @2*0x1000000 + @3*0x10000 + @4*0x100 + @5
+   Key =  LibVW.SecurityAccess_Seed2Key(algorithm, seed, debugLevel)
+   Result = Key;
+   Key_Byte1 =  math.floor(Key /0x1000000);
+   Key =  Key - Key_Byte1*0x1000000;
+   Key_Byte2 =  math.floor(Key /0x10000);
+   Key = Key - Key_Byte2*0x10000;
+   Key_Byte3 =  math.floor(Key /0x100);
+   Key_Byte4 =  math.floor(Key - Key_Byte3*0x100);
+
+--engine.Delay(500);
+#COMMEX ECU_Handle -1  0x27 0x12 Key_Byte1 Key_Byte2 Key_Byte3 Key_Byte4 
+
+if (0 == engine.LastError)  then
+   engine.SetLineText(1,"安全访问成功");
+   engine.StatValue = "security Access successfully" ;
+else
+   engine.SetLineText(1,"安全访问失败");
+   engine.StatValue = "security Access failed" ;
+end
+
+else
+   engine.SetLineText(1,"请求登陆密码出错");
+   engine.StatValue = "request security seed error" ;
+end
+   
+engine.ShowMessage();</Script></Function>
+

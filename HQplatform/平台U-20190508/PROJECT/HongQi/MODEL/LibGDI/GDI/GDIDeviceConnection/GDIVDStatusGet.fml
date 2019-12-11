@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiDeviceConnection" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="logicalState" type="8" data=""/>
+<Variable id="physicalState" type="8" data=""/>
+<Variable id="lifeCyclePhase" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>logicalState, physicalState ,lifeCyclePhase,gdiError= engine.GDI_GetVDStatus(gdiDeviceConnection);
+</Script></Function>
+

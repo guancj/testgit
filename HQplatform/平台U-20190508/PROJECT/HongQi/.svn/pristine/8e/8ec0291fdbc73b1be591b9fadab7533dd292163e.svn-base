@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_HUP_ECU_BH_Testbild_Start_01" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="335" top="62" right="435" bottom="94"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="335" top="263" right="435" bottom="295"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="HUP 同步">
+<Rect left="334" top="125" right="434" bottom="157"/>
+<Script>engine.SharedVarSet("_DInt_HUD_Sync_shared",1)</Script></Activity>
+<Activity id="4" ActivityType="5" name="c7_hud">
+<Rect left="335" top="191" right="435" bottom="223"/>
+<SubProcesses>
+<SubProcess id="c7_hud">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ChangeEOL&quot;,&quot;BHtestPattern&quot;}"/>
+<Parameter id="DString_HUP_WarpingMatrix_shared" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="5" ActivityType="4" name="路由节点">
+<Rect left="475" top="192" right="507" bottom="224"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="3" EndId="5" type="0">
+</Transition>
+<Transition StartId="4" EndId="2" type="0">
+</Transition>
+<Transition StartId="5" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

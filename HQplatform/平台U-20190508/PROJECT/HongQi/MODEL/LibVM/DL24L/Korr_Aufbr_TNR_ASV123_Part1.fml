@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data="" description="dl24 xml handle"/>
+<Variable id="Modus" type="8" data="" description="mode to select correction / use up / ZDC selection / Flash container selection"/>
+<Variable id="SgTnr" type="8" data="" description="ECU partnumber"/>
+<Variable id="SgBg" type="8" data="" description="Baugruppe ECU"/>
+<Variable id="ZdcTnr" type="8" data="" description="ZDC partnumber"/>
+<Variable id="ZdcBg" type="8" data="" description="Baugruppe ZDC"/>
+<Variable id="SwapDcTnr" type="8" data="" description="SWaP_DC partnumber from vehicle data set, possibly corrected"/>
+<Variable id="HW_Ref_TNR" type="8" data="" description="HW raw-partnumber"/>
+</Inputs>
+<Outputs>
+<Variable id="Tnr_Aenderung" type="3" data="0" description="correction / use-up entry found"/>
+<Variable id="Tnr_Aend_SWaP" type="3" data="0" description="correction entry found for SWaP_DC-Tnr"/>
+<Variable id="SgTnrErsatz" type="8" data="" description="corrected /alternative ECU part number"/>
+<Variable id="ZdcTnrErsatz" type="8" data="" description="corrected /alternative ZDC part number"/>
+<Variable id="SwapDcTnrErsatz" type="8" data="" description="SWaP_DC partnumber from Korrekturliste"/>
+<Variable id="bufTab" type="8" data="" description="表"/>
+<Variable id="errFlag" type="3" data="0" description="err code"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This template starts computing the lists Korrektur SG (Modus = Korrektur), 
+Aufbrauch SG (Modus = Teileaufbrauch), ZDC Liste (link to ZDC- file name, (Modus = Zdc))
+Flash Liste (link to Flashcontainer- file name, (Modus = Flash)) and SWaP_DCListe (link to 
+SWaP_DC-filenames (Modus = SWaP).
+
+input parameter:XmlHndl, Modus, SgTnr, SgBg, ZdcTnr, ZdcBg, SwapDcTnr,HW_Ref_TNR
+output parameter:Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+-- return value
+Tnr_Aenderung = -1
+Tnr_Aend_SWaP = -1
+SgTnrErsatz = ""
+ZdcTnrErsatz = ""
+SwapDcTnrErsatz = ""
+bufTab = {}  -- return value Table xml nodes
+errFlag = 0
+-- return value
+
+print("Korr_Aufbr_TNR_ASV123_Part1 called .. ")
+print("XmlHndl :" .. tostring(XmlHndl))
+print("Modus :" .. tostring(Modus))
+print("SgTnr :" .. tostring(SgTnr))
+print("SgBg :" .. tostring(SgBg))
+print("ZdcTnr :" .. tostring(ZdcTnr))
+print("ZdcBg :" .. tostring(ZdcBg))
+print("SwapDcTnr :" .. tostring(SwapDcTnr))
+print("HW_Ref_TNR :" .. tostring(HW_Ref_TNR))
+print("errFlag :" .. tostring(errFlag))
+
+local FilterModus_Quadruple_Attribute = 16 -- 4 组  Finde Daten zu allen Attributen und Werten
+local FilterModus_Quadruple_Attribute1 = 1 -- 3 组
+local FilterModus_Triple_Attribute = 8 --  3 组 Finde Daten zu allen Attributen und Werten
+local FilterModus3 = 1 -- 4 组 Finde Daten zu Attribute+Wert
+local FilterModus1 = 3 -- 3 组
+local FilterModus2 = 1 -- 3 组
+local xmlbuflist = {}
+local bufTab2 = {} 
+
+local xmlPath
+local xmlTag
+local xmlAttribFilter
+local xmlAttribFilter2
+local xmlAttribFilter3
+local xmlAttribFilter4
+
+local tnr_ignore = "000000000";
+local sgTnr_ignore = tnr_ignore;
+local zdcTnr_ignore = tnr_ignore;
+local swapDcTnr_ignore = tnr_ignore;
+
+local xmlAttribNameSgTnr = "SgTnr";
+local xmlAttribNameSgTnrOrig = "SgTnrOriginal";
+local xmlAttribNameSgBg = "SgBg";
+
+local xmlAttribNameZdcTnr = "ZdcTnr";
+local xmlAttribNameZdcTnrOrig = "ZdcTnrOriginal";
+local xmlAttribNameZdcTnrDatensatz = "ZdcTnrDatensatz";
+local xmlAttribNameZdcBg = "ZdcBg";
+
+local xmlAttribNameHWRefTnr = "HW_Ref_TNR";
+local xmlAttribNameFlashTnr = "Flash_TNR";
+
+local xmlAttribNameSWaPTnrOrig = "SWaP_DC_TnrOriginal";
+local xmlAttribNameSG_BG = "SG_BG";
+
+local xmlPathKorrektur = "/AsvListe/AsvDaten/Korrekturliste";
+local xmlTagKorrektur = "Sg_Zdc_SWaP";
+
+local xmlPathAufbrauch = "/AsvListe/AsvDaten/Teileaufbrauchliste";
+local xmlTagAufbrauch = "Sg";
+
+local xmlPathZdc = "/AsvListe/AsvDaten/ZdcListe";
+local xmlTagZdc = "Sg";
+local xmlSubTagZdc = "ZdcListenNormalEintrag";
+
+local xmlPathFlash = "/AsvListe/AsvDaten/Flashliste";
+local xmlTagFlash = "Sg";
+local xmlSubTagFlash = "FlashlistenEintrag";
+
+local xmlPathSWaP = "/AsvListe/AsvDaten/SWaP_DCListe";
+local xmlTagSwap = "Sg";
+
+if(Modus == "Korrektur") then
+
+	xmlPath = xmlPathKorrektur;
+	xmlTag = xmlTagKorrektur;
+	xmlAttribFilter = xmlAttribNameSgTnrOrig;
+	xmlAttribFilter2 = xmlAttribNameSgBg;
+	xmlAttribFilter3 = xmlAttribNameZdcTnrOrig;
+	xmlAttribFilter4 = xmlAttribNameSWaPTnrOrig;
+
+	bufTab = LibVW.GetFilteredBufByAttrQuadrupel1Altern(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr, sgTnr_ignore, xmlAttribFilter2, SgBg, "",xmlAttribFilter3, ZdcTnr, zdcTnr_ignore,xmlAttribFilter4, SwapDcTnr, swapDcTnr_ignore, FilterModus_Quadruple_Attribute);
+
+
+	if(engine.LastError ~= 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: failure during check of Korrekturliste")
+		errFlag = 1957;
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	elseif(#bufTab == 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: no correction")
+		SgTnrErsatz = SgTnr;
+		ZdcTnrErsatz = ZdcTnr;
+		SwapDcTnrErsatz = SwapDcTnr;
+		Tnr_Aenderung = 0;
+		Tnr_Aend_SWaP = 0;
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	end
+end
+
+if(Modus == "Teileaufbrauch") then
+	xmlPath = xmlPathAufbrauch;
+	xmlTag = xmlTagAufbrauch;
+	xmlAttribFilter = xmlAttribNameSgTnr;
+	xmlAttribFilter2 = xmlAttribNameSgBg;
+	xmlAttribFilter3 = xmlAttribNameZdcTnrDatensatz;
+	
+	bufTab = LibVW.GetFilteredBufByAttrQuadrupel1Altern(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, SgTnr, sgTnr_ignore, xmlAttribFilter2, SgBg, "",xmlAttribFilter3, ZdcTnr, zdcTnr_ignore,"", "", "", FilterModus_Quadruple_Attribute1);
+
+	if(engine.LastError ~= 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: failure during check of Teileaufbrauchliste")
+		errFlag = 1956;
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	elseif(#bufTab == 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: no use-up")
+		errFlag = 1989;
+		SgTnrErsatz = SgTnr;
+		ZdcTnrErsatz = ZdcTnr;
+		SwapDcTnrErsatz = SwapDcTnr;
+		Tnr_Aenderung = 0;
+		Tnr_Aend_SWaP = 0;
+		engine.LastError = 1
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	end
+end
+
+if(Modus == "Zdc") then
+	xmlPath = xmlPathZdc;
+	xmlTag = xmlTagZdc;
+	xmlAttribFilter = xmlAttribNameSgTnr;
+	if (ZdcTnr ~= "") then
+		xmlAttribFilter2 = xmlAttribNameZdcTnr;
+	else 
+		xmlAttribFilter2 = xmlAttribNameZdcTnr
+	end
+	xmlAttribFilter3 = xmlAttribNameZdcBg;
+	xmlSubTag = xmlSubTagZdc;
+	
+	bufTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl,xmlPath,xmlTag,xmlAttribFilter,SgTnr,"","","","",FilterModus1)
+	
+	if (engine.LastError == 0 and (#bufTab ~= 0)) then
+		local count = 1
+		for i = 1,#bufTab do
+			xmlbuflist = bufTab[i].selectNodes(xmlSubTag)
+			if(xmlbuflist.length &gt; 0) then
+				print("xmlbuflist length :" .. tostring(xmlbuflist.length))
+				for j = 0,xmlbuflist.length - 1 do
+					print("getAttribute 2 :"..tostring(xmlbuflist[j].getAttribute(xmlAttribFilter2)).." =&gt; "..tostring(ZdcTnr))
+					print("getAttribute 3 :"..tostring(xmlbuflist[j].getAttribute(xmlAttribFilter3)).." =&gt; "..tostring(ZdcBg))
+					if(xmlbuflist[j].getAttribute(xmlAttribFilter2) == ZdcTnr and xmlbuflist[j].getAttribute(xmlAttribFilter3) == ZdcBg) then
+						bufTab2[count] = xmlbuflist[j]
+						print("bufTab2 : "..bufTab2[count].xml)
+						count = count + 1 	
+					end
+				end
+			end
+		end
+		
+	end
+
+	bufTab = bufTab2
+
+	if (engine.LastError ~= 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: failure during check of ZdcListe")
+		errFlag = 1955;
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	elseif (#bufTab == 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: no valid entry found in ZdcList")
+		errFlag = 1989;
+		engine.LastError = 1
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	end
+end
+
+if (Modus == "Flash") then
+	xmlPath = xmlPathFlash;
+	xmlTag = xmlTagFlash;
+	xmlAttribFilter = xmlAttribNameFlashTnr;
+	xmlAttribFilter2 = xmlAttribNameHWRefTnr;
+	xmlSubTag = xmlSubTagFlash;
+
+	bufTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl,xmlPath,xmlTag,xmlAttribFilter,SgTnr,"","","","",FilterModus1)
+
+	if (engine.LastError == 0 and (#bufTab ~= 0)) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: Modus Flash")
+		local count = 1
+		for i = 1,#bufTab do
+			xmlbuflist = bufTab[i].selectNodes(xmlSubTag)
+			if(xmlbuflist.length &gt; 0) then
+				print("xmlbuflist length :" .. tostring(xmlbuflist.length))
+				for j = 0,xmlbuflist.length - 1 do
+					print("getAttribute 2 :"..tostring(xmlbuflist[j].getAttribute(xmlAttribFilter2)).." =&gt; "..tostring(HW_Ref_TNR))
+					if(xmlbuflist[j].getAttribute(xmlAttribFilter2) == HW_Ref_TNR) then
+						bufTab2[count] = xmlbuflist[j]
+						print("bufTab2 : "..bufTab2[count].xml)
+						count = count + 1 	
+					end	
+				end
+			end
+		end
+	
+	end
+
+	bufTab = bufTab2	
+
+	if (engine.LastError ~= 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: failure during check of Flashliste");
+		errFlag = 1954;
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	elseif (#bufTab == 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: no valid entry found in Flashliste");
+		errFlag = 1968;
+		engine.LastError = 1
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	end
+	
+end
+
+if (Modus == "SWaP") then
+	xmlPath = xmlPathSWaP;
+	xmlTag = xmlTagSwap;
+	xmlAttribFilter = xmlAttribNameSgTnr;
+	xmlAttribFilter4 = xmlAttribNameSG_BG;
+
+	bufTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl,xmlPath,xmlTag,xmlAttribFilter,SgTnr,xmlAttribFilter4,SgBg,"","",FilterModus2)
+	
+	if (engine.LastError ~= 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: failure during check of SWaP_DCListe");
+		errFlag = 1998;
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	elseif (#bufTab == 0) then
+		print("Korr_Aufbr_TNR_ASV123_Part1: no entry found in SWaP_DCListe");
+		errFlag = 2006;
+		engine.LastError = 1
+		return Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag
+	end
+end</Script></Function>
+

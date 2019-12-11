@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ZdcCalcCoding">
+<Inputs>
+<Variable id="zdcHndl" type="3" data="0" description="ZDC handle"/>
+<Variable id="modusFilter" type="8" data="&quot;&quot;" description="ZDC &apos;MODUSTEIL&apos; filter, e.g. &quot;C1&quot;. set empty return all MODUSTEIL value"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="shortCodingValue" type="3" data="0" description="the coding value stores here if short coding"/>
+<Variable id="longCodingValue" type="8" data="" description="the coding value stores here if lang coding"/>
+<Variable id="codingType" type="3" data="0" description="0 = short coding; 1 = lang coding; -1 = unvalid;"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to caculate zdc Coding value which modus is 'C'
+History:
+    02/01/2016, wuh : function created
+	04/11/2016, wuh : add debugLevel
+****************************************************************--]]
+	local err = 0
+	local codingType = -1
+	local shortCodingValue = 0
+	local longCodingValue = ""
+
+	-- **** precondition check **** --
+	if nil == zdcHndl then 
+		engine.StatValue = "input zdc handle is invalid"
+		engine.println("ERROR, ZdcCalcCoding : input zdc handle is invalid, zdcHndl= " .. tostring(zdcHndl))
+		engine.LastError =1
+		return shortCodingValue,longCodingValue, codingType
+	end	
+	
+	-- get Coding 'TABELLE' element
+	local xpath = "/ZDC/VORSCHRIFT/DIREKT/TABELLEN/TABELLE/MODUS[text()='C']/.."
+	local nodeTabelle = zdcHndl.selectSingleNode(xpath)
+	if nil == nodeTabelle then 
+		engine.StatValue = "no coding in zdc container"
+		engine.println("WARNING, ZdcCalcCoding : Modus tables not found xpath = " .. xpath)
+		engine.LastError =0
+		return shortCodingValue,longCodingValue, codingType
+	end
+	-- debug coding description
+	engine.println("ZdcCalcCoding, coding description : ", nodeTabelle.selectSingleNode("MODUSTEIL").text)
+	-- get codingType
+	local codeNumBase = nodeTabelle.selectSingleNode("ZAHLENBASIS").text
+	engine.println("ZdcCalcCoding, ZAHLENBASIS = " .. tostring(codeNumBase))
+	if codeNumBase == '1' then
+		codingType = 1
+	elseif codeNumBase == '10' or codeNumBase == '256' then
+		codingType = 0
+	else
+		engine.StatValue = "Zdc caculate failed, zdc data invalid"
+		engine.println("ERROR, ZdcCalcCoding : code number base is not valid, ZAHLENBASIS=" .. tostring(codeNumBase))
+		engine.LastError =1
+		return shortCodingValue,longCodingValue, codingType
+	end
+	
+	-- **** caculate code word **** --
+	local cwt = LibVW.zdcCalcCodeWord(nodeTabelle, debugLevel)
+	if engine.LastError ~= 0 then
+		engine.StatValue = "Zdc caculate failed, zdc data invalid"
+		engine.println("ERROR, ZdcCalcCoding : code word caculate failed.")
+		engine.LastError =1
+		return shortCodingValue,longCodingValue, codingType
+	end
+	
+	-- **** build return coding  values **** --
+	if codingType == 1 then	-- base 1
+		-- hex string convert to bin string, return bin string
+		for i=1,cwt.codeString:len(),2 do	    
+			longCodingValue = longCodingValue .. string.char(tonumber(cwt.codeString:sub(i,i+1),16))
+		end
+	else	-- base 10, base 256
+		-- return integer number
+		local i, tmpV = nil, cwt[0].num
+		for i,_ in ipairs(cwt) do
+			tmpV = tmpV + cwt[i].num * (tonumber(codeNumBase)^i)
+		end
+		shortCodingValue = tmpV
+	end
+	
+	engine.println("ZdcCalcCoding, caculate finished successfully:",
+		"codingType = " .. tostring(codingType), "shortCodingValue = " .. tostring(shortCodingValue), 
+		"longCodingValue = " .. tostring(longCodingValue))
+	
+	if codingType == 1 then
+		engine.StatValue = "langcoding, coding value=" .. tostring(cwt.codeString)
+	elseif codingType == 0 then
+		engine.StatValue = "shortcoding, coding value=" .. tostring(shortCodingValue)
+	end
+	engine.LastError = err</Script></Function>
+

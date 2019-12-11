@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ExhaustMeasurement_Lambda">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="the exhaust connection handle"/>
+</Inputs>
+<Outputs>
+<Variable id="Lam" type="5" data="0" description="Lambda value"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is used to read  Lambda
+History:
+    03/16/2016, wuh : function created
+	04/10/2016, wuh : protocal change
+****************************************************************--]]
+	local err = 0
+	local Lam = -1
+
+	-- check connection handl
+	if nil == pHndl or pHndl &lt; 0 then
+		engine.println("ERROR, ExhaustMeasurement_Lambda : input connection handl not valid, pHndl=" .. tostring(pHndl))
+		engine.LastError = 1
+		return Lam
+	end
+	
+	-- set requst data
+	local reqData = 'Measure{"LAM";}'
+	-- send requst and receive response
+	err, revData  = LibExhaust.exhaustDataExchange(pHndl, reqData)
+	if err ~= 0  or revData == nil then
+		engine.println("ERROR, ExhaustMeasurement_Lambda :   Read command failed, revData=" .. tostring(revData))
+		engine.LastError = 1;
+		return Lam
+	end
+	engine.println("ExhaustMeasurement_Lambda,  revData : " .. revData)
+	
+	-- get result
+	local _,_,_,tmp1 = revData:find('Measure{(.*);(.*);')		
+	Lam = tonumber (tmp1)
+	if Lam == nil then
+		err = 1; Lam = -1;
+	end
+	
+	--engine.LastError = err
+engine.LastError = 0</Script></Function>
+

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_ID_Read_91">
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="MultiID_String" type="8" data=""/>
+<Variable id="PartNumber_Ref_String" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to   read ID of vw2000   1a 91 硬件参考零件号
+input parameter :ECU_Handle
+output parameter:MultiID_String;PartNumber_Ref_String
+
+01/25/2016     created by viforce
+11/04/2016     changed by viforce
+******************************************************************************--]]
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return "",""
+end
+
+#COMMEX ECU_Handle -1 0x1a 0x91 
+
+if (engine.LastError ~= 0) then 
+engine.StatValue = "0x1a 0x91 service failed";
+MultiID_String = "";
+return "","";
+else
+
+MultiID_String = @3-;
+
+end;
+
+
+if(string.len(MultiID_String) &gt;=  11) then 
+
+PartNumber_Ref_String = string.sub(MultiID_String,1,11);
+engine.StatValue = "硬件参考零件号："..tostring(PartNumber_Ref_String);
+else
+
+PartNumber_Ref_String = "            ";
+engine.StatValue = "硬件参考零件号："..tostring(PartNumber_Ref_String);
+end;
+</Script></Function>
+

@@ -1,0 +1,2291 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="c7_hud_xml" flags="1" block="4" ptbtext="DEP1368" group="145" pbltext="DEP1527">
+<ProcessParameters>
+<Variable id="Prueftyp" type="8" dir="0" data="&quot;BGW&quot;"/>
+<Variable id="Positionsnummer" type="8" dir="0" data="&quot;1&quot;"/>
+<Variable id="DFloat_XML_BGW_Alpha_Rot_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Translation_Horizontal_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Translation_Vertikal_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_links_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_vertikal_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_rechts_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_oben_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_horizontal_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_unten_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_trapez_horizontal_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Beta_trapez_vertikal_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_A_aspekt_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Z_1_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Z_2_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Z_3_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Y_1_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Y_2_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Y_3_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Y_max_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Y_min_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Z_max_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Z_min_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_B_links_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_B_oben_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_B_rechts_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_B_unten_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Ghost_y_Abstand_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Ghost_y_Helligkeit_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Ghost_y_Anzahl_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Ghost_z_Abstand_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Ghost_z_Helligkeit_shared" type="5" dir="0" data=""/>
+<Variable id="DFloat_XML_BGW_Ghost_z_Anzahl_shared" type="5" dir="0" data=""/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="580" top="37" right="680" bottom="69"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="592" top="2460" right="692" bottom="2492"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="参数准备">
+<Rect left="579" top="102" right="679" bottom="134"/>
+<Script>-- 1+2+3
+Str_Positionsnummer = Positionsnummer
+local pos1,pos2 = string.find(Str_Positionsnummer,"1")
+
+if(pos1 ~= nil) then
+	Str_Positionsnummer = "1+2+3"
+else
+	pos1,pos2 = string.find(Str_Positionsnummer,"2")
+        if(pos1 ~= nil) then
+		Str_Positionsnummer = "1+2+3"
+        else
+		pos1,pos2 = string.find(Str_Positionsnummer,"3")
+                if(pos1 ~= nil) then
+			Str_Positionsnummer = "1+2+3"
+                else
+			-- 4+5+6+7
+			pos1,pos2 = string.find(Str_Positionsnummer,"4")
+                        if(pos1 ~= nil) then
+				Str_Positionsnummer = "4+5+6+7"
+                        else
+				pos1,pos2 = string.find(Str_Positionsnummer,"5")
+                                if(pos1 ~= nil) then
+					Str_Positionsnummer = "4+5+6+7"
+                                else
+					pos1,pos2 = string.find(Str_Positionsnummer,"6")
+                                        if(pos1 ~= nil) then
+						Str_Positionsnummer = "4+5+6+7"
+                                        else
+						pos1,pos2 = string.find(Str_Positionsnummer,"7")
+						if(pos1 ~= nil) then
+							Str_Positionsnummer = "4+5+6+7"
+                                                else
+							engine.println("viforce -- Error : Str_Positionsnummer out of range !!!")
+                                                end
+                                        end
+                                end
+                        end
+                end
+        end
+end
+
+
+</Script></Activity>
+<Activity id="4" ActivityType="13" name="Xml_HUD_ToleranceRead">
+<Rect left="580" top="167" right="680" bottom="199"/>
+<FunctionRef id="Xml_HUD_ToleranceRead" model="LibGeneral">
+<Parameters>
+<Parameter id="xmlFile" value="nil"/>
+<Parameter id="Karosserievariante" value="&quot;AU57x&quot;"/>
+<Parameter id="Lenker" value="&quot;Lenker&quot;"/>
+<Parameter id="Prueftyp" value="Prueftyp"/>
+<Parameter id="Position" value="Str_Positionsnummer"/>
+<Parameter id="float_Rotation_OTG" ret="float_Rotation_OTG"/>
+<Parameter id="float_Rotation_UTG" ret="float_Rotation_UTG"/>
+<Parameter id="float_Translation_vertikal_OTG" ret="float_Translation_vertikal_OTG"/>
+<Parameter id="float_Translation_vertikal_UTG" ret="float_Translation_vertikal_UTG"/>
+<Parameter id="float_Translation_horizontal_OTG" ret="float_Translation_horizontal_OTG"/>
+<Parameter id="float_Translation_horizontal_UTG" ret="float_Translation_horizontal_UTG"/>
+<Parameter id="float_Schiefstellung_vertikal_links_OTG" ret="float_Schiefstellung_vertikal_links_OTG"/>
+<Parameter id="float_Schiefstellung_vertikal_links_UTG" ret="float_Schiefstellung_vertikal_links_UTG"/>
+<Parameter id="float_Schiefstellung_vertikal_mitte_OTG" ret="float_Schiefstellung_vertikal_mitte_OTG"/>
+<Parameter id="float_Schiefstellung_vertikal_mitte_UTG" ret="float_Schiefstellung_vertikal_mitte_UTG"/>
+<Parameter id="float_Schiefstellung_vertikal_rechts_OTG" ret="float_Schiefstellung_vertikal_rechts_OTG"/>
+<Parameter id="float_Schiefstellung_vertikal_rechts_UTG" ret="float_Schiefstellung_vertikal_rechts_UTG"/>
+<Parameter id="float_Schiefstellung_horizontal_oben_OTG" ret="float_Schiefstellung_horizontal_oben_OTG"/>
+<Parameter id="float_Schiefstellung_horizontal_oben_UTG" ret="float_Schiefstellung_horizontal_oben_UTG"/>
+<Parameter id="float_Schiefstellung_horizontal_mitte_OTG" ret="float_Schiefstellung_horizontal_mitte_OTG"/>
+<Parameter id="float_Schiefstellung_horizontal_mitte_UTG" ret="float_Schiefstellung_horizontal_mitte_UTG"/>
+<Parameter id="float_Schiefstellung_horizontal_unten_OTG" ret="float_Schiefstellung_horizontal_unten_OTG"/>
+<Parameter id="float_Schiefstellung_horizontal_unten_UTG" ret="float_Schiefstellung_horizontal_unten_UTG"/>
+<Parameter id="float_Trapez_vertikal_OTG" ret="float_Trapez_vertikal_OTG"/>
+<Parameter id="float_Trapez_vertikal_UTG" ret="float_Trapez_vertikal_UTG"/>
+<Parameter id="float_Trapez_horizontal_OTG" ret="float_Trapez_horizontal_OTG"/>
+<Parameter id="float_Trapez_horizontal_UTG" ret="float_Trapez_horizontal_UTG"/>
+<Parameter id="float_Aspekt_OTG" ret="float_Aspekt_OTG"/>
+<Parameter id="float_Aspekt_UTG" ret="float_Aspekt_UTG"/>
+<Parameter id="float_Abw_Geraden_horizontal_oben_OTG" ret="float_Abw_Geraden_horizontal_oben_OTG"/>
+<Parameter id="float_Abw_Geraden_horizontal_oben_UTG" ret="float_Abw_Geraden_horizontal_oben_UTG"/>
+<Parameter id="float_Abw_Geraden_horizontal_mitte_OTG" ret="float_Abw_Geraden_horizontal_mitte_OTG"/>
+<Parameter id="float_Abw_Geraden_horizontal_mitte_UTG" ret="float_Abw_Geraden_horizontal_mitte_UTG"/>
+<Parameter id="float_Abw_Geraden_horizontal_unten_OTG" ret="float_Abw_Geraden_horizontal_unten_OTG"/>
+<Parameter id="float_Abw_Geraden_horizontal_unten_UTG" ret="float_Abw_Geraden_horizontal_unten_UTG"/>
+<Parameter id="float_Abw_Geraden_vertikal_links_OTG" ret="float_Abw_Geraden_vertikal_links_OTG"/>
+<Parameter id="float_Abw_Geraden_vertikal_links_UTG" ret="float_Abw_Geraden_vertikal_links_UTG"/>
+<Parameter id="float_Abw_Geraden_vertikal_mitte_OTG" ret="float_Abw_Geraden_vertikal_mitte_OTG"/>
+<Parameter id="float_Abw_Geraden_vertikal_mitte_UTG" ret="float_Abw_Geraden_vertikal_mitte_UTG"/>
+<Parameter id="float_Abw_Geraden_vertikal_rechts_OTG" ret="float_Abw_Geraden_vertikal_rechts_OTG"/>
+<Parameter id="float_Abw_Geraden_vertikal_rechts_UTG" ret="float_Abw_Geraden_vertikal_rechts_UTG"/>
+<Parameter id="float_Vergr_Verkl_horizontal_max_OTG" ret="float_Vergr_Verkl_horizontal_max_OTG"/>
+<Parameter id="float_Vergr_Verkl_horizontal_max_UTG" ret="float_Vergr_Verkl_horizontal_max_UTG"/>
+<Parameter id="float_Vergr_Verkl_horizontal_min_OTG" ret="float_Vergr_Verkl_horizontal_min_OTG"/>
+<Parameter id="float_Vergr_Verkl_horizontal_min_UTG" ret="float_Vergr_Verkl_horizontal_min_UTG"/>
+<Parameter id="float_Vergr_Verkl_vertikal_max_OTG" ret="float_Vergr_Verkl_vertikal_max_OTG"/>
+<Parameter id="float_Vergr_Verkl_vertikal_max_UTG" ret="float_Vergr_Verkl_vertikal_max_UTG"/>
+<Parameter id="float_Vergr_Verkl_vertikal_min_OTG" ret="float_Vergr_Verkl_vertikal_min_OTG"/>
+<Parameter id="float_Vergr_Verkl_vertikal_min_UTG" ret="float_Vergr_Verkl_vertikal_min_UTG"/>
+<Parameter id="float_Beschnitt_links_OTG" ret="float_Beschnitt_links_OTG"/>
+<Parameter id="float_Beschnitt_links_UTG" ret="float_Beschnitt_links_UTG"/>
+<Parameter id="float_Beschnitt_oben_OTG" ret="float_Beschnitt_oben_OTG"/>
+<Parameter id="float_Beschnitt_oben_UTG" ret="float_Beschnitt_oben_UTG"/>
+<Parameter id="float_Beschnitt_rechts_OTG" ret="float_Beschnitt_rechts_OTG"/>
+<Parameter id="float_Beschnitt_rechts_UTG" ret="float_Beschnitt_rechts_UTG"/>
+<Parameter id="float_Beschnitt_unten_OTG" ret="float_Beschnitt_unten_OTG"/>
+<Parameter id="float_Beschnitt_unten_UTG" ret="float_Beschnitt_unten_UTG"/>
+<Parameter id="float_Ghost_horizontal_Abstand_OTG" ret="float_Ghost_horizontal_Abstand_OTG"/>
+<Parameter id="float_Ghost_horizontal_Abstand_UTG" ret="float_Ghost_horizontal_Abstand_UTG"/>
+<Parameter id="float_Ghost_horizontal_Helligkeit_OTG" ret="float_Ghost_horizontal_Helligkeit_OTG"/>
+<Parameter id="float_Ghost_horizontal_Helligkeit_UTG" ret="float_Ghost_horizontal_Helligkeit_UTG"/>
+<Parameter id="float_Ghost_horizontal_Anzahl_OTG" ret="float_Ghost_horizontal_Anzahl_OTG"/>
+<Parameter id="float_Ghost_horizontal_Anzahl_UTG" ret="float_Ghost_horizontal_Anzahl_UTG"/>
+<Parameter id="float_Ghost_vertikal_Abstand_OTG" ret="float_Ghost_vertikal_Abstand_OTG"/>
+<Parameter id="float_Ghost_vertikal_Abstand_UTG" ret="float_Ghost_vertikal_Abstand_UTG"/>
+<Parameter id="float_Ghost_vertikal_Helligkeit_OTG" ret="float_Ghost_vertikal_Helligkeit_OTG"/>
+<Parameter id="float_Ghost_vertikal_Helligkeit_UTG" ret="float_Ghost_vertikal_Helligkeit_UTG"/>
+<Parameter id="float_Ghost_vertikal_Anzahl_OTG" ret="float_Ghost_vertikal_Anzahl_OTG"/>
+<Parameter id="float_Ghost_vertikal_Anzahl_UTG" ret="float_Ghost_vertikal_Anzahl_UTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="1" name="DEP1688" type="8" flags="97"/>
+</Activity>
+<Activity id="111" ActivityType="13" name="FToleranzPrfng_Rotation">
+<Rect left="256" top="335" right="356" bottom="367"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Alpha_Rot_shared"/>
+<Parameter id="Utg" value="float_Rotation_UTG"/>
+<Parameter id="Otg" value="float_Rotation_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="2" name="DEP1560" type="8" flags="97"/>
+</Activity>
+<Activity id="112" ActivityType="13" name="FToleranzPrfng_Translation_horizontal">
+<Rect left="255" top="402" right="355" bottom="434"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Horizontal_shared"/>
+<Parameter id="Utg" value="float_Translation_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Translation_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="3" name="DEP1561" type="8" flags="97"/>
+</Activity>
+<Activity id="113" ActivityType="13" name="FToleranzPrfng_Translation_vertikal">
+<Rect left="255" top="469" right="355" bottom="501"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Vertikal_shared"/>
+<Parameter id="Utg" value="float_Translation_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Translation_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="4" name="DEP1562" type="8" flags="97"/>
+</Activity>
+<Activity id="114" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_links">
+<Rect left="255" top="538" right="355" bottom="570"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_links_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="5" name="DEP1563" type="8" flags="97"/>
+</Activity>
+<Activity id="119" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_mitte">
+<Rect left="256" top="603" right="356" bottom="635"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_vertikal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="6" name="DEP1564" type="8" flags="97"/>
+</Activity>
+<Activity id="120" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_rechts">
+<Rect left="257" top="669" right="357" bottom="701"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_rechts_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="7" name="DEP1565" type="8" flags="97"/>
+</Activity>
+<Activity id="121" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_oben">
+<Rect left="258" top="732" right="358" bottom="764"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_oben_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="8" name="DEP1566" type="8" flags="97"/>
+</Activity>
+<Activity id="122" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_mitte">
+<Rect left="258" top="797" right="358" bottom="829"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_horizontal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="9" name="DEP1567" type="8" flags="97"/>
+</Activity>
+<Activity id="123" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_unten">
+<Rect left="258" top="863" right="358" bottom="895"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_unten_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="10" name="DEP1568" type="8" flags="97"/>
+</Activity>
+<Activity id="124" ActivityType="13" name="FToleranzPrfng_Trapez_horizontal">
+<Rect left="257" top="929" right="357" bottom="961"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_horizontal_shared"/>
+<Parameter id="Utg" value="float_Trapez_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="11" name="DEP1569" type="8" flags="97"/>
+</Activity>
+<Activity id="125" ActivityType="13" name="FToleranzPrfng_Trapez_vertikal">
+<Rect left="257" top="994" right="357" bottom="1026"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_vertikal_shared"/>
+<Parameter id="Utg" value="float_Trapez_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="12" name="DEP1570" type="8" flags="97"/>
+</Activity>
+<Activity id="126" ActivityType="13" name="FToleranzPrfng_A_Aspekt">
+<Rect left="257" top="1057" right="357" bottom="1089"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_A_aspekt_shared"/>
+<Parameter id="Utg" value="float_Aspekt_UTG"/>
+<Parameter id="Otg" value="float_Aspekt_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="13" name="DEP1571" type="8" flags="97"/>
+</Activity>
+<Activity id="127" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_oben">
+<Rect left="258" top="1124" right="358" bottom="1156"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="14" name="DEP1572" type="8" flags="97"/>
+</Activity>
+<Activity id="128" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_mitte">
+<Rect left="257" top="1193" right="357" bottom="1225"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="15" name="DEP1573" type="8" flags="97"/>
+</Activity>
+<Activity id="129" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_unten">
+<Rect left="258" top="1261" right="358" bottom="1293"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="16" name="DEP1574" type="8" flags="97"/>
+</Activity>
+<Activity id="130" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_links">
+<Rect left="258" top="1328" right="358" bottom="1360"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="17" name="DEP1575" type="8" flags="97"/>
+</Activity>
+<Activity id="131" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_mitte">
+<Rect left="259" top="1394" right="359" bottom="1426"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="18" name="DEP1576" type="8" flags="97"/>
+</Activity>
+<Activity id="132" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="260" top="1462" right="360" bottom="1494"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="19" name="DEP1577" type="8" flags="97"/>
+</Activity>
+<Activity id="133" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="260" top="1525" right="360" bottom="1557"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="20" name="DEP1578" type="8" flags="97"/>
+</Activity>
+<Activity id="134" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_min">
+<Rect left="261" top="1589" right="361" bottom="1621"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="21" name="DEP1579" type="8" flags="97"/>
+</Activity>
+<Activity id="135" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_max">
+<Rect left="262" top="1653" right="362" bottom="1685"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="22" name="DEP1580" type="8" flags="97"/>
+</Activity>
+<Activity id="136" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_min">
+<Rect left="262" top="1718" right="362" bottom="1750"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="23" name="DEP1581" type="8" flags="97"/>
+</Activity>
+<Activity id="137" ActivityType="13" name="FToleranzPrfng_Beschnitt_links">
+<Rect left="262" top="1785" right="362" bottom="1817"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_links_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_links_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="24" name="DEP1582" type="8" flags="97"/>
+</Activity>
+<Activity id="138" ActivityType="13" name="FToleranzPrfng_Beschnitt_oben">
+<Rect left="263" top="1851" right="363" bottom="1883"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_oben_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_oben_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="25" name="DEP1583" type="8" flags="97"/>
+</Activity>
+<Activity id="139" ActivityType="13" name="FToleranzPrfng_Beschnitt_rechts">
+<Rect left="264" top="1918" right="364" bottom="1950"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_rechts_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_rechts_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="26" name="DEP1584" type="8" flags="97"/>
+</Activity>
+<Activity id="140" ActivityType="13" name="FToleranzPrfng_Beschnitt_unten">
+<Rect left="265" top="1984" right="365" bottom="2016"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_unten_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_unten_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="27" name="DEP1585" type="8" flags="97"/>
+</Activity>
+<Activity id="141" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Abstand">
+<Rect left="266" top="2049" right="366" bottom="2081"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="28" name="DEP1586" type="8" flags="97"/>
+</Activity>
+<Activity id="142" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Helligkeit">
+<Rect left="266" top="2111" right="366" bottom="2143"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="29" name="DEP1587" type="8" flags="97"/>
+</Activity>
+<Activity id="143" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Anzahl">
+<Rect left="267" top="2177" right="367" bottom="2209"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="30" name="DEP1588" type="8" flags="97"/>
+</Activity>
+<Activity id="144" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Abstand">
+<Rect left="267" top="2242" right="367" bottom="2274"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="31" name="DEP1589" type="8" flags="97"/>
+</Activity>
+<Activity id="145" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Helligkeit">
+<Rect left="267" top="2313" right="367" bottom="2345"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="32" name="DEP1590" type="8" flags="97"/>
+</Activity>
+<Activity id="146" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Anzahl">
+<Rect left="267" top="2377" right="367" bottom="2409"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="33" name="DEP1591" type="8" flags="97"/>
+</Activity>
+<Activity id="147" ActivityType="13" name="FToleranzPrfng_Rotation">
+<Rect left="425" top="334" right="525" bottom="366"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Alpha_Rot_shared"/>
+<Parameter id="Utg" value="float_Rotation_UTG"/>
+<Parameter id="Otg" value="float_Rotation_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="34" name="DEP1528" type="8" flags="97"/>
+</Activity>
+<Activity id="148" ActivityType="13" name="FToleranzPrfng_Translation_horizontal">
+<Rect left="424" top="401" right="524" bottom="433"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Horizontal_shared"/>
+<Parameter id="Utg" value="float_Translation_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Translation_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="35" name="DEP1529" type="8" flags="97"/>
+</Activity>
+<Activity id="149" ActivityType="13" name="FToleranzPrfng_Translation_vertikal">
+<Rect left="424" top="468" right="524" bottom="500"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Vertikal_shared"/>
+<Parameter id="Utg" value="float_Translation_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Translation_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="36" name="DEP1530" type="8" flags="97"/>
+</Activity>
+<Activity id="150" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_links">
+<Rect left="424" top="537" right="524" bottom="569"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_links_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="37" name="DEP1531" type="8" flags="97"/>
+</Activity>
+<Activity id="151" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_mitte">
+<Rect left="425" top="602" right="525" bottom="634"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_vertikal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="38" name="DEP1532" type="8" flags="97"/>
+</Activity>
+<Activity id="152" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_rechts">
+<Rect left="426" top="668" right="526" bottom="700"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_rechts_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="39" name="DEP1533" type="8" flags="97"/>
+</Activity>
+<Activity id="153" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_oben">
+<Rect left="427" top="731" right="527" bottom="763"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_oben_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="40" name="DEP1534" type="8" flags="97"/>
+</Activity>
+<Activity id="154" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_mitte">
+<Rect left="427" top="796" right="527" bottom="828"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_horizontal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="41" name="DEP1535" type="8" flags="97"/>
+</Activity>
+<Activity id="155" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_unten">
+<Rect left="427" top="862" right="527" bottom="894"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_unten_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="42" name="DEP1536" type="8" flags="97"/>
+</Activity>
+<Activity id="156" ActivityType="13" name="FToleranzPrfng_Trapez_horizontal">
+<Rect left="426" top="928" right="526" bottom="960"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_horizontal_shared"/>
+<Parameter id="Utg" value="float_Trapez_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="43" name="DEP1537" type="8" flags="97"/>
+</Activity>
+<Activity id="157" ActivityType="13" name="FToleranzPrfng_Trapez_vertikal">
+<Rect left="426" top="993" right="526" bottom="1025"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_vertikal_shared"/>
+<Parameter id="Utg" value="float_Trapez_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="44" name="DEP1538" type="8" flags="97"/>
+</Activity>
+<Activity id="158" ActivityType="13" name="FToleranzPrfng_A_Aspekt">
+<Rect left="426" top="1056" right="526" bottom="1088"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_A_aspekt_shared"/>
+<Parameter id="Utg" value="float_Aspekt_UTG"/>
+<Parameter id="Otg" value="float_Aspekt_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="45" name="DEP1539" type="8" flags="97"/>
+</Activity>
+<Activity id="159" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_oben">
+<Rect left="427" top="1123" right="527" bottom="1155"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="46" name="DEP1540" type="8" flags="97"/>
+</Activity>
+<Activity id="160" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_mitte">
+<Rect left="426" top="1192" right="526" bottom="1224"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="47" name="DEP1541" type="8" flags="97"/>
+</Activity>
+<Activity id="161" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_unten">
+<Rect left="427" top="1260" right="527" bottom="1292"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="48" name="DEP1574" type="8" flags="97"/>
+</Activity>
+<Activity id="162" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_links">
+<Rect left="427" top="1327" right="527" bottom="1359"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="49" name="DEP1543" type="8" flags="97"/>
+</Activity>
+<Activity id="163" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_mitte">
+<Rect left="428" top="1393" right="528" bottom="1425"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="50" name="DEP1544" type="8" flags="97"/>
+</Activity>
+<Activity id="164" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="429" top="1461" right="529" bottom="1493"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="51" name="DEP1545" type="8" flags="97"/>
+</Activity>
+<Activity id="165" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="429" top="1524" right="529" bottom="1556"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="52" name="DEP1546" type="8" flags="97"/>
+</Activity>
+<Activity id="166" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_min">
+<Rect left="430" top="1588" right="530" bottom="1620"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="53" name="DEP1547" type="8" flags="97"/>
+</Activity>
+<Activity id="167" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_max">
+<Rect left="431" top="1652" right="531" bottom="1684"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="54" name="DEP1548" type="8" flags="97"/>
+</Activity>
+<Activity id="168" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_min">
+<Rect left="431" top="1717" right="531" bottom="1749"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="55" name="DEP1549" type="8" flags="97"/>
+</Activity>
+<Activity id="169" ActivityType="13" name="FToleranzPrfng_Beschnitt_links">
+<Rect left="431" top="1784" right="531" bottom="1816"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_links_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_links_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="56" name="DEP1550" type="8" flags="97"/>
+</Activity>
+<Activity id="170" ActivityType="13" name="FToleranzPrfng_Beschnitt_oben">
+<Rect left="432" top="1850" right="532" bottom="1882"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_oben_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_oben_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="57" name="DEP1551" type="8" flags="97"/>
+</Activity>
+<Activity id="171" ActivityType="13" name="FToleranzPrfng_Beschnitt_rechts">
+<Rect left="433" top="1917" right="533" bottom="1949"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_rechts_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_rechts_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="58" name="DEP1552" type="8" flags="97"/>
+</Activity>
+<Activity id="172" ActivityType="13" name="FToleranzPrfng_Beschnitt_unten">
+<Rect left="434" top="1983" right="534" bottom="2015"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_unten_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_unten_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="59" name="DEP1553" type="8" flags="97"/>
+</Activity>
+<Activity id="173" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Abstand">
+<Rect left="435" top="2048" right="535" bottom="2080"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="60" name="DEP1554" type="8" flags="97"/>
+</Activity>
+<Activity id="174" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Helligkeit">
+<Rect left="435" top="2110" right="535" bottom="2142"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="61" name="DEP1555" type="8" flags="97"/>
+</Activity>
+<Activity id="175" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Anzahl">
+<Rect left="436" top="2176" right="536" bottom="2208"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="62" name="DEP1556" type="8" flags="97"/>
+</Activity>
+<Activity id="176" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Abstand">
+<Rect left="436" top="2241" right="536" bottom="2273"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="63" name="DEP1557" type="8" flags="97"/>
+</Activity>
+<Activity id="177" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Helligkeit">
+<Rect left="436" top="2312" right="536" bottom="2344"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="64" name="DEP1558" type="8" flags="97"/>
+</Activity>
+<Activity id="178" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Anzahl">
+<Rect left="436" top="2376" right="536" bottom="2408"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="65" name="DEP1559" type="8" flags="97"/>
+</Activity>
+<Activity id="179" ActivityType="13" name="FToleranzPrfng_Rotation">
+<Rect left="580" top="331" right="680" bottom="363"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Alpha_Rot_shared"/>
+<Parameter id="Utg" value="float_Rotation_UTG"/>
+<Parameter id="Otg" value="float_Rotation_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="66" name="DEP1592" type="8" flags="97"/>
+</Activity>
+<Activity id="180" ActivityType="13" name="FToleranzPrfng_Translation_horizontal">
+<Rect left="579" top="398" right="679" bottom="430"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Horizontal_shared"/>
+<Parameter id="Utg" value="float_Translation_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Translation_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="67" name="DEP1593" type="8" flags="97"/>
+</Activity>
+<Activity id="181" ActivityType="13" name="FToleranzPrfng_Translation_vertikal">
+<Rect left="579" top="465" right="679" bottom="497"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Vertikal_shared"/>
+<Parameter id="Utg" value="float_Translation_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Translation_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="68" name="DEP1594" type="8" flags="97"/>
+</Activity>
+<Activity id="182" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_links">
+<Rect left="579" top="534" right="679" bottom="566"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_links_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="69" name="DEP1595" type="8" flags="97"/>
+</Activity>
+<Activity id="183" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_mitte">
+<Rect left="580" top="599" right="680" bottom="631"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_vertikal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="70" name="DEP1596" type="8" flags="97"/>
+</Activity>
+<Activity id="184" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_rechts">
+<Rect left="581" top="665" right="681" bottom="697"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_rechts_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="71" name="DEP1597" type="8" flags="97"/>
+</Activity>
+<Activity id="185" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_oben">
+<Rect left="582" top="728" right="682" bottom="760"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_oben_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="72" name="DEP1598" type="8" flags="97"/>
+</Activity>
+<Activity id="186" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_mitte">
+<Rect left="582" top="793" right="682" bottom="825"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_horizontal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="73" name="DEP1599" type="8" flags="97"/>
+</Activity>
+<Activity id="187" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_unten">
+<Rect left="582" top="859" right="682" bottom="891"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_unten_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="74" name="DEP1600" type="8" flags="97"/>
+</Activity>
+<Activity id="188" ActivityType="13" name="FToleranzPrfng_Trapez_horizontal">
+<Rect left="581" top="925" right="681" bottom="957"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_horizontal_shared"/>
+<Parameter id="Utg" value="float_Trapez_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="75" name="DEP1601" type="8" flags="97"/>
+</Activity>
+<Activity id="189" ActivityType="13" name="FToleranzPrfng_Trapez_vertikal">
+<Rect left="581" top="990" right="681" bottom="1022"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_vertikal_shared"/>
+<Parameter id="Utg" value="float_Trapez_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="76" name="DEP1602" type="8" flags="97"/>
+</Activity>
+<Activity id="190" ActivityType="13" name="FToleranzPrfng_A_Aspekt">
+<Rect left="581" top="1053" right="681" bottom="1085"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_A_aspekt_shared"/>
+<Parameter id="Utg" value="float_Aspekt_UTG"/>
+<Parameter id="Otg" value="float_Aspekt_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="77" name="DEP1603" type="8" flags="97"/>
+</Activity>
+<Activity id="191" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_oben">
+<Rect left="582" top="1120" right="682" bottom="1152"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="78" name="DEP1604" type="8" flags="97"/>
+</Activity>
+<Activity id="192" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_mitte">
+<Rect left="581" top="1189" right="681" bottom="1221"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="79" name="DEP1605" type="8" flags="97"/>
+</Activity>
+<Activity id="193" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_unten">
+<Rect left="582" top="1257" right="682" bottom="1289"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="80" name="DEP1606" type="8" flags="97"/>
+</Activity>
+<Activity id="194" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_links">
+<Rect left="582" top="1324" right="682" bottom="1356"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="81" name="DEP1607" type="8" flags="97"/>
+</Activity>
+<Activity id="195" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_mitte">
+<Rect left="583" top="1390" right="683" bottom="1422"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="82" name="DEP1608" type="8" flags="97"/>
+</Activity>
+<Activity id="196" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="584" top="1458" right="684" bottom="1490"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="83" name="DEP1609" type="8" flags="97"/>
+</Activity>
+<Activity id="197" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="584" top="1521" right="684" bottom="1553"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="84" name="DEP1610" type="8" flags="97"/>
+</Activity>
+<Activity id="198" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_min">
+<Rect left="585" top="1585" right="685" bottom="1617"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="85" name="DEP1611" type="8" flags="97"/>
+</Activity>
+<Activity id="199" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_max">
+<Rect left="586" top="1649" right="686" bottom="1681"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="86" name="DEP1612" type="8" flags="97"/>
+</Activity>
+<Activity id="200" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_min">
+<Rect left="586" top="1714" right="686" bottom="1746"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="87" name="DEP1613" type="8" flags="97"/>
+</Activity>
+<Activity id="201" ActivityType="13" name="FToleranzPrfng_Beschnitt_links">
+<Rect left="586" top="1781" right="686" bottom="1813"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_links_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_links_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="88" name="DEP1614" type="8" flags="97"/>
+</Activity>
+<Activity id="202" ActivityType="13" name="FToleranzPrfng_Beschnitt_oben">
+<Rect left="587" top="1847" right="687" bottom="1879"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_oben_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_oben_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="89" name="DEP1615" type="8" flags="97"/>
+</Activity>
+<Activity id="203" ActivityType="13" name="FToleranzPrfng_Beschnitt_rechts">
+<Rect left="588" top="1914" right="688" bottom="1946"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_rechts_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_rechts_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="90" name="DEP1616" type="8" flags="97"/>
+</Activity>
+<Activity id="204" ActivityType="13" name="FToleranzPrfng_Beschnitt_unten">
+<Rect left="589" top="1980" right="689" bottom="2012"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_unten_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_unten_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="91" name="DEP1617" type="8" flags="97"/>
+</Activity>
+<Activity id="205" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Abstand">
+<Rect left="590" top="2045" right="690" bottom="2077"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="92" name="DEP1618" type="8" flags="97"/>
+</Activity>
+<Activity id="206" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Helligkeit">
+<Rect left="590" top="2107" right="690" bottom="2139"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="93" name="DEP1619" type="8" flags="97"/>
+</Activity>
+<Activity id="207" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Anzahl">
+<Rect left="591" top="2173" right="691" bottom="2205"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="94" name="DEP1620" type="8" flags="97"/>
+</Activity>
+<Activity id="208" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Abstand">
+<Rect left="591" top="2238" right="691" bottom="2270"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="95" name="DEP1621" type="8" flags="97"/>
+</Activity>
+<Activity id="209" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Helligkeit">
+<Rect left="591" top="2309" right="691" bottom="2341"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="96" name="DEP1622" type="8" flags="97"/>
+</Activity>
+<Activity id="210" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Anzahl">
+<Rect left="591" top="2373" right="691" bottom="2405"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="97" name="DEP1623" type="8" flags="97"/>
+</Activity>
+<Activity id="211" ActivityType="13" name="FToleranzPrfng_Rotation">
+<Rect left="745" top="330" right="845" bottom="362"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Alpha_Rot_shared"/>
+<Parameter id="Utg" value="float_Rotation_UTG"/>
+<Parameter id="Otg" value="float_Rotation_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="98" name="DEP1624" type="8" flags="97"/>
+</Activity>
+<Activity id="212" ActivityType="13" name="FToleranzPrfng_Translation_horizontal">
+<Rect left="744" top="397" right="844" bottom="429"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Horizontal_shared"/>
+<Parameter id="Utg" value="float_Translation_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Translation_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="99" name="DEP1625" type="8" flags="97"/>
+</Activity>
+<Activity id="213" ActivityType="13" name="FToleranzPrfng_Translation_vertikal">
+<Rect left="744" top="464" right="844" bottom="496"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Vertikal_shared"/>
+<Parameter id="Utg" value="float_Translation_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Translation_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="100" name="DEP1626" type="8" flags="97"/>
+</Activity>
+<Activity id="214" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_links">
+<Rect left="744" top="533" right="844" bottom="565"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_links_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="101" name="DEP1627" type="8" flags="97"/>
+</Activity>
+<Activity id="215" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_mitte">
+<Rect left="745" top="598" right="845" bottom="630"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_vertikal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="102" name="DEP1628" type="8" flags="97"/>
+</Activity>
+<Activity id="216" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_rechts">
+<Rect left="746" top="664" right="846" bottom="696"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_rechts_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="103" name="DEP1629" type="8" flags="97"/>
+</Activity>
+<Activity id="217" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_oben">
+<Rect left="747" top="727" right="847" bottom="759"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_oben_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="104" name="DEP1630" type="8" flags="97"/>
+</Activity>
+<Activity id="218" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_mitte">
+<Rect left="747" top="792" right="847" bottom="824"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_horizontal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="105" name="DEP1631" type="8" flags="97"/>
+</Activity>
+<Activity id="219" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_unten">
+<Rect left="747" top="858" right="847" bottom="890"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_unten_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="106" name="DEP1632" type="8" flags="97"/>
+</Activity>
+<Activity id="220" ActivityType="13" name="FToleranzPrfng_Trapez_horizontal">
+<Rect left="746" top="924" right="846" bottom="956"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_horizontal_shared"/>
+<Parameter id="Utg" value="float_Trapez_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="107" name="DEP1633" type="8" flags="97"/>
+</Activity>
+<Activity id="221" ActivityType="13" name="FToleranzPrfng_Trapez_vertikal">
+<Rect left="746" top="989" right="846" bottom="1021"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_vertikal_shared"/>
+<Parameter id="Utg" value="float_Trapez_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="108" name="DEP1634" type="8" flags="97"/>
+</Activity>
+<Activity id="222" ActivityType="13" name="FToleranzPrfng_A_Aspekt">
+<Rect left="746" top="1052" right="846" bottom="1084"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_A_aspekt_shared"/>
+<Parameter id="Utg" value="float_Aspekt_UTG"/>
+<Parameter id="Otg" value="float_Aspekt_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="109" name="DEP1635" type="8" flags="97"/>
+</Activity>
+<Activity id="223" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_oben">
+<Rect left="747" top="1119" right="847" bottom="1151"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="110" name="DEP1636" type="8" flags="97"/>
+</Activity>
+<Activity id="224" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_mitte">
+<Rect left="746" top="1188" right="846" bottom="1220"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="111" name="DEP1637" type="8" flags="97"/>
+</Activity>
+<Activity id="225" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_unten">
+<Rect left="747" top="1256" right="847" bottom="1288"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="112" name="DEP1638" type="8" flags="97"/>
+</Activity>
+<Activity id="226" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_links">
+<Rect left="747" top="1323" right="847" bottom="1355"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="113" name="DEP1639" type="8" flags="97"/>
+</Activity>
+<Activity id="227" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_mitte">
+<Rect left="748" top="1389" right="848" bottom="1421"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="114" name="DEP1640" type="8" flags="97"/>
+</Activity>
+<Activity id="228" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="749" top="1457" right="849" bottom="1489"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="115" name="DEP1641" type="8" flags="97"/>
+</Activity>
+<Activity id="229" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="749" top="1520" right="849" bottom="1552"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="116" name="DEP1642" type="8" flags="97"/>
+</Activity>
+<Activity id="230" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_min">
+<Rect left="750" top="1584" right="850" bottom="1616"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="117" name="DEP1643" type="8" flags="97"/>
+</Activity>
+<Activity id="231" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_max">
+<Rect left="751" top="1648" right="851" bottom="1680"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="118" name="DEP1644" type="8" flags="97"/>
+</Activity>
+<Activity id="232" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_min">
+<Rect left="751" top="1713" right="851" bottom="1745"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="119" name="DEP1645" type="8" flags="97"/>
+</Activity>
+<Activity id="233" ActivityType="13" name="FToleranzPrfng_Beschnitt_links">
+<Rect left="751" top="1780" right="851" bottom="1812"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_links_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_links_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="120" name="DEP1646" type="8" flags="97"/>
+</Activity>
+<Activity id="234" ActivityType="13" name="FToleranzPrfng_Beschnitt_oben">
+<Rect left="752" top="1846" right="852" bottom="1878"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_oben_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_oben_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="121" name="DEP1647" type="8" flags="97"/>
+</Activity>
+<Activity id="235" ActivityType="13" name="FToleranzPrfng_Beschnitt_rechts">
+<Rect left="753" top="1913" right="853" bottom="1945"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_rechts_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_rechts_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="122" name="DEP1648" type="8" flags="97"/>
+</Activity>
+<Activity id="236" ActivityType="13" name="FToleranzPrfng_Beschnitt_unten">
+<Rect left="754" top="1979" right="854" bottom="2011"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_unten_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_unten_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="123" name="DEP1649" type="8" flags="97"/>
+</Activity>
+<Activity id="237" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Abstand">
+<Rect left="755" top="2044" right="855" bottom="2076"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="124" name="DEP1650" type="8" flags="97"/>
+</Activity>
+<Activity id="238" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Helligkeit">
+<Rect left="755" top="2106" right="855" bottom="2138"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="125" name="DEP1651" type="8" flags="97"/>
+</Activity>
+<Activity id="239" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Anzahl">
+<Rect left="756" top="2172" right="856" bottom="2204"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="126" name="DEP1652" type="8" flags="97"/>
+</Activity>
+<Activity id="240" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Abstand">
+<Rect left="756" top="2237" right="856" bottom="2269"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="127" name="DEP1653" type="8" flags="97"/>
+</Activity>
+<Activity id="241" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Helligkeit">
+<Rect left="756" top="2308" right="856" bottom="2340"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="128" name="DEP1654" type="8" flags="97"/>
+</Activity>
+<Activity id="242" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Anzahl">
+<Rect left="756" top="2372" right="856" bottom="2404"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="129" name="DEP1655" type="8" flags="97"/>
+</Activity>
+<Activity id="243" ActivityType="13" name="FToleranzPrfng_Rotation">
+<Rect left="902" top="331" right="1002" bottom="363"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Alpha_Rot_shared"/>
+<Parameter id="Utg" value="float_Rotation_UTG"/>
+<Parameter id="Otg" value="float_Rotation_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="130" name="DEP1656" type="8" flags="97"/>
+</Activity>
+<Activity id="244" ActivityType="13" name="FToleranzPrfng_Translation_horizontal">
+<Rect left="901" top="398" right="1001" bottom="430"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Horizontal_shared"/>
+<Parameter id="Utg" value="float_Translation_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Translation_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="131" name="DEP1657" type="8" flags="97"/>
+</Activity>
+<Activity id="245" ActivityType="13" name="FToleranzPrfng_Translation_vertikal">
+<Rect left="901" top="465" right="1001" bottom="497"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Translation_Vertikal_shared"/>
+<Parameter id="Utg" value="float_Translation_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Translation_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="132" name="DEP1658" type="8" flags="97"/>
+</Activity>
+<Activity id="246" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_links">
+<Rect left="901" top="534" right="1001" bottom="566"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_links_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="133" name="DEP1659" type="8" flags="97"/>
+</Activity>
+<Activity id="247" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_mitte">
+<Rect left="902" top="599" right="1002" bottom="631"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_vertikal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="134" name="DEP1660" type="8" flags="97"/>
+</Activity>
+<Activity id="248" ActivityType="13" name="FToleranzPrfng_Schiefstellung_vertikal_rechts">
+<Rect left="903" top="665" right="1003" bottom="697"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_rechts_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="135" name="DEP1661" type="8" flags="97"/>
+</Activity>
+<Activity id="249" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_oben">
+<Rect left="904" top="728" right="1004" bottom="760"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_oben_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="136" name="DEP1662" type="8" flags="97"/>
+</Activity>
+<Activity id="250" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_mitte">
+<Rect left="904" top="793" right="1004" bottom="825"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_horizontal_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="137" name="DEP1663" type="8" flags="97"/>
+</Activity>
+<Activity id="251" ActivityType="13" name="FToleranzPrfng_Schiefstellung_horizontal_unten">
+<Rect left="904" top="859" right="1004" bottom="891"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_unten_shared"/>
+<Parameter id="Utg" value="float_Schiefstellung_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Schiefstellung_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="138" name="DEP1664" type="8" flags="97"/>
+</Activity>
+<Activity id="252" ActivityType="13" name="FToleranzPrfng_Trapez_horizontal">
+<Rect left="903" top="925" right="1003" bottom="957"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_horizontal_shared"/>
+<Parameter id="Utg" value="float_Trapez_horizontal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_horizontal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="139" name="DEP1665" type="8" flags="97"/>
+</Activity>
+<Activity id="253" ActivityType="13" name="FToleranzPrfng_Trapez_vertikal">
+<Rect left="903" top="990" right="1003" bottom="1022"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Beta_trapez_vertikal_shared"/>
+<Parameter id="Utg" value="float_Trapez_vertikal_UTG"/>
+<Parameter id="Otg" value="float_Trapez_vertikal_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="140" name="DEP1666" type="8" flags="97"/>
+</Activity>
+<Activity id="254" ActivityType="13" name="FToleranzPrfng_A_Aspekt">
+<Rect left="903" top="1053" right="1003" bottom="1085"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_A_aspekt_shared"/>
+<Parameter id="Utg" value="float_Aspekt_UTG"/>
+<Parameter id="Otg" value="float_Aspekt_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="141" name="DEP1667" type="8" flags="97"/>
+</Activity>
+<Activity id="255" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_oben">
+<Rect left="904" top="1120" right="1004" bottom="1152"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_oben_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="142" name="DEP1668" type="8" flags="97"/>
+</Activity>
+<Activity id="256" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_mitte">
+<Rect left="903" top="1189" right="1003" bottom="1221"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="143" name="DEP1669" type="8" flags="97"/>
+</Activity>
+<Activity id="257" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_horizontal_unten">
+<Rect left="904" top="1257" right="1004" bottom="1289"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_horizontal_unten_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_horizontal_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="144" name="DEP1670" type="8" flags="97"/>
+</Activity>
+<Activity id="258" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_links">
+<Rect left="904" top="1324" right="1004" bottom="1356"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_1_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_links_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="145" name="DEP1671" type="8" flags="97"/>
+</Activity>
+<Activity id="259" ActivityType="13" name="FToleranzPrfng_Abw_Gerade_vertikal_mitte">
+<Rect left="905" top="1390" right="1005" bottom="1422"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_2_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_mitte_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_mitte_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="146" name="DEP1672" type="8" flags="97"/>
+</Activity>
+<Activity id="260" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="906" top="1458" right="1006" bottom="1490"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_3_shared"/>
+<Parameter id="Utg" value="float_Abw_Geraden_vertikal_rechts_UTG"/>
+<Parameter id="Otg" value="float_Abw_Geraden_vertikal_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="147" name="DEP1673" type="8" flags="97"/>
+</Activity>
+<Activity id="261" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_max">
+<Rect left="906" top="1521" right="1006" bottom="1553"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="148" name="DEP1674" type="8" flags="97"/>
+</Activity>
+<Activity id="262" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_horizontal_min">
+<Rect left="907" top="1585" right="1007" bottom="1617"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Y_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_horizontal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_horizontal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="149" name="DEP1675" type="8" flags="97"/>
+</Activity>
+<Activity id="263" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_max">
+<Rect left="908" top="1649" right="1008" bottom="1681"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_max_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_max_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_max_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="150" name="DEP1676" type="8" flags="97"/>
+</Activity>
+<Activity id="264" ActivityType="13" name="FToleranzPrfng_Vergr_Verkl_vertikal_min">
+<Rect left="908" top="1714" right="1008" bottom="1746"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Z_min_shared"/>
+<Parameter id="Utg" value="float_Vergr_Verkl_vertikal_min_UTG"/>
+<Parameter id="Otg" value="float_Vergr_Verkl_vertikal_min_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="151" name="DEP1677" type="8" flags="97"/>
+</Activity>
+<Activity id="265" ActivityType="13" name="FToleranzPrfng_Beschnitt_links">
+<Rect left="908" top="1781" right="1008" bottom="1813"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_links_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_links_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_links_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="152" name="DEP1678" type="8" flags="97"/>
+</Activity>
+<Activity id="266" ActivityType="13" name="FToleranzPrfng_Beschnitt_oben">
+<Rect left="909" top="1847" right="1009" bottom="1879"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_oben_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_oben_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_oben_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="153" name="DEP1679" type="8" flags="97"/>
+</Activity>
+<Activity id="267" ActivityType="13" name="FToleranzPrfng_Beschnitt_rechts">
+<Rect left="910" top="1914" right="1010" bottom="1946"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_rechts_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_rechts_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_rechts_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="154" name="DEP1680" type="8" flags="97"/>
+</Activity>
+<Activity id="268" ActivityType="13" name="FToleranzPrfng_Beschnitt_unten">
+<Rect left="911" top="1980" right="1011" bottom="2012"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_B_unten_shared"/>
+<Parameter id="Utg" value="float_Beschnitt_unten_UTG"/>
+<Parameter id="Otg" value="float_Beschnitt_unten_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="155" name="DEP1681" type="8" flags="97"/>
+</Activity>
+<Activity id="269" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Abstand">
+<Rect left="912" top="2045" right="1012" bottom="2077"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="156" name="DEP1682" type="8" flags="97"/>
+</Activity>
+<Activity id="270" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Helligkeit">
+<Rect left="912" top="2107" right="1012" bottom="2139"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="157" name="DEP1683" type="8" flags="97"/>
+</Activity>
+<Activity id="271" ActivityType="13" name="FToleranzPrfng_Ghost_horizontal_Anzahl">
+<Rect left="913" top="2173" right="1013" bottom="2205"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_y_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_horizontal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_horizontal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="158" name="DEP1684" type="8" flags="97"/>
+</Activity>
+<Activity id="272" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Abstand">
+<Rect left="913" top="2238" right="1013" bottom="2270"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Abstand_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Abstand_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Abstand_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="159" name="DEP1685" type="8" flags="97"/>
+</Activity>
+<Activity id="273" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Helligkeit">
+<Rect left="913" top="2309" right="1013" bottom="2341"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Helligkeit_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Helligkeit_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Helligkeit_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="160" name="DEP1686" type="8" flags="97"/>
+</Activity>
+<Activity id="274" ActivityType="13" name="FToleranzPrfng_Ghost_vertikal_Anzahl">
+<Rect left="913" top="2373" right="1013" bottom="2405"/>
+<FunctionRef id="FloatToleranceCheck" model="LibGeneral">
+<Parameters>
+<Parameter id="ActualValue" value="DFloat_XML_BGW_Ghost_z_Anzahl_shared"/>
+<Parameter id="Utg" value="float_Ghost_vertikal_Anzahl_UTG"/>
+<Parameter id="Otg" value="float_Ghost_vertikal_Anzahl_OTG"/>
+</Parameters>
+</FunctionRef>
+<assessment no="161" name="DEP1687" type="8" flags="97"/>
+</Activity>
+<Activity id="275" ActivityType="3" name="位置1">
+<Rect left="256" top="266" right="356" bottom="298"/>
+<Script>engine.println("&lt;c7_hud_xml&gt;###Auswertung Bild Position 1")</Script></Activity>
+<Activity id="276" ActivityType="3" name="位置4">
+<Rect left="424" top="263" right="524" bottom="295"/>
+<Script>engine.println("&lt;c7_hud_xml&gt;###Auswertung Bild Position 4")</Script></Activity>
+<Activity id="277" ActivityType="3" name="位置5">
+<Rect left="579" top="263" right="679" bottom="295"/>
+<Script>engine.println("&lt;c7_hud_xml&gt;###Auswertung Bild Position 5")</Script></Activity>
+<Activity id="278" ActivityType="3" name="位置6">
+<Rect left="744" top="266" right="844" bottom="298"/>
+<Script>engine.println("&lt;c7_hud_xml&gt;###Auswertung Bild Position 6")</Script></Activity>
+<Activity id="279" ActivityType="3" name="位置7">
+<Rect left="902" top="267" right="1002" bottom="299"/>
+<Script>engine.println("&lt;c7_hud_xml&gt;###Auswertung Bild Position 7")</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="275" type="1">
+<Expression>Positionsnummer == "1"</Expression></Transition>
+<Transition StartId="4" EndId="276" type="1">
+<Expression>Positionsnummer == "4"</Expression></Transition>
+<Transition StartId="4" EndId="277" type="1">
+<Expression>Positionsnummer == "5"</Expression></Transition>
+<Transition StartId="4" EndId="278" type="1">
+<Expression>Positionsnummer == "6"</Expression></Transition>
+<Transition StartId="4" EndId="279" type="1">
+<Expression>Positionsnummer == "7"</Expression></Transition>
+<Transition StartId="111" EndId="112" type="0">
+</Transition>
+<Transition StartId="112" EndId="113" type="0">
+</Transition>
+<Transition StartId="113" EndId="114" type="0">
+</Transition>
+<Transition StartId="114" EndId="119" type="0">
+</Transition>
+<Transition StartId="119" EndId="120" type="0">
+</Transition>
+<Transition StartId="120" EndId="121" type="0">
+</Transition>
+<Transition StartId="121" EndId="122" type="0">
+</Transition>
+<Transition StartId="122" EndId="123" type="0">
+</Transition>
+<Transition StartId="123" EndId="124" type="0">
+</Transition>
+<Transition StartId="124" EndId="125" type="0">
+</Transition>
+<Transition StartId="125" EndId="126" type="0">
+</Transition>
+<Transition StartId="126" EndId="127" type="0">
+</Transition>
+<Transition StartId="127" EndId="128" type="0">
+</Transition>
+<Transition StartId="128" EndId="129" type="0">
+</Transition>
+<Transition StartId="129" EndId="130" type="0">
+</Transition>
+<Transition StartId="130" EndId="131" type="0">
+</Transition>
+<Transition StartId="131" EndId="132" type="0">
+</Transition>
+<Transition StartId="132" EndId="133" type="0">
+</Transition>
+<Transition StartId="133" EndId="134" type="0">
+</Transition>
+<Transition StartId="134" EndId="135" type="0">
+</Transition>
+<Transition StartId="135" EndId="136" type="0">
+</Transition>
+<Transition StartId="136" EndId="137" type="0">
+</Transition>
+<Transition StartId="137" EndId="138" type="0">
+</Transition>
+<Transition StartId="138" EndId="139" type="0">
+</Transition>
+<Transition StartId="139" EndId="140" type="0">
+</Transition>
+<Transition StartId="140" EndId="141" type="0">
+</Transition>
+<Transition StartId="141" EndId="142" type="0">
+</Transition>
+<Transition StartId="142" EndId="143" type="0">
+</Transition>
+<Transition StartId="143" EndId="144" type="0">
+</Transition>
+<Transition StartId="144" EndId="145" type="0">
+</Transition>
+<Transition StartId="145" EndId="146" type="0">
+</Transition>
+<Transition StartId="146" EndId="2" type="0">
+</Transition>
+<Transition StartId="147" EndId="148" type="0">
+</Transition>
+<Transition StartId="148" EndId="149" type="0">
+</Transition>
+<Transition StartId="149" EndId="150" type="0">
+</Transition>
+<Transition StartId="150" EndId="151" type="0">
+</Transition>
+<Transition StartId="151" EndId="152" type="0">
+</Transition>
+<Transition StartId="152" EndId="153" type="0">
+</Transition>
+<Transition StartId="153" EndId="154" type="0">
+</Transition>
+<Transition StartId="154" EndId="155" type="0">
+</Transition>
+<Transition StartId="155" EndId="156" type="0">
+</Transition>
+<Transition StartId="156" EndId="157" type="0">
+</Transition>
+<Transition StartId="157" EndId="158" type="0">
+</Transition>
+<Transition StartId="158" EndId="159" type="0">
+</Transition>
+<Transition StartId="159" EndId="160" type="0">
+</Transition>
+<Transition StartId="160" EndId="161" type="0">
+</Transition>
+<Transition StartId="161" EndId="162" type="0">
+</Transition>
+<Transition StartId="162" EndId="163" type="0">
+</Transition>
+<Transition StartId="163" EndId="164" type="0">
+</Transition>
+<Transition StartId="164" EndId="165" type="0">
+</Transition>
+<Transition StartId="165" EndId="166" type="0">
+</Transition>
+<Transition StartId="166" EndId="167" type="0">
+</Transition>
+<Transition StartId="167" EndId="168" type="0">
+</Transition>
+<Transition StartId="168" EndId="169" type="0">
+</Transition>
+<Transition StartId="169" EndId="170" type="0">
+</Transition>
+<Transition StartId="170" EndId="171" type="0">
+</Transition>
+<Transition StartId="171" EndId="172" type="0">
+</Transition>
+<Transition StartId="172" EndId="173" type="0">
+</Transition>
+<Transition StartId="173" EndId="174" type="0">
+</Transition>
+<Transition StartId="174" EndId="175" type="0">
+</Transition>
+<Transition StartId="175" EndId="176" type="0">
+</Transition>
+<Transition StartId="176" EndId="177" type="0">
+</Transition>
+<Transition StartId="177" EndId="178" type="0">
+</Transition>
+<Transition StartId="178" EndId="2" type="0">
+</Transition>
+<Transition StartId="179" EndId="180" type="0">
+</Transition>
+<Transition StartId="180" EndId="181" type="0">
+</Transition>
+<Transition StartId="181" EndId="182" type="0">
+</Transition>
+<Transition StartId="182" EndId="183" type="0">
+</Transition>
+<Transition StartId="183" EndId="184" type="0">
+</Transition>
+<Transition StartId="184" EndId="185" type="0">
+</Transition>
+<Transition StartId="185" EndId="186" type="0">
+</Transition>
+<Transition StartId="186" EndId="187" type="0">
+</Transition>
+<Transition StartId="187" EndId="188" type="0">
+</Transition>
+<Transition StartId="188" EndId="189" type="0">
+</Transition>
+<Transition StartId="189" EndId="190" type="0">
+</Transition>
+<Transition StartId="190" EndId="191" type="0">
+</Transition>
+<Transition StartId="191" EndId="192" type="0">
+</Transition>
+<Transition StartId="192" EndId="193" type="0">
+</Transition>
+<Transition StartId="193" EndId="194" type="0">
+</Transition>
+<Transition StartId="194" EndId="195" type="0">
+</Transition>
+<Transition StartId="195" EndId="196" type="0">
+</Transition>
+<Transition StartId="196" EndId="197" type="0">
+</Transition>
+<Transition StartId="197" EndId="198" type="0">
+</Transition>
+<Transition StartId="198" EndId="199" type="0">
+</Transition>
+<Transition StartId="199" EndId="200" type="0">
+</Transition>
+<Transition StartId="200" EndId="201" type="0">
+</Transition>
+<Transition StartId="201" EndId="202" type="0">
+</Transition>
+<Transition StartId="202" EndId="203" type="0">
+</Transition>
+<Transition StartId="203" EndId="204" type="0">
+</Transition>
+<Transition StartId="204" EndId="205" type="0">
+</Transition>
+<Transition StartId="205" EndId="206" type="0">
+</Transition>
+<Transition StartId="206" EndId="207" type="0">
+</Transition>
+<Transition StartId="207" EndId="208" type="0">
+</Transition>
+<Transition StartId="208" EndId="209" type="0">
+</Transition>
+<Transition StartId="209" EndId="210" type="0">
+</Transition>
+<Transition StartId="210" EndId="2" type="0">
+</Transition>
+<Transition StartId="211" EndId="212" type="0">
+</Transition>
+<Transition StartId="212" EndId="213" type="0">
+</Transition>
+<Transition StartId="213" EndId="214" type="0">
+</Transition>
+<Transition StartId="214" EndId="215" type="0">
+</Transition>
+<Transition StartId="215" EndId="216" type="0">
+</Transition>
+<Transition StartId="216" EndId="217" type="0">
+</Transition>
+<Transition StartId="217" EndId="218" type="0">
+</Transition>
+<Transition StartId="218" EndId="219" type="0">
+</Transition>
+<Transition StartId="219" EndId="220" type="0">
+</Transition>
+<Transition StartId="220" EndId="221" type="0">
+</Transition>
+<Transition StartId="221" EndId="222" type="0">
+</Transition>
+<Transition StartId="222" EndId="223" type="0">
+</Transition>
+<Transition StartId="223" EndId="224" type="0">
+</Transition>
+<Transition StartId="224" EndId="225" type="0">
+</Transition>
+<Transition StartId="225" EndId="226" type="0">
+</Transition>
+<Transition StartId="226" EndId="227" type="0">
+</Transition>
+<Transition StartId="227" EndId="228" type="0">
+</Transition>
+<Transition StartId="228" EndId="229" type="0">
+</Transition>
+<Transition StartId="229" EndId="230" type="0">
+</Transition>
+<Transition StartId="230" EndId="231" type="0">
+</Transition>
+<Transition StartId="231" EndId="232" type="0">
+</Transition>
+<Transition StartId="232" EndId="233" type="0">
+</Transition>
+<Transition StartId="233" EndId="234" type="0">
+</Transition>
+<Transition StartId="234" EndId="235" type="0">
+</Transition>
+<Transition StartId="235" EndId="236" type="0">
+</Transition>
+<Transition StartId="236" EndId="237" type="0">
+</Transition>
+<Transition StartId="237" EndId="238" type="0">
+</Transition>
+<Transition StartId="238" EndId="239" type="0">
+</Transition>
+<Transition StartId="239" EndId="240" type="0">
+</Transition>
+<Transition StartId="240" EndId="241" type="0">
+</Transition>
+<Transition StartId="241" EndId="242" type="0">
+</Transition>
+<Transition StartId="242" EndId="2" type="0">
+</Transition>
+<Transition StartId="243" EndId="244" type="0">
+</Transition>
+<Transition StartId="244" EndId="245" type="0">
+</Transition>
+<Transition StartId="245" EndId="246" type="0">
+</Transition>
+<Transition StartId="246" EndId="247" type="0">
+</Transition>
+<Transition StartId="247" EndId="248" type="0">
+</Transition>
+<Transition StartId="248" EndId="249" type="0">
+</Transition>
+<Transition StartId="249" EndId="250" type="0">
+</Transition>
+<Transition StartId="250" EndId="251" type="0">
+</Transition>
+<Transition StartId="251" EndId="252" type="0">
+</Transition>
+<Transition StartId="252" EndId="253" type="0">
+</Transition>
+<Transition StartId="253" EndId="254" type="0">
+</Transition>
+<Transition StartId="254" EndId="255" type="0">
+</Transition>
+<Transition StartId="255" EndId="256" type="0">
+</Transition>
+<Transition StartId="256" EndId="257" type="0">
+</Transition>
+<Transition StartId="257" EndId="258" type="0">
+</Transition>
+<Transition StartId="258" EndId="259" type="0">
+</Transition>
+<Transition StartId="259" EndId="260" type="0">
+</Transition>
+<Transition StartId="260" EndId="261" type="0">
+</Transition>
+<Transition StartId="261" EndId="262" type="0">
+</Transition>
+<Transition StartId="262" EndId="263" type="0">
+</Transition>
+<Transition StartId="263" EndId="264" type="0">
+</Transition>
+<Transition StartId="264" EndId="265" type="0">
+</Transition>
+<Transition StartId="265" EndId="266" type="0">
+</Transition>
+<Transition StartId="266" EndId="267" type="0">
+</Transition>
+<Transition StartId="267" EndId="268" type="0">
+</Transition>
+<Transition StartId="268" EndId="269" type="0">
+</Transition>
+<Transition StartId="269" EndId="270" type="0">
+</Transition>
+<Transition StartId="270" EndId="271" type="0">
+</Transition>
+<Transition StartId="271" EndId="272" type="0">
+</Transition>
+<Transition StartId="272" EndId="273" type="0">
+</Transition>
+<Transition StartId="273" EndId="274" type="0">
+</Transition>
+<Transition StartId="274" EndId="2" type="0">
+</Transition>
+<Transition StartId="275" EndId="111" type="0">
+</Transition>
+<Transition StartId="276" EndId="147" type="0">
+</Transition>
+<Transition StartId="277" EndId="179" type="0">
+</Transition>
+<Transition StartId="278" EndId="211" type="0">
+</Transition>
+<Transition StartId="279" EndId="243" type="0">
+</Transition>
+</Transitions>
+</Process>
+

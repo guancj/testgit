@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_HUP_Process" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="398" top="42" right="498" bottom="74"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="394" top="619" right="494" bottom="651"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="统计">
+<Rect left="399" top="105" right="499" bottom="137"/>
+<Script>engine.StatValue = "HUP Ablauf nicht komplett durchgefuehrt"
+engine.LastError = 1
+engine.println("&lt;Par_HUP_Process&gt; Start - HUP-Testsequenz")</Script><assessment no="1" name="DEP1512" type="8" flags="97"/>
+</Activity>
+<Activity id="4" ActivityType="3" name="HUP初始化">
+<Rect left="399" top="167" right="499" bottom="199"/>
+<Script></Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+</Transitions>
+</Process>
+

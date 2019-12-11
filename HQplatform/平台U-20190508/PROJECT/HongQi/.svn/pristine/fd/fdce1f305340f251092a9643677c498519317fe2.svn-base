@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_Adaption_Multi_Channel">
+<Inputs>
+<Variable id="vciExData" type="8" data=""/>
+<Variable id="Adaptation_String" type="8" data=""/>
+<Variable id="P_VW_ImporterNumber" type="3" data="0"/>
+<Variable id="P_WSC_VW" type="3" data="0"/>
+<Variable id="LineNr" type="3" data="0"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+Function  used to   Write Adaptation  String to ECU multi address
+input parameter:vciExData,Adaptation_String,P_VW_ImporterNumber,P_WSC_VW,LineNr;ECU_Handle
+\x01\x0a : long Adaptation; \x01\x03 : short Adaptation ;
+
+01/22/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+local Count = 0;
+local Text;
+local Channel;
+local Adaptation;
+local AdaptationLen = 0;
+local LongAdaptation;
+
+local	Adaptationtyp;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+--long adaptation should be supported
+
+Adaptationtyp = 1;	
+engine.StatValue = "Adaptation".." ";
+--Read the Supported Functions
+
+if(vciExData == "") then
+engine.println("vciExData : receive failed ".."\n");
+end;
+local pos_0,pos_1 = string.find(vciExData,"\x01\x0a");
+local pos_2,pos_3 = string.find(vciExData,"\x01\x03");
+
+
+--long or short adaptation support check
+if ((pos_0 == nil) and (pos_2 == nil)) then
+    engine.StatValue = "adaptation function not supported";engine.LastError = 1 ; 
+	return;
+else
+    if(pos_0 == nil) then 
+--short adaptation supported
+		Adaptationtyp = 0;
+	end;
+end;
+
+
+
+	Count = string.byte(Adaptation_String,1) * 0x1000000 + string.byte(Adaptation_String,2) * 0x10000 + string.byte(Adaptation_String,3) * 0x100 + string.byte(Adaptation_String,4);
+	Adaptation_String = string.sub(Adaptation_String,5,-1);
+
+engine.println("Adaptation String : "..LibGeneral.hex2str(Adaptation_String).."\n");
+engine.println(string.format("Adaptation Count : %d \n",Count));	
+	
+
+	engine.LastError = 1;
+	while (Count &gt; 0)  do
+	
+		Channel = string.byte(Adaptation_String,1) * 0x1000000 + string.byte(Adaptation_String,2) * 0x10000 + string.byte(Adaptation_String,3) * 0x100 + string.byte(Adaptation_String,4);
+		Adaptation_String = string.sub(Adaptation_String,5,-1);
+		
+		Text = "Adaptation"..": "..string.format("%d",Channel);
+		
+		AdaptationLen = string.byte(Adaptation_String,1) * 0x1000000 + string.byte(Adaptation_String,2) * 0x10000 + string.byte(Adaptation_String,3) * 0x100 + string.byte(Adaptation_String,4);
+		Adaptation_String = string.sub(Adaptation_String,5,-1);
+		
+		engine.println("Adaptation String : "..LibGeneral.hex2str(Adaptation_String).."\n");
+		engine.println(string.format("AdaptationLen: %d \n",AdaptationLen));
+
+		if ((AdaptationLen &lt;= 2) and (Adaptationtyp == 0)) then
+		
+			if(AdaptationLen == 1) then Adaptation = string.byte(Adaptation_String,1);end;
+			if(AdaptationLen == 2) then Adaptation = string.byte(Adaptation_String,1) * 0x100 + string.byte(Adaptation_String,2);end;
+			Adaptation_String = string.sub(Adaptation_String,AdaptationLen + 1,-1) ;
+			
+			engine.println(string.format("Channel: %d ", Channel)..string.format(", Adaptation: %d", Adaptation)..", Adaptation String: "..LibGeneral.hex2str(Adaptation_String).."\n");
+					
+			LibVW.VW2000_Adaptation_Complete(Channel,Adaptation,Text,P_VW_ImporterNumber,P_WSC_VW,ECU_Handle);
+
+			if (engine.LastError ~= 0) then 
+				engine.LastError = 1;
+				engine.StatValue = "Error".." ".."Adaptation".." "..string.format("%d=%d",Channel,Adaptation);
+				break;
+			else 
+				engine.StatValue = engine.StatValue..string.format("%d=%d",Channel,Adaptation)..";";
+			end;
+			
+		elseif ((AdaptationLen &gt; 0) and (Adaptationtyp == 1)) then
+		
+			LongAdaptation = string.sub(Adaptation_String,1,AdaptationLen);
+			Adaptation_String = string.sub(Adaptation_String,AdaptationLen + 1,-1);
+			
+			engine.println(string.format("Channel: %d ", Channel)..LibGeneral.hex2str(LongAdaptation)..", Adaptation String: "..LibGeneral.hex2str(Adaptation_String).."\n");
+			
+			LibVW.VW2000_Adaption_Long(vciExData,Channel,LongAdaptation,Text,P_VW_ImporterNumber,P_WSC_VW,ECU_Handle);
+                        engine.println(string.format("here: %d \n",engine.LastError));
+			if (engine.LastError ~= 0) then
+				engine.LastError = 1;
+				engine.StatValue = "Error".." ".."Adaptation".." "..string.format("%d=",Channel)..LibGeneral.hex2str(LongAdaptation);
+				break;
+			else
+				engine.StatValue = engine.StatValue..string.format("%d=",Channel)..LibGeneral.hex2str(LongAdaptation).. ";";
+			end;
+		end;
+		Count = Count -1;
+	end;
+if (engine.LastError == 0) then 
+engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpok"); engine.ShowMessage();engine.Delay(1);
+else
+engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);
+end</Script></Function>
+

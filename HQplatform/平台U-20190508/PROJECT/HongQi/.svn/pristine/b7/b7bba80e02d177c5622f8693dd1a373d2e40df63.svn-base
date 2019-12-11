@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_P_Modes_2_1_EZE_MOT" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="365" top="59" right="465" bottom="91"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="367" top="524" right="467" bottom="556"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="EZE">
+<Rect left="365" top="130" right="465" bottom="162"/>
+<Line2Text Enable="1" Text="EZE"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="5" name="c7_eze">
+<Rect left="366" top="194" right="466" bottom="226"/>
+<SubProcesses>
+<SubProcess id="c7_eze">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;PModeAbleDaytimeLights&quot;,&quot;PModeDisableIndoorLights&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="5" ActivityType="3" name="Clear">
+<Rect left="366" top="260" right="466" bottom="292"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="6" ActivityType="5" name="c7_mot">
+<Rect left="368" top="387" right="468" bottom="419"/>
+<SubProcesses>
+<SubProcess id="c7_mot">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;P-Mode deaktivieren&quot;,&quot;DTCCheck&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="7" ActivityType="3" name="MOT">
+<Rect left="367" top="322" right="467" bottom="354"/>
+<Line2Text Enable="1" Text="MOT"/>
+<Script></Script></Activity>
+<Activity id="8" ActivityType="3" name="Clear">
+<Rect left="368" top="455" right="468" bottom="487"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="7" type="0">
+</Transition>
+<Transition StartId="6" EndId="8" type="0">
+</Transition>
+<Transition StartId="7" EndId="6" type="0">
+</Transition>
+<Transition StartId="8" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="MOP_CheckResult" flags="1" block="1" ptbtext="DEP47" group="200" pbltext="DEP1449">
+<ProcessParameters>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="Byte" type="3" data="10"/>
+<Variable id="Bit" type="3" data="2"/>
+<Variable id="DInt_Byteposition" type="3" data="0"/>
+<Variable id="DInt_Bitposition" type="3" data="0"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="283" top="59" right="383" bottom="91"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="287" top="706" right="387" bottom="738"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="5" name="c7_gwa">
+<Rect left="283" top="126" right="383" bottom="158"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteRead&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="TransportMode" value="&quot;&quot;" ret="TransportmodeGWA"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="77" ActivityType="3" name="参数准备">
+<Rect left="284" top="376" right="384" bottom="408"/>
+<Script>
+
+</Script></Activity>
+<Activity id="78" ActivityType="3" name="$FA58">
+<Rect left="284" top="438" right="384" bottom="470"/>
+<Script></Script></Activity>
+<Activity id="79" ActivityType="3" name="MOP 不合格">
+<Rect left="284" top="500" right="384" bottom="532"/>
+<Line2Text Enable="1" Text="MOS不合格，继续执行FAS吗？"/>
+<Line3Text Enable="1" Text="合格？"/>
+<ButtonLText Enable="1" Text="不合格"/>
+<ButtonRText Enable="1" Text="合格"/>
+<Script>engine.DialogBackColor = "yellow"
+#PRESSBUTTON</Script></Activity>
+<Activity id="80" ActivityType="3" name="统计OK">
+<Rect left="285" top="562" right="385" bottom="594"/>
+<Script>engine.StatValue = "MOP nio (Vorserie)"
+engine.LastError = 0
+engine.DialogBackColor = -1
+isOK = true</Script><assessment no="1" name="DEP1450" type="8" flags="97"/>
+</Activity>
+<Activity id="81" ActivityType="3" name="统计NOK">
+<Rect left="419" top="501" right="519" bottom="533"/>
+<Script>engine.StatValue = "MOP nio (Vorserie)"
+engine.LastError = 1
+engine.DialogBackColor = -1</Script><assessment no="1" name="DEP1450" type="8" flags="97"/>
+</Activity>
+<Activity id="82" ActivityType="4" name="路由节点">
+<Rect left="164" top="375" right="196" bottom="407"/>
+</Activity>
+<Activity id="83" ActivityType="4" name="路由节点">
+<Rect left="551" top="439" right="583" bottom="471"/>
+</Activity>
+<Activity id="84" ActivityType="4" name="路由节点">
+<Rect left="551" top="502" right="583" bottom="534"/>
+</Activity>
+<Activity id="86" ActivityType="3" name="Clear">
+<Rect left="286" top="629" right="386" bottom="661"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+<Script></Script></Activity>
+<Activity id="89" ActivityType="3" name="MOP 不合格">
+<Rect left="517" top="562" right="617" bottom="594"/>
+<Line2Text Enable="1" Text="MOS不合格，FAS无法进行？"/>
+<Line3Text Enable="1" Text="合格？"/>
+<ButtonLText Enable="1" Text="不合格"/>
+<ButtonRText Enable="1" Text="合格"/>
+<Script>engine.DialogBackColor = "red"
+engine.Delay(15000)</Script></Activity>
+<Activity id="90" ActivityType="3" name="统计NOK">
+<Rect left="517" top="630" right="617" bottom="662"/>
+<Script>engine.StatValue = "ABS nio (Vorserie)"
+engine.LastError = 1
+engine.DialogBackColor = -1
+isOK = false</Script><assessment no="1" name="DEP1450" type="8" flags="97"/>
+</Activity>
+<Activity id="91" ActivityType="3" name="OK">
+<Rect left="130" top="628" right="230" bottom="660"/>
+<Script>isOK = true</Script></Activity>
+<Activity id="92" ActivityType="3" name="Byte bit处理">
+<Rect left="284" top="252" right="384" bottom="284"/>
+<Script>DInt_Byteposition = (Byte - 11) * (-1)
+engine.println("&lt;MOP_CheckResult&gt; DInt_Byteposition :"..tostring(DInt_Byteposition))
+DInt_Bitposition = (Bit - 7) * (-1)
+engine.println("&lt;MOP_CheckResult&gt; DInt_Bitposition :"..tostring(DInt_Bitposition))</Script></Activity>
+<Activity id="93" ActivityType="13" name="GetByteBitPosition_AUDI">
+<Rect left="283" top="184" right="383" bottom="216"/>
+<FunctionRef id="GetByteBitPosition_AUDI" model="LibVW">
+<Parameters>
+<Parameter id="section" value="&quot;MOP&quot;"/>
+<Parameter id="key_1" value="&quot;Byte&quot;"/>
+<Parameter id="key_2" value="&quot;Bit&quot;"/>
+<Parameter id="Byte" value="0" ret="Byte"/>
+<Parameter id="Bit" value="0" ret="Bit"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="94" ActivityType="13" name="StringTestBitInByte">
+<Rect left="283" top="317" right="383" bottom="349"/>
+<FunctionRef id="StringTestBitInByte" model="LibGeneral">
+<Parameters>
+<Parameter id="SrcString" value="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="BytePosition" value="DInt_Byteposition"/>
+<Parameter id="BitPosition" value="DInt_Bitposition"/>
+<Parameter id="Log" value="&quot;&lt;MOP_CheckResult&gt;&quot;"/>
+<Parameter id="Result" value="0" ret="DInt_Prozessbyte"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="93" type="0">
+</Transition>
+<Transition StartId="77" EndId="78" type="1">
+<Expression>DInt_Prozessbyte == 0</Expression></Transition>
+<Transition StartId="77" EndId="82" type="0">
+</Transition>
+<Transition StartId="78" EndId="79" type="7">
+<Expression>$FA5|$FA8</Expression></Transition>
+<Transition StartId="78" EndId="83" type="0">
+</Transition>
+<Transition StartId="79" EndId="80" type="6">
+</Transition>
+<Transition StartId="79" EndId="81" type="0">
+</Transition>
+<Transition StartId="80" EndId="86" type="0">
+</Transition>
+<Transition StartId="81" EndId="84" type="0">
+</Transition>
+<Transition StartId="82" EndId="91" type="0">
+</Transition>
+<Transition StartId="83" EndId="84" type="0">
+</Transition>
+<Transition StartId="84" EndId="89" type="0">
+</Transition>
+<Transition StartId="86" EndId="2" type="0">
+</Transition>
+<Transition StartId="89" EndId="90" type="0">
+</Transition>
+<Transition StartId="90" EndId="86" type="0">
+</Transition>
+<Transition StartId="91" EndId="86" type="0">
+</Transition>
+<Transition StartId="92" EndId="94" type="0">
+</Transition>
+<Transition StartId="93" EndId="92" type="0">
+</Transition>
+<Transition StartId="94" EndId="77" type="0">
+</Transition>
+</Transitions>
+</Process>
+

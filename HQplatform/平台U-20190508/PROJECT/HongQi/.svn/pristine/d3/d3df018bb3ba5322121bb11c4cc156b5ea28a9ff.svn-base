@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_BuildConnection" description="建立与检测设备的通信">
+<Inputs>
+<Variable id="rPort" type="3" data="7755" description="检测设备端口号"/>
+<Variable id="rHost" type="8" data="&quot;127.0.0.1&quot;" description="检测设备ip地址，例如：&quot;192.168.1.11&quot;"/>
+<Variable id="lPort" type="3" data="0" description="VMT接收端口号"/>
+<Variable id="send_mark" type="3" data="0" description="发送报文标志位，即报文第一字节，例如:4"/>
+<Variable id="receive_mark" type="3" data="0" description="接收报文标志位，即报文第一字节，例如:3"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data="" description="返回值"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Outputs>
+<Script>--[[ *************************************************************
+History :
+* 04/03/2016, wuh : 保存全局变量到通讯句柄附带变量
+*************************************************************--]]
+	ret = false;
+	pHndl = engine.UdpOpenEx(lPort,"",rPort,rHost,-1);
+	engine.println("IDT_BuildConnection, udp handl pHndl= " .. tostring(pHndl));
+	if pHndl ~= nil  and pHndl &gt;=0 then
+		--设置发送标志和接收标志的全局变量
+		engine.UdpHandleVarSet(pHndl, "_SNDMARK", send_mark);
+		engine.UdpHandleVarSet(pHndl, "_REVMARK", receive_mark);
+		engine.UdpHandleVarSet(pHndl, "_TOGGLECOUNTER", 0);
+		engine.UdpHandleVarSet(pHndl, "_SEQUENCENUM", 0);
+		engine.UdpHandleVarSet(pHndl, "_DEVICETYPE", 6);
+		engine.UdpHandleVarSet(pHndl, "_FINISHFLAG", false);
+                engine.UdpHandleVarSet(pHndl, "_CURRENTSEVACK", 0);
+                engine.UdpHandleVarSet(pHndl, "_CURRENTSERVICE", "\x00");
+		local request = LibIDT.idtInitRequest(pHndl);
+		ret = LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl);
+	else
+		println("IDT Build connection failed at udp open");
+		engine.LastError = -1;
+	end;;</Script></Function>
+

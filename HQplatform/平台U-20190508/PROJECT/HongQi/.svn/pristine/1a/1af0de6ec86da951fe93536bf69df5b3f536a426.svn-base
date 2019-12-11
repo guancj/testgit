@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="SWE_22_Identity" flags="1" block="4" ptbtext="DEP1368" group="115" pbltext="DEP1390">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="SWEType" type="3" data="0"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="322" top="67" right="422" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="324" top="523" right="424" bottom="555"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="错误">
+<Rect left="492" top="387" right="592" bottom="419"/>
+<Line2Text Enable="1" Text="SWE SERVICE 22 ERROR"/>
+<Script>engine.println(" &lt;SWE_22_Identity&gt; : FWE Status: Error --&gt;"..tostring(Ret))</Script></Activity>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="674" top="522" right="706" bottom="554"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="639" top="387" right="739" bottom="419"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="OK">
+<Rect left="323" top="447" right="423" bottom="479"/>
+<Script>isOK = true;
+engine.println(" &lt;SWE_22_Identity&gt; : ret --&gt;"..tostring(Ret))
+</Script></Activity>
+<Activity id="25" ActivityType="13" name="IDT_WaitForServiceFinish">
+<Rect left="322" top="386" right="422" bottom="418"/>
+<FunctionRef id="IDT_WaitForServiceFinish" model="LibIDT">
+<Parameters>
+<Parameter id="serviceNum" value="22"/>
+<Parameter id="timeOut" value="0"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="revTel" ret="RecvData"/>
+</Parameters>
+</FunctionRef>
+<assessment no="4" name="DEP1392" type="8" flags="97"/>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="321" top="137" right="421" bottom="169"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="638" top="138" right="738" bottom="170"/>
+<Script>engine.println(" &lt;SWE_22_Identity&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="29" ActivityType="3" name="大灯：身份">
+<Rect left="321" top="201" right="421" bottom="233"/>
+<TitleText Enable="1" Text="前束调整：身份"/>
+<Script>engine.println(" &lt;SWE_22_Identity&gt; : 大灯调整身份 --&gt;")
+--#### Neue Montage ####
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HV&amp;$K8L&amp;$1BB" ) then SWEType = 1 end
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HV&amp;$K8L&amp;$1BR" ) then SWEType = 2 end
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HV&amp;$K8L&amp;$1BL" ) then SWEType = 3 end
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$7JL&amp;$1BA" ) then SWEType = 4 end
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$7JL&amp;$1BL" ) then SWEType = 5 end
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$7JL&amp;$1BH" ) then SWEType = 6 end
+--#### Alte Montage ####
+--# C6CN; Luftfederung Air suspension 空气悬架
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BK&amp;$8Q0" ) then SWEType = 10 end
+--# C6CN; Schlechtwegefahrwerk Mobility  重型悬挂
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BK&amp;$8Q1" ) then SWEType = 11 end
+--# C6CN; Komfortschlechtwegefahrwerk  Comfort Mobility  舒适重型悬挂
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BK&amp;($8Q3|$8Q6)" ) then SWEType = 12 end
+
+
+--# C6CN; Schlechtwegefahrwerk; ohne LWR
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BB&amp;$8Q0" ) then SWEType = 13 end
+--# C6CN; Schlechtwegefahrwerk; mit man. LWR
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BB&amp;$8Q1" ) then SWEType = 14 end
+--# C6CN; Schlechtwegefahrwerk; mit autom. LWR
+--15=$0HX.$1BB.($8Q3+$8Q6)
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BB&amp;($8Q3|$8Q6)" ) then SWEType = 15 end
+--# C6CN; Komfortschlechtwegefahrwerk; ohne LWR
+--16=$0HX.$1BR.$8Q0
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BR&amp;$8Q0" ) then SWEType = 16 end
+--# C6CN; Komfortschlechtwegefahrwerk; mit man. LWR
+--17=$0HX.$1BR.$8Q1
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BR&amp;$8Q1" ) then SWEType = 17 end
+--# C6CN; Komfortschlechtwegefahrwerk; mit autom. LWR
+--18=$0HX.$1BR.($8Q3+$8Q6)
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$0HX&amp;$1BR&amp;($8Q3|$8Q6)" ) then SWEType = 18 end
+
+--# C7CN; 4 Corner Luftfederung, Schlechtwegeausf黨rung  Corner air suspension, bad road version
+-- 20=-$8G4.$7JV.$1BS
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;(!$8G4)&amp;$7JV&amp;$1BS" ) then SWEType = 20 end
+--# C7CN; Schlechtwegefahrwerk Mobility
+--21=-$8G4.$7JV.$1BR
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;(!$8G4)&amp;$7JV&amp;$1BR" ) then SWEType = 21 end
+--# C7CN; Komfortschlechtwegefahrwerk  Comfort Mobility
+--22=-$8G4.$7JV.$1BB
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;(!$8G4)&amp;$7JV&amp;$1BB" ) then SWEType = 22 end
+-- # C7 PA Matrix Beam
+-- 23=$7JV.$8G4
+if engine.executeLAS( "([13]4&amp;[14]X)&amp;$8G4&amp;$7JV" ) then SWEType = 23 end
+
+
+engine.println(" &lt;SWE_22_Identity&gt; : 大灯调整身份 FWE-Typ --&gt;"..tostring(SWEType))</Script></Activity>
+<Activity id="30" ActivityType="3" name="统计SWE TYPE">
+<Rect left="321" top="263" right="421" bottom="295"/>
+<Script>engine.StatValue = tostring(SWEType)
+engine.LastError = 0</Script><assessment no="2" name="DEP1392" type="8" flags="97"/>
+</Activity>
+<Activity id="32" ActivityType="13" name="SWE_22_Fzg_ID_mit_Type">
+<Rect left="322" top="327" right="422" bottom="359"/>
+<FunctionRef id="SWE_22_Fzg_ID_mit_Type" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="ID_Typ" value="2"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="Vehicle_ID" value="engine.KNR"/>
+<Parameter id="Typ_SWE_1" value="SWEType"/>
+<Parameter id="Typ_SWE_2" value="0"/>
+<Parameter id="Typ_SWE_3" value="0"/>
+<Parameter id="Typ_SWE_4" value="0"/>
+<Parameter id="Typ_SWE_5" value="0"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+</Parameters>
+</FunctionRef>
+<assessment no="3" name="DEP1392" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="5" EndId="21" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="2" type="0">
+</Transition>
+<Transition StartId="25" EndId="23" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="25" EndId="5" type="0">
+</Transition>
+<Transition StartId="26" EndId="29" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="29" EndId="30" type="0">
+</Transition>
+<Transition StartId="30" EndId="32" type="0">
+</Transition>
+<Transition StartId="32" EndId="25" type="0">
+</Transition>
+</Transitions>
+</Process>
+

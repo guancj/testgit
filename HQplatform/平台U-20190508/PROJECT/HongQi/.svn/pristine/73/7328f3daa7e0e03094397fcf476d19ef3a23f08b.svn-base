@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="HUP_86_Kamera_Arbeitsposition" flags="1" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="301" top="155" right="401" bottom="187"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="302" top="561" right="402" bottom="593"/>
+<Script></Script></End>
+<Activities>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="653" top="560" right="685" bottom="592"/>
+</Activity>
+<Activity id="7" ActivityType="3" name="不合格">
+<Rect left="620" top="412" right="720" bottom="444"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="22" ActivityType="3" name="OK">
+<Rect left="302" top="482" right="402" bottom="514"/>
+<Script>isOK = true;
+engine.println(" &lt;HUP_86_Kamera_Arbeitsposition&gt; : ret --&gt;"..tostring(Ret))
+engine.println(" &lt;HUP_86_Kamera_Arbeitsposition&gt; : HUP: Kamera anfahren Arbeitsstellung IO ")
+</Script></Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="302" top="217" right="402" bottom="249"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="619" top="218" right="719" bottom="250"/>
+<Script>engine.println(" &lt;HUP_86_Kamera_Arbeitsposition&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="28" ActivityType="3" name="HUP：进入工作位置">
+<Rect left="302" top="281" right="402" bottom="313"/>
+<Line3Text Enable="1" Text="HUP：进入工作位置"/>
+<Script>engine.println(" &lt;HUP_86_Kamera_Arbeitsposition&gt; : HUP: Arbeitsstellung anfahren--&gt;")
+</Script></Activity>
+<Activity id="31" ActivityType="13" name="HUP_86_KamPos_BasicWorkingPosition">
+<Rect left="302" top="345" right="402" bottom="377"/>
+<FunctionRef id="HUP_86_KamPos_BasicWorkingPosition" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="BasicPosition" value="false"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="Kamera_Pos_IO" value="0" ret="DInt_Kamera_Pos_IO"/>
+<Parameter id="Kamera_Pos_Nr" value="0" ret="DInt_Kamera_Pos_Nr"/>
+</Parameters>
+</FunctionRef>
+<assessment no="3" name="DEP1514" type="8" flags="97"/>
+</Activity>
+<Activity id="33" ActivityType="3" name="数据收取">
+<Rect left="303" top="413" right="403" bottom="445"/>
+<Script>if(Ret == 1) then
+engine.println(" &lt;HUP_86_Kamera_Arbeitsposition&gt; : +++HUP 86 Arbeitsstellung KameraPos IO --&gt;"..tostring(DInt_Kamera_Pos_IO))
+engine.println(" &lt;HUP_86_Kamera_Arbeitsposition&gt; : +++HUP 86 Arbeitsstellung KameraPos Nr --&gt;"..tostring(DInt_Kamera_Pos_Nr))
+end</Script></Activity>
+<Activity id="34" ActivityType="3" name="Delay">
+<Rect left="448" top="346" right="548" bottom="378"/>
+<Script>engine.Delay(100)</Script></Activity>
+<Activity id="35" ActivityType="3" name="finish_flag">
+<Rect left="448" top="412" right="548" bottom="444"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;HUP_86_Kamera_Arbeitsposition&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="7" EndId="6" type="0">
+</Transition>
+<Transition StartId="22" EndId="2" type="0">
+</Transition>
+<Transition StartId="26" EndId="28" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="7" type="0">
+</Transition>
+<Transition StartId="28" EndId="31" type="0">
+</Transition>
+<Transition StartId="31" EndId="33" type="0">
+</Transition>
+<Transition StartId="33" EndId="35" type="1">
+<Expression>Ret ~= 1</Expression></Transition>
+<Transition StartId="33" EndId="22" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="34" EndId="31" type="0">
+</Transition>
+<Transition StartId="35" EndId="34" type="0">
+</Transition>
+<Transition StartId="35" EndId="7" type="1">
+<Expression>finishflag</Expression></Transition>
+</Transitions>
+</Process>
+

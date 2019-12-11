@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="DL24_GetInfoASVHeader"/>
+
+<Function id="DL24_GetInfoConfigHeader"/>
+
+<Function id="DL24_PartnumberCheck"/>
+
+<Function id="DL24_ProcessZDC"/>
+
+<Function id="DL24_Select"/>
+
+</children>
+</Workplace>

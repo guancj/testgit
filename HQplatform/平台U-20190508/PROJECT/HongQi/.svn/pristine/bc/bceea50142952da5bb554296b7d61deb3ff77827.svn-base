@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_HLA_GetState" description="发送service 0报文，获取大灯设备状态、大灯设备号、灯箱状态">
+<Inputs>
+<Variable id="lastRequest" type="8" data="&quot;&quot;" description="上一个请求报文"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="isStateOK" type="5" data="0" description="返回大灯设备状态,第6字节二进制形式&quot;0b?001??00&quot;为OK,返回true;否则返回false"/>
+<Variable id="standNumber" type="3" data="0" description="大灯设备号码"/>
+<Variable id="isLamphouseOK" type="11" data="" description="灯箱状态是否OK"/>
+</Outputs>
+<Script>local request = "";
+if(lastRequest ~= "") then
+request = lastRequest;
+else
+request = LibIDT.idtInitRequestALS(pHndl);
+end;
+
+isStateOK,isLamphouseOK = false,false;
+standNumber = -1;
+
+if(LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl) == true) then
+
+isStateOK = LibIDT.idtCheckByte(@5,0x73,0x10);
+
+isLamphouseOK= (LibIDT.idtCheckByte(@5,0x73,0x10)==ture) and (LibIDT.idtCheckByte(@4,0x40,0x00)==true);
+
+standNumber = @38;
+
+end;</Script></Function>
+

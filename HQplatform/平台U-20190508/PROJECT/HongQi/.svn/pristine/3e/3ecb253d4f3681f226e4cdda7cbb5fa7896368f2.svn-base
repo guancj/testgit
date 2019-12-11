@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="FWE" code="">
+
+<Processes>
+<Process id="FWE_01_Start_Check_Name"/>
+<Process id="FWE_02_End_Test"/>
+<Process id="FWE_22_Identity"/>
+<Process id="FWE_28_Result_AxialOffset"/>
+<Process id="FWE_31_Result_HeightMeasurement"/>
+<Process id="FWE_51_Check_Availability"/>
+<Process id="FWE_Start_Conditions"/>
+</Processes>
+</Workplace>

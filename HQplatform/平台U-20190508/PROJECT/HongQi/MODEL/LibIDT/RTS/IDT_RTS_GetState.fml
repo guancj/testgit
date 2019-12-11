@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="发送service 0报文，获取转毂设备状态是否OK、车辆是否降落到转毂上、转毂轮毂是否静止、是否是前轴serviceMode&#13;&#10;">
+<Inputs>
+<Variable id="lastRequest" type="8" data="&quot;&quot;" description="上一个请求报文"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+<Variable id="sendMode" type="3" data="4" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="isStateOK" type="11" data="" description="返回转毂台状态,第6字节二进制形式&quot;0b?0010?00&quot;为OK,返回true;否则返回false"/>
+<Variable id="isVehicleDown" type="11" data="" description="返回车辆是否已经降落到转毂台上"/>
+<Variable id="isRollsStandstill" type="11" data="" description="返回转毂轮毂是否静止,静止为true,否则为false"/>
+<Variable id="isFrontDriveServiceMode" type="11" data="" description="是否为前轴的service mode"/>
+</Outputs>
+<Script>sendMode = sendMode or 0
+
+local request = "";
+if(lastRequest ~= "") then
+    request = lastRequest;
+else
+    request = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+    if request == nil or request == "" then
+       request = LibIDT.idtInitRequestRTS(pHndl);
+    end;
+end
+
+isStateOK,isVehicleDown,isRollsStandstill,isFrontDriveServiceMode = false,false,false,false;
+
+if(LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl,sendMode) == true) then
+
+--判断转毂台状态是否OK
+isStateOK = LibIDT.idtCheckByte(@5,0x7B,0x10);
+
+--判断车辆是否降落到转毂台上并且转毂台已经准备好
+isVehicleDown = (LibIDT.idtCheckByte(@5,0xF3,0x90)==ture) and (LibIDT.idtCheckByte(@9,0x1E,0x00)==true);
+
+--判断轮毂是否静止
+isRollsStandstill = LibIDT.idtCheckByte(@4,0x04,0x04);
+
+--返回报文第7字节值为1表示为前轴service mode
+isFrontDriveServiceMode = (@6==1);
+
+end;</Script></Function>
+

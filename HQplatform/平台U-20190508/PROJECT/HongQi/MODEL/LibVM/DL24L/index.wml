@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="conv1ByteToBinString"/>
+
+<Function id="BinString1BytefilterCmp"/>
+
+<Function id="DL24_EV_Text_ASV123"/>
+
+<Function id="DL24_EV_Text"/>
+
+<Function id="GetFilteredTabByAttributeTripel"/>
+
+<Function id="codepartExecute"/>
+
+<Function id="ascstrtoNum"/>
+
+<Function id="CheckPRNRTermId"/>
+
+<Function id="CheckKnrListenId"/>
+
+<Function id="DL24_Errflag2Statstr"/>
+
+<Function id="Korrektur_Aufbrauch_TNR_ASV122"/>
+
+<Function id="GetFilteredBufByAttrQuadrupel1Altern"/>
+
+<Function id="Korr_Aufbr_TNR_ASV123_Part1"/>
+
+<Function id="Korr_Aufbr_TNR_ASV123_Part2"/>
+
+<Function id="Korrektur_TNR_ASV123"/>
+
+<Function id="Aufbrauch_TNR_ASV123"/>
+
+<Function id="VersionsPruefung_TNR_ASV123"/>
+
+<Function id="SWaP_TNR_ASV123"/>
+
+<Function id="Zdc_TNR_ASV123"/>
+
+<Function id="Flash_TNR_ASV123"/>
+
+<Function id="ProcessConfigfile_ASV123"/>
+
+<Function id="GetPartNoFromVehicleData_ASV123"/>
+
+<Function id="DL24_CM_Partnumber_Fitment_Stat"/>
+
+<Function id="DL24_ZDC_Stat"/>
+
+<Function id="DL24_FLASH_Stat"/>
+
+<Function id="DL24_SWaP_Stat"/>
+
+<Function id="GetASVHeaderInfo_Stat"/>
+
+<Function id="GetConfigHeaderInfo_Stat"/>
+
+<Function id="DL24_Process_ASV_Stat"/>
+
+</children>
+</Workplace>

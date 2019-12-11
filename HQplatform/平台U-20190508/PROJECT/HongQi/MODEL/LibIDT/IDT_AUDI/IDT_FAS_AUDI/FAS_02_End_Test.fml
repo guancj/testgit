@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="service 2">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="sendMode" type="3" data="0" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="revTel" type="8" data="" description="返回报文"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 02
+input parameter:pHndl,IDT_Timeout,sendMode
+output parameter :ret;revTel
+
+01/05/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00";
+
+sendMode = sendMode or 0
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x02");    -- 设置service号,第2字节
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl,sendMode)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

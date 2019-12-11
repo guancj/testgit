@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ECU_NAME" type="8" data="" description="section"/>
+<Variable id="dtc_from_vci" type="8" data="" description="dtc"/>
+</Inputs>
+<Script>num=7;
+local StrDtc="DTC. ";
+                if (#dtc_from_vci &lt; num) then
+                                engine.StatValue="No DTC."  
+                end   
+		while num&lt;#dtc_from_vci do
+				str=string.sub(dtc_from_vci,num,num+5);
+				--print(str)
+				key=dtc_translate(str);
+				keyValue=read_ini(ECU_NAME,key,".\\dtctext.ini");
+                                engine.println("key="..key)  
+				if(keyValue==nil)then
+                                        engine.LastError = 0;
+					print(key.."=".."nil")
+                                        --StrDtc="No DTC.."
+                                        
+				else    engine.LastError = 1;
+					engine.println(key.."="..keyValue)
+                                        keyValue=string.sub(keyValue,2,string.len(keyValue)-1)
+                                        local ss = key.."="..keyValue
+                                        StrDtc = StrDtc..key..","..keyValue.."  ." 
+                                        
+				end
+				num=num+8;
+		end
+
+engine.StatValue=StrDtc</Script></Function>
+

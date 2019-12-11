@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="KWP2000_GetDTCStatusInfor">
+<Inputs>
+<Variable id="status_byte" type="3" data="0" description="DTC status"/>
+</Inputs>
+<Outputs>
+<Variable id="Str_text" type="8" data="" description="DTC information of status"/>
+</Outputs>
+<Script>local status_code = status_byte;
+local bit_7 = 0;
+local bit_6 = 0;
+local bit_5 = 0;
+local bit_4 = 0;
+local bit_3 = 0;
+local bit_2 = 0;
+local bit_1 = 0;
+local bit_0 = 0;
+local Str_text = "";
+local Str_text_1 = "";
+local Str_text_2 = "";
+local Str_text_3 = "";
+
+bit_7 = math.floor(status_code/128);
+status_tmp = status_code - bit_7*128;
+bit_6 = math.floor(status_tmp/64);
+status_tmp = status_tmp - bit_6*64;
+bit_5 = math.floor(status_tmp/32);
+status_tmp = status_tmp - bit_5*32;
+bit_4 = math.floor(status_tmp/16);
+status_tmp = status_tmp - bit_4*16;
+bit_3 = math.floor(status_tmp/8);
+status_tmp = status_tmp - bit_3*8;
+bit_2 = math.floor(status_tmp/4);
+status_tmp = status_tmp - bit_2*4;
+bit_1 = math.floor(status_tmp/2);
+bit_0 = status_tmp - bit_1*2;
+
+if(bit_7 == 1) then
+Str_text_1 = "the fault lamp is triggered by the fault";
+else
+Str_text_1 = "the fault lamp is not switched on by the fault";
+end;
+
+if(bit_6 == 0 and bit_5 == 0) then
+Str_text_2 = "fault not stored";
+elseif(bit_6 == 0 and bit_5 == 1) then
+Str_text_2 = "sporadic";
+elseif(bit_6 == 1 and bit_5 == 0) then
+Str_text_2 = "temporary fault";
+elseif(bit_6 == 1 and bit_5 == 1) then
+Str_text_2 = "static";
+end;
+
+    if(bit_3 == 0 and bit_2 == 0 and bit_1 == 0 and bit_0 == 0) then
+Str_text_3 = "no display";
+elseif(bit_3 == 0 and bit_2 == 0 and bit_1 == 0 and bit_0 == 1)  then
+Str_text_3 = "upper limit exceeded";
+elseif(bit_3 == 0 and bit_2 == 0 and bit_1 == 1 and bit_0 == 0)  then
+Str_text_3 = "lower limit undershot";
+elseif(bit_3 == 0 and bit_2 == 0 and bit_1 == 1 and bit_0 == 1)  then
+Str_text_3 = "mechanical failure";
+elseif(bit_3 == 0 and bit_2 == 1 and bit_1 == 0 and bit_0 == 0)  then
+Str_text_3 = "no signal/communication";
+elseif(bit_3 == 0 and bit_2 == 1 and bit_1 == 0 and bit_0 == 1)  then
+Str_text_3 = "no or wrong basic setting/adaption";
+elseif(bit_3 == 0 and bit_2 == 1 and bit_1 == 1 and bit_0 == 0)  then
+Str_text_3 = "short to positive";
+elseif(bit_3 == 0 and bit_2 == 1 and bit_1 == 1 and bit_0 == 1)  then
+Str_text_3 = "short to ground";
+elseif(bit_3 == 1 and bit_2 == 0 and bit_1 == 0 and bit_0 == 0)  then
+Str_text_3 = "signal implausible";
+elseif(bit_3 == 1 and bit_2 == 0 and bit_1 == 0 and bit_0 == 1)  then
+Str_text_3 = "open circuit/short to ground";
+elseif(bit_3 == 1 and bit_2 == 0 and bit_1 == 1 and bit_0 == 0)  then
+Str_text_3 = "open circuit/short to positive";
+elseif(bit_3 == 1 and bit_2 == 0 and bit_1 == 1 and bit_0 == 1)  then
+Str_text_3 = "open circuit";
+elseif(bit_3 == 1 and bit_2 == 1 and bit_1 == 0 and bit_0 == 0)  then
+Str_text_3 = "electrical fault in circuit";
+elseif(bit_3 == 1 and bit_2 == 1 and bit_1 == 0 and bit_0 == 1)  then
+Str_text_3 = "please read out fault memory";
+elseif(bit_3 == 1 and bit_2 == 1 and bit_1 == 1 and bit_0 == 0)  then
+Str_text_3 = "faulty";
+elseif(bit_3 == 1 and bit_2 == 1 and bit_1 == 1 and bit_0 == 1)  then
+Str_text_3 = "cannot be tested at present";
+end;
+
+
+Str_text = "status_"..string.format("%X",status_code)..": "..Str_text_2..": "..Str_text_3;</Script></Function>
+

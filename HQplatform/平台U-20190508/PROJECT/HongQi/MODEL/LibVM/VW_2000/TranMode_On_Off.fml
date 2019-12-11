@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="TranMode" type="8" data="&quot;off&quot;" description="&quot;on&quot;   or &quot;off&quot;"/>
+<Variable id="VciHandle" type="3" data="0"/>
+</Inputs>
+<Script>
+if(VciHandle == nil) then VciHandle = 0; end;
+
+if(TranMode == "on") then
+ 
+engine.EcuBroadcast(0x200,0xFE,0x3B,0x00,0xFF,VciHandle);
+
+if(engine.LastError ~= 0 ) then 
+engine.StatValue = "TranMode On Error : Return ErrorCode :"..tostring(engine.LastError);
+else
+engine.StatValue = "TranMode On "
+end;
+
+
+elseif(TranMode == "off") then
+ 
+engine.EcuBroadcast(0x200,0xFE,0x3B,0x00,0x00,VciHandle);
+if(engine.LastError ~= 0 ) then 
+engine.StatValue = "TranMode Off Error : Return ErrorCode :"..tostring(engine.LastError);
+else
+engine.StatValue = "TranMode Off"
+end;
+
+else
+
+engine.LastError = 1;
+engine.StatValue = "Paramter Not Correct";
+engine.println("TranMode paramter value is not correct :"..tostring(TranMode));
+end;
+
+
+</Script></Function>
+

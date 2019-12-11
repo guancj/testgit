@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Script>--os.execute("rasdial /disconnect")
+ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","\"C:\\Windows\\System32\\rasdial.exe\" /disconnect",0,false);
+print("irda finish")</Script></Function>
+

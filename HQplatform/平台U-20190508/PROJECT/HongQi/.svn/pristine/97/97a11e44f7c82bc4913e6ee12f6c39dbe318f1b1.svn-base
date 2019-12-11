@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_ZDC_Check_2_2_HUD" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="345" top="69" right="445" bottom="101"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="346" top="413" right="446" bottom="445"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="准备">
+<Rect left="344" top="135" right="444" bottom="167"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="3" name="HUD">
+<Rect left="344" top="203" right="444" bottom="235"/>
+<Line2Text Enable="1" Text="HUD"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="5" name="c7_hud">
+<Rect left="345" top="266" right="445" bottom="298"/>
+<SubProcesses>
+<SubProcess id="c7_hud">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Examination&quot;,&quot;CheckZDCconfiguration&quot;}"/>
+<Parameter id="DString_HUP_WarpingMatrix_shared" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="3" name="Clear">
+<Rect left="346" top="330" right="446" bottom="362"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="7" ActivityType="4" name="路由节点">
+<Rect left="249" top="190" right="281" bottom="222"/>
+</Activity>
+<Activity id="8" ActivityType="4" name="路由节点">
+<Rect left="249" top="365" right="281" bottom="397"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="3" EndId="7" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

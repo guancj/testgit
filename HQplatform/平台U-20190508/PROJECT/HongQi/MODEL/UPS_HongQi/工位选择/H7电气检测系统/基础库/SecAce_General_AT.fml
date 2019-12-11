@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="vciHandl" type="8" data=""/>
+<Variable id="MASK" type="8" data=""/>
+</Inputs>
+<Script>recvTel = LibGeneral.ECU_DataExchange(vciHandl,0x27,0x67,"\x01")
+if (engine.LastError == 0) then
+	s1 = string.byte(recvTel:sub(3,3))
+	s2 = string.byte(recvTel:sub(4,4))
+	s3 = string.byte(recvTel:sub(5,5))
+	s4 = string.byte(recvTel:sub(6,6))
+
+	seed=s1*0x1000000+s2*0x10000+s3*0x100+s4
+
+	if (seed ~= 0) then
+		for i =1,35 do
+			if (bit32.band(seed,0x80000000) ~= 0) then
+				seed = bit32.lshift(seed,1)
+				seed = bit32.bxor(seed,MASK)
+			else
+				seed = bit32.lshift(seed,1)
+			end
+		end
+		key = seed
+		print("SecAccess key:"..string.format("%x",key))
+		k4 = bit32.band(key,0xff)
+		k3 = bit32.rshift(bit32.band(key,0xff00),8)
+		k2 = bit32.rshift(bit32.band(key,0xff0000),16)
+		k1 = bit32.rshift(bit32.band(key,0xff000000),24)
+		
+		keystr = string.char(0x02,k4,k3,k2,k1)
+		LibGeneral.ECU_DataExchange(vciHandl,0x27,0x67,keystr)
+	else
+		engine.LastError = -1
+		print("Response Seed equal Zero @Dpin")
+	end      
+else
+	print("Security Access Negtive Response! @Dpin")
+end
+
+</Script></Function>
+

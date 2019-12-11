@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="BCM2_Common"/>
+<Process id="BCM2_test"/>
+<Process id="BCM2_ReadDTC"/>
+<Process id="BCM2_FIN"/>
+</children>
+</Workplace>

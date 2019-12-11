@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="IDT_FAS_AUDI" code="">
+
+<Functions>
+<Function id="FAS_01_Start_Check_Name"/>
+
+<Function id="FAS_02_End_Test"/>
+
+<Function id="FAS_100_TopViewBoards"/>
+
+<Function id="FAS_22_Fzg_ID_mit_Type"/>
+
+<Function id="FAS_40_LightingControl"/>
+
+<Function id="FAS_61_LDW_HeightPanel"/>
+
+<Function id="FAS_62_NV_HeatingWireSwitch"/>
+
+<Function id="FAS_63_DoublerRearViewBoard"/>
+
+<Function id="FAS_83_Result_Coordinates"/>
+
+<Function id="FAS_84_Result_Coordinates"/>
+
+<Function id="IDT_FAS_State_actual"/>
+
+<Function id="IDT_FAS_State_store"/>
+
+<Function id="FAS_HoeheLDWTafel_ini"/>
+
+</Functions>
+</Workplace>

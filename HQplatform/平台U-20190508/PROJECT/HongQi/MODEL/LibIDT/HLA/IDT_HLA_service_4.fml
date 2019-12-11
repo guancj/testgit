@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="像大灯设备发送车辆类型指令,service 4.">
+<Inputs>
+<Variable id="vehicleType" type="3" data="6" description="车辆类型"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+<Variable id="sendMode" type="3" data="0" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>ret = -1;
+
+local request = "";
+
+sendMode = sendMode or 0
+
+--初始化发送报文
+request = LibIDT.idtInitRequestALS(pHndl);
+
+--设置service号,第2字节
+request = LibIDT.idtSetBytes(request,2,1,"\x04");
+
+--设置车辆类型,第24字节
+request = LibIDT.idtSetBytes(request,24,1,string.char(vehicleType));
+
+--设置车辆knr号,第29字节-第35字节
+request = LibIDT.idtSetBytes(request,29,7,engine.KNR:sub(1,7));
+
+--发送报文并校验返回报文是否正确
+if(LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl,sendMode) == true) then
+
+ret = @1;
+
+--LibIDT.idtAdjustLastError(ret);
+
+end;</Script></Function>
+

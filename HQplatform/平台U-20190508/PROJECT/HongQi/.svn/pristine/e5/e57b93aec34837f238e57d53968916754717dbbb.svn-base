@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ECU_Open">
+<Outputs>
+<Variable id="ECU_Handle" type="8" data="" description="ECU Handle"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to   connect ECU 
+output parameter:ECU_Handle
+
+11/08/2016     created by viforce
+******************************************************************************--]]
+
+
+ECU_Handle = engine.EcuOpen() 
+
+local count = 3;
+while(0 ~= engine.LastError ) do
+engine.Delay(1000);
+ECU_Handle = engine.EcuOpen();
+count = count - 1;
+if(count &lt;= 0) then
+break;
+end;
+end;
+
+if (ECU_Handle  == nil)  then 
+	ECU_Handle = -1;
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return ECU_Handle
+end
+
+</Script></Function>
+

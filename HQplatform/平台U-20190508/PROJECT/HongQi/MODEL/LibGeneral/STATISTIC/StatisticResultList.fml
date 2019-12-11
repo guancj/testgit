@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="Flag_ShowTBLResult" type="11" data="true" description="显示或者不显示 true or false"/>
+</Inputs>
+<Outputs>
+<Variable id="testResult" type="3" data="0" description="0 - OK"/>
+<Variable id="textPblSel" type="8" data="" description="返回PBL的当前语言字符串"/>
+</Outputs>
+<Script>--[[ ********************************************************************************************
+these  codes are used to  Show pbl result  List ,prepare for single test maybe
+input prameter : Flag_ShowTBLResult,
+output prameter: testResult,TextPblSel
+
+11/09/2016     created by viforce
+*************************************************************************************************--]]
+
+if(Flag_ShowTBLResult == true) then
+engine.ListClear();
+--测试结果列表
+local i,PtbTest;
+local j,PblTest;
+local textList;
+local StatisticTestResult = engine.GetResults();
+
+if(#StatisticTestResult ~= 0) then
+	local TextGiveUP = "放弃";
+	engine.ListAddString( TextGiveUP,true);
+end;
+
+
+for i=1, #StatisticTestResult do 
+	PtbTest = StatisticTestResult[i];
+	for j=1, #PtbTest.pbl do 
+		PblTest = PtbTest.pbl[j];
+		if(PblTest.result ~=0) then 
+			textList = "NOK       "..tostring(PblTest.pbltext) ;
+		else
+			textList = "OK        "..tostring(PblTest.pbltext) ;
+		end;
+		engine.ListAddString(textList,false);
+	end;
+end;
+
+if(engine.TestResult ~= 0 and #StatisticTestResult ~= 0) then
+	engine.DialogBackColor = "red";
+	engine.SetRButtonText("确定");
+	engine.SelectLayout(1);
+#INPUT textSequenceSel
+	engine.println("已选择:" .. tostring(textSequenceSel));
+	engine.SelectLayout(0);
+	engine.DialogBackColor = -1;
+	if(textSequenceSel == TextGiveUP) then
+		textPblSel = TextGiveUP
+	else
+		textPblSel = string.sub(textSequenceSel,11,-1)	
+	end
+
+else
+	if(engine.TestResult == 0 and #StatisticTestResult ~= 0) then
+		engine.DialogBackColor = "green";
+		engine.SetRButtonText("确定");
+		engine.SelectLayout(1);
+#INPUT textSequenceSel
+		engine.println("已选择:" .. tostring(textSequenceSel));
+		engine.SelectLayout(0);
+		engine.DialogBackColor = -1;
+		if(textSequenceSel == TextGiveUP) then
+			textPblSel = TextGiveUP
+		else
+			textPblSel = string.sub(textSequenceSel,11,-1)	
+		end
+	end;
+	textPblSel = "NULL"
+end;
+
+end;
+engine.SetRButtonText("");
+testResult = engine.TestResult;
+if (testResult == 0) then
+engine.DialogBackColor = "green";
+engine.SelectLayout(0);
+engine.SetLineText(1,"检测结果合格")
+
+else
+engine.DialogBackColor = "red";
+engine.SelectLayout(0);
+engine.SetLineText(1,"检测结果不合格")
+end
+engine.Delay(2000)
+engine.DialogBackColor = -1;
+engine.println("textPblSel : "..tostring(textPblSel));
+</Script></Function>
+

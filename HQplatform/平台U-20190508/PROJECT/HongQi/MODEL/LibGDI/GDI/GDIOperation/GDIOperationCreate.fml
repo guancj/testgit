@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiDeviceFunction" type="8" data=""/>
+<Variable id="operationName" type="8" data=""/>
+<Variable id="instanceName" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiOperation" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>gdiOperation,gdiError = engine.GDI_CreateOperation(gdiDeviceFunction, operationName, instanceName)
+print("creatDeviceOperationResult of "..instanceName.." is "..tostring(gdiError))</Script></Function>
+

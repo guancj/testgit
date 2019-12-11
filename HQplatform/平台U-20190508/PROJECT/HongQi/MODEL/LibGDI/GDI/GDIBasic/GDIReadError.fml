@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="errorFromCoordinator" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="errorCode" type="8" data=""/>
+<Variable id="errorMessage" type="8" data=""/>
+<Variable id="errorGrade" type="8" data=""/>
+<Variable id="errorQuality" type="8" data=""/>
+<Variable id="errorReturn" type="8" data=""/>
+</Outputs>
+<Script>errorCode,errorMessage,errorGrade,errorQuality,errorReturn=engine.GDI_ReadError(errorFromCoordinator)</Script></Function>
+

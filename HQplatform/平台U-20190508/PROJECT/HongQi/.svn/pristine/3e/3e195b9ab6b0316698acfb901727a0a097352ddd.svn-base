@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtSetBytes" description="设置报文串中的指定位置开始的n个字节内容。">
+<Inputs>
+<Variable id="request" type="8" data="" description="请求报文,&quot;\x06\x00......&quot;格式字符串"/>
+<Variable id="pos" type="3" data="0" description="修改指定字节的开始位置，从1开始计数"/>
+<Variable id="nByte" type="3" data="0" description="需要修改的字节数"/>
+<Variable id="modifyBytes" type="8" data="" description="需要替换的字节,&quot;\x22\x34&quot;格式串"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回修改后的报文串,&quot;\x06\01.....&quot;格式"/>
+</Outputs>
+<Script>--获取需要修改的字节后面的子串
+local rearRequest = string.sub(request,pos + nByte);
+
+--获取需要求改的字节前面的子串
+local frontRequest = string.sub(request,1,pos-1);
+
+ret = "";
+
+ret = frontRequest .. modifyBytes ..rearRequest;</Script></Function>
+

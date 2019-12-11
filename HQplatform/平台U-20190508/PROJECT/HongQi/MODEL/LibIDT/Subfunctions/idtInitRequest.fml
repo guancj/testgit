@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="初始化请求报文。报文格式为&quot;\x06\x00\x00......&quot;共44个字节">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回初始化的报文"/>
+</Outputs>
+<Script>ret = "";
+--默认采用上一次报文为初始报文
+local ret = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+
+--如果没有上一次报文，则初始化一个全0的
+if ret == nil or ret== "" then
+    ret = "";
+    local zero = "\x00";
+    --设置发送报文第1字节
+    ret = ret .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));
+    ret = ret .. zero:rep(43);
+end</Script></Function>
+

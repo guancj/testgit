@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_DTC_KEL_FBE_HKL_MOT_ABA_ADP_NDR_4" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="356" top="43" right="456" bottom="75"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="357" top="850" right="457" bottom="882"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="5" name="c7_kel">
+<Rect left="357" top="175" right="457" bottom="207"/>
+<SubProcesses>
+<SubProcess id="c7_kel">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="4" ActivityType="3" name="准备">
+<Rect left="357" top="111" right="457" bottom="143"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="5" name="c7_fbe">
+<Rect left="357" top="241" right="457" bottom="273"/>
+<SubProcesses>
+<SubProcess id="c7_fbe">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+<Parameter id="VIN" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="5" name="c7_hkl">
+<Rect left="356" top="378" right="456" bottom="410"/>
+<SubProcesses>
+<SubProcess id="c7_hkl">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="7" ActivityType="3" name="LAS判断">
+<Rect left="357" top="308" right="457" bottom="340"/>
+<Script></Script></Activity>
+<Activity id="8" ActivityType="4" name="路由节点">
+<Rect left="283" top="374" right="315" bottom="406"/>
+</Activity>
+<Activity id="9" ActivityType="5" name="c7_mot">
+<Rect left="356" top="440" right="456" bottom="472"/>
+<SubProcesses>
+<SubProcess id="c7_mot">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="10" ActivityType="5" name="c7_aba">
+<Rect left="355" top="508" right="455" bottom="540"/>
+<SubProcesses>
+<SubProcess id="c7_aba">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="11" ActivityType="3" name="LAS判定">
+<Rect left="356" top="573" right="456" bottom="605"/>
+<Script></Script></Activity>
+<Activity id="12" ActivityType="5" name="c7_adp">
+<Rect left="357" top="641" right="457" bottom="673"/>
+<SubProcesses>
+<SubProcess id="c7_adp">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="13" ActivityType="4" name="路由节点">
+<Rect left="286" top="636" right="318" bottom="668"/>
+</Activity>
+<Activity id="14" ActivityType="3" name="LAS判定">
+<Rect left="357" top="708" right="457" bottom="740"/>
+<Script></Script></Activity>
+<Activity id="15" ActivityType="5" name="c7_ndr">
+<Rect left="357" top="776" right="457" bottom="808"/>
+<SubProcesses>
+<SubProcess id="c7_ndr">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ActivateControl&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="16" ActivityType="4" name="路由节点">
+<Rect left="280" top="776" right="312" bottom="808"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="4" type="0">
+</Transition>
+<Transition StartId="3" EndId="5" type="0">
+</Transition>
+<Transition StartId="4" EndId="3" type="0">
+</Transition>
+<Transition StartId="5" EndId="7" type="0">
+</Transition>
+<Transition StartId="6" EndId="9" type="0">
+</Transition>
+<Transition StartId="7" EndId="6" type="7">
+<Expression>$4E7|$4E9</Expression></Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="9" type="0">
+</Transition>
+<Transition StartId="9" EndId="10" type="0">
+</Transition>
+<Transition StartId="10" EndId="11" type="0">
+</Transition>
+<Transition StartId="11" EndId="12" type="7">
+<Expression>$8RY|$8RF|($9VD&amp;$EP1)</Expression></Transition>
+<Transition StartId="11" EndId="13" type="0">
+</Transition>
+<Transition StartId="12" EndId="14" type="0">
+</Transition>
+<Transition StartId="13" EndId="14" type="0">
+</Transition>
+<Transition StartId="14" EndId="15" type="7">
+<Expression>$1BK|$1BY|$1BS|$2MB</Expression></Transition>
+<Transition StartId="14" EndId="16" type="0">
+</Transition>
+<Transition StartId="15" EndId="2" type="0">
+</Transition>
+<Transition StartId="16" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

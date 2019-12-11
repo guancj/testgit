@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_HUP_State_store" description="从上一次接收的报文中进行字节过滤。&#13;&#10;过滤信息格式(字符串类型)如下：&#13;&#10;&quot;@6==0b?001??00&quot;或&quot;@6==0b?001??00 &amp;&amp; @10==0b???0000?&quot;,其中&quot;@6&quot;表示返回报文的&quot;第6个字节&quot;;&quot;0b&quot;表示二进制格式;&quot;?&quot;表示不关心该bit位的值;&quot;0&quot;表示该bit位的值应该为0;&quot;1&quot;表示该bit位的值应该为1;&quot;&amp;&amp;&quot;:表示逻辑与.">
+<Inputs>
+<Variable id="lastDatagram" type="8" data="" description="上一次接收的报文"/>
+<Variable id="filter" type="8" data="" description="过滤字符串,形如:&quot;@6==0b?001??00&quot;"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="isOK" type="11" data="0" description="true:表示OK，false:表示NOK"/>
+</Outputs>
+<Script>ret = -1;
+isOK = false;
+
+--判断参数filter是否为nil
+if(filter == nil) then
+
+engine.println("IdtLib:parameter filter is nil,error!");
+return;
+end;
+
+--从共享变量中获取值
+if(lastDatagram == nil or lastDatagram == "") then
+   lastDatagram = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+end;
+
+for v in string.gmatch(filter,"(@%d+==0b[0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?])") do --2
+ret = LibIDT.idtSetFilterByte(v,lastDatagram);
+if( ret ~= 1) then --3
+break;
+end; --3
+end; --2
+
+
+if(ret == 1) then
+isOK = true;
+else
+isOK = false;
+end;</Script></Function>
+

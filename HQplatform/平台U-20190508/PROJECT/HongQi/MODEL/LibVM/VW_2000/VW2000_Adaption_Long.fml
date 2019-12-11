@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="vciExData" type="8" data="&quot;&quot;"/>
+<Variable id="Channel" type="8" data=""/>
+<Variable id="LongAdaptation" type="8" data=""/>
+<Variable id="Text" type="8" data="&quot;&quot;"/>
+<Variable id="P_VW_ImporterNumber" type="3" data="VW_ImporterNumber"/>
+<Variable id="P_WSC_VW" type="3" data="VW_WSC"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+Function  used to   Write Adaptation long String to ECU  ;
+input parameter:vciExData,Channel,LongAdaptation,Text,P_VW_ImporterNumber,P_WSC_VW;ECU_Handle
+\x01\x0a : long Adaptation; \x01\x03 : short Adaptation ;
+
+01/22/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+local   Tmp_Int;
+local   Value;
+local   byte_0,byte_1,byte_2,byte_3,byte_4,byte_5,byte_6;
+local   tmp_Int_M;
+local	 AnpasChannelHex;
+local   LongAdaptationStr;
+local   RecvBuff;
+local   RecvBuffStr;
+local   AdaptationStringRead = "";
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+Tmp_Int = engine.VmtId * 8;
+Tmp_Int = math.floor(P_VW_ImporterNumber/0x80) - math.floor(P_VW_ImporterNumber/0x400) + Tmp_Int;
+
+byte_0  = math.floor(Tmp_Int/0x1000000);
+tmp_Int_M = Tmp_Int - byte_0 * 0x1000000;
+byte_1 = math.floor(tmp_Int_M/0x10000);
+tmp_Int_M = tmp_Int_M - byte_1 * 0x10000;
+byte_2 = math.floor(tmp_Int_M/0x100);
+byte_3 = tmp_Int_M - byte_2 * 0x100;
+
+Tmp_Int = P_VW_ImporterNumber * 2;
+if (P_WSC_VW &gt; 0xffff) then
+    Tmp_Int = Tmp_Int +1;end;
+
+byte_4 = Tmp_Int - math.floor(Tmp_Int/0x100) * 0x100
+
+Tmp_Int = P_WSC_VW;
+
+tmp_Int_M = Tmp_Int - math.floor(Tmp_Int/0x10000) * 0x10000;
+byte_5 = math.floor(tmp_Int_M/0x100);
+byte_6 = tmp_Int_M - byte_5 * 0x100;
+
+
+engine.SetLineText ( 1,Text); engine.ShowMessage();
+engine.StatValue = LibGeneral.hex2str(LongAdaptation);
+
+if(vciExData == "") then
+engine.println("vciExData : receive failed ".."\n");
+end;
+
+local pos_0,pos_1 = string.find(vciExData,"\x01\x0a");
+
+if(pos_0 == nil) then
+engine.StatValue = "adaptation function not supported";engine.LastError = 1 ; 
+	return;
+end;
+
+
+
+
+if ((Channel &lt; 0) or ( Channel &gt; 255)) then 
+    engine.StatValue = "Error :Channel Out of range ";
+    engine.LastError = 1;
+	return ;
+end;
+
+
+if (string.len(LongAdaptation) &lt;= 0) then
+	engine.StatValue = "Error :LongAdaptation string is empty ";
+	engine.LastError = 1 ;
+	return ;
+end;
+
+
+--long adaptation start
+#COMMEX ECU_Handle -1 0x31 0xb8 0x01 0x0a 
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+end;
+
+--long adaptation query
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x0a
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+else
+	Tmp_Int = string.byte(RecvBuff,5);
+	if (Tmp_Int ~= 0x81) then
+		engine.println("next step was not allowed --need 0x81 "..RecvBuffStr.."\n");
+		engine.StatValue = " next step was not allowed --need 0x81 ";
+		ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+		engine.SetLineText ( 2,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();
+		engine.Delay(1);
+                engine.LastError = 1;
+		return;
+		end;
+end;
+
+--Long Adaptation Consult with Channel number
+#COMMEX ECU_Handle -1 0x31 0xb9 0x01 0x0a Channel
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+end;
+
+--Long adaptation query
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x0a
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+else
+	Value = string.byte(RecvBuff,6);
+	--when ASCII data 0xCx; if NUM data  0x8x
+	if ((math.floor(Value/0x40) == 3) or (math.floor(Value/0x40) == 2) or (Value == 0x02) or (Value == 0x05))	then
+		AdaptationStringRead = string.sub(RecvBuff,8,string.byte(RecvBuff,7) + 6 );
+	end;
+	if (string.len (AdaptationStringRead) &lt; 1) then engine.LastError = 1 ;end;
+	
+	engine.println("AdaptationStringRead: "..LibGeneral.hex2str(AdaptationStringRead).."\n");
+		
+	if (engine.LastError ~= 0) then
+		engine.println("unexpected data : "..RecvBuffStr.."\n");
+		engine.StatValue = "Error : unexpected data"..RecvBuffStr;
+		ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+		engine.SetLineText ( 2,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();
+		engine.Delay(1);
+                engine.LastError = 1;
+		return;
+	end;
+	if (string.len(LongAdaptation) ~= string.len(AdaptationStringRead))  then
+		engine.println(string.format("Length of Long Adaptation NOK: %d ~= %d \n",string.len(LongAdaptation),string.len(AdaptationStringRead)));
+		engine.StatValue = "Error : Length of Long Adaptation NOK";
+		ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+		engine.SetLineText ( 2,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();
+		engine.Delay(1);
+                engine.LastError = 1;
+		return;
+	else
+		ReturnValue = LibGeneral.hex2str(AdaptationStringRead);
+		LongAdaptationStr = LibGeneral.hex2str(LongAdaptation);
+		engine.println("Read Long Adaptation : "..ReturnValue.."\n");
+		engine.println("write Long Adaptation :"..LongAdaptationStr.."\n");
+		engine.SetLineText ( 2,LongAdaptationStr); engine.ShowMessage();
+	end;
+end;
+-- write adaptation
+#COMMEX ECU_Handle -1 0x31 0xb9 0x01 0x0a LongAdaptation
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+end;
+
+-- Long adaptation query to write
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x0a
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+end;
+
+--Save Long Adaptation
+#COMMEX ECU_Handle -1 0x31 0xbb 0x01 0x0a LongAdaptation byte_1 byte_2 byte_3 byte_4 byte_5 byte_6
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+end;
+
+--last query with new values
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x0a
+RecvBuff = @0-;
+RecvBuffStr = LibGeneral.hex2str(RecvBuff);
+if ( engine.LastError ~= 0 ) then
+	engine.StatValue = "Error : "..RecvBuffStr;
+	ReturnValue = "";
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+        engine.LastError = 1;
+	return;
+else
+	 
+	 Value = string.byte(RecvBuff,6);
+	--when ASCII data 0xCx; if NUM data  0x8x
+	if ((math.floor(Value/0x40) == 3) or (math.floor(Value/0x40) == 2) or (Value == 0x02) or (Value == 0x05))	then
+		AdaptationStringRead = string.sub(RecvBuff,8,string.byte(RecvBuff,7) + 6 );
+	end;
+	if (string.len (AdaptationStringRead) &lt; 1) then engine.LastError = 1 ;end;
+	
+	engine.println("AdaptationStringRead: "..LibGeneral.hex2str(AdaptationStringRead).."\n");
+	 
+	if (engine.LastError ~= 0) then
+		engine.println("unexpected data : "..RecvBuffStr.."\n");
+		engine.StatValue = "Error : unexpected data"..RecvBuffStr;
+		ReturnValue = "";
+		engine.SetLineText ( 2,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();
+		engine.Delay(1);
+	else
+	        ReturnValue = LibGeneral.hex2str(AdaptationStringRead);
+		LongAdaptationStr = LibGeneral.hex2str(LongAdaptation);
+		engine.println("Read Long Adaptation : "..ReturnValue.."\n");
+		if (LongAdaptationStr == ReturnValue) then 
+			engine.StatValue = ReturnValue;
+			engine.LastError = 0;
+			engine.SetLineText ( 2,ReturnValue); engine.ShowMessage();
+		else			
+			engine.StatValue = ReturnValue;
+			engine.LastError = 1;
+			engine.SetLineText ( 2,string.format("channal: %d Long Adaptation write check wrong",Channel)); engine.ShowMessage();
+			engine.Delay(1);return;
+		end;
+	 end;
+end;
+
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x0a
+
+engine.SetLineText ( 1,""); 
+engine.SetLineText ( 2,""); 
+engine.SetLineText ( 3,""); 
+engine.ShowMessage();</Script></Function>
+

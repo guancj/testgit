@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="iObdHandle" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Script>engine.Buslog_Stop();
+if(iObdHandle == nil or iObdHandle &lt;0) then
+	engine.LastError = 1;
+        engine.dprintln("Can not get the odx handle");
+else
+	engine.Buslog_ObdClose(iObdHandle);
+end;
+</Script></Function>
+

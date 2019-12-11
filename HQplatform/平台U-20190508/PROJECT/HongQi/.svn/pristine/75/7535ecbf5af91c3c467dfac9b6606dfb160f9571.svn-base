@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="HUP" code="">
+
+<Processes>
+<Process id="Par_HUP"/>
+<Process id="Par_HUP_Process"/>
+<Process id="HUP_22_Identity"/>
+<Process id="HUP_86_Kamera_Arbeitsposition"/>
+</Processes>
+</Workplace>

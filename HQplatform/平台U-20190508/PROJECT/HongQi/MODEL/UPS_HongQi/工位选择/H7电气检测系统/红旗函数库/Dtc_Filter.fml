@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="将读取故障码指令的返回值DTC_INPUT解析成PCODE码，返回值dtc&#13;&#10;可以设置掩码KEY_MASK,通常来说先使用这函数将HEX解析成PCODE，再根据工位传入KEY_MASK&#13;&#10;&#13;&#10;当传入值为HEX格式时，将HEX转成PCODE&#13;&#10;当传入值为PCODE时，可以将掩码KEY_MASK参数传入，过滤掉KEY_MASK&#13;&#10;&#13;&#10;&#13;&#10;&#13;&#10;">
+<Inputs>
+<Variable id="DTC_INPUT" type="8" data="" description="dtc from @3--"/>
+<Variable id="KEY_MASK" type="8" data="" description="mask"/>
+</Inputs>
+<Script>--[[ 
+************************************************************************************************************************
+The function is used to convert DTC from HEX format to PCode format attached filtering KEY MASK function
+
+History:
+    06/16/2016, developer : Zhushaodong created
+************************************************************************************************************************
+--]]
+
+local num=1;
+local i;
+local Filter;
+local keyStr="";
+keymasknum=0;
+local PcodeSta=0;
+local PcodeEnd=0;
+local PcodeFlag=0;
+if(KEY_MASK==nil)then
+else
+	engine.println("KEY_MASK:"..KEY_MASK);
+	if(string.len(KEY_MASK)&gt;0)then
+		key_mask=string.gsub(KEY_MASK,"{","");
+		key_mask=string.gsub(key_mask,"}","");		
+		if(string.len(key_mask)&gt;=8)then
+			key_mask=string.gsub(key_mask,",","");
+		engine.println("key_mask:"..key_mask);
+			keymasknum,keymasknum1=math.modf(string.len(key_mask)/8);
+		else
+			keymasknum=0;
+		end
+	else
+	end
+end
+if(DTC_INPUT~=nil)then
+	engine.println("keymasknum:"..keymasknum..",DTC_INPUT:"..DTC_INPUT);
+else
+end
+PcodeSta,PcodeEnd=string.find(DTC_INPUT,"-")
+if(PcodeSta==nil)then
+else
+	PcodeFlag=1;
+	engine.println("PcodeSta此DTC为上面解析过的PCODE传到这里的,有-在第"..PcodeSta.."位开始");
+end
+while num&lt;#DTC_INPUT do
+	if(PcodeFlag==1)then
+		key=string.sub(DTC_INPUT,num,num+7);
+	else
+		str=string.sub(DTC_INPUT,num,num+5);
+		--print(str)
+		key=dtc_translate(str);	
+	end
+	
+	Filter=0;	
+	if(keymasknum&gt;0)then
+		for i=1,keymasknum do
+			keytmp=string.sub(key_mask,1+8*(i-1),8*i);
+			--engine.println("i:"..i.."keytmp:"..keytmp);
+			if(key==keytmp)then
+				Filter=1;
+				engine.println("Filtered:"..key);
+				break;                           
+			else
+			end
+			i=i+1;
+		end
+	else 
+	end
+	if(Filter==1)then                                     
+	else    
+		keyStr=keyStr..key; 
+		--engine.println("keyStr:"..keyStr);                          
+	end
+	num=num+8;--不管是PCode(8位)还是HEX格式(6位长度加2位DTC掩码)，都是8位长度
+end
+dtc=keyStr;
+engine.println("dtc:"..dtc);</Script></Function>
+

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="assemblies" type="8" data="" description="BaugruppenNr"/>
+<Variable id="stringLen" type="3" data="0" description="数据长度"/>
+<Variable id="data" type="8" data="" description="数据"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this is used to  write BZD data
+input parameter:assemblies;data;stringLen;
+create by zhouxh 01/18/2016
+******************************************************************************--]]
+local i = 0;
+local content = "";
+
+content = assemblies..data;
+if(string.len(content) &lt; stringLen) then
+ i = stringLen - string.len(content);
+
+while true do 
+content = content.." ";
+i = i - 1;
+if(i == 0) then break;end;
+end
+
+else
+
+content = string.sub(content,1,stringLen);
+
+end;
+
+
+
+
+engine.StatValue = "BAUTEIL".."{".."\\\""..assemblies.."\\\";".."\\\""..content.."\\\""..";}";
+
+
+--engine.StatValue = "BAUTEIL".."{".."\""..assemblies.."\";".."\""..content.."\""..";}";
+engine.println("###BZD Component:"..engine.StatValue.."\n");</Script></Function>
+

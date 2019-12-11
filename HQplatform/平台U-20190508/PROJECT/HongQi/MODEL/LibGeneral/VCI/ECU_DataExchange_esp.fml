@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+<Variable id="reqTitle" type="3" data="0" description="如0x22"/>
+<Variable id="resTitle" type="3" data="0" description="如0x62"/>
+<Variable id="sendTel" type="8" data="&apos;&apos;" description="如&apos;\x06\x00&apos;"/>
+</Inputs>
+<Outputs>
+<Variable id="recvTel" type="8" data="" description="返回报文"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  Exchange Data with ECU 
+input parameter:ECU_Handle;reqTitle;resTitle;sendTel
+output parameter:recvTel
+
+11/08/2016     created by viforce
+******************************************************************************--]]
+
+if( ECU_Handle == nil or ECU_Handle &lt; 0) then 
+
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return ""
+
+else
+
+#COMMEX ECU_Handle 1 reqTitle sendTel
+	recvTel = @0-;
+	if(engine.LastError ~= 0) then
+		if(recvTel ~= nil and @0 == 0x7F and #recvTel &gt;=3) then
+			local tmpStatValue = LibGeneral.ECU_NegativeResponseValues(@2) ;
+			engine.StatValue = "NegativeResponse : "..tostring(@2).." "..tostring(tmpStatValue);
+		else
+		engine.StatValue = "Lost Connection or time out ";
+		end
+	engine.StatValue = "unexpect err ";	
+	else
+
+	engine.StatValue = "Recv :"..LibGeneral.hex2str(recvTel);	
+
+	end
+
+end
+</Script></Function>
+

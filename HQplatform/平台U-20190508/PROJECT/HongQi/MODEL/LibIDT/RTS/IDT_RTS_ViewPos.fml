@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="posValue" type="3" data="0" description="位置数值 0-255 , Byte39（从0开始计数）的整数值。如果收到值者返回-1"/>
+</Outputs>
+<Script>if pHndl == nil or pHndl &lt; 0 then
+    engine.println("IDT_RTS_ViewPos, input handle is not valid" .. tostring(pHndl));
+    posValue = -1
+    return posValue
+end
+
+
+local pos = 40; --从1开始计数
+local lastRev = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+posValue = lastRev:sub(pos,pos):byte();
+engine.println("IDT_RTS_ViewPos, posValue : " .. tostring(posValue));</Script></Function>
+

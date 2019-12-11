@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="convNumTo4ByteHex">
+<Inputs>
+<Variable id="val" type="3" data="0" description="0x0000 - 0xffff"/>
+</Inputs>
+<Outputs>
+<Variable id="outstr" type="8" data="" description="hex字符串 - &quot;\x00\x00\x00\x00&quot; 4 byte"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   convert num to 4byte hex String  from ECU 
+input parameter:val
+output parameter :outstr;
+
+11/25/2016     created by viforce
+******************************************************************************--]]
+
+local IntText = ""
+local bitNum = 0
+ for i = 0,3 do 
+	val = val - bitNum * (math.pow(0x100,4 - i))
+	bitNum = math.floor(val/(math.pow(0x100,3 - i)))
+	IntText = IntText..string.char(bitNum);
+end;
+
+outstr = IntText</Script></Function>
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ExhaustStatus">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="the exhaust connection handle"/>
+</Inputs>
+<Outputs>
+<Variable id="countDown" type="3" data="0" description="the gas tester zeroing process count down number"/>
+<Variable id="state" type="3" data="0" description="false=standby not ready, true=standby ready"/>
+<Variable id="info" type="8" data="" description="exhaust device return information"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is used to read zeroing sequence count down number and the standby status
+History:
+    03/16/2016, wuh : function created
+    04/10/2016, wuh : protocal change
+****************************************************************--]]
+	local err = 0
+	local countDown = -1
+	local state = -1
+	local info = ""
+	
+	-- check connection handl
+	if nil == pHndl or pHndl &lt; 0 then
+		engine.println("ERROR, ExhaustStatus : input connection handl not valid, pHndl=" .. tostring(pHndl))
+		engine.LastError = 1
+		return countDown, state, info
+	end
+	
+	-- set requst status data
+	local reqData = "Status{ }"
+	-- send requst and receive response
+	err, revData  = LibExhaust.exhaustDataExchange(pHndl, reqData)
+	if err ~= 0  or revData == nil then
+		engine.println("ERROR, ExhaustStatus : Read zeroing status command failed, revData=" .. tostring(revData))
+		engine.LastError = 1;
+		return countDown, state, info
+	end
+	engine.println("ExhaustStatus,  revData : " .. revData)
+	
+	-- get status values
+	local _,_,tmp1,tmp2,tmp3 = revData:find('Status{(.*);(.*);"(.*)";')
+	
+	if tonumber(tmp1) ~= nil then
+		state = tonumber(tmp1)
+	end
+	if tonumber (tmp2) ~= nil then
+		countDown = tonumber (tmp2)
+	end
+	if tostring(tmp3) ~= nil then
+		info = tostring(tmp3)
+	end
+	
+	engine.LastError = err</Script></Function>
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlNode" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="result" type="11" data="" description="返回元素是否拥有子节点"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+判断元素是否拥有子节点
+output parameter: result
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+result = xmlNode.hasChildNodes()</Script></Function>
+

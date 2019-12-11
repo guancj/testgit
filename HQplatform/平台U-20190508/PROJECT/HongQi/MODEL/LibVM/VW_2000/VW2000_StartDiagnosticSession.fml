@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="mode" type="3" data="0" description="诊断模式"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this is used to  start DiagnosticSession
+input parameter:ECU_Handle
+
+01/14/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+#COMMEX ECU_Handle -1 0x10 mode
+
+if(engine.LastError == 0)  then 
+	engine.StatValue ="start DiagnosticSession Success"
+else
+	engine.StatValue ="start DiagnosticSession Failed"
+end;</Script></Function>
+

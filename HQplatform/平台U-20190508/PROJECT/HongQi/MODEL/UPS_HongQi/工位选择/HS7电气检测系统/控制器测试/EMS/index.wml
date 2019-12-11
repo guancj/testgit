@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="EMS_Common"/>
+<Process id="EMS_ReadDTC"/>
+<Process id="EMS_FIN"/>
+<Process id="EMS_ReadVIN"/>
+<Process id="EMS_ReadVIN-AVM"/>
+<Process id="EMS_Engine_rpm"/>
+</children>
+</Workplace>

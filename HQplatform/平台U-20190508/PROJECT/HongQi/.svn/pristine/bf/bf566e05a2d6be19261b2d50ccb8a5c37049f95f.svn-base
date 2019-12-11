@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="EV_Select">
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="Ev_variant_name" type="8" data=""/>
+<Variable id="Ev_variant_version" type="8" data=""/>
+<Variable id="Ev_object_name" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   SELECT EV Variant  ;
+input parameter:ECU_Handle
+out parameter:Ev_variant_name;Ev_variant_version;Ev_object_name;
+
+02/11/2016     created by viforce
+11/04/2016     changed by viforce
+******************************************************************************--]]
+Ev_variant_name = ""
+Ev_variant_version = ""
+Ev_object_name = ""
+
+engine.mcdVariantIdentificationAndSelection(ECU_Handle);
+
+if (engine.LastError == 0) then
+
+Ev_object_name = engine.mcdVariantGetCurrent(ECU_Handle);
+
+else
+
+Ev_object_name = "" ;
+
+end
+
+
+engine.StatValue = Ev_object_name;
+
+engine.println("###EV Variant :"..tostring(Ev_object_name));
+
+
+--[[
+Ev_variant_name_tmp=""
+#COMM 0x22 0xF1 0x9E 
+if (0 == engine.LastError) then
+       Ev_variant_name = @3-;
+	   --delete 0x00
+	   local pos_0,pos_1 = string.find(Ev_variant_name,"\x00\x00");
+	   if(pos_0 ~= nil) then 
+	    Ev_variant_name = string.sub(Ev_variant_name,1,pos_0);
+	   end;
+       if ( string.byte(Ev_variant_name,-1) == 0) then Ev_variant_name = string.sub(Ev_variant_name,1,-2);end;
+	   --double check
+       local num=1
+    while true do  
+        local lcPos = string.find(Ev_variant_name,"_")  
+        if not lcPos then  
+            Ev_variant_name_tmp = Ev_variant_name_tmp .. Ev_variant_name      
+            break  
+        end 
+        
+        local lcSubStr  = string.sub(Ev_variant_name,1,lcPos-1)
+      if(num == 1) then   Ev_variant_name_tmp = Ev_variant_name_tmp ..lcSubStr .."_" else
+        Ev_variant_name_tmp = Ev_variant_name_tmp ..lcSubStr  end;
+        num = num + 1; 
+    --    Ev_variant_name = string.sub(Ev_variant_name,lcPos+1,#Ev_variant_name)
+        Ev_variant_name = string.sub(Ev_variant_name,lcPos+1,#Ev_variant_name);
+    end 
+       
+       Ev_variant_name_tmp = Ev_variant_name_tmp .."_";
+
+#COMM 0x22 0xF1 0xA2 
+       if (0 == engine.LastError) then
+           Ev_variant_version = @3-@5;
+           Ev_object_name = Ev_variant_name_tmp .. Ev_variant_version;
+           engine.SetLineText(1,Ev_object_name);
+           engine.ShowMessage();
+           engine.Delay(1);
+           engine.SetLineText(1,"");
+       end
+end
+
+
+if(Ev_object_name == "") then
+
+engine.LastError = 1;
+else
+engine.LastError = 0;
+
+end;
+
+engine.StatValue = "EV variant :"..tostring(Ev_object_name);
+
+engine.dprintln(tostring(Ev_object_name));
+
+#EVSEL Ev_object_name
+
+--]]</Script></Function>
+

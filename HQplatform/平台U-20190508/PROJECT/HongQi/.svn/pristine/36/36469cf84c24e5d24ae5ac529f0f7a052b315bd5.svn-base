@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_Dackelwinkel_1" flags="1">
+<ProcessParameters>
+<Variable id="fFWE_Dackelwinkel_shared" type="8" dir="1" data=""/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="336" top="60" right="436" bottom="92"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="335" top="258" right="435" bottom="290"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="5" name="c7_gwa">
+<Rect left="337" top="122" right="437" bottom="154"/>
+<SubProcesses>
+<SubProcess id="c7_gwa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ProcessByteRead&quot;}"/>
+<Parameter id="MCDResultStringProcessByte" value="DMCDResultString_Prozessbytes_shared" ret="DMCDResultString_Prozessbytes_shared"/>
+<Parameter id="Transportmode" value="&quot;&quot;" ret="DefaultResult"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="77" ActivityType="3" name="参数计算">
+<Rect left="336" top="184" right="436" bottom="216"/>
+<Script>fFWE_Dackelwinkel_shared = (string.byte(DMCDResultString_Prozessbytes_shared,12) - 128) * 0.1
+engine.println("&lt;Par_Dackelwinkel_1&gt; fFWE_Dackelwinkel_shared :"..tostring(fFWE_Dackelwinkel_shared))</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="77" type="0">
+</Transition>
+<Transition StartId="77" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

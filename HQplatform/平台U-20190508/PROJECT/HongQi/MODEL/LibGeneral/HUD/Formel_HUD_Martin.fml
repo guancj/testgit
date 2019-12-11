@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="Cut_above" type="5" data="0"/>
+<Variable id="Cut_below" type="5" data="0"/>
+<Variable id="Refpkt_before" type="5" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="Refpkt" type="3" data="0"/>
+</Outputs>
+<Script>--[[ ********************************************************************************************
+The element caculate for HUD function 
+input prameter : Cut_above,Cut_below,Refpkt_before
+output prameter: Refpkt
+
+02/04/2017     created by viforce
+*************************************************************************************************--]]
+
+local fdifference = 0.0
+local fdifference_abs = 0.0
+local fPotenz = 0.0 
+
+
+fdifference = Cut_above - Cut_below;
+fdifference_abs = math.abs(fdifference);
+
+fPotenz = 0.88 ^ fdifference_abs;	
+
+engine.println("fPotenz:"..tostring(fPotenz))
+
+Refpkt = Refpkt_before + ( (1.0-fPotenz) * fdifference  ) * 29.0;
+engine.println("Refpkt in float: "..tostring(Refpkt))</Script></Function>
+

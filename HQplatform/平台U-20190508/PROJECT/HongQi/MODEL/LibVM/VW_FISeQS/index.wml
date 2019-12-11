@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="BG_FZG_TranspoderCodes"/>
+
+<Function id="BZD_Component_String"/>
+
+<Function id="BZD_Manufacturer_String"/>
+
+<Function id="FISeQS_Measuring_String"/>
+
+</children>
+</Workplace>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="ID_String" type="8" data="" description="Coding string read from ECU"/>
+</Outputs>
+<Script>
+--[[*****************************************************************************
+this is function used to read coding 0600
+input parameter:ECU_Handle
+output parameter:ID_String
+
+01/06/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	ID_String = "";
+	return ID_String
+end
+
+#COMMEX ECU_Handle -1  0x22 0x06 0x00
+ID_String = ""
+
+if (0 == engine.LastError) then
+ID_String = @3-;
+end
+
+if(ID_String == nil) then 
+ID_String = "";
+end;</Script></Function>
+

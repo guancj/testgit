@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="symbolicWorspaceName" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+</Outputs>
+<Script>gdiWorkspace = engine.GDI_GetGdiWorkspaceBySymbolicName(symbolicWorspaceName)</Script></Function>
+

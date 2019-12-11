@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="SendCommandData"/>
+
+<Function id="GetCommand2can"/>
+
+<Function id="RawtargetExtractData"/>
+
+<Function id="BSD_SecurityAlgorithm"/>
+
+<Function id="GetCommand2canNew"/>
+
+<Function id="GetComd12orX1"/>
+
+<Function id="read_ini"/>
+
+<Function id="DelS"/>
+
+</children>
+</Workplace>

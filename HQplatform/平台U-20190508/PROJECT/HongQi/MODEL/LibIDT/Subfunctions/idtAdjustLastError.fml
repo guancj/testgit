@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="针对service号不为0的情况，调整其接收报文后engine.LastError的值">
+<Inputs>
+<Variable id="result" type="3" data="0" description="返回报文的第一个字节值为1时，将LastError值设为0；否则设为1"/>
+</Inputs>
+<Script>if(result == 1) then
+
+engine.LastError = 0;
+
+else
+
+engine.LastError = -1;
+
+end;</Script></Function>
+

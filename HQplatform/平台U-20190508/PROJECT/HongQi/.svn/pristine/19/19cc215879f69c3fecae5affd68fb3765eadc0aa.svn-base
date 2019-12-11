@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="zdcInContainerDataBuild">
+<Inputs>
+<Variable id="zdcHndl" type="3" data="0" description="ZDC handle"/>
+<Variable id="nodeTabelle" type="3" data="0" description="the zdc &apos;TABELLE&apos; xml object"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="dt" type="3" data="0" description="a table which store all caculated data"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to collect data which type is "DATEN-NAME" for one 'TABELLE' element in zdc container.
+History:
+	02/16/2016, wuh : function created
+	04/11/2016, wuh : add debugLevel
+        01/20/2017, wuh : bug fix for 'START-ADR' and 'GROESSE-DEKOMPRIMIERT' value can be start with '0x'
+****************************************************************--]]
+	local err, dt = 0, {}
+	
+	-- build Knotens table
+	local knotens = LibVW.zdcGetKnotens(nodeTabelle, debugLevel)
+	if engine.LastError ~= 0 then
+		engine.println("ERROR, 'zdcInContainerDataBuild' : zdcGetKnotens failed")
+		engine.LastError =1
+		return dt
+	end
+	
+	-- data table build
+	for _,knoten in ipairs(knotens) do
+		if knoten.valueType == "DATEN-NAME" then
+			-- get Coding 'DATENBEREICH' element
+			local xpath = "/ZDC/VORSCHRIFT/DIREKT/DATENBEREICHE/DATENBEREICH/DATEN-NAME[text()='" .. knoten.value .. "']/.."
+			local nodeDataArea = zdcHndl.selectSingleNode(xpath)
+			if nil == nodeDataArea then 
+				engine.println("ERROR, zdcInContainerDataBuild : DATENBEREICH tables not found xpath = " .. xpath)
+				err =1 ; break
+			end
+			local startAddr = nodeDataArea.selectSingleNode("START-ADR") and tonumber(string.gsub(nodeDataArea.selectSingleNode("START-ADR").text,"0x",'') , 16)
+			local dataLen = nodeDataArea.selectSingleNode("GROESSE-DEKOMPRIMIERT") and tonumber(string.gsub(nodeDataArea.selectSingleNode("GROESSE-DEKOMPRIMIERT").text,"0x",'') , 16)
+			local formatName = nodeDataArea.selectSingleNode("DATEN-FORMAT-NAME") and nodeDataArea.selectSingleNode("DATEN-FORMAT-NAME").text
+			local data = ""
+			if nil ~= formatName and formatName == "DFN_HEX" then
+				local tmpData = nodeDataArea.selectSingleNode("DATEN") and nodeDataArea.selectSingleNode("DATEN").text
+				if nil ~= tmpData then 
+					-- convert all character to lower case. cut the '0x' and ','.
+					string.gsub(tmpData:lower(), "0x[A-Z a-z 0-9][A-Z a-z 0-9]", function(s) data = data .. s:sub(3,4) return "" end)
+				end
+				if data:len() / 2 ~= dataLen then
+					engine.println("ERROR, zdcInContainerDataBuild : the data len not match.",
+					"GROESSE-DEKOMPRIMIERT= " .. tostring(dataLen), "len of DATEN= " .. tostring(data:len() / 2))
+					err =1 ; break
+				end
+			else
+				engine.println("ERROR, zdcInContainerDataBuild : format name not recongnize, formatName= " .. tostring(formatName) )
+				err =1 ; break
+			end
+			-- fill data table
+			if 0 == err then
+				dt[#dt+1] = {}
+				dt[#dt].name = knoten.value
+				dt[#dt].formatName = formatName
+				dt[#dt].startAddr = startAddr
+				dt[#dt].dataLen = dataLen
+				dt[#dt].data = data
+				if debugLevel &gt; 0 then
+					engine.println("zdcInContainerDataBuild : new data table item added.",
+						"name=" .. dt[#dt].name, "formatName=" .. dt[#dt].formatName, "startAddr=" .. string.format("%08x", dt[#dt].startAddr),
+						"dataLen=" .. string.format("%08x", dt[#dt].dataLen), "data=" .. dt[#dt].data)
+				end
+			end
+		else
+			engine.println("WARNING , zdcInContainerDataBuild : the knoten value type is not fit for in container data caculating.",
+				"valueType= " .. knoten.valueType, "value= " .. knoten.value)		
+		end
+	end
+	
+	engine.LastError = err</Script></Function>
+

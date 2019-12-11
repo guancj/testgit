@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="GW_Common"/>
+<Process id="GW_ReadDTC"/>
+<Process id="GW_EBSdiagnostic"/>
+<Process id="GW_FIN"/>
+<Process id="GW_EBS_FIN"/>
+</children>
+</Workplace>

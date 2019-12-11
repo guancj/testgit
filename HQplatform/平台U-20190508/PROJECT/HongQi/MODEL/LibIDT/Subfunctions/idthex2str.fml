@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="将16进制编码格式转换成字符串格式">
+<Inputs>
+<Variable id="hex" type="8" data="" description="16进制编码格式，例如：&quot;\x05\x00\x01\xac&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data="" description="16进制字符串格式，例如：“06000010”"/>
+</Outputs>
+<Script>--判断输入类型
+if (type(hex)~="string") then
+	return nil,"idthex2str invalid input type";
+end
+--拼接字符串
+local index=1;
+local ret="";
+for index=1,hex:len() do
+	ret=ret..string.format("%02X",hex:sub(index):byte());
+end</Script></Function>
+

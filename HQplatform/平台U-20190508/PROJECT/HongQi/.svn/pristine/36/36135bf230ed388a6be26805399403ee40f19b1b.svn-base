@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="GetByteBitPosition_AUDI" description="从&quot;prozessbytes.ini&quot; 文件里读取 BYTE BIT">
+<Inputs>
+<Variable id="section" type="8" data="&quot;FAS&quot;" description="prozessbytes.ini section"/>
+<Variable id="key_1" type="8" data="&quot;Byte&quot;" description="byte"/>
+<Variable id="key_2" type="8" data="&quot;Bit&quot;" description="bit"/>
+</Inputs>
+<Outputs>
+<Variable id="Byte" type="3" data="0" description="位置"/>
+<Variable id="Bit" type="3" data="0" description="位置"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to  get byte and bit value  from a file "Dtc_list.ini";
+input parameter:section,key_1,key_2
+output parameter :Byte,Bit
+
+1/12/2017     created by viforce
+******************************************************************************--]]
+
+local ini = IniFile(engine.ProgPath.."\\prozessbytes.ini")
+engine.println("IniFile:prozessbytes.ini :"..type(ini)..": section =&gt;"..tostring(section))
+Byte = ini.getInt(section,key_1,-1)
+Bit = ini.getInt(section,key_2,-1)
+
+engine.println(tostring(section)..": BYTE:"..tostring(Byte).."  BIT:"..tostring(Bit))</Script></Function>
+

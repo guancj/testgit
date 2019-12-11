@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="将PCODE的解释内容从dtctext.ini文件提取">
+<Inputs>
+<Variable id="DTC" type="8" data="" description="dtc string"/>
+<Variable id="ECU_SECTION" type="8" data="" description="Section name in dtctext.ini"/>
+</Inputs>
+<Script>--[[ 
+************************************************************************************************************************
+The function is used to display the DTC code explaination from "dtctext.ini" file
+
+History:
+    06/16/2016, developer : Zhushaodong created
+************************************************************************************************************************
+--]]
+
+local num=1;
+local i;
+local StrDtc="DTC. ";
+engine.println("dtc:"..DTC);
+if (#DTC &lt; num) then
+    engine.StatValue="No DTC."
+    engine.LastError = 0; 
+	print("key".."=".."nil") 
+else  
+	while num&lt;#DTC do
+		key=string.sub(DTC,num,num+7);
+		--engine.println("key="..key);
+		keyValue=read_ini(ECU_SECTION,key,".\\dtctext.ini");
+	
+	    if(key=="")then
+			engine.LastError = 0;                                      
+		else
+			if(keyValue==nil)then                      
+				StrDtc = StrDtc..key..",".."  No Translation."                              
+			else    
+				--engine.println(key.."="..keyValue)
+				keyValue=string.sub(keyValue,2,string.len(keyValue)-1)
+				StrDtc = StrDtc..key..","..keyValue.."  ."                              
+			end
+			engine.LastError = 1;
+			
+		end
+		
+		num=num+8;
+	end
+end
+
+engine.StatValue=StrDtc;
+engine.println("StrDtc:"..StrDtc);</Script></Function>
+

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data="" description="dl24 xml 文件句柄 （ASVListfile）"/>
+<Variable id="PRNRTermId" type="8" data="" description="KnrListenID"/>
+<Variable id="Fzd" type="8" data="" description="车辆数据"/>
+</Inputs>
+<Outputs>
+<Variable id="PRNRTermStat" type="3" data="0" description="1 - true   0 -false"/>
+<Variable id="errFlag" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This function used to check PRNRTermId
+input parameter:XmlHndl,PRNRTermId,Fzd
+output parameter:PRNRTermStat,errFlag
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+-- return value
+PRNRTermStat = 0
+errFlag = 0
+-- return value
+
+local xmlPath = "/AsvListe/AsvDaten/PrnrTerme"
+local xmlTag = "PrnrTerm"
+local xmlAttribFilter = "PrnrTermID"
+local xmlSubPathTag = "Term"
+local FilterModus = 3
+local xmlTab = {}
+local i = 0
+local tmpbuf = ""
+local PRNRTerm = ""
+
+xmlTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl, xmlPath, xmlTag,xmlAttribFilter, PRNRTermId, "","","","", FilterModus)
+
+if(nil == xmlTab or #xmlTab == 0) then
+	errFlag = 1987	-- Ref not found
+	PRNRTermStat = 0;	
+	print("no PRNRTermId: "..tostring(PRNRTermId))
+	engine.LastError = 1;
+else
+	for i = 1 ,#xmlTab do
+		tmpbuf = xmlTab[i].selectSingleNode(xmlSubPathTag)
+		if(tmpbuf ~= nil) then
+			PRNRTerm = tmpbuf.text
+		else
+			PRNRTerm = nil
+		end
+		if(nil == PRNRTerm or "" == PRNRTerm ) then
+			errFlag = 1987
+			PRNRTermStat = 0
+			print("CheckKnrListenId : no PRNRTermId: "..tostring(PRNRTermId))
+			engine.LastError = 1 
+		end
+		
+		if(engine.LastError == 0 and LibVW.codepartExecute (PRNRTerm) == 1) then
+			PRNRTermStat = 1
+		else
+			PRNRTermStat = 0
+		end				
+	end
+	
+end</Script></Function>
+

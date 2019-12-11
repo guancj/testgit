@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="symbolicWorspaceName" type="8" data=""/>
+<Variable id="timeout" type="8" data=""/>
+<Variable id="stepIdentifier" type="3" data="0"/>
+<Variable id="analysisSupportLevel" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>gdiWorkspace,gdiError= engine.GDI_CreateWorkspace(timeout, symbolicWorspaceName)</Script></Function>
+

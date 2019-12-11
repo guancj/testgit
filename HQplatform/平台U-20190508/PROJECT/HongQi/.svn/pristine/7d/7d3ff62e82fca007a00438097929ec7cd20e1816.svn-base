@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_SWE_FAS_RFK_SWA_ARE_ARE_02_NSS_3" flags="1">
+<ProcessParameters>
+<Variable id="FWEHndl" type="3" dir="0" data="FWEHndl"/>
+<Variable id="FASHndl" type="3" dir="0" data="FASHndl"/>
+<Variable id="SWEHndl" type="3" dir="0" data="SWEHndl"/>
+<Variable id="fFWE_Achsversatz_VA_shared" type="5" dir="0" data="0"/>
+<Variable id="fFWE_Dackelwinkel_shared" type="5" dir="0" data="0" description="蟹行角"/>
+<Variable id="fFWE_Achsversatz_HA_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVR_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHR_shared" type="5" dir="0" data="0"/>
+<Variable id="FWE_Symmetriewinkel_shared" type="5" dir="0" data="0"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="312" top="39" right="412" bottom="71"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="315" top="303" right="415" bottom="335"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="5" name="标定过程">
+<Rect left="313" top="109" right="413" bottom="141"/>
+<SubProcesses>
+<SubProcess id="SWE_Test">
+<Parameters>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK_1"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FAS_RFK_SWA">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="0"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="0"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="0"/>
+<Parameter id="isOK" value="false" ret="isOK_2"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FAS_KAS">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="0"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="0"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="0"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="0"/>
+<Parameter id="isOK" value="false" ret="isOK_3"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="c7_sgr">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Werkerueberwachung&quot;}"/>
+<Parameter id="SGR_Result" ret="SGR_Result"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="4" ActivityType="3" name="Fahrzeug nicht in Ruhe!">
+<Rect left="464" top="109" right="564" bottom="141"/>
+<Script>engine.StatValue = "Fahrzeug nicht in Ruhe!"
+engine.LastError = 1</Script><assessment block="4" ptbtext="DEP1368" group="122" pbltext="DEP1369" no="700" name="DEP1458" type="8" flags="97"/>
+</Activity>
+<Activity id="7" ActivityType="3" name="结束处理">
+<Rect left="622" top="108" right="722" bottom="140"/>
+<Script></Script></Activity>
+<Activity id="20" ActivityType="5" name="SWE_ARE_NSS">
+<Rect left="313" top="172" right="413" bottom="204"/>
+<SubProcesses>
+<SubProcess id="SWE_ARE_NSS">
+<Parameters>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="0"/>
+<Parameter id="fFWE_Symmetriewinkel_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausVL" value="0"/>
+<Parameter id="IDT_YPosRadhausVR" value="0"/>
+<Parameter id="IDT_YPosRadhausHL" value="0"/>
+<Parameter id="IDT_YPosRadhausHR" value="0"/>
+<Parameter id="FWE_Achsversatz_VA_shared" value="0"/>
+<Parameter id="FWE_Achsversatz_HA_shared" value="0"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="21" ActivityType="5" name="FAS ARE">
+<Rect left="314" top="237" right="414" bottom="269"/>
+<SubProcesses>
+<SubProcess id="Par_FAS">
+<Parameters>
+<Parameter id="FASHndl" value="FASHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="Par_ARE">
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="1">
+<Expression>(isOK_1 == true) and (isOK_2 == true) and (isOK_3 == true) and (SGR_Result == false)</Expression></Transition>
+<Transition StartId="3" EndId="20" type="0">
+</Transition>
+<Transition StartId="4" EndId="7" type="0">
+</Transition>
+<Transition StartId="20" EndId="21" type="0">
+</Transition>
+<Transition StartId="21" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

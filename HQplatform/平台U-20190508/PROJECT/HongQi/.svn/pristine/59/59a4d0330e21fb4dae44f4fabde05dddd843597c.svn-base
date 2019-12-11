@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_LDW_BoardPositonCheck" flags="1" block="4" ptbtext="DEP1368" group="122" pbltext="DEP1369">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="409" top="44" right="509" bottom="76"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="409" top="503" right="509" bottom="535"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="等待车道偏离报警板">
+<Rect left="410" top="110" right="510" bottom="142"/>
+<Line1Text Enable="1" Text="等待"/>
+<Script>engine.println(" &lt;FAS_RV_BoardPositonCheck&gt; :Wait for RV panel in working position")</Script></Activity>
+<Activity id="4" ActivityType="3" name="判断通讯句柄">
+<Rect left="409" top="174" right="509" bottom="206"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="731" top="174" right="831" bottom="206"/>
+<Script>engine.println(" &lt;FAS_LDW_BoardPositonCheck&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="28" ActivityType="3" name="wait init">
+<Rect left="410" top="241" right="510" bottom="273"/>
+<Script>timestart = os.clock();
+</Script></Activity>
+<Activity id="29" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="410" top="300" right="510" bottom="332"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram" value="&quot;&quot;"/>
+<Parameter id="filter" value="&quot;@8==0b????1???&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="30" ActivityType="3" name="Check">
+<Rect left="410" top="364" right="510" bottom="396"/>
+<Script>timeout = os.clock() - timestart</Script></Activity>
+<Activity id="31" ActivityType="3" name="Delay">
+<Rect left="558" top="299" right="658" bottom="331"/>
+<Script>engine.Delay(2000)</Script></Activity>
+<Activity id="34" ActivityType="3" name="不合格">
+<Rect left="731" top="363" right="831" bottom="395"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="35" ActivityType="3" name="finish_flag">
+<Rect left="559" top="363" right="659" bottom="395"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");
+engine.println(" &lt;FAS_LDW_BoardPositonCheck&gt; : finishflag --&gt;"..tostring(finishflag))</Script></Activity>
+<Activity id="36" ActivityType="3" name="统计">
+<Rect left="410" top="432" right="510" bottom="464"/>
+<Script>
+if(isOK == true) then
+engine.LastError = 0
+engine.println(" &lt;FAS_LDW_BoardPositonCheck&gt; :   OK --&gt;"..tostring(isOK))
+else
+engine.LastError = 1
+engine.println(" &lt;FAS_LDW_BoardPositonCheck&gt; :   NOK --&gt;"..tostring(isOK))
+end</Script><assessment no="22" name="DEP1399" type="8" flags="97"/>
+</Activity>
+<Activity id="37" ActivityType="4" name="路由节点">
+<Rect left="764" top="504" right="796" bottom="536"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="27" type="0">
+</Transition>
+<Transition StartId="4" EndId="28" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="27" EndId="34" type="0">
+</Transition>
+<Transition StartId="28" EndId="29" type="0">
+</Transition>
+<Transition StartId="29" EndId="30" type="0">
+</Transition>
+<Transition StartId="30" EndId="35" type="1">
+<Expression>isOK == false and timeout &lt; 20</Expression></Transition>
+<Transition StartId="30" EndId="36" type="0">
+</Transition>
+<Transition StartId="31" EndId="29" type="0">
+</Transition>
+<Transition StartId="34" EndId="37" type="0">
+</Transition>
+<Transition StartId="35" EndId="34" type="1">
+<Expression>finishflag</Expression></Transition>
+<Transition StartId="35" EndId="31" type="0">
+</Transition>
+<Transition StartId="36" EndId="2" type="0">
+</Transition>
+<Transition StartId="37" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="main" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="681" top="85" right="781" bottom="117"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="270" top="975" right="370" bottom="1007"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="OBD连接检查">
+<Rect left="271" top="168" right="371" bottom="200"/>
+<Script>engine.DialogBackColor = -1;
+TextPrompt = "";
+engine.ExecuteRpdPending();
+
+title = "VMT-"..tostring(engine.VmtId)
+TextPrompt = "请输入检测地点组"</Script></Activity>
+<Activity id="5" ActivityType="3" name="检测地点">
+<Rect left="271" top="229" right="371" bottom="261"/>
+<TitleText Enable="1" Text="&amp;title"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1" Text="&amp;TextPrompt"/>
+<Line3Text Enable="1"/>
+<ButtonLText Enable="1" Text="退出"/>
+<ButtonRText Enable="1" Text="确认"/>
+<Script>engine.VIN  = "";
+engine.VehiData = "";
+#INPUT  Str_Input
+
+
+</Script></Activity>
+<Activity id="6" ActivityType="3" name="检测点数据">
+<Rect left="272" top="291" right="372" bottom="323"/>
+<TitleText Enable="1"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<Script>if(Str_Input == "FASC1FIRAP03") then
+	engine.WorkPlace = "tL3"
+        Taufe = "auto"
+        engine.LastError = 0
+elseif(Str_Input == "FASC1FIRAP04") then
+	engine.WorkPlace = "tL4"
+        Taufe = "auto"
+        engine.LastError = 0
+else
+engine.WorkPlace = "---"
+engine.LastError = 1
+end
+</Script></Activity>
+<Activity id="7" ActivityType="4" name="路由节点">
+<Rect left="177" top="201" right="209" bottom="233"/>
+</Activity>
+<Activity id="13" ActivityType="4" name="路由节点">
+<Rect left="176" top="262" right="208" bottom="294"/>
+</Activity>
+<Activity id="14" ActivityType="3" name="OBD连接检查">
+<Rect left="405" top="228" right="505" bottom="260"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1" Text="已连接上车"/>
+<Line3Text Enable="1" Text="可以吗？"/>
+<Line4Text Enable="1"/>
+<ButtonLText Enable="1" Text="退出"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>#PRESSBUTTON</Script></Activity>
+<Activity id="17" ActivityType="3" name="获取VIN">
+<Rect left="273" top="356" right="373" bottom="388"/>
+<Script></Script></Activity>
+<Activity id="18" ActivityType="5" name="c7_fbe">
+<Rect left="274" top="419" right="374" bottom="451"/>
+<SubProcesses>
+<SubProcess id="c7_fbe">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ReadVIN&quot;}"/>
+<Parameter id="VIN" value="&quot;&quot;" ret="VIN"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="19" ActivityType="3" name="AUTO FZD">
+<Rect left="275" top="482" right="375" bottom="514"/>
+<Script>if(string.len(VIN) ==  17) then
+		
+	engine.SetLineText(1,"正在获取车辆数据");		
+	engine.VIN = VIN;		
+	engine.println("### VIN :" .. tostring(VIN))
+					
+	if(#engine.VehiData == 0)   then		
+		engine.Delay(4000);
+		engine.VIN = VIN;		
+	end;
+				
+	if(#engine.VehiData == 0) then
+		engine.DialogBackColor = "yellow";
+		engine.SetLineText(1,"获取车辆数据失败");
+		engine.Delay(1000);
+		engine.LastError = 1;
+	else
+		engine.KNR = string.sub(engine.VehiData,51,64);
+		engine.CarType = string.sub(engine.VehiData,13,16);
+		engine.LastError = 0;
+	end;
+
+end
+
+engine.println("&lt;main&gt;车辆数据:"..tostring(engine.VehiData));
+engine.SelectLayout(0);
+engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="20" ActivityType="3" name="Manual FZD">
+<Rect left="416" top="449" right="516" bottom="481"/>
+<Script>TextPrompt = ""</Script></Activity>
+<Activity id="21" ActivityType="3" name="提示扫描VIN">
+<Variables>
+<Variable id="my_var" type="8" data=""/>
+</Variables>
+<Rect left="550" top="449" right="650" bottom="481"/>
+<TitleText Enable="1" Text="&amp;title"/>
+<Line1Text Enable="1" Text="请输入7或14位车辆号"/>
+<Line2Text Enable="1" Text="请扫描车号"/>
+<Line3Text Enable="1" Text="&amp;TextPrompt"/>
+<ButtonLText Enable="1" Text="退出"/>
+<ButtonRText Enable="1" Text="确认"/>
+<Script>engine.VIN  = "";
+engine.VehiData = "";
+#INPUT  vehiclePid
+
+
+</Script></Activity>
+<Activity id="22" ActivityType="3" name="PID的处理">
+<Rect left="551" top="505" right="651" bottom="537"/>
+<TitleText Enable="1"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<Script>if( string.len(vehiclePid) ~= 8 and string.len(vehiclePid) ~=7 and string.len(vehiclePid)~= 14) then
+
+	if(vehiclePid == "DEP777") then
+	engine.VehiData = "  1157574CE 1521G3 0Q0QVJ    MJ                   79201611575740                LFV2A2152G3042019    0AE 0BC 0F2 0FA 0G7 0ID 0KA 0L2 0N5 0NA 0P0 0RB 0SM 0TA 0UA 0YA 1AT 1C2 1D0 1E1 1EY 1G4 1H0 1KX 1N6 1NL 1PA 1Q0 1S1 1SA 1T2 1W0 1Z0 1ZP 2B5 2C1 2D0 2E0 2G1 2JC 2LC 2PH 2UA 2V1 2W0 3B4 3C7 3FE 3H0 3J1 3L1 3LJ 3ML 3NS 3P0 3Q6 3QN 3S0 3U0 3Y0 3YQ 3ZM 4A0 4B4 4E8 4GF 4K3 4KC 4L2 4LA 4M4 4P1 4R4 4SE 4TB 4U5 4UE 4W0 4X0 4Z1 4ZC 5A8 5C8 5D1 5H2 5N6 5RQ 5SJ 5TT 6A0 6E4 6EA 6FF 6KD 6M0 6NF 6P5 6PC 6Q2 6QA 6SG 6T1 6U0 6W7 6XN 7AA 7B0 7E2 7GR 7JZ 7K6 7L3 7M5 7N2 7P5 7PA 7Q0 7QA 7R3 7X3 8GG 8ID 8K0 8L4 8M0 8N1 8Q1 8RL 8S2 8SD 8T2 8TC 8W0 8WB 8X0 8Y1 8Z7 9A0 9AB 9D0 9F0 9FB 9GH 9J0 9JD 9M0 9P3 9Q1 9T0 9TA 9U0 9WA 9Y1 9ZU A8C AZ0 B36 C2L DP7 E0A F0A FB0 G01 G1A GP2 H4G I6F J1L K8L KA0 L0L L20 N0K Q1A QA0 QD2 QG0 QI3 QJ3 QQ1 QS0 TJ5 U0C UA6 UF0 UG1 V0A VC0 VF0 VK0 VL0                                     X8D                 DP7                                                                            00300H0004090201201PY0130003032000003300000420000043000004400000450000063019R064000506900000700000076000007700000780000079000011600001170000322000032300003910000434000052300005240000574N   601G   6174                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          79M20006172016M2000617                                                        SZ0104E906057DFSZ02V03935215NYSZ0309G927749H SZ04V03935211GPSZ051JD907379F SZ06V03935216DRSZ07V03935009UGSZ08V03935009UHSZ13V03935003SVSZ14V03935003SWSZ1518D937086G SZ16V03935233FJSZ17V03935005GVSZ18V03935005GWSZ35V03935014RMSZ36V03935014RNSZ436RD959655B SZ44V03935234CJSZ4718G920860B SZ48V03935216BDSZ5118D909901  SZ52NO CORINF  SZ59V03935005KJSZ60V03935005GUSZ77V03935003SXSZ78V03935003SYSZA1V03935015DYSZAQV03935014RSSZAYNO CORINF  SZBC180909144G SZBDV03935223JVSZCGV03935004WBSZCHV03935004WCSZCWV03935009UUSZCXV03935014RTSZDI18G959801B SZDJV03935219TRSZDK18G959802B SZDLV03935219TTSZDQV03935014RWSZDRV03935014RXSZE45K0953234  SZE5V03935193KJSZE618G959811C SZE7V03935219TLSZE818G959812C SZE9V03935219TKSZFYNO CORINF  SZHGV03935014RYSZHWV03935007HXSZHXV03935007HYSZII31G035185  SZIJV03935008LFSZJ6V03935009DDSZJAV03935015DXSZJC31G035185  SZJS18G919064                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ";
+	
+	
+
+	engine.LastError = 0;
+	else
+	
+	TextPrompt =  "PID号长度错误！重新输入！";
+	engine.LastError = 1;
+	
+	end;
+
+else
+	--7位长度
+	if(string.len(vehiclePid) ==  7) then
+		
+		engine.SetLineText(1,"正在获取车辆数据");
+		
+		engine.KNR = vehiclePid;
+		
+		engine.println("### vehiclePid :" .. tostring(vehiclePid))
+		
+		
+		
+		if(#engine.VehiData == 0)   then
+		
+		engine.Delay(4000);
+		engine.KNR = vehiclePid;
+		
+		end;
+		
+		
+		if(#engine.VehiData == 0) then
+		engine.DialogBackColor = "yellow";
+		engine.SetLineText(1,"获取车辆数据失败");
+		engine.ShowMessage();
+		engine.Delay(1000);
+		engine.LastError = 1;
+		else
+		engine.VIN = string.sub(engine.VehiData,81,97);
+		engine.CarType = string.sub(engine.VehiData,13,16);
+		engine.LastError = 0;
+		end;
+	
+	end;
+	
+	--14位长度
+	if(string.len(vehiclePid) ==  14) then
+	
+		engine.SetLineText(1,"正在获取车辆数据");
+		engine.ShowMessage();
+		engine.KNR = string.sub(vehiclePid,7,13);
+		
+		
+		if(#engine.VehiData == 0)   then
+		
+		engine.Delay(4000);
+		engine.KNR = string.sub(vehiclePid,7,13);
+		
+		end;
+		
+		
+		
+		if(#engine.VehiData == 0) then
+		engine.DialogBackColor = "yellow";
+		engine.SetLineText(1,"获取车辆数据失败");
+		engine.ShowMessage();
+		engine.Delay(1000);
+		engine.LastError = 1;
+		else
+		engine.VIN = string.sub(engine.VehiData,81,97);
+		engine.CarType = string.sub(engine.VehiData,13,16);
+		engine.LastError = 0;
+		end;
+	
+	end;
+	
+	--8位长度
+	if(string.len(vehiclePid) ==  8) then
+	
+		engine.SetLineText(1,"正在获取车辆数据");
+		engine.ShowMessage();
+		engine.KNR = string.sub(vehiclePid,1,7);
+		
+		
+		
+		if(#engine.VehiData == 0)   then
+		
+		engine.Delay(4000);
+		engine.KNR = string.sub(vehiclePid,1,7);
+		
+		end;
+		
+		
+		
+		if(#engine.VehiData == 0) then
+		engine.DialogBackColor = "yellow";
+		engine.SetLineText(1,"获取车辆数据失败");
+		engine.ShowMessage();
+		engine.Delay(1000);
+		engine.LastError = 1;
+		else
+		engine.VIN = string.sub(engine.VehiData,81,97);
+		engine.CarType = string.sub(engine.VehiData,13,16);
+		engine.LastError = 0;
+		end;
+	
+	end;
+	
+	
+	
+end;
+
+engine.println("&lt;main&gt;车辆数据:"..tostring(engine.VehiData));
+engine.SelectLayout(0);
+engine.DialogBackColor = -1;
+</Script></Activity>
+<Activity id="23" ActivityType="4" name="路由节点">
+<Rect left="583" top="168" right="615" bottom="200"/>
+</Activity>
+<Activity id="25" ActivityType="3" name="全局量初始化">
+<Rect left="274" top="560" right="374" bottom="592"/>
+<Script>engine.SharedVarSet("_GlobalFinishShared",0) -- 全局结束标志 设置 1 结束
+engine.SharedVarSet("_Fahrzeugstatus_FSP","FAS") -- fsp 过滤过程控制
+engine.SharedVarSet("_DStr_FirapName_shared","FWEC1FIRAP05") -- firap name
+
+engine.SharedVarSet("_DStr_HUP_Kam_Pos_Anfahren","") -- HUP 相机位置记录
+engine.SharedVarSet("_DStr_HUP_Kam_Pos_Anfahren_ERG","") -- HUP 相机ERG位置
+
+engine.SharedVarSet("_DInt_HUD_RefPkt_shared",0) -- AK Z方向偏差
+
+--Fahrzeugstatus_FSP = engine.SharedVarGet("_Fahrzeugstatus_FSP")
+--engine.println("&lt;main&gt;Fahrzeugstatus_FSP :"..tostring(Fahrzeugstatus_FSP))</Script></Activity>
+<Activity id="27" ActivityType="3" name="普通节点">
+<Rect left="552" top="561" right="652" bottom="593"/>
+<Script></Script></Activity>
+<Activity id="28" ActivityType="3" name="车辆数据">
+<Rect left="64" top="357" right="164" bottom="389"/>
+<Script>engine.KNR= "79201641552650"
+engine.VehiData = " 04155265HV 4XL0NY 0E0EVBX9SD11                   79201641552650M1  0207        LFV6A24G7G3124388    0C0 0EE 0FS 0G7 0JZ 0K0 0M5 0NA 0P0 0RC 0SX 0TD 0U0 0XF 0Y5 0YZ 1A2 1AT 1BS 1D0 1E1 1ER 1G5 1LL 1N8 1PD 1QC 1S1 1SH 1T2 1VH 1X1 1Z0 2C7 2D0 2EA 2K1 2T5 2V9 2WA 2Z8 2ZS 3B7 3D6 3FU 3G0 3GA 3L4 3M3 3ND 3S0 3X0 3Y5 4A4 4E7 4F2 4GQ 4KC 4L6 4UE 4V1 4X4 4ZB 5C0 5D4 5J0 5K0 5RU 5SL 6E3 6EA 6F0 6FA 6M0 6NJ 6RB 6SS 6V1 6W7 6XL 6Y2 73A 7A7 7AL 7E0 7F9 7G0 7HE 7JV 7K9 7L8 7M1 7MJ 7P3 7PA 7TL 7UG 7W4 7X2 7Y5 8G4 8IT 8K4 8Q3 8RY 8SP 8T4 8X1 8Z6 9AQ 9G3 9JC 9M0 9P3 9Q8 9R0 9WC 9Z3 9ZK A00 A56 A60 A8S AQ0 AV1 B1P B36 C00 C0J D11 E0A EA0 EF1 EH0 EP0 ER6 EV0 EW0 F0A FA0 FC0 FM0 FQ0 FZ1 G1D GH1 GP2 GZ0 H2E I8H IW0 IX1 J0P K8L KA6 KK1 KS1 KT1 KU2 L0L N5D NJ0 NM1 NT0 NY0 Q1H QE1 QF0 QK1 QQ2 QR8 QV0 QW4 TM8 U1A UH2 UI2 UJ1 V0A VC0 VG6 WZG YEG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            SZ014G2907551B SZ0206E909102Q SZ034G0927166D SZ040B5909103C SZ054G0907379S SZ064GD909504D SZ074H0907064HRSZ084GD909517E SZ094G8959760E SZ0A4G0919604M SZ0B4GD909463A SZ0C4G0919158S SZ0D4GD909861B SZ0GV03935004VQSZ0IV03935004VRSZ0K4GD881073  SZ0L4GD909882A SZ0O4GD881073  SZ0P4GD909883A SZ0Q4H0980945B SZ0R4G0909614C SZ0U8K0959663F SZ0Y4H0907658B SZ104GD909866A SZ134G0820043CESZ144GD909862D SZ154H0907063GHSZ164GD909514G SZ178U0955559C SZ184GD909530B SZ198K0959772E SZ204GD909544A SZ218K0959772E SZ224GD909544A SZ238K0959772E SZ244GD909572A SZ258K0959772E SZ264GD909572A SZ31V03935004TRSZ32V03935013NYSZ35V03935012FZSZ364GD909542D SZ394G0907561B SZ404GD909863C SZ434GD959655B SZ444GD909602B SZ454H0953568G SZ464GD909853A SZ474GD920931A SZ484GD909525E SZ514G8907468H SZ524GD909515K SZ538K0907144N SZ544GD909848B SZ574G8959760E SZ584GD909856A SZ614G0907566M SZ624GD909535B SZ654G0959793B SZ664GD909872B SZ674H0907064HRSZ684GD909501F SZ694G5035223D SZ704GD909510C SZ714G0959792C SZ724GD909873B SZ734H0907801L SZ744GD909522D SZ754H4907357E SZ764GD909865B SZ79V03935004TQSZ80V03935004UXSZ834G0959795  SZ844GD909875B SZ894GD955119  SZ904GD909864A SZ934H0907428E SZ944GD909460C SZ954G5959107C SZ964GD909541D SZ974G0959795  SZ984GD909874B SZA3V03935004UJSZA54G0941531BGSZA7V03935004TPSZAA4H0959126B SZAC4H0905852C SZAG4G0951177A SZAI8K0959754C SZAM1K0951605C SZAOV03935004UFSZAQ8S0915181B SZAS4G1919610H SZAY4GD959591A SZAZ4GD909888B SZB1V03959801LLSZBA4G0907568M SZBC4G0909144T SZBD4GD909852G SZBKV03935004SYSZBL4GD909550B SZBM4H0907217F SZBN4GD909547C SZBO4G0907637L SZBP4GD909573A SZBQ4G0907541B SZBR4GD909885C SZBS4H0907107H SZBT4GD909548F SZBWV03935004TFSZBY4G0947135K SZBZ4GD909523A SZC64G1035049C SZC74GD909545H SZC8V03935004THSZCG4G0951528E SZCY4H0980946B SZCZ4G0909615C SZD44GD919605G SZD6V03935012NESZD74GD909546A SZDA4H0907658B SZDC4G0907553G SZDD4GD909553D SZDE4H0907705K SZDF4GD909844A SZE2V03935003UUSZE3V03935005CQSZEAV03935005CLSZECV03935005DHSZEEV03935005DGSZEYV03935014WESZEZV03935016JHSZF0V03935004TJSZFSV03935007JJSZFWV03935012KLSZFY4GD959591A SZFZ4GD909558A SZGAV03935008TZSZGUV03935005KWSZHQ4G0907568M SZI4V03935012KKSZI54GD909811A SZJKV03935008NPSZJUV03935015AFSZJWV03935015LXSZKQV03935012KJSZKRV03935015AGSZLSV03935011AVSZNC4H0963459  SZOSV03935012ZMSZPANO CORINF  SZR0V03935004TCSZRENO CORINF  SZZ1V03959101RM                                                                           ";</Script></Activity>
+<Activity id="29" ActivityType="3" name="for test">
+<Rect left="64" top="426" right="164" bottom="458"/>
+<Script></Script></Activity>
+<Activity id="30" ActivityType="5" name="FAS_Main">
+<Rect left="63" top="495" right="163" bottom="527"/>
+<SubProcesses>
+<SubProcess id="FAS_Main">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="35" ActivityType="3" name="车辆数据">
+<Rect left="681" top="210" right="781" bottom="242"/>
+<Script>engine.KNR= "79201641552650"
+engine.VehiData = " 04155265HV 4XL0NY 0E0EVBX9SD11                   79201641552650M1  0207        LFV6A24G7G3124388    0C0 0EE 0FS 0G7 0JZ 0K0 0M5 0NA 0P0 0RC 0SX 0TD 0U0 0XF 0Y5 0YZ 1A2 1AT 1BS 1D0 1E1 1ER 1G5 1LL 1N8 1PD 1QC 1S1 1SH 1T2 1VH 1X1 1Z0 2C7 2D0 2EA 2K1 2T5 2V9 2WA 2Z8 2ZS 3B7 3D6 3FU 3G0 3GA 3L4 3M3 3ND 3S0 3X0 3Y5 4A4 4E7 4F2 4GQ 4KC 4L6 4UE 4V1 4X4 4ZB 5C0 5D4 5J0 5K0 5RU 5SL 6E3 6EA 6F0 6FA 6M0 6NJ 6RB 6SS 6V1 6W7 6XL 6Y2 73A 7A7 7AL 7E0 7F9 7G0 7HE 7JV 7K9 7L8 7M1 7MJ 7P3 7PA 7TL 7UG 7W4 7X2 7Y5 8G4 8IT 8K4 8Q3 8RY 8SP 8T4 8X1 8Z6 9AQ 9G3 9JC 9M0 9P3 9Q8 9R0 9WC 9Z3 9ZK A00 A56 A60 A8S AQ0 AV1 B1P B36 C00 C0J D11 E0A EA0 EF1 EH0 EP0 ER6 EV0 EW0 F0A FA0 FC0 FM0 FQ0 FZ1 G1D GH1 GP2 GZ0 H2E I8H IW0 IX1 J0P K8L KA6 KK1 KS1 KT1 KU2 L0L N5D NJ0 NM1 NT0 NY0 Q1H QE1 QF0 QK1 QQ2 QR8 QV0 QW4 TM8 U1A UH2 UI2 UJ1 V0A VC0 VG6 WZG YEG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            SZ014G2907551B SZ0206E909102Q SZ034G0927166D SZ040B5909103C SZ054G0907379S SZ064GD909504D SZ074H0907064HRSZ084GD909517E SZ094G8959760E SZ0A4G0919604M SZ0B4GD909463A SZ0C4G0919158S SZ0D4GD909861B SZ0GV03935004VQSZ0IV03935004VRSZ0K4GD881073  SZ0L4GD909882A SZ0O4GD881073  SZ0P4GD909883A SZ0Q4H0980945B SZ0R4G0909614C SZ0U8K0959663F SZ0Y4H0907658B SZ104GD909866A SZ134G0820043CESZ144GD909862D SZ154H0907063GHSZ164GD909514G SZ178U0955559C SZ184GD909530B SZ198K0959772E SZ204GD909544A SZ218K0959772E SZ224GD909544A SZ238K0959772E SZ244GD909572A SZ258K0959772E SZ264GD909572A SZ31V03935004TRSZ32V03935013NYSZ35V03935012FZSZ364GD909542D SZ394G0907561B SZ404GD909863C SZ434GD959655B SZ444GD909602B SZ454H0953568G SZ464GD909853A SZ474GD920931A SZ484GD909525E SZ514G8907468H SZ524GD909515K SZ538K0907144N SZ544GD909848B SZ574G8959760E SZ584GD909856A SZ614G0907566M SZ624GD909535B SZ654G0959793B SZ664GD909872B SZ674H0907064HRSZ684GD909501F SZ694G5035223D SZ704GD909510C SZ714G0959792C SZ724GD909873B SZ734H0907801L SZ744GD909522D SZ754H4907357E SZ764GD909865B SZ79V03935004TQSZ80V03935004UXSZ834G0959795  SZ844GD909875B SZ894GD955119  SZ904GD909864A SZ934H0907428E SZ944GD909460C SZ954G5959107C SZ964GD909541D SZ974G0959795  SZ984GD909874B SZA3V03935004UJSZA54G0941531BGSZA7V03935004TPSZAA4H0959126B SZAC4H0905852C SZAG4G0951177A SZAI8K0959754C SZAM1K0951605C SZAOV03935004UFSZAQ8S0915181B SZAS4G1919610H SZAY4GD959591A SZAZ4GD909888B SZB1V03959801LLSZBA4G0907568M SZBC4G0909144T SZBD4GD909852G SZBKV03935004SYSZBL4GD909550B SZBM4H0907217F SZBN4GD909547C SZBO4G0907637L SZBP4GD909573A SZBQ4G0907541B SZBR4GD909885C SZBS4H0907107H SZBT4GD909548F SZBWV03935004TFSZBY4G0947135K SZBZ4GD909523A SZC64G1035049C SZC74GD909545H SZC8V03935004THSZCG4G0951528E SZCY4H0980946B SZCZ4G0909615C SZD44GD919605G SZD6V03935012NESZD74GD909546A SZDA4H0907658B SZDC4G0907553G SZDD4GD909553D SZDE4H0907705K SZDF4GD909844A SZE2V03935003UUSZE3V03935005CQSZEAV03935005CLSZECV03935005DHSZEEV03935005DGSZEYV03935014WESZEZV03935016JHSZF0V03935004TJSZFSV03935007JJSZFWV03935012KLSZFY4GD959591A SZFZ4GD909558A SZGAV03935008TZSZGUV03935005KWSZHQ4G0907568M SZI4V03935012KKSZI54GD909811A SZJKV03935008NPSZJUV03935015AFSZJWV03935015LXSZKQV03935012KJSZKRV03935015AGSZLSV03935011AVSZNC4H0963459  SZOSV03935012ZMSZPANO CORINF  SZR0V03935004TCSZRENO CORINF  SZZ1V03959101RM                                                                           ";</Script></Activity>
+<Activity id="39" ActivityType="5" name="Par_P_Modes_deaktiveren_FAS_2">
+<Rect left="683" top="291" right="783" bottom="323"/>
+<SubProcesses>
+<SubProcess id="Par_P_Modes_deaktiveren_FAS_2">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="41" ActivityType="13" name="DTC_Filter_Mit_Audi">
+<Rect left="275" top="630" right="375" bottom="662"/>
+<FunctionRef id="DTC_Filter_Mit_Audi" model="LibVW">
+<Parameters>
+<Parameter id="SG_Name" value="&quot;ABA&quot;"/>
+<Parameter id="Process_Short" value="engine.SharedVarGet(&quot;_Fahrzeugstatus_FSP&quot;)"/>
+<Parameter id="Konfigfile" value="&quot;c7_fsp_filter.xml&quot;"/>
+<Parameter id="FSPReadStatus" value="3"/>
+<Parameter id="FSP_String" value="&quot;&quot;"/>
+<Parameter id="UDS_DTC_CODE" value="{0x123445}"/>
+<Parameter id="DTC_String_filtered" ret="xx"/>
+<Parameter id="DTC_Table_list_Pcode" ret="yy"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="43" ActivityType="3" name="全局量初始化">
+<Rect left="680" top="145" right="780" bottom="177"/>
+<Script>engine.SharedVarSet("_GlobalFinishShared",0) -- 全局结束标志 设置 1 结束
+engine.SharedVarSet("_Fahrzeugstatus_FSP","FAS") -- fsp 过滤过程控制
+Fahrzeugstatus_FSP = engine.SharedVarGet("_Fahrzeugstatus_FSP")
+engine.println("&lt;main&gt;Fahrzeugstatus_FSP :"..tostring(Fahrzeugstatus_FSP))
+
+engine.WorkPlace = "FAS"</Script></Activity>
+<Activity id="58" ActivityType="13" name="StatisticResultList">
+<Rect left="63" top="571" right="163" bottom="603"/>
+<FunctionRef id="StatisticResultList" model="LibGeneral">
+<Parameters>
+<Parameter id="Flag_ShowTBLResult" value="true"/>
+<Parameter id="testResult" value="0"/>
+<Parameter id="textPblSel"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="60" ActivityType="3" name="saveresult">
+<Rect left="64" top="645" right="164" bottom="677"/>
+<Script>local StatisticTestResult = engine.GetResults();
+
+
+if (#StatisticTestResult ~= 0) then
+
+engine.SaveResultXml("");
+
+engine.SetLineText(0,"");
+engine.SetLineText(1,"测试结果打印中");
+engine.SetLineText(2,"请断开OBD接口");
+engine.SetLineText(3,"");
+engine.ShowMessage();
+
+end;</Script></Activity>
+<Activity id="68" ActivityType="3" name="普通节点">
+<Rect left="1485" top="385" right="1585" bottom="417"/>
+<Script></Script></Activity>
+<Activity id="78" ActivityType="5" name="c7_rfk">
+<Rect left="684" top="349" right="784" bottom="381"/>
+<SubProcesses>
+<SubProcess id="c7_rfk">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;RFKCalibration&quot;}"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="fFWE_Achsversatz_VA_shared"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="fFWE_Achsversatz_HA_shared"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="IDT_YPosRadhausVL_shared"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="IDT_YPosRadhausVR_shared"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="IDT_YPosRadhausHL_shared"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="IDT_YPosRadhausHR_shared"/>
+<Parameter id="fFAS_RearView_Z_korrekt" value="0" ret="fFAS_RearView_X_korrekt"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="79" ActivityType="3" name="车辆数据">
+<Rect left="811" top="212" right="911" bottom="244"/>
+<Script>engine.KNR= "79201641552650"
+--engine.VehiData = " 04155265HV 4XL0NY 0E0EVBX9SD11                   79201641552650M1  0207        LFV6A24G7G3124388    0C0 0EE 0FS 0G7 0JZ 0K0 0M5 0NA 0P0 0RC 0SX 0TD 0U0 0XF 0Y5 0YZ 1A2 1AT 1BS 1D0 1E1 1ER 1G5 1LL 1N8 1PD 1QC 1S1 1SH 1T2 1VH 1X1 1Z0 2C7 2D0 2EA 2K1 2T5 2V9 2WA 2Z8 2ZS 3B7 3D6 3FU 3G0 3GA 3L4 3M3 3ND 3S0 3X0 3Y5 4A4 4E7 4F2 4GQ 4KC 4L6 4UE 4V1 4X4 4ZB 5C0 5D4 5J0 5K0 5RU 5SL 6E3 6EA 6F0 6FA 6M0 6NJ 6RB 6SS 6V1 6W7 6XL 6Y2 73A 7A7 7AL 7E0 7F9 7G0 7HE 7JV 7K9 7L8 7M1 7MJ 7P3 7PA 7TL 7UG 7W4 7X2 7Y5 8G4 8IT 8K4 8Q3 8RY 8SP 8T4 8X1 8Z6 9AQ 9G3 9JC 9M0 9P3 9Q8 9R0 9WC 9Z3 9ZK A00 A56 A60 A8S AQ0 AV1 B1P B36 C00 C0J D11 E0A EA0 EF1 EH0 EP0 ER6 EV0 EW0 F0A FA0 FC0 FM0 FQ0 FZ1 G1D GH1 GP2 GZ0 H2E I8H IW0 IX1 J0P K8L KA6 KK1 KS1 KT1 KU2 L0L N5D NJ0 NM1 NT0 NY0 Q1H QE1 QF0 QK1 QQ2 QR8 QV0 QW4 TM8 U1A UH2 UI2 UJ1 V0A VC0 VG6 WZG YEG                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            SZ014G2907551B SZ0206E909102Q SZ034G0927166D SZ040B5909103C SZ054G0907379S SZ064GD909504D SZ074H0907064HRSZ084GD909517E SZ094G8959760E SZ0A4G0919604M SZ0B4GD909463A SZ0C4G0919158S SZ0D4GD909861B SZ0GV03935004VQSZ0IV03935004VRSZ0K4GD881073  SZ0L4GD909882A SZ0O4GD881073  SZ0P4GD909883A SZ0Q4H0980945B SZ0R4G0909614C SZ0U8K0959663F SZ0Y4H0907658B SZ104GD909866A SZ134G0820043CESZ144GD909862D SZ154H0907063GHSZ164GD909514G SZ178U0955559C SZ184GD909530B SZ198K0959772E SZ204GD909544A SZ218K0959772E SZ224GD909544A SZ238K0959772E SZ244GD909572A SZ258K0959772E SZ264GD909572A SZ31V03935004TRSZ32V03935013NYSZ35V03935012FZSZ364GD909542D SZ394G0907561B SZ404GD909863C SZ434GD959655B SZ444GD909602B SZ454H0953568G SZ464GD909853A SZ474GD920931A SZ484GD909525E SZ514G8907468H SZ524GD909515K SZ538K0907144N SZ544GD909848B SZ574G8959760E SZ584GD909856A SZ614G0907566M SZ624GD909535B SZ654G0959793B SZ664GD909872B SZ674H0907064HRSZ684GD909501F SZ694G5035223D SZ704GD909510C SZ714G0959792C SZ724GD909873B SZ734H0907801L SZ744GD909522D SZ754H4907357E SZ764GD909865B SZ79V03935004TQSZ80V03935004UXSZ834G0959795  SZ844GD909875B SZ894GD955119  SZ904GD909864A SZ934H0907428E SZ944GD909460C SZ954G5959107C SZ964GD909541D SZ974G0959795  SZ984GD909874B SZA3V03935004UJSZA54G0941531BGSZA7V03935004TPSZAA4H0959126B SZAC4H0905852C SZAG4G0951177A SZAI8K0959754C SZAM1K0951605C SZAOV03935004UFSZAQ8S0915181B SZAS4G1919610H SZAY4GD959591A SZAZ4GD909888B SZB1V03959801LLSZBA4G0907568M SZBC4G0909144T SZBD4GD909852G SZBKV03935004SYSZBL4GD909550B SZBM4H0907217F SZBN4GD909547C SZBO4G0907637L SZBP4GD909573A SZBQ4G0907541B SZBR4GD909885C SZBS4H0907107H SZBT4GD909548F SZBWV03935004TFSZBY4G0947135K SZBZ4GD909523A SZC64G1035049C SZC74GD909545H SZC8V03935004THSZCG4G0951528E SZCY4H0980946B SZCZ4G0909615C SZD44GD919605G SZD6V03935012NESZD74GD909546A SZDA4H0907658B SZDC4G0907553G SZDD4GD909553D SZDE4H0907705K SZDF4GD909844A SZE2V03935003UUSZE3V03935005CQSZEAV03935005CLSZECV03935005DHSZEEV03935005DGSZEYV03935014WESZEZV03935016JHSZF0V03935004TJSZFSV03935007JJSZFWV03935012KLSZFY4GD959591A SZFZ4GD909558A SZGAV03935008TZSZGUV03935005KWSZHQ4G0907568M SZI4V03935012KKSZI54GD909811A SZJKV03935008NPSZJUV03935015AFSZJWV03935015LXSZKQV03935012KJSZKRV03935015AGSZLSV03935011AVSZNC4H0963459  SZOSV03935012ZMSZPANO CORINF  SZR0V03935004TCSZRENO CORINF  SZZ1V03959101RM                                                                           ";
+engine.VehiData = " 44515177HV 4XL0AH 0E0EFZX9SM9X                   79201645151774M1  0561        LFV5A24G5G3124742    0C0 0EE 0FS 0G7 0JJ 0K0 0M5 0NA 0P0 0RC 0SX 0TD 0U0 0XF 0Y5 0YL 1A2 1AS 1BB 1D0 1E1 1ER 1G5 1KW 1LA 1PD 1QC 1S1 1SH 1T2 1VH 1X0 1Z0 2C5 2D0 2K1 2T5 2V9 2WA 2Z8 2ZS 3B7 3D1 3FU 3G0 3GA 3L5 3M3 3ND 3S0 3X0 3Y5 4A0 4D0 4E2 4GQ 4K4 4KC 4L6 4UE 4V0 4X4 4ZB 5C0 5D4 5J0 5K0 5MG 5RU 5SL 6E3 6EA 6F0 6FA 6M0 6NJ 6RB 6SS 6V1 6W7 6XE 6Y2 73A 7A7 7AL 7E0 7F9 7G0 7HA 7JV 7K9 7L8 7M1 7MJ 7P1 7PA 7UG 7W0 7X2 7Y0 8G0 8IT 8K4 8Q3 8SP 8T1 8X1 8Z6 9AQ 9G3 9JC 9M0 9P3 9Q8 9R0 9VD 9WC 9Z0 9ZK A00 A56 A60 A8S AQ0 AV1 B1P B36 C00 C4H E0A EA0 EF0 EH0 EP0 ER6 EV0 EW0 F0A FA0 FC0 FM0 FQ0 FZ1 G0Z GH0 GP2 GZ0 HN4 I8H IW0 IX1 J0P K8L KA2 KK1 KS0 KT0 L0L M9X N5W NJ0 NM1 NT0 NY0 Q1A QE1 QF0 QK0 QQ0 QR8 QV0 QW1 QZ7 TF8 U1A UH2 UI2 UJ1 V0A VC0 VG6 WZF YED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            SZ014G0907473B SZ0206E909102AASZ034G1927155L SZ04V03935105RTSZ054G0907379S SZ064GD909504D SZ074H0907064HQSZ084GD909517E SZ09V03935004SNSZ0AV03935003E SZ0B4GD909463A SZ0C4G0919158Q SZ0D4GD909861B SZ0GV03935004VQSZ0IV03935004VRSZ0KV03935004TUSZ0L4GD909882A SZ0OV03935004TVSZ0P4GD909883A SZ0QV03935004LCSZ0R4G0909614C SZ0U8K0959663F SZ0Y4H0907658B SZ104GD909866A SZ134G0820043CCSZ144GD909862D SZ154H0907063GHSZ164GD909514G SZ178U0955559C SZ184GD909530B SZ19V03935004TWSZ204GD909544A SZ21V03935004TXSZ224GD909544A SZ23V03935004STSZ244GD909572A SZ25V03935004UNSZ264GD909572A SZ31V03935004TRSZ32V03935013NYSZ35V03935012FZSZ364GD909542D SZ39V03935004UUSZ404GD909863C SZ434GD959655B SZ444GD909602B SZ454GD953568A SZ464GD909853A SZ474GD920930T SZ484GD909525E SZ514G8907468H SZ524GD909515K SZ53V03935004TYSZ54V03935004USSZ57V03935004TTSZ584GD909856A SZ61V03935004UPSZ624GD909535B SZ654G0959793C SZ664GD909872B SZ674H0907064HQSZ684GD909501G SZ69V03935012ZKSZ70V03935012ZLSZ714G0959792C SZ724GD909873B SZ734H0907801M SZ744GD909522E SZ754H4907357E SZ764GD909865B SZ79V03935004TQSZ80V03935004UXSZ834G0959795  SZ844GD909875B SZ894GD955119  SZ904GD909864A SZ934S0907441B SZ944GD909460B SZ95V03935004U SZ964GD909541D SZ974G0959795  SZ984GD909874B SZA3V03935004UJSZA54G0941531BESZA7V03935004TPSZAA4H0959126B SZAC4H0905852C SZAG4G0951177B SZAI8K0959754C SZAM1K0951605C SZAOV03935004UFSZAQ8S0915181B SZAS4G1919610G SZAY4GD959591A SZAZ4GD909888B SZB1V03959801LLSZBAV03935004TDSZBC4G0909144T SZBD4GD909852G SZBKV03935004SYSZBL4GD909550B SZBMV03935012KHSZBN4GD909547C SZBO4G0907637H SZBP4GD909573A SZBQV03935003FFSZBR4GD909885C SZBSV03935004SVSZBT4GD909548F SZBWV03935004TFSZBY4G0947135H SZBZ4GD909523A SZC64G1035049C SZC74GD909545H SZC8V03935004THSZCG4G0951528E SZCYV03935004XKSZCZ4G0909615C SZD44GD919605G SZD6V03935012NESZD74GD909546A SZDA4H0907658B SZDCV03935004TKSZDD4GD909553D SZDEV03935004TLSZDF4GD909844A SZE2V03935003UUSZE3V03935005CQSZEAV03935005CLSZECV03935005DHSZEEV03935005DGSZEYV03935019BLSZEZV03935019BMSZF0V03935004TJSZFSV03935007JJSZFWV03935012KLSZFY4GD959591A SZFZ4GD909558A SZGAV03935008TZSZGUV03935005KWSZHQV03935012KMSZI4V03935012KKSZI54GD909811A SZJKV03935008NPSZJUV03935015AFSZJWV03935015LXSZKQV03935012KJSZKRV03935015AGSZLSV03935011AVSZNC4H0963459  SZOSV03935012ZMSZPANO CORINF  SZR0V03935004TCSZRENO CORINF  SZZ1V03959101RM";</Script></Activity>
+<Activity id="87" ActivityType="5" name="Par_P_Modes_2_1_IEL_FUN">
+<Rect left="807" top="359" right="907" bottom="391"/>
+<SubProcesses>
+<SubProcess id="Par_P_Modes_2_1_IEL_FUN">
+</SubProcess>
+<SubProcess id="Par_P_Modes_2_1_KEL">
+</SubProcess>
+<SubProcess id="Par_ZDC_Check_2_2_ARE_ARE02">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="88" ActivityType="5" name="Par_P_Modes_2_1_IEL_FUN">
+<Rect left="810" top="298" right="910" bottom="330"/>
+<SubProcesses>
+<SubProcess id="Par_P_Modes_2_1_IEL_FUN">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="89" ActivityType="5" name="c7_hud">
+<Rect left="952" top="298" right="1052" bottom="330"/>
+<SubProcesses>
+<SubProcess id="c7_hud">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;ChangeEOL&quot;,&quot;Login&quot;,&quot;BHtestPattern&quot;,&quot;HWtestPattern&quot;,&quot;BGWtestPattern&quot;,&quot;ReadReferencePoint&quot;,&quot;WriteReferencePoint&quot;,&quot;WriteWarpingMatrix&quot;}"/>
+<Parameter id="DString_HUP_WarpingMatrix_shared" value="&quot;&quot;"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="90" ActivityType="5" name="Par_DTC_ARE_ARE_02_BSV_BTU_RAD_BVE_4">
+<Rect left="929" top="401" right="1029" bottom="433"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_ARE_ARE_02_BSV_BTU_RAD_BVE_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="91" ActivityType="5" name="Par_DTC_ESP_EUL_EZE_RGS_LV_NSS_4">
+<Rect left="930" top="465" right="1030" bottom="497"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_ESP_EUL_EZE_RGS_LV_NSS_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="92" ActivityType="5" name="Par_DTC_FSV_FTR_LI_FTR_RE_RGS_RV_DWE_EFB_4">
+<Rect left="930" top="527" right="1030" bottom="559"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_FSV_FTR_LI_FTR_RE_RGS_RV_DWE_EFB_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="93" ActivityType="5" name="Par_DTC_FTU_GET_GWA_HGE_SDV_EHI_4">
+<Rect left="931" top="607" right="1031" bottom="639"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_FTU_GET_GWA_HGE_SDV_EHI_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="94" ActivityType="5" name="Par_DTC_HKL_HUD_IEL_KAS_SGR_RFK_4">
+<Rect left="1075" top="435" right="1175" bottom="467"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_HKL_HUD_IEL_KAS_SGR_RFK_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="95" ActivityType="5" name="Par_DTC_KEL_FBE_HKL_MOT_ABA_ADP_NDR_4">
+<Rect left="1076" top="504" right="1176" bottom="536"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_KEL_FBE_HKL_MOT_ABA_ADP_NDR_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="96" ActivityType="5" name="Par_DTC_KIN_KRE_KRE_HI_SWA_MKF_HI_4">
+<Rect left="1076" top="567" right="1176" bottom="599"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_KIN_KRE_KRE_HI_SWA_MKF_HI_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="97" ActivityType="5" name="Par_DTC_LHI_LSE_LWR_MKB_MKF_TTU_4">
+<Rect left="1076" top="637" right="1176" bottom="669"/>
+<SubProcesses>
+<SubProcess id="Par_DTC_LHI_LSE_LWR_MKB_MKF_TTU_4">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="98" ActivityType="5" name="c7_swa">
+<Rect left="1140" top="319" right="1240" bottom="351"/>
+<SubProcesses>
+<SubProcess id="c7_swa">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;SWAcalibration&quot;}"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="2"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="-1.3"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="1.9"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="709.8"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="712.5"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="709.2"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="711.3"/>
+<Parameter id="fFAS_DopplerL_X_shared" value="-5006"/>
+<Parameter id="fFAS_DopplerL_Y_shared" value="783"/>
+<Parameter id="fFAS_DopplerL_Z_shared" value="605"/>
+<Parameter id="fFAS_DopplerR_X_shared" value="-5006"/>
+<Parameter id="fFAS_DopplerR_Y_shared" value="-783"/>
+<Parameter id="fFAS_DopplerR_Z_shared" value="605"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="99" ActivityType="5" name="c7_sgr">
+<Rect left="1142" top="371" right="1242" bottom="403"/>
+<SubProcesses>
+<SubProcess id="c7_sgr">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Werkerueberwachung&quot;}"/>
+<Parameter id="SGR_Result"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="100" ActivityType="5" name="Par_ARE">
+<Rect left="680" top="425" right="780" bottom="457"/>
+<SubProcesses>
+<SubProcess id="Par_ARE">
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="101" ActivityType="5" name="c7_are">
+<Rect left="683" top="493" right="783" bottom="525"/>
+<SubProcesses>
+<SubProcess id="c7_are">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;calibration&quot;}"/>
+<Parameter id="fSWE_ACC_Elevation_shared" value="0" ret="fSWE_ACC_Elevation"/>
+<Parameter id="fSWE_ACC_Azimut_shared" value="0" ret="fSWE_ACC_Azimut"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="102" ActivityType="5" name="c7_are_2">
+<Rect left="683" top="555" right="783" bottom="587"/>
+<SubProcesses>
+<SubProcess id="c7_are_2">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;calibration&quot;}"/>
+<Parameter id="fSWE_ACC_2_Elevation_shared" value="0" ret="fSWE_ACC_2_Elevation"/>
+<Parameter id="fSWE_ACC_2_Azimut_shared" value="0" ret="fSWE_ACC_2_Azimut"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="103" ActivityType="5" name="c7_kas">
+<Rect left="805" top="425" right="905" bottom="457"/>
+<SubProcesses>
+<SubProcess id="c7_kas">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;CameraCalibration&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+<Parameter id="Radhauskante_VL" value="0" ret="Radhauskante_VL"/>
+<Parameter id="Radhauskante_VR" value="0" ret="Radhauskante_VR"/>
+<Parameter id="Radhauskante_HL" value="0" ret="Radhauskante_HL"/>
+<Parameter id="Radhauskante_HR" value="0" ret="Radhauskante_HR"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="2"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="711.3"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="-1.3"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="1.9"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="709.8"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="712.5"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="709.2"/>
+<Parameter id="fFAS_LDW_OL_X_shared" value="1302"/>
+<Parameter id="fFAS_LDW_OL_Y_shared" value="550"/>
+<Parameter id="fFAS_LDW_OL_Z_shared" value="1433.8"/>
+<Parameter id="fFAS_LDW_OR_X_shared" value="1302"/>
+<Parameter id="fFAS_LDW_OR_Y_shared" value="-550"/>
+<Parameter id="fFAS_LDW_OR_Z_shared" value="1433.8"/>
+<Parameter id="fFAS_LDW_UL_X_shared" value="1302"/>
+<Parameter id="fFAS_LDW_UL_Y_shared" value="550"/>
+<Parameter id="fFAS_LDW_UL_Z_shared" value="993.8"/>
+<Parameter id="fFAS_LDW_UR_X_shared" value="1302"/>
+<Parameter id="fFAS_LDW_UR_Y_shared" value="-550"/>
+<Parameter id="fFAS_LDW_UR_Z_shared" value="993.8"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="104" ActivityType="13" name="Formel_HUD_Martin">
+<Rect left="952" top="163" right="1052" bottom="195"/>
+<FunctionRef id="Formel_HUD_Martin" model="LibGeneral">
+<Parameters>
+<Parameter id="Cut_above" value="47.570419"/>
+<Parameter id="Cut_below" value="0"/>
+<Parameter id="Refpkt_before" value="2493"/>
+<Parameter id="Refpkt" ret="TesRefpkt"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="105" ActivityType="3" name="普通节点">
+<Rect left="952" top="224" right="1052" bottom="256"/>
+<Script>engine.println("++++TesRefpkt :"..tostring(TesRefpkt))</Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="43" type="0">
+</Transition>
+<Transition StartId="3" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="14" type="0">
+</Transition>
+<Transition StartId="5" EndId="7" type="5">
+</Transition>
+<Transition StartId="6" EndId="13" type="4">
+</Transition>
+<Transition StartId="6" EndId="17" type="3">
+</Transition>
+<Transition StartId="7" EndId="3" type="0">
+</Transition>
+<Transition StartId="13" EndId="5" type="0">
+</Transition>
+<Transition StartId="14" EndId="6" type="6">
+</Transition>
+<Transition StartId="14" EndId="3" type="5">
+</Transition>
+<Transition StartId="17" EndId="18" type="0">
+</Transition>
+<Transition StartId="18" EndId="19" type="1">
+<Expression>VIN ~= "00000000000000000"</Expression></Transition>
+<Transition StartId="18" EndId="20" type="0">
+</Transition>
+<Transition StartId="19" EndId="20" type="4">
+</Transition>
+<Transition StartId="19" EndId="25" type="0">
+</Transition>
+<Transition StartId="20" EndId="21" type="0">
+</Transition>
+<Transition StartId="21" EndId="22" type="0">
+</Transition>
+<Transition StartId="21" EndId="23" type="5">
+</Transition>
+<Transition StartId="22" EndId="27" type="0">
+</Transition>
+<Transition StartId="23" EndId="3" type="0">
+</Transition>
+<Transition StartId="27" EndId="25" type="0">
+</Transition>
+<Transition StartId="28" EndId="29" type="0">
+</Transition>
+<Transition StartId="29" EndId="30" type="0">
+</Transition>
+<Transition StartId="35" EndId="89" type="0">
+</Transition>
+<Transition StartId="43" EndId="35" type="0">
+</Transition>
+<Transition StartId="58" EndId="60" type="0">
+</Transition>
+<Transition StartId="60" EndId="2" type="0">
+</Transition>
+<Transition StartId="89" EndId="58" type="0">
+</Transition>
+<Transition StartId="101" EndId="102" type="0">
+</Transition>
+<Transition StartId="104" EndId="105" type="0">
+</Transition>
+</Transitions>
+</Process>
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiDeviceFunction" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="comObjectInstanceNames" type="8" data=""/>
+</Outputs>
+<Script>strNames = engine.GDI_GetComObjectByInstanceNames(gdiDeviceFunction)
+comObjectInstanceNames = LibGDI.split(strNames)</Script></Function>
+

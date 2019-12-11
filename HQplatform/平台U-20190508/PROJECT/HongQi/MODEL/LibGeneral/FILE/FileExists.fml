@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="path" type="8" data="&quot;&quot;" description="全路径文件名"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data="" description="true :exists  false :not exists"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to check file exists or not;
+input parameter:path
+output parameter :ret
+
+03/10/2017     created by viforce
+******************************************************************************--]]
+ret = false
+local file = io.open(path, "r")
+if file then
+  io.close(file)
+  ret = true
+end
+</Script></Function>
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="PrepareIDT"/>
+<Process id="FWE_ErrorMonitor"/>
+<Process id="FAS_ErrorMonitor"/>
+<Process id="SWE_ErrorMonitor"/>
+<Process id="IDT_Ctrl_Monitor"/>
+<Process id="FWE_SWE_FAS_Start"/>
+<Process id="TestProcess"/>
+<Process id="FWE_ChassisSetupBefore"/>
+<Process id="Calibration_Process"/>
+<Process id="H7_ALS_Process"/>
+<Process id="ACC板子移动判断勿用"/>
+</children>
+</Workplace>

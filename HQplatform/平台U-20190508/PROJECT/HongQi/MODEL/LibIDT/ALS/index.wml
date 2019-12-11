@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="IDT_ALS_CamberResult_service_11"/>
+
+<Function id="IDT_ALS_GetState"/>
+
+<Function id="IDT_ALS_HLA_GroundState_service_5"/>
+
+<Function id="IDT_ALS_HLA_StartTest_Service_1"/>
+
+<Function id="IDT_ALS_HLA_StopTest_service_2"/>
+
+<Function id="IDT_ALS_ResultOfTorque_service_32"/>
+
+<Function id="IDT_ALS_service_4"/>
+
+<Function id="IDT_ALS_SetToes_service_7"/>
+
+<Function id="IDT_ALS_State_actual"/>
+
+<Function id="IDT_ALS_State_store"/>
+
+<Function id="IDT_ALS_ToesResult_service_10"/>
+
+</children>
+</Workplace>

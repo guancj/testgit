@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="thread2" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="253" top="119" right="353" bottom="151"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="253" top="439" right="353" bottom="471"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="普通节点">
+<Rect left="253" top="199" right="353" bottom="231"/>
+<Script>count = 0</Script></Activity>
+<Activity id="4" ActivityType="3" name="普通节点">
+<Rect left="253" top="279" right="353" bottom="311"/>
+<Line2Text Enable="1" Text="&amp;count"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="3" name="普通节点">
+<Rect left="253" top="359" right="353" bottom="391"/>
+<Script>
+engine.Delay(1200)
+
+count = count + 1</Script></Activity>
+<Activity id="6" ActivityType="3" name="普通节点">
+<Rect left="397" top="312" right="497" bottom="344"/>
+<Script></Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="4" type="0">
+</Transition>
+</Transitions>
+</Process>
+

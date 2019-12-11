@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="GetDTCText" description="从&quot;Dtc_list.ini&quot; 文件里读取DTC描述">
+<Inputs>
+<Variable id="pCode" type="8" data="&quot;xxxx&quot;"/>
+<Variable id="section" type="8" data="&quot;&quot;" description="dtc file list section"/>
+</Inputs>
+<Outputs>
+<Variable id="pCodeText" type="8" data="" description="pCode 文本解释"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to  Generic DTC  Code to DTC text  from a file "Dtc_list.ini";
+input parameter:pCode,filename;
+output parameter :pCodeText;
+
+12/3/2016     created by viforce
+******************************************************************************--]]
+
+local filenametemp = "Dtc_list.ini"
+local ini = IniFile(engine.ProgPath.."\\Dtc_list.ini")
+engine.println("IniFile:"..type(ini)..":"..tostring(pCode))
+pCodeText = ini.getString(section,pCode,"unknown pCode");
+engine.println("pCode Text from filelist :"..tostring(pCodeText))</Script></Function>
+

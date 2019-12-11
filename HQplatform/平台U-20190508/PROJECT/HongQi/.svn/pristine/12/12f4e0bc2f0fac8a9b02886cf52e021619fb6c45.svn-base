@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="SYSTEM" code="">
+
+<Functions>
+<Function id="ExecuteRpdPending"/>
+
+<Function id="GetFirapName"/>
+
+<Function id="GetLocalTime"/>
+
+<Function id="KillThread"/>
+
+</Functions>
+</Workplace>

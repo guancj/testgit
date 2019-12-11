@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="Read_cartype"/>
+<Process id="choose_location"/>
+<Process id="location_process_call"/>
+<Process id="ESP_Read_DTC"/>
+<Process id="EPB_Read_DTC"/>
+<Process id="EMS_Read_DTC"/>
+<Process id="EPB_Clear_DTC"/>
+</children>
+</Workplace>

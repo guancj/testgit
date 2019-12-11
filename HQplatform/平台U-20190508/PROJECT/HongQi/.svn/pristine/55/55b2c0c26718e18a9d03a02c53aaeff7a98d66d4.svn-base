@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_ID_read">
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="MultiID_String" type="8" data=""/>
+<Variable id="PartNumber_String" type="8" data=""/>
+<Variable id="SoftWare_Version" type="8" data=""/>
+<Variable id="HardWare_Version" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to   read ID of vw2000   1a 9b
+input parameter :ECU_Handle
+output parameter:MultiID_String;PartNumber_String;SoftWare_Version;HardWare_Version
+
+01/25/2016     created by viforce
+11/04/2016     changed by viforce
+******************************************************************************--]]
+
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return "","","","";
+end
+
+#COMMEX ECU_Handle -1 0x1a 0x9b 
+
+
+local tmp_StatValue = "";
+if (engine.LastError ~= 0) then 
+engine.StatValue  = "0x1a 0x9b service failed";
+MultiID_String = "";
+return "","","","";
+else
+
+MultiID_String = @2-;
+
+end;
+
+
+if(string.len(MultiID_String) &gt;=  12) then 
+
+PartNumber_String = string.sub(MultiID_String,1,12);
+tmp_StatValue = "零件号："..tostring(PartNumber_String);
+else
+
+PartNumber_String = "            ";
+tmp_StatValue = "零件号："..tostring(PartNumber_String);
+end;
+
+if(string.len(MultiID_String) &gt;=  16) then 
+SoftWare_Version = string.sub(MultiID_String,13,16);
+tmp_StatValue = tmp_StatValue.."软件版本："..tostring(SoftWare_Version);
+else
+
+SoftWare_Version = "    ";
+tmp_StatValue = tmp_StatValue.."软件版本："..tostring(SoftWare_Version);
+end;
+
+
+if(string.len(MultiID_String) &gt;=  46) then
+HardWare_Version = string.sub(MultiID_String,43,45);
+tmp_StatValue = tmp_StatValue.."硬件版本："..tostring(HardWare_Version);
+else
+HardWare_Version = "   ";
+tmp_StatValue = tmp_StatValue.."硬件版本："..tostring(HardWare_Version);
+end;
+
+
+engine.StatValue = tmp_StatValue;</Script></Function>
+

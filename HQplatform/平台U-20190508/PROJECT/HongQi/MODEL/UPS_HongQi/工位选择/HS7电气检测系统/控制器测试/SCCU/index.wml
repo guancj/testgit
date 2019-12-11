@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="SCCU_Common"/>
+<Process id="SCCU_ReadDTC"/>
+<Process id="SCCU_FIN"/>
+</children>
+</Workplace>

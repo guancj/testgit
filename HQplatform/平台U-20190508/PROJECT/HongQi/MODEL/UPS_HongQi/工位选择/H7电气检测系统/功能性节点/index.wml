@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="ECU_List"/>
+<Process id="ECU_Repair"/>
+<Process id="Flash_Select"/>
+<Process id="Force_Power_Off"/>
+<Process id="Force_Power_On"/>
+<Process id="Get_Vehicle_Data"/>
+<Process id="Read_All_ECU_Infor"/>
+<Process id="Read_ECU_Infor"/>
+<Process id="Repair_List"/>
+<Process id="Scan_KNR"/>
+<Process id="Scan_KNR_Flash"/>
+<Process id="Write_All_ECU_Config"/>
+</children>
+</Workplace>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="发送获取前束值指令并返回前束值，service 10">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="toeFL" type="5" data="0" description="左前前束值"/>
+<Variable id="toeFLReview" type="3" data="0" description="左前前束值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="toeFR" type="5" data="0" description="右前前束值"/>
+<Variable id="toeFRReview" type="3" data="0" description="右前前束值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="toeFront" type="5" data="0" description="前轴前束值"/>
+<Variable id="toeFrontReview" type="3" data="0" description="前轴前束值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="toeRL" type="5" data="0" description="右后前束值"/>
+<Variable id="toeRLReview" type="3" data="0" description="右后前束值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="toeRR" type="5" data="0" description="右后前束值"/>
+<Variable id="toeRRReview" type="3" data="0" description="右后前束值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="toeRear" type="5" data="0" description="后轴前束值"/>
+<Variable id="toeRearReview" type="3" data="0" description="后轴前束值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="thrustAngel" type="5" data="0" description="蟹型角值"/>
+<Variable id="thrustAngelReview" type="3" data="0" description="蟹型角值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+</Outputs>
+<Script>toeFL,toeFLReview,toeFR,toeFRReview,toeFront,toeFrontReview = 0,0,0,0,0,0;
+toeRL,toeRLReview,toeRR,toeRRReview,toeRear,toeRearReview = 0,0,0,0,0,0;
+thrustAngel,thrustAngelReview = 0,0;
+
+local factor = 0.01;
+
+ret = LibIDT.idtSendDatagramALS("\x0A",LibIDT.idtGetTimeout(),pHndl);
+
+if(ret == 1) then
+
+local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+
+engine.println("### RESULT SERVER 10 :" ..LibIDT.idthex2str(lastRevTel));
+
+--获取左前前束值和评估值
+toeFL = LibIDT.idtSigned2float(lastRevTel:sub(13,13):byte(),lastRevTel:sub(14,14):byte(),factor);
+toeFLReview = lastRevTel:sub(29,29):byte();
+
+--获取右前前束值和评估值
+toeFR = LibIDT.idtSigned2float(lastRevTel:sub(15,15):byte(),lastRevTel:sub(16,16):byte(),factor);
+toeFRReview = lastRevTel:sub(30,30):byte();
+
+--获取前轴前束值和评估值
+toeFront = LibIDT.idtSigned2float(lastRevTel:sub(17,17):byte(),lastRevTel:sub(18,18):byte(),factor);
+toeFrontReview = lastRevTel:sub(31,31):byte();
+
+--获取左后前束值和评估值
+toeRL = LibIDT.idtSigned2float(lastRevTel:sub(19,19):byte(),lastRevTel:sub(20,20):byte(),factor);
+toeRLReview = lastRevTel:sub(32,32):byte();
+
+--获取右后前束值和评估值
+toeRR = LibIDT.idtSigned2float(lastRevTel:sub(21,21):byte(),lastRevTel:sub(22,22):byte(),factor);
+toeRRReview = lastRevTel:sub(33,33):byte();
+
+--获取后轴前束值和评估值
+toeRear = LibIDT.idtSigned2float(lastRevTel:sub(23,23):byte(),lastRevTel:sub(24,24):byte(),factor);
+toeRearReview = lastRevTel:sub(34,34):byte();
+
+--获取蟹型角值和评估值
+thrustAngel = LibIDT.idtSigned2float(lastRevTel:sub(25,25):byte(),lastRevTel:sub(26,26):byte(),factor);
+thrustAngelReview = lastRevTel:sub(35,35):byte();
+
+end;
+
+--[[
+if(ret == 1) then
+
+--获取左前前束值和评估值
+toeFL = LibIDT.idtSigned2float(@12,@13,factor);
+toeFLReview = @28;
+
+--获取右前前束值和评估值
+toeFR = LibIDT.idtSigned2float(@14,@15,factor);
+toeFRReview = @29;
+
+--获取前轴前束值和评估值
+toeFront = LibIDT.idtSigned2float(@16,@17,factor);
+toeFrontReview = @30;
+
+--获取左后前束值和评估值
+toeRL = LibIDT.idtSigned2float(@18,@19,factor);
+toeRLReview = @31;
+
+--获取右后前束值和评估值
+toeRR = LibIDT.idtSigned2float(@20,@21,factor);
+toeRRReview = @32;
+
+--获取后轴前束值和评估值
+toeRear = LibIDT.idtSigned2float(@22,@23,factor);
+toeRearReview = @33;
+
+--获取蟹型角值和评估值
+thrustAngel = LibIDT.idtSigned2float(@24,@25,factor);
+thrustAngelReview = @34;
+
+end;
+]]
+</Script></Function>
+

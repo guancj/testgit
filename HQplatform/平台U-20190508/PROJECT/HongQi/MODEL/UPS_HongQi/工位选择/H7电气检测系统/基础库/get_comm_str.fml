@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="secIn" type="8" data=""/>
+<Variable id="secIn_size" type="8" data=""/>
+</Inputs>
+<Script>--secIn=@0-@4;
+secIn=secIn;
+local out="";
+for i=1,secIn_size do
+  --out = out..string.byte(secIn,i);--十进制形式
+    out = out..string.format("%2X",string.byte(secIn,i));--16进制
+end
+ return out;
+
+</Script></Function>
+

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data="" description="XML handle"/>
+<Variable id="Fzd" type="8" data="" description="vehicle data set"/>
+<Variable id="Knr" type="8" data="" description="production number"/>
+<Variable id="SgTnr" type="8" data="" description="ECU partnumber"/>
+<Variable id="HW_Ref_TNR" type="8" data="" description="HW raw-partnumber"/>
+<Variable id="VorserienFzg" type="3" data="0" description="0 = no pre-series vehicle, 1 = pre-series vehicle (according to PR-Nr from configfile)"/>
+</Inputs>
+<Outputs>
+<Variable id="SW_Version" type="8" data="" description="SW-Version according to Flashlist"/>
+<Variable id="Flashdatencont" type="8" data="" description="name of flash container (*.sgm, *.odx)"/>
+<Variable id="errFlag" type="3" data="0" description="error code"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This template computes the lists Flash-Liste (link to Flashcontainer- file name).
+(minimal required ASV list version: 1.23)
+
+input parameter:XmlHndl,Fzd,Knr,SgTnr,HW_Ref_TNR,VorserienFzg
+output parameter:SW_Version,Flashdatencont,errFlag
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+local bufTab = {}
+local Modus = "Flash"
+
+local sgBg_local, zdcTnr_local, zdcBg_local, swapDcTnr_local, sgTnrErsatz_local, zdcTnrErsatz_local, swapDcBg_local
+local swapDcTnrErsatz_local, istSgTnr_local, sollTnr_local, zdcName_local, zdcVersion_local
+local keyID_local, swapDCName_local, swapDCVersion_local
+local tnr_Aenderung_local, tnr_Aend_SWaP_local, flagZdcGeraten_local
+
+	tnr_Aenderung_local,tnr_Aend_SWaP_local,sgTnrErsatz_local,zdcTnrErsatz_local,swapDcTnrErsatz_local,bufTab,errFlag = LibVW.Korr_Aufbr_TNR_ASV123_Part1(XmlHndl, Modus, SgTnr, sgBg_local, zdcTnr_local, zdcBg_local, swapDcTnr_local,HW_Ref_TNR)
+	if(#bufTab &gt; 0 and engine.LastError == 0) then
+		tnr_Aenderung_local,tnr_Aend_SWaP_local,sgTnrErsatz_local,sollTnr_local,zdcTnrErsatz_local,swapDcTnrErsatz_local,zdcName_local,zdcVersion_local,flagZdcGeraten_local,keyID_local,swapDCName_local,swapDCVersion_local,SW_Version,Flashdatencont,errFlag = LibVW.Korr_Aufbr_TNR_ASV123_Part2(XmlHndl, Fzd, Knr, Modus, SgTnr, zdcTnr_local, swapDcTnr_local, swapDcBg_local, istSgTnr_local, HW_Ref_TNR, VorserienFzg, bufTab)
+	end</Script></Function>
+

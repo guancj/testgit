@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="c7_kel" description="UDS ODX&#13;&#10;--2016 - 12 - 6 created by viforce" flags="1" block="1" ptbtext="DEP47" group="46" pbltext="DEP1023">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="2" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="1" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0x21" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Exec_Tab" type="8" dir="0" data="{&quot;Connection&quot;}" description="执行步骤表请注意执行顺序"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="Exec_Finish" type="11" data="false" description="流程步骤结束标识  true / false"/>
+<Variable id="Exec_Step" type="3" data="0" description="流程步骤总数"/>
+<Variable id="Exec_i" type="3" data="1" description="流程步骤步进数"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="191" top="103" right="291" bottom="135"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="564" top="229" right="664" bottom="261"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="ECU测试开始">
+<Rect left="190" top="171" right="290" bottom="203"/>
+<Script>engine.println("=============ECU KEL ================")
+engine.StatValue = "C7_KEL Version 2.0"
+engine.LastError = 0</Script><assessment block="1" ptbtext="DEP47" group="200" pbltext="DEP1449" no="27" name="DEP1490" type="8" flags="97"/>
+</Activity>
+<Activity id="6" ActivityType="3" name="初始化步骤">
+<Rect left="189" top="230" right="289" bottom="262"/>
+<Script>Exec_Step = #Exec_Tab
+if(Exec_Step == 0) then
+-- 没有步骤操作
+	Exec_Finish = true
+else
+	Exec_Finish = false
+	Exec_i = 0
+end</Script></Activity>
+<Activity id="7" ActivityType="3" name="判断执行">
+<Rect left="190" top="291" right="290" bottom="323"/>
+<Script>
+if(Exec_i &lt; Exec_Step) then
+-- 步数累加，循环比较
+	Exec_i = Exec_i + 1
+        Exec_Finish = false
+        if(Exec_i == 1) then
+		engine.println("===ECU Exec Start===")
+        end
+else
+	Exec_Finish = true
+	engine.println("===ECU Exec Finish===")
+end</Script></Activity>
+<Activity id="9" ActivityType="3" name="预留">
+<Rect left="323" top="1043" right="423" bottom="1075"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="10" ActivityType="3" name="预留">
+<Rect left="325" top="532" right="425" bottom="564"/>
+<Script></Script></Activity>
+<Activity id="13" ActivityType="4" name="路由节点">
+<Rect left="225" top="531" right="257" bottom="563"/>
+</Activity>
+<Activity id="14" ActivityType="4" name="路由节点">
+<Rect left="598" top="411" right="630" bottom="443"/>
+</Activity>
+<Activity id="16" ActivityType="13" name="ECU_Close">
+<Rect left="565" top="293" right="665" bottom="325"/>
+<FunctionRef id="ECU_Close" model="LibGeneral">
+<Parameters>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="38" ActivityType="4" name="路由节点">
+<Rect left="225" top="790" right="257" bottom="822"/>
+</Activity>
+<Activity id="39" ActivityType="3" name="故障码检查">
+<Rect left="322" top="872" right="422" bottom="904"/>
+<Line1Text Enable="1" Text="检查故障码存储器"/>
+<Script></Script></Activity>
+<Activity id="43" ActivityType="4" name="路由节点">
+<Rect left="226" top="1044" right="258" bottom="1076"/>
+</Activity>
+<Activity id="44" ActivityType="4" name="路由节点">
+<Rect left="121" top="1898" right="153" bottom="1930"/>
+</Activity>
+<Activity id="45" ActivityType="4" name="路由节点">
+<Rect left="120" top="290" right="152" bottom="322"/>
+</Activity>
+<Activity id="46" ActivityType="3" name="清除故障码">
+<Rect left="323" top="612" right="423" bottom="644"/>
+<Script></Script></Activity>
+<Activity id="48" ActivityType="3" name="预留">
+<Rect left="324" top="729" right="424" bottom="761"/>
+<Script></Script></Activity>
+<Activity id="50" ActivityType="13" name="VW2000_Communication_Connect">
+<Rect left="327" top="412" right="427" bottom="444"/>
+<FunctionRef id="VW2000_Communication_Connect" model="LibVW">
+<Parameters>
+<Parameter id="vciExData" ret="vciExDataStr"/>
+<Parameter id="ECU_Handle" ret="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="1" name="DEP1024" type="8" flags="97"/>
+</Activity>
+<Activity id="51" ActivityType="13" name="VW_Diag_Load_Path">
+<Rect left="326" top="471" right="426" bottom="503"/>
+<FunctionRef id="VW_Diag_Load_Path" model="LibVW">
+<Parameters>
+<Parameter id="File_Name" value="&quot;vw_diag.ini&quot;"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="52" ActivityType="13" name="VW2000_DTC_Clear">
+<Rect left="323" top="674" right="423" bottom="706"/>
+<FunctionRef id="VW2000_DTC_Clear" model="LibVW">
+<Parameters>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="2" name="DEP1025" type="8" flags="97"/>
+</Activity>
+<Activity id="53" ActivityType="13" name="VW2000_DTC_Read_Quantity">
+<Rect left="323" top="931" right="423" bottom="963"/>
+<FunctionRef id="VW2000_DTC_Read_Quantity" model="LibVW">
+<Parameters>
+<Parameter id="vciExData" value="vciExDataStr"/>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+<Parameter id="DTC_String" ret="Dtc_string"/>
+<Parameter id="DTC_Num" ret="DTC_Number"/>
+<Parameter id="DTC_Typ" ret="DTC_Type"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="117" ActivityType="3" name="后备箱关闭检测">
+<Rect left="324" top="1111" right="424" bottom="1143"/>
+<Line1Text Enable="1" Text="后备箱"/>
+<Line2Text Enable="1" Text="关闭"/>
+<Script></Script></Activity>
+<Activity id="118" ActivityType="3" name="Loop Start">
+<Rect left="324" top="1171" right="424" bottom="1203"/>
+<Script>Pram_1 = nil </Script></Activity>
+<Activity id="119" ActivityType="3" name="Loop End">
+<Rect left="325" top="1339" right="425" bottom="1371"/>
+<Script></Script></Activity>
+<Activity id="120" ActivityType="13" name="VW2000_Messwert">
+<Rect left="325" top="1226" right="425" bottom="1258"/>
+<FunctionRef id="VW2000_Messwert" model="LibVW">
+<Parameters>
+<Parameter id="LocalIdent" value="2"/>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+<Parameter id="RecvTel" ret="vciMessureResult"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="121" ActivityType="4" name="路由节点">
+<Rect left="459" top="1283" right="491" bottom="1315"/>
+</Activity>
+<Activity id="123" ActivityType="4" name="路由节点">
+<Rect left="227" top="1400" right="259" bottom="1432"/>
+</Activity>
+<Activity id="124" ActivityType="3" name="预留">
+<Rect left="326" top="1401" right="426" bottom="1433"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="126" ActivityType="13" name="Switch_Status_Check_VW_Complete">
+<Rect left="325" top="1280" right="425" bottom="1312"/>
+<FunctionRef id="Switch_Status_Check_VW_Complete" model="LibVW">
+<Parameters>
+<Parameter id="PramIn" value="Pram_1"/>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="LastErr" value="engine.LastError"/>
+<Parameter id="RecvTel" value="vciMessureResult"/>
+<Parameter id="Measurenummer" value="4"/>
+<Parameter id="LeftViewText" value="&quot;后备箱&quot;"/>
+<Parameter id="RightViewText" value="&quot;状态&quot;"/>
+<Parameter id="CType" value="1"/>
+<Parameter id="OKcount" value="1"/>
+<Parameter id="NOKcount" value="0"/>
+<Parameter id="TimeOut" value="30"/>
+<Parameter id="DialogHandle" value="0"/>
+<Parameter id="MeasureTextNummer" value="171"/>
+<Parameter id="PramOut" ret="Pram_1"/>
+<Parameter id="FinishFlag" ret="FinishFlag_1"/>
+</Parameters>
+</FunctionRef>
+<assessment no="4" name="DEP1027" type="8" flags="97"/>
+</Activity>
+<Activity id="127" ActivityType="3" name="关闭生产模式">
+<Rect left="326" top="1468" right="426" bottom="1500"/>
+<Line1Text Enable="1" Text="关闭生产模式"/>
+<Script></Script></Activity>
+<Activity id="128" ActivityType="13" name="VW2000_SecurityAccess">
+<Rect left="327" top="1536" right="427" bottom="1568"/>
+<FunctionRef id="VW2000_SecurityAccess" model="LibVW">
+<Parameters>
+<Parameter id="login" value="20103"/>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="5" name="DEP1425" type="8" flags="97"/>
+</Activity>
+<Activity id="129" ActivityType="13" name="VW2000_StartDiagnosticSession">
+<Rect left="328" top="1601" right="428" bottom="1633"/>
+<FunctionRef id="VW2000_StartDiagnosticSession" model="LibVW">
+<Parameters>
+<Parameter id="mode" value="0x83"/>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="6" name="DEP1426" type="8" flags="97"/>
+</Activity>
+<Activity id="130" ActivityType="13" name="VW2000_Write_Service_2E_SID">
+<Rect left="328" top="1664" right="428" bottom="1696"/>
+<FunctionRef id="VW2000_Write_Service_2E_SID" model="LibVW">
+<Parameters>
+<Parameter id="vciExData" value="vciExDataStr"/>
+<Parameter id="SID" value="&quot;\x04\xFC&quot;"/>
+<Parameter id="WriteData" value="&quot;\x00\x00\x00&quot;"/>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="7" name="DEP1427" type="8" flags="97"/>
+</Activity>
+<Activity id="131" ActivityType="13" name="VW2000_ReinitializeWithout_Test">
+<Rect left="329" top="1730" right="429" bottom="1762"/>
+<FunctionRef id="VW2000_ReinitializeWithout_Test" model="LibVW">
+<Parameters>
+<Parameter id="vciExData" value="vciExDataStr"/>
+<Parameter id="ECU_Handle" value="vciHandle"/>
+</Parameters>
+</FunctionRef>
+<assessment no="8" name="DEP1428" type="8" flags="97"/>
+</Activity>
+<Activity id="132" ActivityType="13" name="dlgWaitSecondBar">
+<Rect left="329" top="1794" right="429" bottom="1826"/>
+<FunctionRef id="dlgWaitSecondBar" model="LibUI">
+<Parameters>
+<Parameter id="LineNr" value="1"/>
+<Parameter id="Timeout" value="5"/>
+<Parameter id="Text" value="&quot;请等待&quot;"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="133" ActivityType="3" name="clear">
+<Rect left="330" top="1856" right="430" bottom="1888"/>
+<Line1Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="134" ActivityType="4" name="路由节点">
+<Rect left="228" top="1856" right="260" bottom="1888"/>
+</Activity>
+<Activity id="135" ActivityType="13" name="DTC_Filter_Mit_Audi">
+<Rect left="323" top="989" right="423" bottom="1021"/>
+<FunctionRef id="DTC_Filter_Mit_Audi" model="LibVW">
+<Parameters>
+<Parameter id="SG_Name" value="&quot;KEL&quot;"/>
+<Parameter id="Process_Short" value="engine.SharedVarGet(&quot;_Fahrzeugstatus_FSP&quot;)"/>
+<Parameter id="Konfigfile" value="&quot;c7_fsp_filter.xml&quot;"/>
+<Parameter id="FSPReadStatus" value="0"/>
+<Parameter id="FSP_String" value="Dtc_string"/>
+<Parameter id="UDS_DTC_CODE" value="{}"/>
+<Parameter id="DTC_String_filtered" ret="dtc_string_filered"/>
+<Parameter id="DTC_Table_list_Pcode" ret="dtc_table_list_Pcode"/>
+</Parameters>
+</FunctionRef>
+<assessment no="3" name="DEP1026" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="7" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="1">
+<Expression>Exec_Finish == true</Expression></Transition>
+<Transition StartId="7" EndId="50" type="1">
+<Expression>Exec_Tab[Exec_i] == "Connection"</Expression></Transition>
+<Transition StartId="7" EndId="16" type="1">
+<Expression>Exec_Finish == true</Expression></Transition>
+<Transition StartId="7" EndId="13" type="0">
+</Transition>
+<Transition StartId="9" EndId="43" type="0">
+</Transition>
+<Transition StartId="10" EndId="13" type="0">
+</Transition>
+<Transition StartId="13" EndId="46" type="1">
+<Expression>Exec_Tab[Exec_i] == "DTCClear"</Expression></Transition>
+<Transition StartId="13" EndId="38" type="0">
+</Transition>
+<Transition StartId="14" EndId="16" type="0">
+</Transition>
+<Transition StartId="16" EndId="2" type="0">
+</Transition>
+<Transition StartId="38" EndId="39" type="1">
+<Expression>Exec_Tab[Exec_i] == "DTCCheck"</Expression></Transition>
+<Transition StartId="38" EndId="43" type="0">
+</Transition>
+<Transition StartId="39" EndId="53" type="0">
+</Transition>
+<Transition StartId="43" EndId="117" type="1">
+<Expression>Exec_Tab[Exec_i] == "Close_the_tailgate"</Expression></Transition>
+<Transition StartId="43" EndId="123" type="0">
+</Transition>
+<Transition StartId="44" EndId="45" type="0">
+</Transition>
+<Transition StartId="45" EndId="7" type="0">
+</Transition>
+<Transition StartId="46" EndId="52" type="0">
+</Transition>
+<Transition StartId="48" EndId="38" type="0">
+</Transition>
+<Transition StartId="50" EndId="14" type="4">
+</Transition>
+<Transition StartId="50" EndId="51" type="0">
+</Transition>
+<Transition StartId="51" EndId="10" type="0">
+</Transition>
+<Transition StartId="52" EndId="48" type="0">
+</Transition>
+<Transition StartId="53" EndId="135" type="0">
+</Transition>
+<Transition StartId="117" EndId="118" type="0">
+</Transition>
+<Transition StartId="118" EndId="120" type="0">
+</Transition>
+<Transition StartId="119" EndId="121" type="1">
+<Expression>FinishFlag_1 == false</Expression></Transition>
+<Transition StartId="119" EndId="124" type="0">
+</Transition>
+<Transition StartId="120" EndId="126" type="0">
+</Transition>
+<Transition StartId="121" EndId="120" type="0">
+</Transition>
+<Transition StartId="123" EndId="127" type="1">
+<Expression>Exec_Tab[Exec_i] == "P-Mode deaktivieren"</Expression></Transition>
+<Transition StartId="123" EndId="134" type="0">
+</Transition>
+<Transition StartId="124" EndId="123" type="0">
+</Transition>
+<Transition StartId="126" EndId="119" type="0">
+</Transition>
+<Transition StartId="127" EndId="128" type="0">
+</Transition>
+<Transition StartId="128" EndId="129" type="0">
+</Transition>
+<Transition StartId="129" EndId="130" type="0">
+</Transition>
+<Transition StartId="130" EndId="131" type="0">
+</Transition>
+<Transition StartId="131" EndId="132" type="0">
+</Transition>
+<Transition StartId="132" EndId="133" type="0">
+</Transition>
+<Transition StartId="133" EndId="134" type="0">
+</Transition>
+<Transition StartId="134" EndId="44" type="0">
+</Transition>
+<Transition StartId="135" EndId="9" type="0">
+</Transition>
+</Transitions>
+</Process>
+

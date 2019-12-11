@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_SecurityAccess">
+<Inputs>
+<Variable id="login" type="3" data="0" description="登陆密码"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>
+--[[*****************************************************************************
+this is function used to finish SecurityAccess
+input parameter:login;ECU_Handle
+MODE:0x03
+
+01/06/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+local Key;
+local Key_Byte1;
+local Key_Byte2;
+local Key_Byte3;
+local Key_Byte4;
+local Result;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+#COMMEX ECU_Handle -1  0x27 0x03 
+if (0 == engine.LastError)  then
+   engine.SetLineText(1,"请求密钥成功");
+   engine.ShowMessage();
+   Key = @2*0x1000000 + @3*0x10000 + @4*0x100 + @5 + login;
+   Result = Key;
+   Key_Byte1 =  math.floor(Key /0x1000000);
+   Key =  Key - Key_Byte1*0x1000000;
+   Key_Byte2 =  math.floor(Key /0x10000);
+   Key = Key - Key_Byte2*0x10000;
+   Key_Byte3 =  math.floor(Key /0x100);
+   Key_Byte4 =  math.floor(Key - Key_Byte3*0x100);
+
+--engine.Delay(500);
+#COMMEX ECU_Handle -1  0x27 0x04 Key_Byte1 Key_Byte2 Key_Byte3 Key_Byte4 
+
+if (0 == engine.LastError)  then
+   engine.SetLineText(1,"安全访问成功");
+   engine.StatValue = "security Access successfully" ;
+else
+   engine.SetLineText(1,"安全访问失败");
+   engine.StatValue = "security Access failed" ;
+end
+
+else
+   engine.SetLineText(1,"请求登陆密码出错");
+   engine.StatValue = "request security seed error" ;
+end
+   
+engine.ShowMessage();</Script></Function>
+

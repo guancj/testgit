@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="ECU_Broadcast"/>
+
+<Function id="ECU_Close"/>
+
+<Function id="ECU_DataExchange"/>
+
+<Function id="ECU_NegativeResponseValues"/>
+
+<Function id="ECU_Open"/>
+
+<Function id="VciStatusRead"/>
+
+<Function id="VciIgitionGetLoop"/>
+
+<Function id="ECU_DataExchange_esp"/>
+
+</children>
+</Workplace>

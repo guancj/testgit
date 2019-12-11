@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="pHandl" type="3" data="0" description="通讯handle"/>
+<Variable id="logData" type="8" data="&quot;&quot;" description="要写入的log数据"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to  write another udp log file specified name 
+input parameter:pHandl,logData
+output parameter :ret
+                engine.UdpHandleVarSet(pHandl, "_logFlag", logflag);   "true" 需要写log
+                engine.UdpHandleVarSet(pHandl, "_logFilename", iniKey); 文件名
+                engine.UdpHandleVarSet(pHandl, "_logsize", logsize); 文件的最大size 单位M
+                         
+03/09/2017    created by viforce
+******************************************************************************--]]
+
+ret = false
+if(pHandl == nil or pHandl &lt; 0) then
+return ret
+end
+
+
+local logFlag = engine.UdpHandleVarGet(pHandl,"_logFlag")
+local logFilename = engine.UdpHandleVarGet(pHandl,"_logFilename")
+local logsize = engine.UdpHandleVarGet(pHandl,"_logsize")
+
+print("logFlag :" .. tostring(logFlag))
+print("logFilename :" .. tostring(logFilename))
+print("logsize :" .. tostring(logsize))
+
+if(string.lower(logFlag) == "true") then
+	while(true)  do
+		logfp = io.open(engine.ProgPath .. "log\\".. tostring(logFilename) .. ".log","a+")
+		if(logfp:seek("end") &gt;= (logsize * 1024 * 1024)) then
+			io.close(logfp)
+			local p1,p2  = string.find(logFilename,"-")
+                        print("p1 :" .. tostring(p1) .. "  " .. "p2 :" .. tostring(p2))
+			if(p1 == nil) then
+				logFilename = logFilename .. "-0"
+                                engine.UdpHandleVarSet(pHandl,"_logFilename",logFilename)
+			else
+				local count = tonumber(string.sub(logFilename,p2 + 1,-1)) + 1
+				logFilename = string.sub(logFilename,1,p2) .. tostring(count)
+                                engine.UdpHandleVarSet(pHandl,"_logFilename",logFilename)
+			end
+		else
+			break
+                end
+        end
+        if(logfp) then
+		logData = os.date("%Y-%m-%d %X " .. tostring(logData) .. "\n")
+		if(logfp:write(logData) == nil ) then
+			print("&lt;log&gt;write failed !!!")
+			ret = false
+                        return ret
+                end
+		logfp:flush()
+		io.close(logfp)
+
+        else
+		ret = false
+                return ret
+        end
+        
+else
+	ret = true
+	return ret
+end</Script></Function>
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="createParameter" type="8" data=""/>
+<Variable id="instancePath" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiDeviceFunction" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>gdiDeviceConnection = engine.GDI_GetDeviceConnectionByInstancePath(gdiWorkspace, gdiDevicePath)
+gdiDeviceFunction,gdiError = engine.GDI_CreateDeviceFunction(gdiDeviceConnection,functionName, functionName, CreateParameter)
+print("creatDeviceFunctionResult of "..functionName.." is "..tostring(gdiError))
+
+</Script></Function>
+

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="hudTestDemol">
+<Script>--[[*****************************************************************************
+this function is used to  Test hud Connect like  Send and Recive
+
+02/09/2017     created by viforce
+******************************************************************************--]]
+
+rHost = "TCP:127.0.0.1:8009"
+tcphandle = engine.SockOpen(rHost)
+
+if(tcphandle ~= nil) then
+	--sRequest = "&lt;SchemaHeadUp&gt;&lt;function value=""/&gt;&lt;data.DateTime&gt;&lt;/data.DateTime&gt;&lt;data.Sender&gt;MFT&lt;/data.Sender&gt;&lt;data.Receiver&gt;PS&lt;/data.Receiver&gt;&lt;data.Kennnummer&gt;&lt;/data.Kennnummer&gt;&lt;/SchemaHeadUp&gt;"
+	sRequest = "VVW"
+        err = engine.SockExchange(tcphandle,sRequest,5000)
+        if(err == 0) then
+		recv = engine.GetResponseString(0,1023)
+                print(tostring(recv))
+                engine.SockClose(tcphandle)
+        else
+		print("&lt;hudTestDemol&gt; Error : recv data err")
+                engine.SockClose(tcphandle)
+        end 
+else
+	print("&lt;hudTestDemol&gt; Error : tcphandle was nil")
+end</Script></Function>
+

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="gbk" ?>
+<global>
+
+<!--
+SBR 安全带提醒装置
+-->
+
+<!--
+控制器通讯
+-->
+<comms>
+<!--<comm name="ControlCan" module="pci9820b.dll" device="5/0" />-->
+</comms>
+
+<!--
+数据采集/控制
+-->
+
+<!--<dam type="NDAM-9000" addr="192.168.1.178">-->
+<dam type="NDAM-9000" addr="192.168.0.178">
+
+
+<!--NDAM-4055 8路数字输入 8路数字输出 工位B-->
+<module addr="1" type="NDAM-4055">
+<io type="di" addr="0"  />
+<io type="di" addr="1"  />
+<io type="di" addr="2"  />
+<io type="di" addr="3"  var="HS7_dr_door_lock"    name="HS7左前门门锁开关信号"  value="1" desc="1到位"/>
+<io type="di" addr="4"  var="HS7_df_door_lock"    name="HS7左后门门锁开关信号"  value="1" desc="1到位"/>
+<io type="di" addr="5"  var="df_door_start_pressed"    name="H7/HS7左前门开始按钮（开始信号）"  value="1" desc="1到位"/>
+<io type="di" addr="6"  var="df_door_end_pressed"    name="H7/HS7左前门结束按钮（结束信号）"  value="1" desc="1到位" />
+<io type="di" addr="7"  var="plc_signal" name="PLC信号（就位信号）"  value="0" desc="1到位" />
+
+<io type="do" addr="0" var="H7_power_on_df"      name="B+ 门控制器电源开关（H7-左前）"		value="1" desc="1关 0开" />
+<io type="do" addr="1" var="HS7_power_on_df"      name="B+ 门控制器电源开关（HS7-左前）"		value="1" desc="1关 0开"/>
+<io type="do" addr="2" var="H7_power_on_dr"        name="B+ 门控制器电源开关（H7-左后）"     	value="1" desc="1关 0开" />
+<io type="do" addr="3" var="HS7_power_on_dr"		name="B+ 门控制器电源开关（HS7-左后）" value="0" desc="1关 0开"/>
+<io type="do" addr="4" var="power_switch_9V"          name="9V供电开关"   value="1" desc="1关 0开"/>
+<io type="do" addr="5" var="current_switch_control_A"	name="左侧车门恒流源切换:前后门切换"	 value="1"	desc="1关 0开" />
+<io type="do" addr="6" var="current_switch_control_B"	name="左侧车门恒流源切换:前门（高低频切换） "	 value="1"	desc="1关 0开" />
+<io type="do" addr="7"  var="H7_Light" name="PLC信号（就位信号）"  value="1" desc="0到位"/>
+</module>
+
+
+
+
+<!--NDAM-4017 8路模拟输入-->
+<module addr="2" type="NDAM-4017">
+<io type="ai" addr="0" var="df_door_i"  name="B+电流检测（H7/HS7-左前）"     unit="A" formula="(@@/65535*20-10)*1000/4/0.01"         value="0x8000" desc="±2.5V  0.01Ω"/>
+<io type="ai" addr="1" var="dr_door_i"  name="B+电流检测（H7/HS7-左后）"     unit="A" formula="(@@/65535*20-10)*1000/4/0.01"         value="0x8000" desc="±2.5V  0.01Ω"/>
+<io type="ai" addr="2" var="crash_sensor_i" name="碰撞传感器电流检测" unit="mA" formula="(@@/65535*20-10)*1000/330*1000"         value="0x8000" desc="±150mV"/>
+<io type="ai" addr="3" var="df_door_tweeter_speaker" name="H7/HS7/前门高频扬声器电阻检测"     unit="mV"  formula="(@@/65535*20-10)*1000/64"                value="0x8000" desc="±150mV" />
+<io type="ai" addr="4" var="df_door_bass_speaker" name="H7/HS7/前门低频扬声器电阻检测"     unit="V"  formula="(@@/65535*20-10)*1000/64"                  value="0x8000" desc="±150mV"/>
+<io type="ai" addr="5" var="dr_door_bass_speaker" name="H7/HS7/后门低频扬声器电阻检测"     unit="V"  formula="(@@/65535*20-10)*1000/64"                  value="0x8000" desc="±150mV"/>
+<io type="ai" addr="6" var="df_door_handle" name="H7/HS7/左前门把手动作检测"     unit="V"  formula="(@@/65535*20-10)/1"                  value="0x8000" desc="±10V  2000Ω  9V电源"/>
+<io type="ai" addr="7" var="dr_door_handle" name="H7/HS7/左后门把手动作检测"     unit="V"  formula="(@@/65535*20-10)/1"                  value="0x8000" desc="±10V  2000Ω  9V电源"/>
+</module>
+
+<!--NDAM-3412 4路模拟输入 1路模拟输出 2路数字输入 4路数字输出
+模拟输入采样值为16位数据，数据的最高位为符号位，0表示测量值为负值，1表示测量值为正值，其余15位表示测量数值。
+采样值的零点值为0x0000，满量程值为0x7FFF(32767)。
+(2 * (@@ >> 15) - 1) * ((@@ & 0x7FFF) / 0x7FFF)
+
+(2 * (@@ >> 15) - 1)     = (2*bit32.rshift(@@,15)-1)
+((@@ & 0x7FFF) / 0x7FFF) = (bit32.band(@@,32767)/32767)
+
+(2*bit32.rshift(@@,15)-1)*(bit32.band(@@,32767)/32767)
+
+20mA	100KG
+4mA		0KG
+-->
+
+<module addr="3" type="NDAM-3412">
+<io type="ai" addr="0"  var="bsd_led_v" name="bsd灯电压" unit="mV" formula="(@@/65535*20-10)*1000/100"  value="0x8000" desc="±2500mv" />
+<io type="ai" addr="1" />
+<io type="ai" addr="2" />
+<io type="ai" addr="3" />
+
+<io type="ao" addr="0" var="constant_current_output" name="恒流激励信号" unit="mA" formula="@@*20/65535" desc="气囊 电流输出10mA" />
+
+<io type="di" addr="1" var="dr_door_start_pressed"     name="H7/HS7左后门开始按钮（开始信号）"  value="0" desc="1归位"/>
+<io type="di" addr="0" var="dr_door_end_pressed"     name="H7/HS7左后门结束按钮（结束信号）"  value="0" desc="1归位"/>
+
+<io type="do" addr="0" var="plc_test_finished"	name="PLC信号（检测完成信号）"	 value="1"	desc="1关 0开"/>
+<io type="do" addr="1" var="green_power" name="绿灯电源"  notgate="1" value="1" desc="0打开 1关闭" />
+<io type="do" addr="2" var="red_power" name="红灯电源"  notgate="1" value="1" desc="0打开 1关闭" />
+<io type="do" addr="3" var="yellow_power" name="黄灯电源" notgate="1" value="1" desc="0=打开 1关闭"/>
+
+
+</module>
+
+
+
+
+</dam>
+
+</global>

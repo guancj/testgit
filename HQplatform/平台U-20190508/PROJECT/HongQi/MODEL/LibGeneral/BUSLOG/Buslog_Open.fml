@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="iProtocolType" type="3" data="0" description="协议类型。J1939=4"/>
+<Variable id="iBaudrate" type="3" data="500000" description="波特率，例如：500000"/>
+<Variable id="iCanSId" type="3" data="0" description="请求ID，如果是监听模式，iCanSId和iCanRId只要有一个为0，即表示记录全部报文"/>
+<Variable id="iCanRId" type="3" data="0" description="响应ID"/>
+<Variable id="saveFileName" type="8" data="&quot;&quot;" description="保存日志的文件名。（如文件名称为空，则只处理实时报文，不向文件中存储）"/>
+<Variable id="isFilled" type="11" data="true" description="true=将实时报文回传至lua，false=不传至lua"/>
+<Variable id="FilterID" type="8" data="0" description="输入获取ID 报文"/>
+<Variable id="iPort" type="3" data="1" description="port端口"/>
+</Inputs>
+<Outputs>
+<Variable id="iObdHandle" type="3" data="0" description="句柄"/>
+<Variable id="result" type="3" data="0" description="0=OK, 1=NOK"/>
+</Outputs>
+<Script>--开启vci侦听模式
+local iHandle = engine.Buslog_GetObdStatus();
+if (iHandle ~= -1) 
+then
+	LibGeneral.Buslog_Close(iHandle);
+end
+
+iObdHandle = engine.Buslog_ObdOpen(iProtocolType, iBaudrate, iCanSId, iCanRId,iPort);
+local count = 2;
+while (iObdHandle  == nil or iObdHandle &lt; 0 or iObdHandle =="")  do 
+	engine.Delay(500)
+	iObdHandle = engine.Buslog_ObdOpen(iProtocolType, iBaudrate, iCanSId, iCanRId,iPort);
+	count = count -1 
+	if(count &lt;= 0 ) then
+	break;
+	end;
+end
+--获取CANID报文
+if(saveFileName == nil) then
+	saveFileName = "";
+end
+if (iObdHandle &gt;= 0)
+then
+	local acount = 2
+	local ret = engine.Buslog_Start(saveFileName, isFilled,FilterID);
+	while (ret ~= true) do 
+	       engine.Delay(500)
+	       local ret = engine.Buslog_Start(saveFileName,isFilled,FilterID);
+	       acount = acount -1 
+	       if(acount &lt;= 0 ) then
+	       break;
+	       end;
+	end
+end</Script></Function>
+

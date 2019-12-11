@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_PreparationStart" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="FWEHndl" type="3" dir="0" data="FWEHndl"/>
+<Variable id="FASHndl" type="3" dir="0" data="FASHndl"/>
+<Variable id="SWEHndl" type="3" dir="0" data="SWEHndl"/>
+<Variable id="IDT_YPosRadhausVL" type="5" dir="1" data="0"/>
+<Variable id="IDT_YPosRadhausVR" type="5" dir="1" data="0"/>
+<Variable id="IDT_YPosRadhausHL" type="5" dir="1" data="0"/>
+<Variable id="IDT_YPosRadhausHR" type="5" dir="1" data="0"/>
+<Variable id="FWE_Achsversatz_VA_shared" type="5" dir="1" data="0"/>
+<Variable id="FWE_Achsversatz_HA_shared" type="5" dir="1" data="0"/>
+<Variable id="FWE_Symmetriewinkel_shared" type="5" dir="1" data="0"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="282" top="55" right="382" bottom="87"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="287" top="1024" right="387" bottom="1056"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="5" name="FWE_01_Start_Check_Name">
+<Rect left="282" top="129" right="382" bottom="161"/>
+<SubProcesses>
+<SubProcess id="FWE_01_Start_Check_Name">
+<Parameters>
+<Parameter id="Handl" value="FWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="PSName_FWE" value="&quot;&quot;" ret="PSName_FWE"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FWE" ret="IDT_Default_Answer_FWE"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="5" ActivityType="5" name="FWE_22_Identity">
+<Rect left="282" top="194" right="382" bottom="226"/>
+<SubProcesses>
+<SubProcess id="FWE_22_Identity">
+<Parameters>
+<Parameter id="Handl" value="FWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FWE" ret="IDT_Default_Answer_FWE"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="3" name="普通节点">
+<Rect left="448" top="128" right="548" bottom="160"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FWE Service 01 Processed Execute failed")
+-- 前束调整：与检测台通信失败</Script></Activity>
+<Activity id="7" ActivityType="3" name="普通节点">
+<Rect left="449" top="193" right="549" bottom="225"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FWE Service 22 Processed identify Execute failed")
+-- 身份验证失败</Script></Activity>
+<Activity id="8" ActivityType="5" name="FWE_Start_Conditions">
+<Rect left="282" top="257" right="382" bottom="289"/>
+<SubProcesses>
+<SubProcess id="FWE_Start_Conditions">
+<Parameters>
+<Parameter id="Handl" value="FWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FWE" ret="IDT_Default_Answer_FWE"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="9" ActivityType="3" name="普通节点">
+<Rect left="451" top="258" right="551" bottom="290"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : Start Condtions Processed Check failed")
+-- 前束调整：开始条件不满足</Script></Activity>
+<Activity id="11" ActivityType="3" name="普通节点">
+<Rect left="450" top="319" right="550" bottom="351"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : Check Availability not  Ready")
+-- 前束调整：检测准备</Script></Activity>
+<Activity id="12" ActivityType="5" name="FAS_40_LightingControl">
+<Rect left="283" top="383" right="383" bottom="415"/>
+<SubProcesses>
+<SubProcess id="FAS_40_LightingControl">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="bFAS_LDW_Beleuchtung_shared" value="false"/>
+<Parameter id="bFAS_RV_Beleuchtung_shared" value="false"/>
+<Parameter id="bFAS_TopView_Beleuchtung_shared" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="13" ActivityType="3" name="普通节点">
+<Rect left="450" top="383" right="550" bottom="415"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FAS Lighting Control  not  OK")
+-- FAS:灯光调节</Script></Activity>
+<Activity id="14" ActivityType="5" name="FWE_28_Result_AxialOffset">
+<Rect left="284" top="447" right="384" bottom="479"/>
+<SubProcesses>
+<SubProcess id="FWE_28_Result_AxialOffset">
+<Parameters>
+<Parameter id="Handl" value="FWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" ret="FWE_Achsversatz_VA_shared"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" ret="FWE_Achsversatz_HA_shared"/>
+<Parameter id="fFWE_Symmetriewinkel_shared" ret="FWE_Symmetriewinkel_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="15" ActivityType="3" name="普通节点">
+<Rect left="450" top="446" right="550" bottom="478"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FWE 28 Result AxialOffset  N OK")
+-- 前束：轴偏距</Script></Activity>
+<Activity id="17" ActivityType="3" name="普通节点">
+<Rect left="450" top="512" right="550" bottom="544"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FWE 32 Result HeightMeasurement NOK")
+-- 前束：高度测量结果</Script></Activity>
+<Activity id="18" ActivityType="5" name="FAS_40_LightingControl">
+<Rect left="285" top="573" right="385" bottom="605"/>
+<SubProcesses>
+<SubProcess id="FAS_40_LightingControl">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="bFAS_LDW_Beleuchtung_shared" value="true"/>
+<Parameter id="bFAS_RV_Beleuchtung_shared" value="true"/>
+<Parameter id="bFAS_TopView_Beleuchtung_shared" value="true"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="19" ActivityType="3" name="普通节点">
+<Rect left="451" top="574" right="551" bottom="606"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : 2 FAS Lighting Control  not  OK")
+-- FAS:灯光调节</Script></Activity>
+<Activity id="20" ActivityType="3" name="WAIT">
+<Rect left="285" top="637" right="385" bottom="669"/>
+<TitleText Enable="1" Text="前束调整：等待。。。"/>
+<Script></Script></Activity>
+<Activity id="21" ActivityType="5" name="FAS_01_Start_Check_Name">
+<Rect left="286" top="700" right="386" bottom="732"/>
+<SubProcesses>
+<SubProcess id="FAS_01_Start_Check_Name">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="PSName_FAS" value="&quot;&quot;" ret="PSName_FAS"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="22" ActivityType="3" name="普通节点">
+<Rect left="455" top="699" right="555" bottom="731"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FAS Service 01 Processed Execute failed")
+-- 驾驶辅助调整：与检测台通信失败</Script></Activity>
+<Activity id="23" ActivityType="5" name="FAS_22_Identity">
+<Rect left="286" top="763" right="386" bottom="795"/>
+<SubProcesses>
+<SubProcess id="FAS_22_Identity">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="24" ActivityType="3" name="普通节点">
+<Rect left="453" top="763" right="553" bottom="795"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FAS Service 22 Processed identify Execute failed")
+-- FAS身份验证失败</Script></Activity>
+<Activity id="25" ActivityType="5" name="FWE_51_Check_Availability">
+<Rect left="283" top="318" right="383" bottom="350"/>
+<SubProcesses>
+<SubProcess id="FWE_51_Check_Availability">
+<Parameters>
+<Parameter id="Handl" value="0"/>
+<Parameter id="isOK" value="false"/>
+<Parameter id="RecvData"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="26" ActivityType="3" name="后视板">
+<Rect left="287" top="826" right="387" bottom="858"/>
+<Script></Script></Activity>
+<Activity id="28" ActivityType="5" name="FAS_100_TopViewBoards">
+<Rect left="285" top="887" right="385" bottom="919"/>
+<SubProcesses>
+<SubProcess id="FAS_100_TopViewBoards">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="Blackboard_vo_mi" value="true"/>
+<Parameter id="Blackboard_vo_li" value="true"/>
+<Parameter id="Blackboard_vo_re" value="true"/>
+<Parameter id="Blackboard_mi_li_st" value="false"/>
+<Parameter id="Blackboard_mi_re_st" value="false"/>
+<Parameter id="Blackboard_mi_li_li" value="false"/>
+<Parameter id="Blackboard_mi_re_li" value="false"/>
+<Parameter id="Blackboard_hi_mi" value="true"/>
+<Parameter id="Blackboard_hi_li" value="false"/>
+<Parameter id="Blackboard_hi_re" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="29" ActivityType="3" name="普通节点">
+<Rect left="458" top="887" right="558" bottom="919"/>
+<Script>engine.println(" &lt;FAS_PreparationStart&gt; : FAS Service 100 TopViewBoards move on position failed")
+-- 标定板移动</Script></Activity>
+<Activity id="30" ActivityType="4" name="路由节点">
+<Rect left="218" top="893" right="250" bottom="925"/>
+</Activity>
+<Activity id="31" ActivityType="3" name="WAIT">
+<Rect left="286" top="955" right="386" bottom="987"/>
+<Line1Text Enable="1" Text="驾驶辅助系统：等待。。。"/>
+<Script></Script></Activity>
+<Activity id="32" ActivityType="5" name="FWE_31_Result_HeightMeasurement">
+<Rect left="285" top="511" right="385" bottom="543"/>
+<SubProcesses>
+<SubProcess id="FWE_31_Result_HeightMeasurement">
+<Parameters>
+<Parameter id="Handl" value="FWEHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="0" ret="IDT_YPosRadhausVL"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="0" ret="IDT_YPosRadhausVR"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="0" ret="IDT_YPosRadhausHL"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="0" ret="IDT_YPosRadhausHR"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="5" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="3" EndId="6" type="0">
+</Transition>
+<Transition StartId="5" EndId="7" type="0">
+</Transition>
+<Transition StartId="5" EndId="8" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="8" EndId="9" type="0">
+</Transition>
+<Transition StartId="8" EndId="25" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="12" EndId="13" type="0">
+</Transition>
+<Transition StartId="12" EndId="14" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="14" EndId="15" type="0">
+</Transition>
+<Transition StartId="14" EndId="32" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="18" EndId="19" type="0">
+</Transition>
+<Transition StartId="18" EndId="20" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="20" EndId="21" type="0">
+</Transition>
+<Transition StartId="21" EndId="22" type="0">
+</Transition>
+<Transition StartId="21" EndId="23" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="23" EndId="24" type="0">
+</Transition>
+<Transition StartId="23" EndId="26" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="25" EndId="12" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="25" EndId="11" type="0">
+</Transition>
+<Transition StartId="26" EndId="28" type="7">
+<Expression>$KA6</Expression></Transition>
+<Transition StartId="26" EndId="30" type="0">
+</Transition>
+<Transition StartId="28" EndId="29" type="0">
+</Transition>
+<Transition StartId="28" EndId="31" type="0">
+</Transition>
+<Transition StartId="30" EndId="31" type="0">
+</Transition>
+<Transition StartId="31" EndId="2" type="0">
+</Transition>
+<Transition StartId="32" EndId="18" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="32" EndId="17" type="0">
+</Transition>
+</Transitions>
+</Process>
+

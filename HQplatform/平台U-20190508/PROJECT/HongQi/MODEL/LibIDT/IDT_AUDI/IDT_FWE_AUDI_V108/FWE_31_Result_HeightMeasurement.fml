@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="service 31">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="MessgTyp" type="11" data="false"/>
+<Variable id="StartDyn" type="11" data="false"/>
+<Variable id="HeightMeasure" type="11" data="true"/>
+<Variable id="sendMode" type="3" data="0" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="YPosRadhausVL" type="5" data="0" description="左前挡泥板高度mm"/>
+<Variable id="YPosRadhausVR" type="5" data="0" description="右前挡泥板高度mm"/>
+<Variable id="YPosRadhausHL" type="5" data="0" description="左后挡泥板高度mm"/>
+<Variable id="YPosRadhausHR" type="5" data="0" description="右后挡泥板高度mm"/>
+<Variable id="YPosRadhausDiffV" type="5" data="0" description="前高度差mm"/>
+<Variable id="YPosRadhausDiffH" type="5" data="0" description="后高度差mm"/>
+<Variable id="VL_Status" type="3" data="0" description="0 - NOK;1 - OK;2 - NOK;3 - LT; 4 - GT"/>
+<Variable id="VR_Status" type="3" data="0" description="0 - NOK;1 - OK;2 - NOK;3 - LT; 4 - GT"/>
+<Variable id="HL_Status" type="3" data="0" description="0 - NOK;1 - OK;2 - NOK;3 - LT; 4 - GT"/>
+<Variable id="HR_Status" type="3" data="0" description="0 - NOK;1 - OK;2 - NOK;3 - LT; 4 - GT"/>
+<Variable id="DV_Status" type="3" data="0" description="0 - NOK;1 - OK;2 - NOK;3 - LT; 4 - GT"/>
+<Variable id="DH_Status" type="3" data="0" description="0 - NOK;1 - OK;2 - NOK;3 - LT; 4 - GT"/>
+<Variable id="revTel" type="8" data="" description="返回报文"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FWE Service 31
+input parameter:pHndl,IDT_Timeout,MessgTyp,StartDyn,HeightMeasure,sendMode
+output parameter :ret,YPosRadhausVL,YPosRadhausVR,YPosRadhausHL,YPosRadhausHR,YPosRadhausDiffV,YPosRadhausDiffH,
+                           VL_Status,VR_Status,HL_Status,HR_Status,DV_Status,DH_Status,revTel
+
+12/23/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00";
+local factor = 0.1
+
+sendMode = sendMode or 0
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x1F");    -- 设置service号,第2字节
+
+if(MessgTyp) then
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.bor(string.byte(idt_tel,5),0x01)));
+else
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.band(string.byte(idt_tel,5),0xfe)));
+end
+
+if(StartDyn) then
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.bor(string.byte(idt_tel,5),0x02)));
+else
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.band(string.byte(idt_tel,5),0xfd)));
+end
+
+if(HeightMeasure) then
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.bor(string.byte(idt_tel,5),0x04)));
+else
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.band(string.byte(idt_tel,5),0xfb)));
+end
+
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl,sendMode)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+
+
+if(ret == 1 and err == true) then
+
+-- local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+local lastRevTel = revTel
+engine.println("### RESULT SERVER 31 :" ..LibIDT.idthex2str(lastRevTel));
+
+--左前挡泥板高度mm
+YPosRadhausVL = LibIDT.idtSigned2float(lastRevTel:sub(13,13):byte(),lastRevTel:sub(14,14):byte(),factor);
+--右前挡泥板高度mm
+YPosRadhausVR = LibIDT.idtSigned2float(lastRevTel:sub(15,15):byte(),lastRevTel:sub(16,16):byte(),factor);
+--左后挡泥板高度mm
+YPosRadhausHL = LibIDT.idtSigned2float(lastRevTel:sub(17,17):byte(),lastRevTel:sub(18,18):byte(),factor);
+--右后挡泥板高度mm
+YPosRadhausHR = LibIDT.idtSigned2float(lastRevTel:sub(19,19):byte(),lastRevTel:sub(20,20):byte(),factor);
+--前高度差mm
+YPosRadhausDiffV = LibIDT.idtSigned2float(lastRevTel:sub(21,21):byte(),lastRevTel:sub(22,22):byte(),factor);
+--后高度差mm
+YPosRadhausDiffH = LibIDT.idtSigned2float(lastRevTel:sub(23,23):byte(),lastRevTel:sub(24,24):byte(),factor);
+
+VL_Status = lastRevTel:sub(29,29):byte();
+VR_Status = lastRevTel:sub(30,30):byte();
+HL_Status = lastRevTel:sub(31,31):byte();
+HR_Status = lastRevTel:sub(32,32):byte();
+DV_Status = lastRevTel:sub(33,33):byte();
+DH_Status = lastRevTel:sub(34,34):byte();
+engine.LastError = 0
+end</Script></Function>
+

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_DTC_Read_Quantity" description="VW2000_FSP_Lesen_Anzahl">
+<Inputs>
+<Variable id="vciExData" type="8" data="&quot;&quot;" description="vw2000 protocal select Data"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="DTC_String" type="8" data="" description="DTC code string from ECU (hex)"/>
+<Variable id="DTC_Num" type="8" data="" description="DTC num"/>
+<Variable id="DTC_Typ" type="8" data="" description="service type (-1 err)"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  Read DTC
+input parameter:vciExData;ECU_Handle
+output parameter:DTC_String,DTC_Num,DTC_Typ
+
+01/20/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+DTC_String = "";
+DTC_Num = -1;
+DTC_Typ = -1;
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return DTC_String,DTC_Num,DTC_Typ
+end
+
+if(vciExData == nil) then
+vciExData = "";
+end;
+
+if(vciExData == "") then
+engine.println("vciExData : receive failed ".."\n");
+end;
+
+
+DTC_Typ = 2;
+local pos_0,pos_1 = string.find(vciExData,"\x01\x18");
+local recevbuf = "";
+if(pos_0 == nil) then
+#COMMEX ECU_Handle -1 0x18 0x02 0xff 0x00
+if(0 ~= engine.LastError) then
+#COMMEX ECU_Handle -1 0x18 0x00 0xff 0x00 
+DTC_Typ = 2;
+end;
+
+else
+#COMMEX ECU_Handle -1 0x18 0x00 0xff 0x00
+DTC_Typ = 0;
+end
+
+if (0 == engine.LastError) then
+recevbuf = @0-;
+DTC_Num = string.byte(recevbuf,2);
+if(DTC_Num &gt; 0) then
+DTC_String = @1-;
+else
+DTC_String = "";
+end;
+
+else
+engine.StatValue = "read DTC err ";
+DTC_Typ = -1;
+engine.LastError = 1;
+DTC_String = "NG";
+end 
+</Script></Function>
+

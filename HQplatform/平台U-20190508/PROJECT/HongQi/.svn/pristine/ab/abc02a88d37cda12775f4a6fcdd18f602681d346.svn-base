@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_Adaptation_Complete" description="VW2000_Adaptation_complete">
+<Inputs>
+<Variable id="channel" type="3" data="0" description="写入通道号"/>
+<Variable id="adaptation" type="3" data="0" description="值"/>
+<Variable id="Text" type="8" data="" description="显示文本"/>
+<Variable id="P_VW_ImporterNumber" type="3" data="VW_ImporterNumber"/>
+<Variable id="P_WSC_VW" type="3" data="VW_WSC"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="returnvalue" type="5" data="0" description="return value"/>
+<Variable id="RecvBuf" type="8" data="" description="vci return string"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this is used to   Write adaptation to  ECU by channel  
+input parameter:channel;adaptation;Text;P_VW_ImporterNumber;P_WSC_VW;ECU_Handle
+output parameter:returnvalue;RecvBuf;
+
+01/25/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+local byte_adapt_1;
+local byte_ddapt_2;
+
+local Tmp_Int = 0;
+local byte_0;
+local byte_1;
+local byte_2;
+local byte_3;
+local byte_4;
+local byte_5;
+local byte_6;
+
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return -1,"" 
+end
+
+local tmp_Int_M;
+Tmp_Int = engine.VmtId * 8;
+Tmp_Int = math.floor(P_VW_ImporterNumber/0x80) - math.floor(P_VW_ImporterNumber/0x400) + Tmp_Int;
+
+byte_0  = math.floor(Tmp_Int/0x1000000);
+tmp_Int_M = Tmp_Int - byte_0 * 0x1000000;
+byte_1 = math.floor(tmp_Int_M/0x10000);
+tmp_Int_M = tmp_Int_M - byte_1 * 0x10000;
+byte_2 = math.floor(tmp_Int_M/0x100);
+byte_3 = tmp_Int_M - byte_2 * 0x100;
+
+Tmp_Int = P_VW_ImporterNumber * 2;
+if (P_WSC_VW &gt; 0xffff) then
+    Tmp_Int = Tmp_Int +1;end;
+
+byte_4 = Tmp_Int - math.floor(Tmp_Int/0x100) * 0x100
+
+Tmp_Int = P_WSC_VW;
+
+tmp_Int_M = Tmp_Int - math.floor(Tmp_Int/0x10000) * 0x10000;
+byte_5 = math.floor(tmp_Int_M/0x100);
+byte_6 = tmp_Int_M - byte_5 * 0x100;
+
+engine.SetLineText ( 1 , Text); engine.ShowMessage();
+
+if ((channel &lt; 0) or (channel &gt; 255)) then engine.StatValue = "NOK"..": bad channel value "; engine.LastError = 1;return -1,"";
+end;
+	
+byte_adapt_1 = math.floor(adaptation/0x100);
+byte_adapt_2 = adaptation - byte_adapt_1 * 0x100;
+
+#COMMEX ECU_Handle -1 0x31 0xb8 0x01 0x03
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end;
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x03
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end; 
+
+#COMMEX ECU_Handle -1 0x31 0xb9 0x01 0x03 channel 
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end; 
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x03
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end;
+
+-- START Adaptatin
+#COMMEX ECU_Handle -1 0x31 0xb9 0x01 0x03 byte_adapt_1 byte_adapt_2 
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end;
+
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x03 
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end;
+
+
+#COMMEX ECU_Handle -1 0x31 0xb9 0x01 0x03 byte_adapt_1 byte_adapt_2
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end;
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x03
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end;
+
+
+-- END Adaptatin
+#COMMEX ECU_Handle -1 0x31 0xbb 0x01 0x03 byte_adapt_1 byte_adapt_2 byte_1 byte_2 byte_3 byte_4 byte_5 byte_6
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+end;
+
+#COMMEX ECU_Handle -1 0x31 0xba 0x01 0x03
+if (engine.LastError ~= 0) then 
+RecvBuf = @0-;
+if(RecvBuf ~= nil) then
+engine.StatValue = "NOK : "..LibGeneral.hex2str(RecvBuf);
+else
+engine.StatValue = "out of time";
+end;
+returnvalue = -1 ;
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+return -1,"";
+else
+	 returnvalue  = @7*256+@8;
+	engine.StatValue = "OK : "..string.format("%f",returnvalue);
+end;
+
+--End route
+#COMMEX ECU_Handle -1 0x32 0xb8 0x01 0x03
+
+
+engine.SetLineText ( 1 ,""); engine.ShowMessage();</Script></Function>
+

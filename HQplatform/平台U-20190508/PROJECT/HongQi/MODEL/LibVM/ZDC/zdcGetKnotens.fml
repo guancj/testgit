@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="nodeTabelle" type="3" data="0" description="the zdc &apos;TABELLE&apos; xml object"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="knotens" type="3" data="0" description="a table which stores all the &apos;KNOTEN&apos; infor"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to get all the 'KNOTEN' information of one 'TABELLE' element in zdc container.
+And this KNOTEN' information will be used for caculating zdc code word
+History:
+    02/01/2016, wuh : function created
+	03/07/2016, wuh : ignore first LAS string operation character( '+' , '/')
+	04/11/2016, wuh : add debugLevel
+****************************************************************--]]
+	local err,knotens = 0, {}
+
+	-- get all 'TEGUE' element  under 'TAB'
+	local nodeTegues = nodeTabelle.selectNodes("TAB//TEGUE")
+	local teguePassedNum = 0
+	for i=0, nodeTegues.length-1,1 do
+		local nodeTegue = nodeTegues[i]
+		if debugLevel &gt; 0 then
+			engine.println("getKnoten : start calc TEGUE,"
+				.. " PRNR=" .. tostring(nodeTegue.selectSingleNode("PRNR").text)
+				.. " PRBEZ=" .. tostring(nodeTegue.selectSingleNode("PRBEZ").text))
+		end
+		-- build las string	according to the 'PRNR' information
+		local lasStr = nodeTegue.selectSingleNode("PRNR").text
+		-- ignore the firest operation
+		if lasStr:sub(1,1) == "+" or lasStr:sub(1,1) == "/"  then lasStr = lasStr:sub(2) end
+		-- covert to LAS string format
+		lasStr = "($".. string.gsub(lasStr, "[+/]",function(s) if s=='+' then s=")&amp;($" elseif s=='/' then s="|$" end return s end) .. ")"
+		-- if las passed, then store all the 'KNOTEN' infro under this las
+		if engine.executeLAS(lasStr)  then
+			teguePassedNum = teguePassedNum + 1
+			local nodeKnotens = nodeTegue.selectNodes("KNOTEN")
+			for j=0, nodeKnotens.length-1, 1 do
+				local nodeKnoten = nodeKnotens[j]
+				knotens[#knotens + 1] = {}	-- append a new knoten
+				--fill new knoten values
+				knotens[#knotens].stelle = nodeKnoten.selectSingleNode("STELLE") and tonumber(nodeKnoten.selectSingleNode("STELLE").text, 16)
+				knotens[#knotens].lsb = nodeKnoten.selectSingleNode("LSB") and tonumber(nodeKnoten.selectSingleNode("LSB").text)
+				if nodeKnoten.selectSingleNode("WERT")  then
+					knotens[#knotens].valueType = "WERT"
+					knotens[#knotens].value = tonumber(nodeKnoten.selectSingleNode("WERT").text,16)
+				elseif nodeKnoten.selectSingleNode("DATEINAME") then
+					knotens[#knotens].valueType = "DATEINAME"
+					knotens[#knotens].value = nodeKnoten.selectSingleNode("DATEINAME").text
+				elseif  nodeKnoten.selectSingleNode("DATEN-NAME") then
+					knotens[#knotens].valueType = "DATEN-NAME"
+					knotens[#knotens].value = nodeKnoten.selectSingleNode("DATEN-NAME").text
+				elseif nodeKnoten.selectSingleNode("VARNAME") then
+					knotens[#knotens].valueType = "VARNAME"
+					knotens[#knotens].value = nodeKnoten.selectSingleNode("VARNAME").text
+				elseif nodeKnoten.selectSingleNode("FEHLER")  then
+					knotens[#knotens].valueType = "FEHLER"
+					knotens[#knotens].value = nodeKnoten.selectSingleNode("FEHLER").text
+				elseif nodeKnoten.selectSingleNode("UNGUELTIG")  then
+					knotens[#knotens].valueType = "UNGUELTIG"
+					knotens[#knotens].value = nodeKnoten.selectSingleNode("UNGUELTIG").text
+				elseif nodeKnoten.selectSingleNode("UEBERSPRINGEN") then 
+					knotens[#knotens].valueType = "UEBERSPRINGEN"
+					knotens[#knotens].value = nodeKnoten.selectSingleNode("UEBERSPRINGEN").text
+				else
+					knotens[#knotens].valueType = nil
+					knotens[#knotens].value = nil
+					engine.println("the KNOTEN value tag is not recongnize, tag= " 
+						.. tostring(nodeKnoten.selectSingleNode("/bookstore/book[last()]").nodeName))
+				end
+				if debugLevel &gt; 0 then
+					engine.println("zdcGetKnotens : append a knoten,"
+						.. " STELLE=" .. tostring(knotens[#knotens].stelle)
+						.. " LSB=" .. tostring(knotens[#knotens].lsb)
+						.. " valueType=" .. tostring(knotens[#knotens].valueType)
+						.. " value=" .. tostring(knotens[#knotens].value) )
+					end
+			end
+		end
+	end
+	
+	-- check if the 'FAM' number equiel caculate tegue number (one 'FAM' must have only one tegue after caculated)
+	local famLen = nodeTabelle.selectNodes("TAB/FAM").length
+	if  famLen ~= teguePassedNum then 
+		err = 1; knotens = {}
+		engine.println("ERROR, zdcGetKnotens : the caculated teguePassedNum number is not match FAM number",
+			"teguePassedNum num= " .. tostring(teguePassedNum), "FAM num= " .. tostring(famLen))
+		engine.println("ERROR, zdcGetKnotens, please check the current 'TABELLE', if each 'FAM' only has one 'TEGUE'-&gt;'PRNR' match vehicle data.")
+	end
+	
+	engine.LastError = err</Script></Function>
+

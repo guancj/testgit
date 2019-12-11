@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>
+if (DString_Car_Tpye == "C229001" or DString_Car_Tpye == "C229002") then
+	ret = true
+else
+	ret = false
+end
+</Script></Function>
+

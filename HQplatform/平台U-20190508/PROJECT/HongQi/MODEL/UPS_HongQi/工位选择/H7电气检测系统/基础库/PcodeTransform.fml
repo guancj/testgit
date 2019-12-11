@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DTChexcode" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="pcode" type="8" data=""/>
+</Outputs>
+<Script>byte1 = string.byte(DTChexcode,1)
+byte2 = string.byte(DTChexcode,2)
+byte3 = string.byte(DTChexcode,3)
+pcode = string.format("%02X%02X%02X",byte1,byte2,byte3)
+
+tmp1 = bit32.extract(byte1,6,2)
+tmp2 = bit32.extract(byte1,4,2)
+
+if (tmp1 == 0x0) then
+	aPcode = "P"
+elseif (tmp1 == 0x1) then
+	aPcode = "C"
+elseif (tmp1 == 0x2) then
+	aPcode = "B"
+elseif (tmp1 == 0x3) then
+	aPcode = "U"
+else
+end
+pcode = aPcode..tmp2..pcode:sub(2,-1)
+</Script></Function>
+

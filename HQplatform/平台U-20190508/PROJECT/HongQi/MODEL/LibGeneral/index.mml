@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model description=" 通用库&#13;&#10;/*&#13;&#10;statflag的含义&#13;&#10;S    记录到统计&#13;&#10;X    上传FIS&#13;&#10;O    OK打印&#13;&#10;N    NOK打印&#13;&#10;R    OK红色打印&#13;&#10;r    NOK黑色打印&#13;&#10;B    OK加粗打印&#13;&#10;b    NOK加粗打印&#13;&#10;*/" format="9" library="1" module="LibGeneral" version="" engine="VMDSEngine" language="lua">
+<children>
+<Workplace id="FILE">
+</Workplace>
+<Workplace id="KWP2000">
+</Workplace>
+<Workplace id="STATISTIC">
+</Workplace>
+<Workplace id="TOLERANCE">
+</Workplace>
+<Workplace id="UDS">
+</Workplace>
+<Workplace id="VCI">
+</Workplace>
+<Workplace id="HUD">
+</Workplace>
+<Workplace id="XMl">
+</Workplace>
+<Workplace id="DATAMANIPULATION">
+</Workplace>
+<Workplace id="SYSTEM">
+</Workplace>
+<Workplace id="BUSLOG">
+</Workplace>
+<Workplace id="BSD">
+</Workplace>
+<Workplace id="HQCarType">
+</Workplace>
+</children>
+</Model>

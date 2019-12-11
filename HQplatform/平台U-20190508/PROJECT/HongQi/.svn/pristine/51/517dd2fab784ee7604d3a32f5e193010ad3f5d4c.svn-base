@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ExhaustStart">
+<Inputs>
+<Variable id="rHost" type="8" data="" description="the remote host IP address, e.g. &quot;127.0.0.1&quot;"/>
+<Variable id="rPort" type="3" data="0" description="the remote hsot port"/>
+</Inputs>
+<Outputs>
+<Variable id="pHndl" type="3" data="0" description="the exhaust connection handle"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is used to start communicaiton with gas tester and start the zeroing initialization sequence
+History:
+    03/16/2016, wuh : function created
+	04/10/2016, wuh : protocal change
+****************************************************************--]]
+	local pHndl = nil
+	local err = 0
+
+
+        local constr= "TCP:"..tostring(rHost)..':'..tostring(rPort)
+	pHndl = engine.SockOpen(constr , "", -1)
+	if pHndl == nil  or pHndl &lt; 0 then
+		engine.println("ERROR, ExhaustStart : Faild with setting up connection")
+		engine.LastError = 1; pHndl = -1
+		return pHndl
+	end
+
+	-- set request tel for exhaust tester start up
+	local reqData = "Start{\"Measure\";}"
+	-- send requst and receive response
+	err, revData  = LibExhaust.exhaustDataExchange(pHndl, reqData)
+	if err ~= 0  or revData == nil then
+		engine.println("ERROR, ExhaustStart : exhaust start command failed, revData=" .. tostring(revData))
+		engine.LastError = 1;
+		return pHndl
+	end
+	-- check response correct
+	if  revData:sub(1,5) ~= "Start" then
+		engine.println("ERROR, ExhaustStart : exhaust start receive data is not correct, receive data=" .. tostring(revData))
+		engine.LastError = 1;
+		return pHndl
+	end
+
+	engine.LastError = err</Script></Function>
+

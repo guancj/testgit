@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_Main" block="4" ptbtext="DEP1368" group="122" pbltext="DEP1369">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="通讯协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="接口号"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="Tester地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="波特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CANId"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CANId"/>
+</CommunicationParameters>
+<ProcessVariables>
+<Variable id="TitleText" type="8" data="&quot;前束&quot;" description="标题"/>
+<Variable id="als_line" type="3" data="1" description="测试平台序号"/>
+<Variable id="Ret" type="3" data="0" description="结果参数"/>
+<Variable id="FirapName" type="8" data="&quot;&quot;" description="FirapName"/>
+<Variable id="FWEType" type="3" data="-1" description="前束类型"/>
+<Variable id="SWEType" type="3" data="-1" description="大灯类型"/>
+<Variable id="TitleTextBase" type="8" data="&quot;前束&quot;" description="基础标题"/>
+<Variable id="FWEStatus" type="3" data="0" description="前束状态"/>
+<Variable id="SWEStatus" type="3" data="0" description="大灯状态"/>
+<Variable id="FWEORT" type="8" data=""/>
+<Variable id="SWEORT" type="8" data=""/>
+<Variable id="FWEHndl" type="3" data="0"/>
+<Variable id="SWEHndl" type="3" data="0"/>
+<Variable id="alsSelected" type="8" data="&quot;&quot;" description="手动选择的工位"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="164" right="264" bottom="32"/>
+<Script></Script><TitleText Enable="1" Text="&amp;TitleText"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<InputText Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+</Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="167" top="1420" right="267" bottom="1452"/>
+<Script></Script><Line1Text Enable="1"/>
+<Line2Text Enable="1" Text="检测结束"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<InputText Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+</End>
+<Activities>
+<Activity id="82" ActivityType="3" name="手动工位选择">
+<Rect left="307" top="117" right="407" bottom="149"/>
+<TitleText Enable="1" Text="请选择前束台"/>
+<ButtonLText Enable="1" Text="退出"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>als_line = 1;
+
+local als1 = "前束一"
+local als2 = "前束二"
+
+engine.DialogBackColor = -1;
+engine.ListClear();
+engine.ListAddString(als1 ,false);
+engine.ListAddString(als2 ,false);
+
+engine.SelectLayout(1);
+
+#INPUT alsSelected
+
+engine.println("### ALS masnual select location : " .. tostring(alsSelected))
+engine.DialogBackColor = -1;
+
+engine.SelectLayout(0);</Script></Activity>
+<Activity id="84" ActivityType="3" name="设置工位和标题">
+<Rect left="163" top="199" right="263" bottom="231"/>
+<TitleText Enable="1" Text="&amp;TitleText"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<InputText Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+<Script>TitleText = TitleTextBase .. " - " .. "AL" .. tostring(als_line);
+
+engine.WorkPlace = "AL" .. tostring(als_line)
+
+
+
+if(als_line == 1) then 
+
+ TestStandIP_ALS = "10.228.187.181";
+
+end;
+
+if(als_line == 2) then 
+
+ TestStandIP_ALS = "10.228.187.183";
+
+end;</Script></Activity>
+<Activity id="86" ActivityType="13" name="前束建立通讯">
+<Rect left="162" top="270" right="262" bottom="302"/>
+<Line1Text Enable="1" Text="前束调整"/>
+<Line2Text Enable="1" Text="IDT建立通讯"/>
+<FunctionRef id="IDT_BuildConnection" model="LibIDT">
+<Parameters>
+<Parameter id="rPort" value="2012"/>
+<Parameter id="rHost" value="TestStandIP_ALS"/>
+<Parameter id="ret" ret="FWEStatus"/>
+<Parameter id="pHndl" value="0" ret="FWEHndl"/>
+<Parameter id="lPort" value="2013"/>
+<Parameter id="send_mark" value="2"/>
+<Parameter id="receive_mark" value="1"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="106" ActivityType="3" name="前束重新检测">
+<Rect left="446" top="644" right="546" bottom="676"/>
+<TitleText Enable="1" Text="需要重新检测？"/>
+<ButtonLText Enable="1" Text="取消"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>#PRESSBUTTON</Script></Activity>
+<Activity id="107" ActivityType="4" name="路由节点">
+<Rect left="751" top="716" right="783" bottom="748"/>
+</Activity>
+<Activity id="217" ActivityType="13" name="大灯断开通讯">
+<Rect left="166" top="1290" right="266" bottom="1322"/>
+<Line3Text Enable="1" Text="大灯断开通讯"/>
+<Line4Text Enable="1"/>
+<FunctionRef id="IDT_DestroyConnection" model="LibIDT">
+<Parameters>
+<Parameter id="ret" ret="SWEStatus"/>
+<Parameter id="pHndl" value="SWEHndl"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="238" ActivityType="3" name="标题重置">
+<Rect left="305" top="599" right="405" bottom="631"/>
+<TitleText Enable="1" Text="&amp;TitleText"/>
+<Script></Script></Activity>
+<Activity id="239" ActivityType="3" name="预留">
+<Rect left="165" top="938" right="265" bottom="970"/>
+<Script></Script></Activity>
+<Activity id="242" ActivityType="4" name="路由节点">
+<Rect left="906" top="1291" right="938" bottom="1323"/>
+</Activity>
+<Activity id="254" ActivityType="13" name="大灯建立通讯">
+<Rect left="163" top="345" right="263" bottom="377"/>
+<Line3Text Enable="1" Text="大灯调整"/>
+<Line4Text Enable="1" Text="IDT建立通讯"/>
+<FunctionRef id="IDT_BuildConnection" model="LibIDT">
+<Parameters>
+<Parameter id="rPort" value="2014"/>
+<Parameter id="rHost" value="TestStandIP_ALS"/>
+<Parameter id="ret" ret="SWEStatus"/>
+<Parameter id="pHndl" value="0" ret="SWEHndl"/>
+<Parameter id="lPort" value="2015"/>
+<Parameter id="send_mark" value="4"/>
+<Parameter id="receive_mark" value="3"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="255" ActivityType="3" name="前束无法建立通讯">
+<Rect left="449" top="270" right="549" bottom="302"/>
+<Line2Text Enable="1" Text="无法建立通讯"/>
+<Script>engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="259" ActivityType="3" name="大灯重新检测">
+<Rect left="450" top="716" right="550" bottom="748"/>
+<TitleText Enable="1" Text="需要重新检测？"/>
+<ButtonLText Enable="1" Text="取消"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>#PRESSBUTTON</Script></Activity>
+<Activity id="260" ActivityType="3" name="标题重置">
+<Rect left="304" top="672" right="404" bottom="704"/>
+<TitleText Enable="1" Text="&amp;TitleText"/>
+<Script></Script></Activity>
+<Activity id="261" ActivityType="13" name="前束断开通讯">
+<Rect left="166" top="1351" right="266" bottom="1383"/>
+<Line1Text Enable="1" Text="前束断开通讯"/>
+<Line2Text Enable="1"/>
+<FunctionRef id="IDT_DestroyConnection" model="LibIDT">
+<Parameters>
+<Parameter id="ret" ret="FWEStatus"/>
+<Parameter id="pHndl" value="FWEHndl"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="262" ActivityType="3" name="大灯无法建立通讯">
+<Rect left="448" top="345" right="548" bottom="377"/>
+<Line4Text Enable="1" Text="无法建立通讯"/>
+<Script>engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="278" ActivityType="3" name="预留">
+<Rect left="164" top="1000" right="264" bottom="1032"/>
+<Script></Script></Activity>
+<Activity id="280" ActivityType="3" name="统计设置">
+<Rect left="589" top="270" right="689" bottom="302"/>
+<Script>engine.StatValue = "FWE device communication failed"
+engine.LastError = 1</Script><assessment no="1" name="DEP771" type="8" flags="97"/>
+</Activity>
+<Activity id="282" ActivityType="4" name="路由节点">
+<Rect left="750" top="647" right="782" bottom="679"/>
+</Activity>
+<Activity id="283" ActivityType="3" name="统计设置">
+<Rect left="589" top="647" right="689" bottom="679"/>
+<Script>engine.StatValue = "FWE Status precheck NOK"
+engine.LastError = 1</Script><assessment no="3" name="DEP772" type="8" flags="97"/>
+</Activity>
+<Activity id="284" ActivityType="3" name="统计设置">
+<Rect left="587" top="344" right="687" bottom="376"/>
+<Script>engine.StatValue = "SWE device communication failed"
+engine.LastError = 1</Script><assessment no="2" name="DEP773" type="8" flags="97"/>
+</Activity>
+<Activity id="285" ActivityType="3" name="统计设置">
+<Rect left="594" top="717" right="694" bottom="749"/>
+<Script>engine.StatValue = "SWE Status precheck NOK"
+engine.LastError = 1</Script><assessment no="4" name="DEP774" type="8" flags="97"/>
+</Activity>
+<Activity id="287" ActivityType="3" name="设置工位号">
+<Rect left="308" top="196" right="408" bottom="228"/>
+<Script>local als1 = "前束一"
+local als2 = "前束二"
+
+if alsSelected == als1 then
+    als_line = 1
+elseif alsSelected == als2 then
+    als_line = 2
+else
+    als_line = 0
+end</Script></Activity>
+<Activity id="288" ActivityType="4" name="路由节点">
+<Rect left="1058" top="119" right="1090" bottom="151"/>
+</Activity>
+<Activity id="289" ActivityType="4" name="路由节点">
+<Rect left="1058" top="197" right="1090" bottom="229"/>
+</Activity>
+<Activity id="290" ActivityType="5" name="CheckFirapName">
+<Rect left="163" top="118" right="263" bottom="150"/>
+<SubProcesses>
+<SubProcess id="CheckFirapName">
+<Parameters>
+<Parameter id="FirapName" ret="FirapName"/>
+<Parameter id="TestStationID" value="0" ret="als_line"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="294" ActivityType="4" name="路由节点">
+<Rect left="1059" top="269" right="1091" bottom="301"/>
+</Activity>
+<Activity id="296" ActivityType="4" name="路由节点">
+<Rect left="985" top="344" right="1017" bottom="376"/>
+</Activity>
+<Activity id="298" ActivityType="4" name="路由节点">
+<Rect left="985" top="1350" right="1017" bottom="1382"/>
+</Activity>
+<Activity id="299" ActivityType="4" name="路由节点">
+<Rect left="1060" top="1421" right="1092" bottom="1453"/>
+</Activity>
+<Activity id="301" ActivityType="4" name="路由节点">
+<Rect left="905" top="409" right="937" bottom="441"/>
+</Activity>
+<Activity id="302" ActivityType="13" name="驾驶辅助建立通讯">
+<Rect left="164" top="411" right="264" bottom="443"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1" Text="IDT建立通讯"/>
+<FunctionRef id="IDT_BuildConnection" model="LibIDT">
+<Parameters>
+<Parameter id="rPort" value="2016"/>
+<Parameter id="rHost" value="TestStandIP_ALS"/>
+<Parameter id="ret" ret="FASStatus"/>
+<Parameter id="pHndl" value="0" ret="FASHndl"/>
+<Parameter id="lPort" value="2017"/>
+<Parameter id="send_mark" value="6"/>
+<Parameter id="receive_mark" value="5"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="303" ActivityType="3" name="驾驶辅助无法建立通讯">
+<Rect left="449" top="411" right="549" bottom="443"/>
+<Line4Text Enable="1" Text="无法建立通讯"/>
+<Script>engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="304" ActivityType="3" name="统计设置">
+<Rect left="588" top="410" right="688" bottom="442"/>
+<Script>engine.StatValue = "SWE device communication failed"
+engine.LastError = 1</Script><assessment no="6" name="DEP1370" type="8" flags="97"/>
+</Activity>
+<Activity id="305" ActivityType="5" name="前束检查状态">
+<Rect left="163" top="645" right="263" bottom="677"/>
+<SubProcesses>
+<SubProcess id="FWE_CheckStatus">
+<Parameters>
+<Parameter id="Handl" value="FWEHndl"/>
+<Parameter id="isOK" value="false" ret="FWEStatus"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="306" ActivityType="5" name="大灯检测状态">
+<Rect left="163" top="716" right="263" bottom="748"/>
+<SubProcesses>
+<SubProcess id="SWE_CheckStatus">
+<Parameters>
+<Parameter id="Handl" value="SWEHndl"/>
+<Parameter id="isOK" value="false" ret="SWEStatus"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="307" ActivityType="4" name="路由节点">
+<Rect left="751" top="794" right="783" bottom="826"/>
+</Activity>
+<Activity id="308" ActivityType="3" name="驾驶辅助重新检测">
+<Rect left="451" top="792" right="551" bottom="824"/>
+<TitleText Enable="1" Text="需要重新检测？"/>
+<ButtonLText Enable="1" Text="取消"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>#PRESSBUTTON</Script></Activity>
+<Activity id="309" ActivityType="3" name="标题重置">
+<Rect left="305" top="748" right="405" bottom="780"/>
+<TitleText Enable="1" Text="&amp;TitleText"/>
+<Script></Script></Activity>
+<Activity id="310" ActivityType="3" name="统计设置">
+<Rect left="595" top="793" right="695" bottom="825"/>
+<Script>engine.StatValue = "SWE Status precheck NOK"
+engine.LastError = 1</Script><assessment no="7" name="DEP1371" type="8" flags="97"/>
+</Activity>
+<Activity id="312" ActivityType="5" name="驾驶辅助检测状态">
+<Rect left="164" top="791" right="264" bottom="823"/>
+<SubProcesses>
+<SubProcess id="FAS_CheckStatus">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="FASStatus"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="313" ActivityType="3" name="HUP">
+<Rect left="163" top="472" right="263" bottom="504"/>
+<Script></Script></Activity>
+<Activity id="314" ActivityType="13" name="HUP断开通讯">
+<Rect left="166" top="1167" right="266" bottom="1199"/>
+<Line3Text Enable="1" Text="HUP断开通讯"/>
+<Line4Text Enable="1"/>
+<FunctionRef id="IDT_DestroyConnection" model="LibIDT">
+<Parameters>
+<Parameter id="ret" ret="HUPStatus"/>
+<Parameter id="pHndl" value="HUPHndl"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="315" ActivityType="13" name="FAS断开通讯">
+<Rect left="166" top="1227" right="266" bottom="1259"/>
+<Line1Text Enable="1" Text="前束断开通讯"/>
+<Line2Text Enable="1"/>
+<FunctionRef id="IDT_DestroyConnection" model="LibIDT">
+<Parameters>
+<Parameter id="ret" ret="FASStatus"/>
+<Parameter id="pHndl" value="FASHndl"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="316" ActivityType="4" name="路由节点">
+<Rect left="97" top="1167" right="129" bottom="1199"/>
+</Activity>
+<Activity id="317" ActivityType="4" name="路由节点">
+<Rect left="848" top="549" right="880" bottom="581"/>
+</Activity>
+<Activity id="318" ActivityType="13" name="HUP建立通讯">
+<Rect left="164" top="551" right="264" bottom="583"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1" Text="IDT建立通讯"/>
+<FunctionRef id="IDT_BuildConnection" model="LibIDT">
+<Parameters>
+<Parameter id="rPort" value="2018"/>
+<Parameter id="rHost" value="TestStandIP_ALS"/>
+<Parameter id="ret" ret="HUPStatus"/>
+<Parameter id="pHndl" value="0" ret="HUPHndl"/>
+<Parameter id="lPort" value="2019"/>
+<Parameter id="send_mark" value="8"/>
+<Parameter id="receive_mark" value="7"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="319" ActivityType="3" name="HUP无法建立通讯">
+<Rect left="449" top="551" right="549" bottom="583"/>
+<Line4Text Enable="1" Text="无法建立通讯"/>
+<Script>engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="320" ActivityType="3" name="统计设置">
+<Rect left="588" top="550" right="688" bottom="582"/>
+<Script>engine.StatValue = "SWE device communication failed"
+engine.LastError = 1</Script><assessment no="8" name="DEP1372" type="8" flags="97"/>
+</Activity>
+<Activity id="321" ActivityType="4" name="路由节点">
+<Rect left="93" top="553" right="125" bottom="585"/>
+</Activity>
+<Activity id="322" ActivityType="4" name="路由节点">
+<Rect left="751" top="875" right="783" bottom="907"/>
+</Activity>
+<Activity id="323" ActivityType="3" name="HUP重新检测">
+<Rect left="452" top="875" right="552" bottom="907"/>
+<TitleText Enable="1" Text="需要重新检测？"/>
+<ButtonLText Enable="1" Text="取消"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>#PRESSBUTTON</Script></Activity>
+<Activity id="324" ActivityType="3" name="标题重置">
+<Rect left="306" top="831" right="406" bottom="863"/>
+<TitleText Enable="1" Text="&amp;TitleText"/>
+<Script></Script></Activity>
+<Activity id="325" ActivityType="3" name="统计设置">
+<Rect left="596" top="876" right="696" bottom="908"/>
+<Script>engine.StatValue = "SWE Status precheck NOK"
+engine.LastError = 1</Script><assessment no="9" name="DEP1373" type="8" flags="97"/>
+</Activity>
+<Activity id="326" ActivityType="5" name="HUP检测状态">
+<Rect left="165" top="874" right="265" bottom="906"/>
+<SubProcesses>
+<SubProcess id="FAS_CheckStatus">
+<Parameters>
+<Parameter id="Handl" value="HUPHndl"/>
+<Parameter id="isOK" value="false" ret="HUPStatus"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="327" ActivityType="4" name="路由节点">
+<Rect left="99" top="864" right="131" bottom="896"/>
+</Activity>
+<Activity id="328" ActivityType="3" name="断开通讯">
+<Rect left="166" top="1104" right="266" bottom="1136"/>
+<Script></Script></Activity>
+<Activity id="329" ActivityType="4" name="路由节点">
+<Rect left="750" top="1105" right="782" bottom="1137"/>
+</Activity>
+<Activity id="331" ActivityType="4" name="路由节点">
+<Rect left="849" top="1228" right="881" bottom="1260"/>
+</Activity>
+<Activity id="332" ActivityType="5" name="IDT_Ctrl_Monitor">
+<Rect left="165" top="1049" right="265" bottom="1081"/>
+<SubProcesses>
+<SubProcess id="IDT_Ctrl_Monitor">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="HUPHndl" value="HUPHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FAS_C7_Process">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="HUPHndl" value="HUPHndl"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="334" ActivityType="3" name="普通节点">
+<Rect left="25" top="157" right="125" bottom="189"/>
+<Script>TestStandIP_ALS = "127.0.0.1"</Script></Activity>
+<Activity id="335" ActivityType="5" name="子流程节点">
+<Rect left="293" top="1048" right="393" bottom="1080"/>
+<SubProcesses>
+<SubProcess id="IDT_Ctrl_Monitor">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="HUPHndl" value="HUPHndl"/>
+</Parameters>
+</SubProcess>
+<SubProcess id="FAS_PreparationStart">
+<Parameters>
+<Parameter id="FWEHndl" value="FWEHndl"/>
+<Parameter id="FASHndl" value="FASHndl"/>
+<Parameter id="SWEHndl" value="SWEHndl"/>
+<Parameter id="IDT_YPosRadhausVL" value="0"/>
+<Parameter id="IDT_YPosRadhausVR" value="0"/>
+<Parameter id="IDT_YPosRadhausHL" value="0"/>
+<Parameter id="IDT_YPosRadhausHR" value="0"/>
+<Parameter id="FWE_Achsversatz_VA_shared" value="0"/>
+<Parameter id="FWE_Achsversatz_HA_shared" value="0"/>
+<Parameter id="FWE_Symmetriewinkel_shared" value="0"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="334" type="0">
+</Transition>
+<Transition StartId="82" EndId="288" type="5">
+</Transition>
+<Transition StartId="82" EndId="287" type="6">
+</Transition>
+<Transition StartId="84" EndId="86" type="0">
+</Transition>
+<Transition StartId="86" EndId="254" type="1">
+<Expression>FWEStatus and FWEHndl &gt;= 0</Expression></Transition>
+<Transition StartId="86" EndId="255" type="0">
+</Transition>
+<Transition StartId="106" EndId="283" type="5">
+</Transition>
+<Transition StartId="106" EndId="238" type="6">
+</Transition>
+<Transition StartId="107" EndId="307" type="0">
+</Transition>
+<Transition StartId="217" EndId="261" type="0">
+</Transition>
+<Transition StartId="238" EndId="305" type="0">
+</Transition>
+<Transition StartId="239" EndId="278" type="0">
+</Transition>
+<Transition StartId="242" EndId="217" type="0">
+</Transition>
+<Transition StartId="254" EndId="302" type="1">
+<Expression>SWEStatus and SWEHndl &gt;= 0</Expression></Transition>
+<Transition StartId="254" EndId="262" type="0">
+</Transition>
+<Transition StartId="255" EndId="280" type="0">
+</Transition>
+<Transition StartId="259" EndId="260" type="6">
+</Transition>
+<Transition StartId="259" EndId="285" type="5">
+</Transition>
+<Transition StartId="260" EndId="306" type="0">
+</Transition>
+<Transition StartId="261" EndId="2" type="0">
+</Transition>
+<Transition StartId="262" EndId="284" type="0">
+</Transition>
+<Transition StartId="278" EndId="335" type="0">
+</Transition>
+<Transition StartId="280" EndId="294" type="0">
+</Transition>
+<Transition StartId="282" EndId="107" type="0">
+</Transition>
+<Transition StartId="283" EndId="282" type="0">
+</Transition>
+<Transition StartId="284" EndId="296" type="0">
+</Transition>
+<Transition StartId="285" EndId="107" type="0">
+</Transition>
+<Transition StartId="287" EndId="84" type="1">
+<Expression>als_line ~= 0</Expression></Transition>
+<Transition StartId="287" EndId="289" type="0">
+</Transition>
+<Transition StartId="288" EndId="289" type="0">
+</Transition>
+<Transition StartId="289" EndId="294" type="0">
+</Transition>
+<Transition StartId="290" EndId="84" type="1">
+<Expression>als_line ~= 0</Expression></Transition>
+<Transition StartId="290" EndId="82" type="0">
+</Transition>
+<Transition StartId="294" EndId="299" type="0">
+</Transition>
+<Transition StartId="296" EndId="298" type="0">
+</Transition>
+<Transition StartId="298" EndId="261" type="0">
+</Transition>
+<Transition StartId="299" EndId="2" type="0">
+</Transition>
+<Transition StartId="301" EndId="242" type="0">
+</Transition>
+<Transition StartId="302" EndId="303" type="0">
+</Transition>
+<Transition StartId="302" EndId="313" type="1">
+<Expression>FASStatus and FASHndl &gt;= 0</Expression></Transition>
+<Transition StartId="303" EndId="304" type="0">
+</Transition>
+<Transition StartId="304" EndId="301" type="0">
+</Transition>
+<Transition StartId="305" EndId="106" type="1">
+<Expression>not FWEStatus</Expression></Transition>
+<Transition StartId="305" EndId="306" type="0">
+</Transition>
+<Transition StartId="306" EndId="259" type="1">
+<Expression>not SWEStatus</Expression></Transition>
+<Transition StartId="306" EndId="312" type="0">
+</Transition>
+<Transition StartId="307" EndId="322" type="0">
+</Transition>
+<Transition StartId="308" EndId="309" type="6">
+</Transition>
+<Transition StartId="308" EndId="310" type="5">
+</Transition>
+<Transition StartId="309" EndId="312" type="0">
+</Transition>
+<Transition StartId="310" EndId="307" type="0">
+</Transition>
+<Transition StartId="312" EndId="308" type="1">
+<Expression>not SWEStatus</Expression></Transition>
+<Transition StartId="312" EndId="326" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="312" EndId="327" type="0">
+</Transition>
+<Transition StartId="313" EndId="318" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="313" EndId="321" type="0">
+</Transition>
+<Transition StartId="314" EndId="315" type="0">
+</Transition>
+<Transition StartId="315" EndId="217" type="0">
+</Transition>
+<Transition StartId="316" EndId="315" type="0">
+</Transition>
+<Transition StartId="317" EndId="331" type="0">
+</Transition>
+<Transition StartId="318" EndId="319" type="0">
+</Transition>
+<Transition StartId="318" EndId="305" type="1">
+<Expression>HUPStatus and HUPHndl &gt;= 0</Expression></Transition>
+<Transition StartId="319" EndId="320" type="0">
+</Transition>
+<Transition StartId="320" EndId="317" type="0">
+</Transition>
+<Transition StartId="321" EndId="305" type="0">
+</Transition>
+<Transition StartId="322" EndId="329" type="0">
+</Transition>
+<Transition StartId="323" EndId="324" type="6">
+</Transition>
+<Transition StartId="323" EndId="325" type="5">
+</Transition>
+<Transition StartId="324" EndId="326" type="0">
+</Transition>
+<Transition StartId="325" EndId="322" type="0">
+</Transition>
+<Transition StartId="326" EndId="323" type="1">
+<Expression>not SWEStatus</Expression></Transition>
+<Transition StartId="326" EndId="239" type="0">
+</Transition>
+<Transition StartId="327" EndId="239" type="0">
+</Transition>
+<Transition StartId="328" EndId="314" type="7">
+<Expression>$KS1</Expression></Transition>
+<Transition StartId="328" EndId="316" type="0">
+</Transition>
+<Transition StartId="329" EndId="328" type="0">
+</Transition>
+<Transition StartId="331" EndId="315" type="0">
+</Transition>
+<Transition StartId="334" EndId="86" type="0">
+</Transition>
+<Transition StartId="335" EndId="328" type="0">
+</Transition>
+</Transitions>
+</Process>
+

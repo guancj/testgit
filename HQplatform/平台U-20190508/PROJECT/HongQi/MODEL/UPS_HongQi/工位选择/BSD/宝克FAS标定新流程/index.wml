@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="FAS_Process_new_version"/>
+<Process id="FAS_IFC标定流程"/>
+<Process id="FAS_后视标定流程"/>
+<Process id="FAS_BSD标定流程"/>
+</children>
+</Workplace>

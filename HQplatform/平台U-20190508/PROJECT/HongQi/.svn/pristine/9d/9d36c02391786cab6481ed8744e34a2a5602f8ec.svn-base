@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_ID_Read_86_data" description="VW2000_ID_86_Lesen&#13;&#10;VW2000_ID_86_Daten&#13;&#10;">
+<Inputs>
+<Variable id="ID_Nummer" type="3" data="1" description="偏移量"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="Serialnumber" type="8" data=""/>
+<Variable id="HerstKennzeichen" type="8" data=""/>
+<Variable id="HerstDatum" type="8" data=""/>
+<Variable id="HerstPruefstand" type="8" data=""/>
+<Variable id="HerstLaufendeNr" type="8" data=""/>
+<Variable id="HerstAenderSt" type="8" data=""/>
+<Variable id="SNContainerFAZIT" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to read 厂商信息
+input parameter:ID_Nummer,ECU_Handle
+output parameter : Serialnumber,HerstKennzeichen,HerstDatum,HerstPruefstand,HerstLaufendeNr,HerstAenderSt
+
+01/14/2016     created by viforce
+11/04/2016     changed by viforce
+******************************************************************************--]]
+
+local MultiID_String
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return "","","","","","","" 
+end
+
+
+#COMMEX ECU_Handle -1 0x1a 0x86
+if (engine.LastError ~= 0) then 
+engine.StatValue = "0x1a 0x86 service failed";
+MultiID_String = "";
+return "","","","","","","";
+else
+MultiID_String = @2-;
+engine.println("MultiID_String :"..tostring(MultiID_String));
+end;
+
+
+
+local	TMP_String;
+local	ID_Result;
+
+engine.LastError = 0;
+
+if(ID_Nummer == 1) then
+	ID_Result = MultiID_String;
+end;
+
+--err = VW2000_ID_Nummer(err, ID_Nummer, MultiID_String, &amp;ID_Result);
+
+
+if ((engine.LastError == 0) and (string.len(ID_Result) &gt; string.byte(ID_Result,1))) then
+	engine.LastError = 0;
+	Serialnumber = string.sub(ID_Result,2,1 + string.byte(ID_Result,1));
+	--Serialnumber = midstr (ID_Result,  2, ID_Result [1] - 1);
+else
+	engine.LastError = 1;
+	Serialnumber = "              ";
+end;
+
+Serialnumber = string.format("%-14s",Serialnumber)
+--*Serialnumber = sprintf ("%-14s", *Serialnumber);
+
+if ((engine.LastError == 0) and (string.len(ID_Result) &gt; string.byte(ID_Result,1))) then 
+	TMP_String = string.sub(ID_Result, string.byte(ID_Result,1)+2, -1);
+	
+	
+if ((string.byte(TMP_String,1) &gt;= 7) and (string.len(TMP_String) &gt; 7)) then
+	HerstKennzeichen = string.sub(TMP_String,1,7);
+else
+	engine.LastError = 1;
+	HerstKennzeichen = "       ";
+end;
+
+	
+if ((engine.LastError == 0) and (string.byte(TMP_String,1) &gt;= 15) and (string.len(TMP_String) &gt; 15)) then
+	HerstDatum = string.sub(TMP_String,8,15);
+	--*HerstDatum = midstr (TMP_String, 8, 8);
+else
+	engine.LastError = 1;
+	HerstDatum = "        ";
+end;
+
+if ((engine.LastError == 0) and (string.byte(TMP_String,1) &gt;= 23) and (string.len(TMP_String) &gt; 23)) then	
+	HerstAenderSt = string.sub(TMP_String,16,23);
+	--*HerstAenderSt = midstr (TMP_String, 16, 8);
+else
+	engine.LastError = 1;
+	HerstAenderSt = "        ";
+end;
+
+if ((engine.LastError == 0) and (string.byte(TMP_String,1) &gt;= 27) and (string.len(TMP_String) &gt; 27)) then
+	HerstPruefstand = string.sub(TMP_String,24,27);
+	--*HerstPruefstand = midstr (TMP_String, 24, 4);
+else
+	engine.LastError = 1;
+	HerstPruefstand = "    ";
+end	;
+
+if ((engine.LastError == 0) and (string.byte(TMP_String,1) &gt;= 28) and (string.len(TMP_String) &gt; 28)) then
+	HerstLaufendeNr = string.sub(TMP_String,28,31);
+	--*HerstLaufendeNr = midstr (TMP_String, 28, 4);
+else
+	engine.LastError = 1;
+	HerstLaufendeNr = "    ";
+end;
+
+end;
+
+
+SNContainerFAZIT = HerstKennzeichen .. HerstDatum .. HerstPruefstand .. HerstLaufendeNr;
+
+
+local pos0,pos1;
+pos0,pos1 = string.find(SNContainerFAZIT , ".",1,true);
+local tmpSNR = SNContainerFAZIT;
+local dummy,reststring;
+engine.println("tmpSNR:"..tostring(tmpSNR));
+while (pos0 ~= nil) do
+        engine.println("pos0:"..tostring(pos0));
+	dummy = string.sub(tmpSNR ,1, pos0-1);
+	reststring = string.sub(tmpSNR ,pos0 + 1, -1);
+	tmpSNR = dummy .. reststring;
+        engine.println("tmpSNR:"..tostring(tmpSNR));
+	pos0,pos1 = string.find(tmpSNR , ".",1,true);
+end;
+
+SNContainerFAZIT = tmpSNR.."-";
+engine.StatValue = SNContainerFAZIT ;
+
+engine.println("Serialnumber: "..tostring(Serialnumber));
+engine.println("HerstKennzeichen: "..tostring(HerstKennzeichen));
+engine.println("HerstDatum: "..tostring(HerstDatum));
+engine.println("HerstPruefstand: "..tostring(HerstPruefstand));
+engine.println("HerstLaufendeNr: "..tostring(HerstLaufendeNr));
+engine.println("HerstAenderSt: "..tostring(HerstAenderSt));
+
+
+</Script></Function>
+

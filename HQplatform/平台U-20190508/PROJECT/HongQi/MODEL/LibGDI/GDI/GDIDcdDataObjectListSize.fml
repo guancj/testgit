@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="adcdDataObjectList" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="listSize" type="3" data="0"/>
+</Outputs>
+<Script>-- to do</Script></Function>
+

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="获取接受的报文前42个字节，用来进行xor校验。">
+<Outputs>
+<Variable id="ret" type="8" data="" description="格式如:&quot;\x05\x01....&quot;"/>
+</Outputs>
+<Script>ret = "";
+
+for index = 0,41 do
+
+ret = ret .. string.char(@index);
+
+end;</Script></Function>
+

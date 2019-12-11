@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtToggleDataExchange">
+<Inputs>
+<Variable id="request" type="8" data="&quot;&quot;" description="需要发送的报文,44字节"/>
+<Variable id="timeout" type="3" data="3" description="超时时间设置,以s(秒)为单位"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data="" description="发送报文、接受报文成功，并且校验接受报文，如果没问题则返回true，否则返回false"/>
+</Outputs>
+<Script>--[[ *************************************************************
+History :
+* 04/03/2016, wuh : 新建函数
+* 05/27/2016, wuh : 回复报文取值方式改变，报文最后延时参数获取BUG修复
+* 02/22/2017, viforce : 去掉连发四次
+*************************************************************--]]
+	local err = 0;
+	local ret = false;
+	local revTel = ""
+	--检查通讯句柄
+	if pHndl == nil or pHndl &lt; 0 then
+		engine.println("IdtLib:idtDataExchange:pHndl is invalid, pHndl= " .. tostring(pHndl));
+		engine.LastError = -1;
+		return ret;
+	end;
+	
+	do
+		--设置Toggle Byte,第4字节,从1计数
+		request = LibIDT.idtSetBytes(request,4,1,string.char(engine.UdpHandleVarGet(pHndl, "_TOGGLECOUNTER")));
+		--设置报文序列号,第42字节,从1计数
+		request = LibIDT.idtSetBytes(request,42,1,LibIDT.idtGetSerialNumber());
+		--设置xor校验和,第43字节(从1开始计数)
+		request = LibIDT.idtSetBytes(request,43,1,LibIDT.idtchecksum(request));
+		--保存请求报文到共享变量中
+		engine.UdpHandleVarSet(pHndl, "_LASTSNDTEL", request);
+		--engine.println("### TOGGLE SND :" ..LibIDT.idthex2str(request));
+		--发送报文
+		--err = engine.UdpExchange(pHndl,request,timeout*1000);
+
+		engine.UdpClear(pHndl); -- TESTONLY
+		-- for i=1, 4 do engine.UdpSend(pHndl,request) end; -- TESTONLY
+		err = engine.UdpExchange(pHndl,request,timeout*1000); --TESTONLY
+
+		if(err == 0) then  --1
+			--engine.println("### TOGGLE REV :" ..LibIDT.idthex2str(engine.GetResponseString(0,43):sub(0,-2)));
+			local recieve = LibIDT.idtGetRecieveForCheck();
+			--检验返回报文是否合法
+			--if(string.byte(LibIDT.idtchecksum(recieve)) == @42 and  @0 == engine.UdpHandleVarGet(pHndl,"_REVMARK")) then
+                        if(@0 == engine.UdpHandleVarGet(pHndl,"_REVMARK")) then
+				-- 接收到的报文
+				revTel = engine.GetResponseString(0,43);
+				--保存共享变量中
+				engine.UdpHandleVarSet(pHndl, "_TOGGLECOUNTER",  string.byte(revTel:sub(12,12)));
+				engine.UdpHandleVarSet(pHndl, "_LASTREVTEL", revTel);
+				ret = true;
+			end;
+			if request:sub(2,2) ~= "\x00" and string.byte(engine.GetResponseString(1,1)) == 1 then
+				engine.UdpHandleVarSet(pHndl, "_CURRENTSEVACK", string.byte(engine.GetResponseString(1,1)));
+			end
+		else
+			engine.println("IDT toggle data exchange failed!");
+			ret = false;
+		end;
+	end
+
+	-- set ret value
+	if(ret == true) then
+		engine.LastError = 0;
+	else
+		engine.LastError = -1;
+	end;
+
+	engine.Delay(LibIDT.DELAY_BETWEEN_SERVICE or 100);</Script></Function>
+

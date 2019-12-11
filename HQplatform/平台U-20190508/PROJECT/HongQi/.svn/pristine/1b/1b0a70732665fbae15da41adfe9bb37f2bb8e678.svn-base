@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_MK60_ValveImpuls">
+<Inputs>
+<Variable id="controlBytes1" type="8" data="" description="Valve control bytes. e.g. &quot;\xab\xb5&quot;"/>
+<Variable id="waitTime" type="3" data="0" description="time between services, in ms"/>
+<Variable id="controlBytes2" type="8" data="" description="Valve control bytes. e.g. &quot;\xaa\xb5&quot;"/>
+<Variable id="vciHndl" type="3" data="0" description="vciHndl"/>
+</Inputs>
+<Script>--[[ ***************************************************************
+The function is use to control MK60 valve and pump, by executing two commands.
+History:
+    04/14/2016, wuh, funtion created
+****************************************************************--]]
+
+local requestSID  = "\x30";
+local responseSID = "\x70";
+local localID = "\x80"
+local controlParam = "\x00";
+
+engine.LastError = 0;
+
+--check vciHndl valid
+if vciHndl == nil or vciHndl &lt; 0 then
+    engine.println("ERROR, VW2000_MK60_ValveImpuls, input vciHndl is invalid, vciHndl=" .. tostring(vciHndl));
+    engine.LastError = 1;
+    return
+end
+--check controlBytes1 valid
+if controlBytes1 == nil or controlBytes1:len() ~= 2 then
+    engine.println("ERROR, VW2000_MK60_ValveImpuls, input controlBytes1 is invalid, controlBytes1=" .. tostring(controlBytes1));
+    engine.LastError = 1;
+    return
+end
+--check controlBytes2 valid
+if controlBytes2 == nil or controlBytes2:len() ~= 2 then
+    engine.println("ERROR, VW2000_MK60_ValveImpuls, input controlBytes2 is invalid, controlBytes2=" .. tostring(controlBytes2));
+    engine.LastError = 1;
+    return
+end
+
+
+engine.println("TESTONLY, TIME 1 : " .. tostring(os.clock()))
+--send command 1
+--engine.EcuComm(requestSID .. localID .. controlParam .. controlBytes1)
+#COMMEX vciHndl -1 requestSID  localID  controlParam  controlBytes1
+engine.println("TESTONLY, TIME 2 : " .. tostring(os.clock()))
+
+engine.Delay(waitTime);
+
+engine.println("TESTONLY, TIME 3 : " .. tostring(os.clock()))
+--send command 2
+--engine.EcuComm(requestSID .. localID .. controlParam .. controlBytes2)
+#COMMEX vciHndl -1 requestSID localID controlParam controlBytes2
+
+engine.println("TESTONLY, TIME 4 : " .. tostring(os.clock()))
+</Script></Function>
+

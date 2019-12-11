@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="获取Knrnumber值,以&quot;\x32\x23&quot;.....形式，一般为7个字节">
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回Knrnumber值,以&quot;\x32\x232&quot;.....形式，一般为7个字节"/>
+</Outputs>
+<Script>ret = "";
+tmpknr = engine.KNR:sub(1,7);
+
+for index =1,7 do
+    ret = ret .. string.char(string.byte(tmpknr:sub(index,index)));
+end;</Script></Function>
+

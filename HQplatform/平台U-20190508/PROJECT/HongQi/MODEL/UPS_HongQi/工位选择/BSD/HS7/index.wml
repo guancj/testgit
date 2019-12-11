@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="BSDprocessHS7"/>
+<Process id="HS7_BSD_写入LED结果"/>
+</children>
+</Workplace>

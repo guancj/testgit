@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="HUP" code="">
+
+<Processes>
+<Process id="Par_HUP"/>
+<Process id="Par_HUP_Process"/>
+<Process id="HUP_22_Identity"/>
+<Process id="HUP_86_Kamera_Arbeitsposition"/>
+<Process id="HUP_87_Anlage_einschwenken"/>
+<Process id="HUP_88_InY_Einfoerdern"/>
+<Process id="HUP_89_FWE_Pruefstandsdaten"/>
+<Process id="HUP_90_Kameraparametersatz_auswaehlen"/>
+<Process id="Par_HUP_ECU_BH_Testbild_Start_01"/>
+<Process id="Par_HUP_01"/>
+<Process id="HUP_86_Kamera_Anfahren"/>
+<Process id="HUP_86_Kamera_AnfahrenPos_erreicht"/>
+<Process id="HUP_91_Bild_Aufnahme"/>
+<Process id="HUP_92_Berechnung_Start"/>
+<Process id="HUP_92_Berechnung_Ende"/>
+<Process id="Par_HUP_ECU_HW_Testbild_Start_02"/>
+<Process id="Par_HUP_02"/>
+<Process id="Par_HUP_ECU_BGW_Testbild_Start_03"/>
+<Process id="Par_HUP_03"/>
+<Process id="HUP_86_Kamera_Arbeitsposition_Ex"/>
+<Process id="HUP_88_InY_Ausfoerdern"/>
+<Process id="HUP_87_Anlage_ausschwenken"/>
+<Process id="HUP_86_Kamera_Ruheposition"/>
+<Process id="XML_BH_Berechnung"/>
+<Process id="XML_Warping_Berechnung"/>
+<Process id="XML_BGW_Berechnung"/>
+</Processes>
+</Workplace>

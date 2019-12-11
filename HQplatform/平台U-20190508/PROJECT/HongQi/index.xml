@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<workspace>
+<models>
+<model name="LibGeneral"/>
+<model name="LibIDT"/>
+<model name="LibExhaust"/>
+<model name="LibGDI"/>
+<model name="LibUI"/>
+<model name="LibHUD"/>
+<model name="LibVM"/>
+<model name="UPS_HongQi"/>
+</models>
+</workspace>

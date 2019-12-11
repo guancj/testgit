@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="GDIDcdDataObjectListAdd"/>
+
+<Function id="GDIDcdDataObjectListGet"/>
+
+<Function id="GDIDcdDataObjectListSize"/>
+
+<Function id="GDIDcdDataObjectSetup"/>
+
+<Function id="GDIDcdDataObjectTypeCompare"/>
+
+<Function id="split"/>
+
+<Workplace id="GDIComObject">
+</Workplace>
+<Workplace id="GDIDeviceConnection">
+</Workplace>
+<Workplace id="GDIDeviceFunction">
+</Workplace>
+<Workplace id="GDIOperation">
+</Workplace>
+<Workplace id="GDIWorkspace">
+</Workplace>
+<Workplace id="GDIBasic">
+</Workplace>
+</children>
+</Workplace>

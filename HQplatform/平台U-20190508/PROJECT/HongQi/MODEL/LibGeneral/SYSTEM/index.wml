@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="GetLocalTime"/>
+
+<Function id="GetFirapName"/>
+
+<Function id="idtmConnect_check_connection"/>
+
+<Function id="IDTMdisconnect"/>
+
+<Function id="idtmConnect_check_connectionV2"/>
+
+</children>
+</Workplace>

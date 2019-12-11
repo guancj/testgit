@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="DDCU_Common"/>
+<Process id="DDCU_Test"/>
+<Process id="DDCU_ReadDTC"/>
+<Process id="DDCU_FIN"/>
+</children>
+</Workplace>

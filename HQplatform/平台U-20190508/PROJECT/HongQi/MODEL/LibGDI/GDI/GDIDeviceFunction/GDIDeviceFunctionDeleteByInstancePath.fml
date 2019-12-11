@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="instancePath" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>gdiDeviceFunction = engine.GDI_GetDeviceFunctionByInstancePath(gdiWorkspace, instancePath)
+if gdiDeviceFunction~= nil then
+	gdiError = engine.GDI_DeleteDeviceFunction(gdiDeviceFunction)
+ else
+	print("GDIDeviceFunctionDelete: GDI device function is not set")
+ end</Script></Function>
+

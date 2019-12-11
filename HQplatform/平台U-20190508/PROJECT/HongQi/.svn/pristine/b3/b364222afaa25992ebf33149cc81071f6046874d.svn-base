@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_RTS_DriveActuators_service_3" description="向转毂台发送测试模式指令,service 3">
+<Inputs>
+<Variable id="withEngine" type="11" data="" description="with engine,设置发送报文中第3字节的第2bit位"/>
+<Variable id="driveEngine" type="11" data="" description="设置发送报文中第5字节的第2bit位"/>
+<Variable id="exhaustAbove" type="11" data="" description="尾气罩是否升起，设置发送报文中第5字节的第8bit位"/>
+<Variable id="modeControl" type="3" data="0" description="模式控制，设置发送报文中第6字节值，范围0-7"/>
+<Variable id="rearSecurity" type="11" data="" description="后轴安全模式,用第11字节的第2bit为表示"/>
+<Variable id="speedFL" type="5" data="0" description="左前毂速度,单位km/h"/>
+<Variable id="speedFR" type="5" data="0" description="右前毂速度,单位km/h"/>
+<Variable id="speedRL" type="5" data="0" description="左后毂速度,单位km/h"/>
+<Variable id="speedRR" type="5" data="0" description="右后毂速度,单位km/h"/>
+<Variable id="torqueFL" type="3" data="0" description="左前毂扭矩"/>
+<Variable id="torqueFR" type="3" data="0" description="右前毂扭矩"/>
+<Variable id="torqueRL" type="3" data="0" description="左后毂扭矩"/>
+<Variable id="torqueRR" type="3" data="0" description="右后毂扭矩"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>ret = -1;
+
+--生成初始化报文
+local request = LibIDT.idtInitRequestRTS(pHndl);
+
+--设置service号
+request = LibIDT.idtSetBytes(request,2,1,"\x03");
+
+
+--设置第3字节值
+local temp = string.byte(request:sub(3,3));
+if(withEngine == true) then
+temp = bit32.bor(temp,0x02);
+else
+temp = bit32.band(temp,0xFD);
+end;
+
+request = LibIDT.idtSetBytes(request,3,1,string.char(temp));
+temp = 0;
+
+--设置第5字节值
+temp = string.byte(request:sub(5,5));
+if(driveEngine == true) then     --设置第2bit位
+temp = bit32.bor(temp,0x02);
+else
+temp = bit32.band(temp,0xFD);
+end;
+
+if(rearSecurity == true) then     --设置第7bit位
+temp = bit32.bor(temp,0x40);
+else
+temp = bit32.band(temp,0xBF);
+end;
+
+
+
+if(exhaustAbove == true) then
+temp = bit32.bor(temp,0x80);    --设置第8bit位
+else
+temp = bit32.band(temp,0x7F);
+end;
+
+request = LibIDT.idtSetBytes(request,5,1,string.char(temp));
+
+temp = 0;
+
+--设置第6字节
+request = LibIDT.idtSetBytes(request,6,1,string.char(modeControl));
+
+--设置第11字节的第2bit位
+temp = string.byte(request:sub(11,11));
+if(rearSecurity == true) then     --设置第2bit位
+temp = bit32.bor(temp,0x02);
+else
+temp = bit32.band(temp,0xFD);
+end;
+
+request = LibIDT.idtSetBytes(request,11,1,string.char(temp));
+
+temp = 0;
+
+local factor = 100;
+
+local hexStr = "";
+--设置左前毂速度,第7、8字节
+hexStr = LibIDT.idtword2hex(speedFL*factor);
+request = LibIDT.idtSetBytes(request,7,2,hexStr);
+
+--设置左前毂扭矩值,第9、10字节
+hexStr = LibIDT.idtword2hex(torqueFL);
+request = LibIDT.idtSetBytes(request,9,2,hexStr);
+
+--设置右前毂速度,第29、30字节
+hexStr = LibIDT.idtword2hex(speedFR*factor);
+request = LibIDT.idtSetBytes(request,29,2,hexStr);
+
+--设置右前毂扭矩值,第31、32字节
+hexStr = LibIDT.idtword2hex(torqueFR);
+request = LibIDT.idtSetBytes(request,31,2,hexStr);
+
+--设置左后毂速度,第33、34字节
+hexStr = LibIDT.idtword2hex(speedRL*factor);
+request = LibIDT.idtSetBytes(request,33,2,hexStr);
+
+--设置左后毂扭矩值,第35、36字节
+hexStr = LibIDT.idtword2hex(torqueRL);
+request = LibIDT.idtSetBytes(request,35,2,hexStr);
+
+--设置右后毂速度,第37、38字节
+hexStr = LibIDT.idtword2hex(speedRR*factor);
+request = LibIDT.idtSetBytes(request,37,2,hexStr);
+
+--设置右后毂扭矩值,第39、40字节
+hexStr = LibIDT.idtword2hex(torqueRR);
+request = LibIDT.idtSetBytes(request,39,2,hexStr);
+
+--发送报文并校验返回报文是否正确
+if(LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl) == true) then
+
+ret = @1;
+
+--LibIDT.idtAdjustLastError(ret);
+
+end;</Script></Function>
+

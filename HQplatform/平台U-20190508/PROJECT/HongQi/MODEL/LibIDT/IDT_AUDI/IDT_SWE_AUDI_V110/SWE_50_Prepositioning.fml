@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="service 50 ,大灯调整：主动巡航位置&#13;&#10;">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="LSK" type="3" data="0"/>
+<Variable id="LSK_Pos" type="3" data="0"/>
+<Variable id="sendMode" type="3" data="0" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="revTel" type="8" data="" description="返回报文"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  SWE Service 50
+input parameter:pHndl,IDT_Timeout,LSK,LSK_Pos,sendMode                   
+output parameter :ret;revTel
+
+12/29/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00"
+
+sendMode = sendMode or 0
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x32");    -- 设置service号,第2字节
+idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(LSK)); 
+if(LSK == 1 or LSK == 2) then
+
+	if(LSK_Pos == 0) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x80)));
+        elseif(LSK_Pos == 1) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x01)));
+        elseif(LSK_Pos == 2) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x10)));
+        elseif(LSK_Pos == 3) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x02)));
+        elseif(LSK_Pos == 4) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x20)));
+        elseif(LSK_Pos == 5) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x04)));
+        elseif(LSK_Pos == 6) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x40)));
+        elseif(LSK_Pos == 7) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x01)));
+        elseif(LSK_Pos == 8) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x10)));
+        elseif(LSK_Pos == 9) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x02)));
+        elseif(LSK_Pos == 10) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x20)));
+        elseif(LSK_Pos == 11) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x04)));
+        elseif(LSK_Pos == 12) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x40)));
+        elseif(LSK_Pos == 13) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x08)));
+        elseif(LSK_Pos == 14) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,string.char(bit32.bor(string.byte(idt_tel,9),0x02)));
+        elseif(LSK_Pos == 15) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,string.char(bit32.bor(string.byte(idt_tel,9),0x10)));
+        elseif(LSK_Pos == 16) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,string.char(bit32.bor(string.byte(idt_tel,9),0x01)));
+        elseif(LSK_Pos == 17) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x08)));
+        elseif(LSK_Pos == 18) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x80)));
+        end
+
+elseif(LSK == 3) then
+	if(LSK_Pos == 0) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x80)));	
+        elseif(LSK_Pos == 1 or LSK_Pos == 2) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x11)));
+        elseif(LSK_Pos == 3 or LSK_Pos == 4) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x22))); 
+        elseif(LSK_Pos == 5 or LSK_Pos == 6) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x44))); 
+        elseif(LSK_Pos == 7 or LSK_Pos == 8) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x11)));  
+        elseif(LSK_Pos == 9 or LSK_Pos == 10) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x22)));  
+        elseif(LSK_Pos == 11 or LSK_Pos == 12) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x44)));  
+        elseif(LSK_Pos == 13) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(bit32.bor(string.byte(idt_tel,7),0x08))); 
+        elseif(LSK_Pos == 17 or LSK_Pos == 18) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x88))); 
+        end          
+end
+
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl,sendMode)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

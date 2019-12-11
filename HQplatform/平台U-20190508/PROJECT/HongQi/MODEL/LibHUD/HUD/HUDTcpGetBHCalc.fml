@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="Pid" type="8" data="&quot;&quot;" description="Production ID (Kennnummer)"/>
+<Variable id="IpAddress" type="8" data="&quot;127.0.0.1&quot;" description="IP address of test stand"/>
+<Variable id="Timeout" type="3" data="5" description="Timeout in sec for sending request and receiving response"/>
+<Variable id="Sender" type="8" data="&quot;MFT&quot;" description="String to be sent as value of tag Sender"/>
+<Variable id="Receiver" type="8" data="&quot;PS&quot;" description="String to be sent as value of tag Receiver"/>
+</Inputs>
+<Outputs>
+<Variable id="BildhoeheOben" type="5" data="0" description="The actual data received: value of element &quot;Bildhoehe_Oben&quot;"/>
+<Variable id="BildhoeheUnten" type="5" data="0" description="The actual data received: value of element &quot;Bildhoehe_Unten&quot;"/>
+<Variable id="Result" type="11" data="" description="Result of function retrieved from test stand: 0=not available; 1=available"/>
+<Variable id="ErrorMessage" type="8" data="" description="Error message retreived from test stand"/>
+<Variable id="ErrorCode" type="3" data="0" description="Error code retrieved from test stand"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  BHBerechnung
+input paramter:Pid,IpAddress,Timeout,Sender,Receiver
+output paramter:BildhoeheOben,BildhoeheUnten,Result,ErrorMessage,ErrorCode
+
+02/10/2017     created by viforce
+******************************************************************************--]]
+
+local pidResponse = ""
+local functionresultbuff = ""
+local ResultTmp = false
+local ErrorMessageTmp = ""
+local ErrorCodeTmp = -1
+engine.LastError = 1
+local buffer = LibHUD.HUDPrepXmlStruct("BHBerechnung",Pid,Sender,Receiver)
+
+local response,err = LibHUD.HUDTelegramExchange(buffer,IpAddress,Timeout)
+
+pidResponse,functionresultbuff,ResultTmp,ErrorMessageTmp,ErrorCodeTmp,err = LibHUD.HUDExtractDataFromResponse(response)
+
+if(err == 0) then
+	if(pidResponse == Pid) then
+		-- read Bildhoehe_Oben
+                pos1,pos2 = string.find(functionresultbuff,"&lt;Bildhoehe_Oben&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Bildhoehe_Oben&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			BildhoeheOben = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBHCalc&gt; HUDTcpGetBHCalc - PID:  " .. tostring(Pid) .. ", Bildhoehe_Oben: ".. tostring(BildhoeheOben)) 
+                else
+			err = 1
+			BildhoeheOben = -9999
+                        engine.println("&lt;HUDTcpGetBHCalc&gt; ERR  BildhoeheOben  invalid ")                                 
+                end                
+		-- read Bildhoehe_Unten
+                 pos1,pos2 = string.find(functionresultbuff,"&lt;Bildhoehe_Unten&gt;")
+                pos3,pos4 = string.find(functionresultbuff,"&lt;/Bildhoehe_Unten&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			BildhoeheUnten = tonumber(string.sub(functionresultbuff,pos2+1,pos3-1))
+                        engine.println("&lt;HUDTcpGetBHCalc&gt; HUDTcpGetBHCalc - PID:  " .. tostring(Pid) .. ", Bildhoehe_Unten: ".. tostring(BildhoeheUnten)) 
+                else
+			err = 1
+			BildhoeheUnten = -9999
+                        engine.println("&lt;HUDTcpGetBHCalc&gt; ERR  BildhoeheUnten  invalid ")                                 
+                end        
+        else
+		err = 1
+		engine.println("&lt;HUDTcpGetBHCalc&gt; ERR  HUDTcpGetBHCalc - specified PID: " .. tostring(Pid) .. ",retreived PID: " .. tostring(pidResponse)) 
+        end
+        if(err == 0) then
+		Result = ResultTmp
+                ErrorMessage = ErrorMessageTmp
+                ErrorCode = ErrorCodeTmp
+                engine.LastError = 0
+        end     
+else
+	engine.println("&lt;HUDTcpGetBHCalc&gt; ERR HUDExtractDataFromResponse excute failed ") 
+end</Script></Function>
+

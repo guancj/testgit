@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="8" data=""/>
+</Outputs>
+<Script>if (DString_C131_Car_Tpye == "CMNA02A") then
+	ret = "3.00"
+elseif (DString_C131_Car_Tpye == "CMNA01A" or DString_C131_Car_Tpye == "CH1QM30" or DString_C131_Car_Tpye == "CH1PM20" or DString_C131_Car_Tpye == "CH1QM40" or DString_C131_Car_Tpye == "CH1QM50" ) then
+	ret = "1.00"
+elseif (DString_C131_Car_Tpye == "CNDA01A" or DString_C131_Car_Tpye == "CH1PM30") then
+	ret = "1.00"
+else
+	ret = ""
+        print("the vehicle type do not know!")
+end</Script></Function>
+

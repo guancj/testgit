@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="BitOrByte" type="8" data="" description="&quot;@10==0b11011001@1==0b1010??01@3==0b??10?0??&quot;"/>
+<Variable id="Byte" type="8" data="" description="&quot;\x02&quot;"/>
+<Variable id="String" type="8" data=""/>
+<Variable id="StringStartPos" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="idt_tel" type="8" data=""/>
+</Outputs>
+<Script>local idt_tel = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+print("hex_tel:"..LibGeneral.hex2str(idt_tel))
+
+startP,endP = BitOrByte:find("==");
+if(BitOrByte ~= nil) then
+	if(BitOrByte:sub(1,1) == "@"  and startP ~= nil and endP ~=nil and BitOrByte:sub(endP+1,endP+2) == "0b") then
+		
+		for filter in string.gmatch(BitOrByte,"(@%d+==0b[0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?])") do
+			pos = filter:sub(2,#filter-12)
+			intpos = tonumber(pos)
+			startP,endP = filter:find("==");
+			idt_byte = idt_tel:sub(intpos,intpos)
+			idt_byte = string.byte(idt_byte)
+			local byteBeginPos = endP+3;
+			for i = 7,0,-1 do
+				bitstr = filter:sub(byteBeginPos+i,byteBeginPos+i)	
+				if (bitstr == "1") then	
+				idt_byte = bit32.bor(idt_byte,bit32.lshift(1,7-i))	
+				end
+				if (bitstr == "0") then
+					bitNum = bit32.extract(string.byte(idt_tel:sub(intpos,intpos)),7-i,1)
+					if(bitNum == 0) then
+					else
+						idt_byte = bit32.replace(idt_byte,0,7-i,1)
+					end
+				end
+			end
+                        
+			idt_byte = string.char(idt_byte)
+			--print("idt_byteHex:"..idt_byte)
+            
+			idt_tel = LibIDT.idtSetBytes(idt_tel,intpos,1,idt_byte)
+			print("hex_tel2:"..LibGeneral.hex2str(idt_tel))
+		end
+
+	end
+	if(startP == nil and Byte~=nil) then
+		for filter in string.gmatch(BitOrByte,"@%d+") do
+			byteNum = tonumber(filter:sub(2,#filter))
+			print("intByte:"..byteNum)
+			idt_tel = LibIDT.idtSetBytes(idt_tel,byteNum,1,Byte)	
+		end
+	end
+      if(String ~= nil) then
+        idt_tel = LibIDT.idtSetBytes(idt_tel,StringStartPos,#String,String)
+        end
+      -- err, revTel = LibIDT.idtDataExchange(idt_tel,Timeout,pHndl,0)
+end</Script></Function>
+

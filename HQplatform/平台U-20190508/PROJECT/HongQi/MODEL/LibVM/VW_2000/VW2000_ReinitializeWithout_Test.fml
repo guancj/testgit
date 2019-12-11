@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="vciExData" type="8" data="&quot;&quot;"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+Function  used to   Reinitialize without test ; 无需重新初始化测试
+input parameter:vciExData,ECU_Handle
+\x0f\xff :supported
+
+01/06/2017     created by viforce
+******************************************************************************--]]
+
+local recvbuf;
+local pos_0,pos_1;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+if(vciExData == "") then
+engine.println("vciExData : receive failed ".."\n");
+end;
+
+
+
+#COMMEX ECU_Handle -1 0x31 0xb8 0x0f 0xff
+recvbuf = @3-;
+if (engine.LastError ~= 0) then 
+	engine.StatValue = " write data failed :"..tostring(recvbuf);
+end;</Script></Function>
+

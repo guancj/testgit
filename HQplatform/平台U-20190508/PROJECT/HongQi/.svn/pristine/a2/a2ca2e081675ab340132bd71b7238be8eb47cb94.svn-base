@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FWE_ErrorMonitor" description="检查byte6结果：&#13;&#10;1）是否是自动模式&#13;&#10;2）是否存在故障&#13;&#10;3）是否是急停状态&#13;&#10;4）转毂台是否准备好进行检测&#13;&#10;如出现以上错误，屏幕背景变红。" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="通讯协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="接口号"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="Tester地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="波特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CANId"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CANId"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="AutoMode" type="11" dir="0" data="true" description="是否监控运行模式，true是，false否"/>
+<Variable id="Error" type="11" dir="0" data="true" description="是否监控故障，true是，false否"/>
+<Variable id="Emergency" type="11" dir="0" data="true" description="是否监控急停，true是，false否"/>
+<Variable id="Ready" type="11" dir="0" data="true" description="是否监控准备好状态，true是，false否"/>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+</ProcessParameters>
+<ProcessVariables>
+<Variable id="finishflag" type="11" data="" description="true退出，false继续"/>
+<Variable id="IDTAnswer" type="8" data="" description="接收到的报文"/>
+</ProcessVariables>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="93" top="16" right="193" bottom="48"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="235" top="518" right="335" bottom="550"/>
+<Script></Script></End>
+<Activities>
+<Activity id="4" ActivityType="3" name="非自动模式">
+<Rect left="568" top="83" right="668" bottom="115"/>
+<Line2Text Enable="1" Text="非自动模式"/>
+<Script>engine.println("##### Error: 非自动模式 \n");</Script></Activity>
+<Activity id="6" ActivityType="3" name="故障">
+<Rect left="570" top="161" right="670" bottom="193"/>
+<Line2Text Enable="1" Text="故障"/>
+<Script>engine.println("##### Error: 故障 \n");</Script></Activity>
+<Activity id="8" ActivityType="3" name="急停">
+<Rect left="571" top="247" right="671" bottom="279"/>
+<Line2Text Enable="1" Text="急停"/>
+<Script>engine.println("##### Error: 急停 \n");</Script></Activity>
+<Activity id="15" ActivityType="3" name="设置结束标识">
+<Rect left="1012" top="177" right="1112" bottom="209"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+<Script>engine.DialogBackColor = "red";
+engine.UdpHandleVarSet(Handl, "_FINISHFLAG", true);</Script></Activity>
+<Activity id="16" ActivityType="4" name="运行模式">
+<Rect left="270" top="83" right="302" bottom="115"/>
+</Activity>
+<Activity id="17" ActivityType="4" name="故障">
+<Rect left="270" top="161" right="302" bottom="193"/>
+</Activity>
+<Activity id="18" ActivityType="4" name="急停">
+<Rect left="269" top="247" right="301" bottom="279"/>
+</Activity>
+<Activity id="30" ActivityType="4" name="路由节点">
+<Rect left="269" top="346" right="301" bottom="378"/>
+</Activity>
+<Activity id="32" ActivityType="3" name="未准备好">
+<Rect left="575" top="345" right="675" bottom="377"/>
+<Line2Text Enable="1" Text="车辆未未准备好"/>
+<Script>engine.println("##### Error: 车辆未未准备好 \n");</Script></Activity>
+<Activity id="33" ActivityType="4" name="路由节点">
+<Rect left="1047" top="16" right="1079" bottom="48"/>
+</Activity>
+<Activity id="40" ActivityType="4" name="路由节点">
+<Rect left="269" top="414" right="301" bottom="446"/>
+</Activity>
+<Activity id="42" ActivityType="3" name="FWE 检测 _FINISHFLAG">
+<Rect left="94" top="84" right="194" bottom="116"/>
+<Script>finishflag = engine.UdpHandleVarGet(Handl, "_FINISHFLAG");</Script></Activity>
+<Activity id="43" ActivityType="4" name="路由节点">
+<Rect left="34" top="85" right="66" bottom="117"/>
+</Activity>
+<Activity id="44" ActivityType="4" name="路由节点">
+<Rect left="34" top="517" right="66" bottom="549"/>
+</Activity>
+<Activity id="45" ActivityType="4" name="路由节点">
+<Rect left="1045" top="518" right="1077" bottom="550"/>
+</Activity>
+<Activity id="46" ActivityType="3" name="Delay">
+<Rect left="94" top="415" right="194" bottom="447"/>
+<Script>engine.Delay(200);</Script></Activity>
+<Activity id="47" ActivityType="3" name="重新检测">
+<Rect left="813" top="414" right="913" bottom="446"/>
+<Line3Text Enable="1" Text="开始检测"/>
+<Line4Text Enable="1" Text="重试？"/>
+<ButtonLText Enable="1" Text="退出"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>#PRESSBUTTON</Script></Activity>
+<Activity id="48" ActivityType="4" name="路由节点">
+<Rect left="848" top="230" right="880" bottom="262"/>
+</Activity>
+<Activity id="49" ActivityType="3" name="普通节点">
+<Rect left="576" top="415" right="676" bottom="447"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1"/>
+<Script></Script></Activity>
+<Activity id="51" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="401" top="83" right="501" bottom="115"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram"/>
+<Parameter id="filter" value="&quot;@6==0b?001????&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="52" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="405" top="160" right="505" bottom="192"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram"/>
+<Parameter id="filter" value="&quot;@6==0b??????0?&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="53" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="403" top="246" right="503" bottom="278"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram"/>
+<Parameter id="filter" value="&quot;@6==0b???????0&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="54" ActivityType="13" name="IDT_FWE_State_store">
+<Rect left="407" top="345" right="507" bottom="377"/>
+<FunctionRef id="IDT_FWE_State_store" model="LibIDT">
+<Parameters>
+<Parameter id="lastDatagram"/>
+<Parameter id="filter" value="&quot;@6==0b???????0&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+<Activity id="55" ActivityType="13" name="IDT_FWE_State_actual">
+<Rect left="408" top="414" right="508" bottom="446"/>
+<FunctionRef id="IDT_FWE_State_actual" model="LibIDT">
+<Parameters>
+<Parameter id="filter" value="&quot;@6==0b?001??00&quot;"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="isOK" value="0" ret="isOK"/>
+<Parameter id="receiveDatagram" ret="RecvData"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="33" type="1">
+<Expression>Handl == nil</Expression></Transition>
+<Transition StartId="1" EndId="42" type="0">
+</Transition>
+<Transition StartId="4" EndId="48" type="0">
+</Transition>
+<Transition StartId="6" EndId="48" type="0">
+</Transition>
+<Transition StartId="8" EndId="48" type="0">
+</Transition>
+<Transition StartId="15" EndId="45" type="0">
+</Transition>
+<Transition StartId="16" EndId="17" type="0">
+</Transition>
+<Transition StartId="16" EndId="51" type="1">
+<Expression>AutoMode</Expression></Transition>
+<Transition StartId="17" EndId="18" type="0">
+</Transition>
+<Transition StartId="17" EndId="52" type="1">
+<Expression>Error</Expression></Transition>
+<Transition StartId="18" EndId="30" type="0">
+</Transition>
+<Transition StartId="18" EndId="53" type="1">
+<Expression>Emergency</Expression></Transition>
+<Transition StartId="30" EndId="54" type="1">
+<Expression>Ready</Expression></Transition>
+<Transition StartId="30" EndId="40" type="0">
+</Transition>
+<Transition StartId="32" EndId="48" type="0">
+</Transition>
+<Transition StartId="33" EndId="15" type="0">
+</Transition>
+<Transition StartId="40" EndId="46" type="0">
+</Transition>
+<Transition StartId="42" EndId="43" type="1">
+<Expression>finishflag == true or engine.SharedVarGet("_GlobalFinishShared") == 1</Expression></Transition>
+<Transition StartId="42" EndId="16" type="0">
+</Transition>
+<Transition StartId="43" EndId="44" type="0">
+</Transition>
+<Transition StartId="44" EndId="2" type="0">
+</Transition>
+<Transition StartId="45" EndId="2" type="0">
+</Transition>
+<Transition StartId="46" EndId="42" type="0">
+</Transition>
+<Transition StartId="47" EndId="49" type="6">
+</Transition>
+<Transition StartId="47" EndId="15" type="5">
+</Transition>
+<Transition StartId="48" EndId="15" type="0">
+</Transition>
+<Transition StartId="49" EndId="55" type="0">
+</Transition>
+<Transition StartId="51" EndId="17" type="1">
+<Expression>isOK</Expression></Transition>
+<Transition StartId="51" EndId="4" type="1">
+<Expression>not isOK</Expression></Transition>
+<Transition StartId="52" EndId="18" type="1">
+<Expression>isOK</Expression></Transition>
+<Transition StartId="52" EndId="6" type="1">
+<Expression>not isOK</Expression></Transition>
+<Transition StartId="53" EndId="30" type="1">
+<Expression>isOK</Expression></Transition>
+<Transition StartId="53" EndId="8" type="1">
+<Expression>not isOK</Expression></Transition>
+<Transition StartId="54" EndId="40" type="1">
+<Expression>isOK</Expression></Transition>
+<Transition StartId="54" EndId="32" type="1">
+<Expression>not isOK</Expression></Transition>
+<Transition StartId="55" EndId="40" type="0">
+</Transition>
+</Transitions>
+</Process>
+

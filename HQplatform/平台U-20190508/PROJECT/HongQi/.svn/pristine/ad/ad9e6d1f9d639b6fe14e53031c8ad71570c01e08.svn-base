@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="DATAMANIPULATION" code="">
+
+<Functions>
+<Function id="binStr2Int"/>
+
+<Function id="conv2ByteToBinString"/>
+
+<Function id="conv4ByteToBinString"/>
+
+<Function id="convNumTo4ByteHex"/>
+
+<Function id="float2int"/>
+
+<Function id="hex2str"/>
+
+<Function id="KeyCodeConvert4Byte"/>
+
+<Function id="str2hex"/>
+
+<Function id="StringResetBitInByte"/>
+
+<Function id="StringSetBitInByte"/>
+
+<Function id="StringTestBitInByte"/>
+
+</Functions>
+</Workplace>

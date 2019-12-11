@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="idtGetSendMark" description="获取发送报文使用的第一个字节，以&quot;\x06&quot;的方式。">
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回发送报文使用的第一个字节，以&quot;\x06&quot;的方式。"/>
+</Outputs>
+<Script>ret = string.char(LibIDT.sendMark);
+
+--ret = string.char(sendMark);</Script></Function>
+

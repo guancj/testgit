@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="GetLocalTime">
+<Outputs>
+<Variable id="Day" type="3" data="0" description="日"/>
+<Variable id="Month" type="3" data="0" description="月"/>
+<Variable id="Year" type="3" data="0" description="年"/>
+<Variable id="Hour" type="3" data="0" description="时"/>
+<Variable id="Minute" type="3" data="0" description="分"/>
+</Outputs>
+<Script>
+
+Day = os.date("%d");
+Day = math.floor(Day/10)*16 + (Day - math.floor(Day/10)*10);
+Month = os.date("%m");
+Month = math.floor(Month/10)*16 + (Month - math.floor(Month/10)*10);
+Year = os.date("%y");
+Year = math.floor(Year/10)*16 + (Year - math.floor(Year/10)*10);
+Hour = os.date("%H");
+Hour = math.floor(Hour/10)*16 + (Hour - math.floor(Hour/10)*10);
+Minute = os.date("%M");
+Minute = math.floor(Minute/10)*16 + (Minute - math.floor(Minute/10)*10);
+
+
+
+
+
+
+</Script></Function>
+

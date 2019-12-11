@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_ZDC_Check_2_2_NSS" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="369" top="68" right="469" bottom="100"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="367" top="392" right="467" bottom="424"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="准备">
+<Rect left="368" top="134" right="468" bottom="166"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="3" name="NSS">
+<Rect left="369" top="198" right="469" bottom="230"/>
+<Line2Text Enable="1" Text="NSS"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="5" name="c7_nss">
+<Rect left="369" top="263" right="469" bottom="295"/>
+<SubProcesses>
+<SubProcess id="c7_nss">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;SlaveExamination&quot;,&quot;Examination&quot;,&quot;CheckZDCconfiguration&quot;}"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="0"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="0"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="0"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="0"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="3" name="Clear">
+<Rect left="368" top="327" right="468" bottom="359"/>
+<Script></Script></Activity>
+<Activity id="7" ActivityType="4" name="路由节点">
+<Rect left="268" top="168" right="300" bottom="200"/>
+</Activity>
+<Activity id="8" ActivityType="4" name="路由节点">
+<Rect left="267" top="346" right="299" bottom="378"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="7">
+<Expression>$9R1</Expression></Transition>
+<Transition StartId="3" EndId="7" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="6" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="7" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="GDIComObjectCreate"/>
+
+<Function id="GDIComObjectCreateByInstancePath"/>
+
+<Function id="GDIComObjectGetByInstanceName"/>
+
+<Function id="GDIComObjectRead"/>
+
+<Function id="GDIComObjectReadByEvent"/>
+
+<Function id="GDIComObjectReadByInstancePath"/>
+
+<Function id="GDIComObjectReadeKeyPressed"/>
+
+<Function id="GDIComObjectWrite"/>
+
+<Function id="GDIComObjectWriteByInstancePath"/>
+
+<Function id="GDIDeviceFunctionGetAllComObjectInstanceNames"/>
+
+<Function id="GDIInformationReportOccurred"/>
+
+<Function id="GDIInformationReportOccurredByEvent"/>
+
+</children>
+</Workplace>

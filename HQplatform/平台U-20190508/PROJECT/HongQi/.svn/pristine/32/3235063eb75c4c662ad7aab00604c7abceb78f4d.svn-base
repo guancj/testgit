@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="VW2000_DTC_Clear" description="VW2000_DTC_Clear">
+<Inputs>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to  Clear DTC
+input parameter : ECU_Handle
+
+01/20/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+Recel = "";
+
+#COMMEX ECU_Handle -1 0x14 0xff 0x00
+
+
+local Recel = @0-; 
+if(engine.LastError ~= 0 ) then
+
+if(Recel ~= nil) then
+
+if(string.byte(Recel,1) == 0x7f and string.byte(Recel,3) == 0x21) then
+
+engine.Delay(500);
+
+#COMMEX ECU_Handle -1 0x14 0xff 0x00
+end;
+
+end;
+
+end;
+
+
+
+
+if(0 == engine.LastError) then
+engine.SetLineText(2,"#L=清除故障码#R=bmpok");
+engine.ShowMessage();
+engine.StatValue = "dtc clear successfully";
+else
+engine.SetLineText(2,"#L=清除故障码#R=bmpnok");
+engine.ShowMessage();
+engine.StatValue = "dtc clear failed";
+end</Script></Function>
+

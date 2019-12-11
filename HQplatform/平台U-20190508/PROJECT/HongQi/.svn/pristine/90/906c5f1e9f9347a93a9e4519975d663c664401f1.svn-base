@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_PRE" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="291" top="78" right="391" bottom="110"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="295" top="609" right="395" bottom="641"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="选择列表">
+<Rect left="292" top="141" right="392" bottom="173"/>
+<TitleText Enable="1" Text="奥迪 驾驶辅助系统-检测"/>
+<ButtonLText Enable="1"/>
+<ButtonRText Enable="1" Text="确定"/>
+<Script>--检测选择
+strLocationFAS = "驾驶辅助系统 - 流程";
+
+--列表添加
+engine.DialogBackColor = -1;
+
+engine.ListClear();
+engine.ListAddString(strLocationFAS,true);
+
+engine.SelectLayout(1);
+#INPUT strLocationSel
+engine.println("已选择工位：" .. tostring(strLocationSel));
+engine.DialogBackColor = -1;
+engine.SelectLayout(0);</Script></Activity>
+<Activity id="4" ActivityType="3" name="选择执行">
+<Rect left="291" top="211" right="391" bottom="243"/>
+<TitleText Enable="1"/>
+<Line1Text Enable="1"/>
+<Line2Text Enable="1"/>
+<Line3Text Enable="1"/>
+<Line4Text Enable="1"/>
+<Script>engine.WorkPlace = Tmp_StrLocation;</Script></Activity>
+<Activity id="5" ActivityType="3" name="驾驶辅助系统">
+<Rect left="292" top="275" right="392" bottom="307"/>
+<Script></Script></Activity>
+<Activity id="6" ActivityType="3" name="其他">
+<Rect left="451" top="140" right="551" bottom="172"/>
+<Script></Script></Activity>
+<Activity id="7" ActivityType="3" name="其他">
+<Rect left="450" top="212" right="550" bottom="244"/>
+<Script></Script></Activity>
+<Activity id="8" ActivityType="3" name="Version">
+<Rect left="293" top="341" right="393" bottom="373"/>
+<Script>engine.StatValue = "C7_FAS_Ablauf 2.16"
+engine.LastError = 0</Script><assessment block="4" ptbtext="DEP1368" group="1" pbltext="DEP1415" no="1" name="DEP1416" type="8" flags="97"/>
+</Activity>
+<Activity id="9" ActivityType="3" name="未执行调整">
+<Rect left="293" top="402" right="393" bottom="434"/>
+<Script>engine.StatValue = ""
+engine.LastError = 0</Script><assessment block="4" ptbtext="DEP1368" group="115" pbltext="DEP1390" no="36" name="DEP1417" type="8" flags="97"/>
+</Activity>
+<Activity id="10" ActivityType="3" name="总结果读取">
+<Rect left="294" top="471" right="394" bottom="503"/>
+<Script>engine.StatValue = ""
+engine.LastError = 0</Script><assessment block="4" ptbtext="DEP1368" group="122" pbltext="DEP1369" no="37" name="DEP1418" type="8" flags="97"/>
+</Activity>
+<Activity id="11" ActivityType="3" name="FAS:批量生产">
+<Rect left="294" top="534" right="394" bottom="566"/>
+<Script>engine.StatValue = "FAS:批量生产流程"
+engine.LastError = 0</Script><assessment block="4" ptbtext="DEP1368" group="1" pbltext="DEP1415" no="2" name="DEP1416" type="8" flags="97"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="6">
+</Transition>
+<Transition StartId="3" EndId="6" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="1">
+<Expression>strLocationSel == strLocationFAS</Expression></Transition>
+<Transition StartId="4" EndId="7" type="0">
+</Transition>
+<Transition StartId="5" EndId="8" type="0">
+</Transition>
+<Transition StartId="8" EndId="9" type="0">
+</Transition>
+<Transition StartId="9" EndId="10" type="0">
+</Transition>
+<Transition StartId="10" EndId="11" type="0">
+</Transition>
+<Transition StartId="11" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="UDS_ReadService_22_SID">
+<Inputs>
+<Variable id="SID" type="8" data="&quot;\xf1\x98&quot;"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Outputs>
+<Variable id="RecvString" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   read data from ECU  by ID ;
+input parameter:SID;ECU_Handle
+output parameter :RecvString;
+
+02/02/2016     created by viforce
+11/04/2016     changed by viforce
+******************************************************************************--]]
+
+local recvbuf = "";
+local pos_0,pos_1;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return ""
+end
+
+
+if (string.len(SID) ~= 2) then
+	engine.StatValue = "SID length  not correct";engine.LastError = 1 ;
+	return "";
+end;
+
+#COMMEX ECU_Handle -1 0x22 SID 
+recvbuf = @0-;
+
+if (engine.LastError ~= 0) then 
+    engine.StatValue = " read  data failed :"..recvbuf;
+	return "";
+else
+    RecvString = string.sub(recvbuf,4,-1);
+end;
+</Script></Function>
+

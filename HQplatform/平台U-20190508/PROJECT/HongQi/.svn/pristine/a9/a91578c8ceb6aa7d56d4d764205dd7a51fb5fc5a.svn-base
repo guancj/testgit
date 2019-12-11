@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="HUP_89_WriteReferenceData" description="service 89 ,HUP 写数据">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="HoeheRadhaus_VL" type="5" data="0"/>
+<Variable id="HoeheRadhaus_VR" type="5" data="0"/>
+<Variable id="HoeheRadhaus_HL" type="5" data="0"/>
+<Variable id="HoeheRadhaus_HR" type="5" data="0"/>
+<Variable id="Achsversatz_VA" type="5" data="0"/>
+<Variable id="Achsversatz_HA" type="5" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  HUP Service 89 HUP Write Reference Data
+input parameter:pHndl,IDT_Timeout,HoeheRadhaus_VL,HoeheRadhaus_VR,HoeheRadhaus_HR,
+                        HoeheRadhaus_HR,Achsversatz_VA,Achsversatz_HA                        
+output parameter :ret;
+
+12/29/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00"
+local tmpVal = 0
+local tmpByte5 = 0
+local tmpByte6 = 0
+local tmpByte7 = 0
+local tmpByte8 = 0
+local tmpByte9 = 0
+local tmpByte10 = 0
+local tmpByte11 = 0
+local tmpByte12 = 0
+local tmpByte13 = 0
+local tmpByte14 = 0
+local tmpByte15 = 0
+local tmpByte16 = 0
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x59");    -- 设置service号,第2字节
+
+HoeheRadhaus_VL = HoeheRadhaus_VL * 10.0;
+HoeheRadhaus_VR = HoeheRadhaus_VR * 10.0;
+HoeheRadhaus_HL = HoeheRadhaus_HL * 10.0;
+HoeheRadhaus_HR = HoeheRadhaus_HR * 10.0;
+Achsversatz_VA = Achsversatz_VA * 10.0;
+Achsversatz_HA = Achsversatz_HA * 10.0;
+
+tmpVal = HoeheRadhaus_VL
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte5 = math.floor(tmpVal / 0x100)
+tmpByte6 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(tmpByte5)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(tmpByte6)); 
+
+tmpVal = HoeheRadhaus_VR
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte7 = math.floor(tmpVal / 0x100)
+tmpByte8 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,7,1,string.char(tmpByte7)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,8,1,string.char(tmpByte8)); 
+
+tmpVal = HoeheRadhaus_HL
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte9 = math.floor(tmpVal / 0x100)
+tmpByte10 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,9,1,string.char(tmpByte9)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,10,1,string.char(tmpByte10)); 
+
+tmpVal = HoeheRadhaus_HR
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte11 = math.floor(tmpVal / 0x100)
+tmpByte12 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,11,1,string.char(tmpByte11)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,12,1,string.char(tmpByte12)); 
+
+tmpVal = Achsversatz_VA
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte13 = math.floor(tmpVal / 0x100)
+tmpByte14 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,13,1,string.char(tmpByte13)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,14,1,string.char(tmpByte14)); 
+
+tmpVal = Achsversatz_HA
+if(tmpVal &lt; 0) then
+tmpVal = tmpVal + 65536
+end
+tmpVal = bit32.band(tmpVal,0xffff)
+tmpByte15 = math.floor(tmpVal / 0x100)
+tmpByte16 = bit32.band(tmpVal,0xff)
+idt_tel = LibIDT.idtSetBytes(idt_tel,15,1,string.char(tmpByte15)); 
+idt_tel = LibIDT.idtSetBytes(idt_tel,16,1,string.char(tmpByte16)); 
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

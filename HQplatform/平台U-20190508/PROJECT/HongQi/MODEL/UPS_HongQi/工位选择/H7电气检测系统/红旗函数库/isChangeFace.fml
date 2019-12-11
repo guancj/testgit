@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data="DString_C131_Car_Tpye"/>
+</Inputs>
+<Script>CarTypeNameChange_Is_ChangeFace = (DString_C131_Car_Tpye=="CH1GM30" or DString_C131_Car_Tpye=="CH1GM23" or DString_C131_Car_Tpye=="CH1AM43" or DString_C131_Car_Tpye=="CH1AM44" or DString_C131_Car_Tpye=="CH1BM34" or DString_C131_Car_Tpye=="CH1CM31" or DString_C131_Car_Tpye=="CH1DM16" or DString_C131_Car_Tpye=="CH1DM17" or DString_C131_Car_Tpye=="CH1FM20" or DString_C131_Car_Tpye=="CH1FM30" or DString_C131_Car_Tpye=="CH1NM11" or DString_C131_Car_Tpye=="CH1JM12")
+
+return CarTypeNameChange_Is_ChangeFace;</Script></Function>
+

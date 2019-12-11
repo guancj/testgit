@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="检测返回报文状态是否正确，主要是判断返回报文第六字节内容。">
+<Inputs>
+<Variable id="checkedByte" type="3" data="0" description="需要被检测的字节内容，例如返回报文第六字节内容&quot;0b?001??00&quot;为OK"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data="" description="合法返回true，否则返回false"/>
+</Outputs>
+<Script>ret = false;
+
+--0x73(二进制:01110011),用来过滤第1、2、5、6和7bit.
+ret = LibIDT.idtCheckByte(checkedByte,0x73,0x10);</Script></Function>
+

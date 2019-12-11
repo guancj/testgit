@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="Par_P_Modes_2_1_MKB_HI" flags="1">
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="383" top="51" right="483" bottom="83"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="388" top="385" right="488" bottom="417"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="准备">
+<Rect left="384" top="116" right="484" bottom="148"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="3" name="MKB_HI">
+<Rect left="385" top="186" right="485" bottom="218"/>
+<Line2Text Enable="1" Text="MKB_HI"/>
+<Script></Script></Activity>
+<Activity id="5" ActivityType="5" name="c7_mkb_hi">
+<Rect left="386" top="251" right="486" bottom="283"/>
+<SubProcesses>
+<SubProcess id="c7_mkb_hi">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;P-Mode deaktivieren&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="289" top="167" right="321" bottom="199"/>
+</Activity>
+<Activity id="7" ActivityType="3" name="Clear">
+<Rect left="387" top="314" right="487" bottom="346"/>
+<Line2Text Enable="1"/>
+<Script></Script></Activity>
+<Activity id="8" ActivityType="4" name="路由节点">
+<Rect left="289" top="340" right="321" bottom="372"/>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="3" type="0">
+</Transition>
+<Transition StartId="3" EndId="4" type="7">
+<Expression>$KU1|$KU2</Expression></Transition>
+<Transition StartId="3" EndId="6" type="0">
+</Transition>
+<Transition StartId="4" EndId="5" type="0">
+</Transition>
+<Transition StartId="5" EndId="7" type="0">
+</Transition>
+<Transition StartId="6" EndId="8" type="0">
+</Transition>
+<Transition StartId="7" EndId="2" type="0">
+</Transition>
+<Transition StartId="8" EndId="2" type="0">
+</Transition>
+</Transitions>
+</Process>
+

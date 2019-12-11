@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data="" description="XML handle"/>
+<Variable id="Fzd" type="8" data="" description="vehicle data set"/>
+<Variable id="Knr" type="8" data="" description="production number"/>
+<Variable id="SgTnr" type="8" data="" description="ECU partnumber"/>
+<Variable id="SgBg" type="8" data="" description="Baugruppe ECU"/>
+<Variable id="ZdcTnr" type="8" data="" description="ZDC partnumber"/>
+<Variable id="SwapDcTnr" type="8" data="" description="SWaP_DC partnumber from vehicle data set, possibly corrected"/>
+<Variable id="SwapDcBg" type="8" data="" description="Baugruppe SWaP_DC"/>
+<Variable id="VorserienFzg" type="3" data="0" description="0 = no pre-series vehicle, 1 = pre-series vehicle (according to PR-Nr from configfile)"/>
+</Inputs>
+<Outputs>
+<Variable id="Tnr_Aenderung" type="3" data="0" description="correction / use-up entry found"/>
+<Variable id="Tnr_Aend_SWaP" type="3" data="0" description="correction entry found for SWaP_DC-Tnr"/>
+<Variable id="SgTnrErsatz" type="8" data="" description="corrected /alternative ECU part number"/>
+<Variable id="ZdcTnrErsatz" type="8" data="" description="corrected /alternative ZDC part number"/>
+<Variable id="SwapDcTnrErsatz" type="8" data="" description="SWaP_DC partnumber from Korrekturliste"/>
+<Variable id="errFlag" type="3" data="0" description="error code"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This template computes the lists Korrektur SG of the ASV list file.
+(minimal required ASV list version: 1.23)
+
+input parameter:XmlHndl,Fzd,Knr,SgTnr,SgBg,ZdcTnr,SwapDcTnr,SwapDcBg,VorserienFzg
+output parameter:Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,errFlag
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+local bufTab = {}
+local Modus = "Korrektur"
+local zdcBg_local, hw_ref_tnr_local, istSgTnr_local, sollTnr_local
+local swapDcTnrErsatz_local, zdcName_local, sw_Version_local, flashdatencont_local
+local keyID_local, swapDCName_local, swapDCVersion_local, zdcVersion_local
+local flagZdcGeraten_local
+
+	Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,ZdcTnrErsatz,SwapDcTnrErsatz,bufTab,errFlag = LibVW.Korr_Aufbr_TNR_ASV123_Part1(XmlHndl, Modus, SgTnr, SgBg, ZdcTnr, zdcBg_local, SwapDcTnr,hw_ref_tnr_local)
+	if(#bufTab &gt; 0 and engine.LastError == 0) then
+		Tnr_Aenderung,Tnr_Aend_SWaP,SgTnrErsatz,sollTnr_local,ZdcTnrErsatz,SwapDcTnrErsatz,zdcName_local,zdcVersion_local,flagZdcGeraten_local,keyID_local,swapDCName_local,swapDCVersion_local,sw_Version_local,flashdatencont_local,errFlag = LibVW.Korr_Aufbr_TNR_ASV123_Part2(XmlHndl, Fzd, Knr, Modus, SgTnr, ZdcTnr, SwapDcTnr,SwapDcBg, istSgTnr_local, hw_ref_tnr_local, VorserienFzg, bufTab)
+	end</Script></Function>
+

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="SrcString_in" type="8" data="" description="数据源(key number 12 )"/>
+</Inputs>
+<Outputs>
+<Variable id="addr_byte0" type="8" data="" description="低地址位 （字符串类型）"/>
+<Variable id="addr_byte1" type="8" data=""/>
+<Variable id="addr_byte2" type="8" data=""/>
+<Variable id="addr_byte3" type="8" data="" description="高地址位 （字符串类型）"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this is used to KeyCodeConvert4Byte
+input parameter:SrcString_in;
+output parameter:addr_byte0,addr_byte1,addr_byte2,addr_byte3
+created by kl 03/13/2016
+lastEdit viforce 03/14/2016
+******************************************************************************--]]
+
+
+	local iLowVal=0;
+	local iHighVal=0;
+	local length=#SrcString_in;
+	local SrcString={};
+		
+	for i=1,length,1 do
+		SrcString[i]=string.sub(SrcString_in,i,i);
+	end
+	
+	i = 1;	
+	while (i &lt; length and (SrcString [i] == ' ' or SrcString [i] == '\t')) do
+    	i = i + 1;
+	end;
+	
+	while ((i&lt;length) and string.byte(SrcString[i])&gt;=0x30 and string.byte(SrcString[i])&lt;=0x39)do
+		iLowVal = iLowVal * 10;
+    	        iHighVal = iHighVal * 10;
+    	        iLowVal = iLowVal + string.byte(SrcString [i]) - 0x30;
+                iHighVal = iHighVal + math.floor(iLowVal / 0x1000000);
+    	        iLowVal = bit32.band(iLowVal,0x0ffffff);
+    	
+    	        i=i+1;
+        end
+   
+   
+            addr_byte0 = string.format("%02x",bit32.band(iLowVal,0xff)) ;
+	    addr_byte1 = string.format("%02x",bit32.rshift(bit32.band(iLowVal,0xff00),8));
+	    addr_byte2 = string.format("%02x",bit32.rshift(bit32.band(iLowVal,0xff0000),16));
+	    addr_byte3 = string.format("%02x",bit32.band(iHighVal,0xff));</Script></Function>
+

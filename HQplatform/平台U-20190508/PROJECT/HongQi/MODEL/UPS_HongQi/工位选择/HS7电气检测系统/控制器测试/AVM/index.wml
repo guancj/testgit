@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="AVM_Common"/>
+<Process id="AVM_Image_Check"/>
+<Process id="AVM_Long_Sensor_Check"/>
+<Process id="AVM_ReadDTC"/>
+<Process id="AVM_Short_Sensor_Check"/>
+<Process id="AVM_Test"/>
+<Process id="AVM_FIN"/>
+<Process id="AVM_Calibration"/>
+</children>
+</Workplace>

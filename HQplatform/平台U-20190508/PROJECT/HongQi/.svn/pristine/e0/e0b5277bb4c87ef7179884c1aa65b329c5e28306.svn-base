@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="Tolerance_view_Float_B" description="--[[*****************************************************************************&#13;&#10;this function is used to compare messure value float bar for uds B 不包括界限&#13;&#10;input parameter:PramIn ; 首次参数必须为nil;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.timeout;计时&#13;&#10;                                                :PramIn.timeoutFlag ;超时标志 true : 超时 ; false :未超时&#13;&#10;                                                :PramIn.errflag = 0;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.okFlag ;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.okCount ;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.nokCount ;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.timestart = os.clock();&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.duration = 0;&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.durationStart = os.clock();&#13;&#10;&#9;&#9;&#9;&#9;&#9;&#9;:PramIn.FinishFlag ;&#13;&#10;&#9;&#9;&#9;                        :PramIn.StatValue ;&#13;&#10;&#9;&#9;&#9;                        :PramIn.StatLower ;&#13;&#10;&#9;&#9;&#9;                        :PramIn.StatUpper ;&#13;&#10;&#9;&#9;                      &#9;        :PramIn.StatUnit ;&#13;&#10;&#13;&#10;&#9;&#9;&#9;&#9;LineNr ;&#13;&#10;                                LastErr;&#13;&#10;&#9;&#9;&#9;&#9;UpperLimit;&#13;&#10;&#9;&#9;&#9;&#9;LowerLimit;&#13;&#10;&#9;&#9;&#9;&#9;MeasValue;&#13;&#10;&#9;&#9;&#9;&#9;RightViewText;&#13;&#10;&#9;&#9;&#9;&#9;barUpper;保留&#13;&#10;&#9;&#9;&#9;&#9;barLimit;保留&#13;&#10;&#9;&#9;&#9;&#9;barScale;刻度&#13;&#10;&#9;&#9;&#9;&#9;CType ; 1,OK计数，2，NOK计数，3，OK计时，4，NOK计时&#13;&#10;&#9;&#9;&#9;&#9;OKcount;  计数或者算秒&#13;&#10;&#9;&#9;&#9;&#9;NOKcount; 计数或者算秒&#13;&#10;&#9;&#9;&#9;&#9;TimeOut; 超时 秒&#13;&#10;&#9;&#9;&#9;&#9;BarType;  保留&#13;&#10;&#9;&#9;&#9;&#9;DialogHandle;保留&#13;&#10;&#9;&#9;&#9;&#9;&#13;&#10;&#9;&#9;&#9;&#9;&#13;&#10;output parameter :FinishFlag ; true / false&#13;&#10;&#9;&#9;&#9;&#9;  PramOut;&#13;&#10;&#9;&#9;&#9;&#9; &#13;&#10;                   &#13;&#10;created by zhouxh 05/18/2016&#13;&#10;******************************************************************************--]]">
+<Inputs>
+<Variable id="PramIn" type="8" data="Pram_1" description="参数留存表  首次必须为nil"/>
+<Variable id="LineNr" type="3" data="1" description="显示行"/>
+<Variable id="LastErr" type="3" data="0" description="读服务的返回Err （注意使用）"/>
+<Variable id="UpperLimit" type="5" data="0" description="上限"/>
+<Variable id="LowerLimit" type="5" data="0" description="下限"/>
+<Variable id="MeasValue" type="5" data="0" description="测量值"/>
+<Variable id="RightViewText" type="8" data="&quot;&quot;" description="右边框显示文字"/>
+<Variable id="barUpper" type="5" data="0" description="保留未开放"/>
+<Variable id="barLimit" type="5" data="0" description="保留未开放"/>
+<Variable id="barScale" type="3" data="5" description="bar 刻度"/>
+<Variable id="CType" type="3" data="1" description="1,OK计数，2，NOK计数，3，OK计时，4，NOK计时"/>
+<Variable id="OKcount" type="3" data="1" description="计数或者算秒"/>
+<Variable id="NOKcount" type="3" data="0" description="计数或者算秒"/>
+<Variable id="TimeOut" type="3" data="10" description="超时 秒"/>
+<Variable id="BarType" type="3" data="1" description="保留未开放"/>
+<Variable id="DialogHandle" type="3" data="0" description="保留未开放"/>
+<Variable id="StatUnit" type="8" data="&quot;&quot;" description="单位"/>
+</Inputs>
+<Outputs>
+<Variable id="FinishFlag" type="11" data="" description="true 完成退出  false 未完成"/>
+<Variable id="PramOut" type="8" data="" description="表,循环中为下次参数"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to compare messure value float bar for uds A
+input parameter:                PramIn ; 首次参数必须为nil;
+						:PramIn.timeout;计时
+                                                :PramIn.timeoutFlag ;超时标志 true : 超时 ; false :未超时
+                                                :PramIn.errflag = 0;
+						:PramIn.okFlag ;
+						:PramIn.okCount ;
+						:PramIn.nokCount ;
+						:PramIn.timestart = os.clock();
+						:PramIn.duration = 0;
+						:PramIn.durationStart = os.clock();
+						:PramIn.FinishFlag ;
+			                        :PramIn.StatValue ;
+			                        :PramIn.StatLower ;
+			                        :PramIn.StatUpper ;
+		                      	        :PramIn.StatUnit ;
+
+				LineNr ;
+                                LastErr;
+				UpperLimit;
+				LowerLimit;
+				MeasValue;
+				RightViewText;
+				barUpper;保留
+				barLimit;保留
+				barScale;刻度
+				CType ; 1,OK计数，2，NOK计数，3，OK计时，4，NOK计时
+				OKcount;  计数或者算秒
+				NOKcount; 计数或者算秒
+				TimeOut; 超时 秒
+				BarType;  保留
+				DialogHandle;保留
+				
+				
+output parameter :                FinishFlag ; true / false
+				  PramOut;
+				 
+                   
+created by zhouxh 05/18/2016
+******************************************************************************--]]
+
+
+local viewText ;
+
+if( LastErr ~= 0) then
+
+viewText = "Read service Err ";
+--PramOut.errflag = LastErr ;
+engine.LastError = LastErr;
+FinishFlag = true;
+engine.StatValue = viewText;
+engine.SetLineText(LineNr,"#L=" .. viewText .. "#R=bmpnok");
+engine.ShowMessage();
+
+else
+
+-- parameter set
+		if (PramIn == nil) then  
+			PramOut = {};
+			PramOut.timeout = 0;
+			PramOut.timeoutFlag = false;
+			PramOut.timestart = os.clock();
+			PramOut.errflag = 0;
+			PramOut.okFlag = false;
+                        PramOut.FinishFlag = false;
+			PramOut.StatValue = "" ;
+			PramOut.StatLower = "";
+			PramOut.StatUpper = "";
+			PramOut.StatUnit = "";
+			
+			if(CType == 1) then PramOut.okCount = 0   end;
+			if(CType == 2) then PramOut.nokCount = 0  end;
+			if(CType == 3) then PramOut.duration = 0; PramOut.durationStart = os.clock(); end;
+			if(CType == 4) then PramOut.duration = 0; PramOut.durationStart = os.clock(); end;
+	
+		else   
+		PramOut = PramIn;
+		end;
+		
+		
+-- CType do loop
+-- OKcount
+		if(CType == 1) then
+			if(MeasValue == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatLower = tostring(LowerLimit); PramOut.StatUpper = tostring(UpperLimit); PramOut.StatUnit = StatUnit; PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				PramOut.StatValue = tostring(MeasValue);
+				PramOut.StatLower = tostring(LowerLimit);
+				PramOut.StatUpper = tostring(UpperLimit);
+                                PramOut.StatUnit = StatUnit;
+				end;
+				
+				if(MeasValue &gt; LowerLimit and MeasValue &lt; UpperLimit )  then
+					PramOut.okCount = PramOut.okCount + 1 ;
+                                                engine.println("####Pram ou :"..tostring(PramOut.okFlag));
+						if(PramOut.okCount &gt;= OKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasValue);
+							PramOut.StatLower = tostring(LowerLimit);
+							PramOut.StatUpper = tostring(UpperLimit);
+                                                        PramOut.StatUnit = StatUnit;
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+                                                        engine.println("####Pram in :"..tostring(PramOut.okFlag));
+						end;
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasValue);
+					PramOut.StatLower = tostring(LowerLimit);
+					PramOut.StatUpper = tostring(UpperLimit);
+                                        PramOut.StatUnit = StatUnit;
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;
+--NOKcount
+		if(CType == 2) then
+			if(MeasValue == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatLower = tostring(LowerLimit); PramOut.StatUpper = tostring(UpperLimit); PramOut.StatUnit = StatUnit; PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				PramOut.StatValue = tostring(MeasValue);
+				PramOut.StatLower = tostring(LowerLimit);
+				PramOut.StatUpper = tostring(UpperLimit);
+                                PramOut.StatUnit = StatUnit;
+				end;
+				
+				if(MeasValue &lt;= LowerLimit or MeasValue &gt;= UpperLimit )  then
+					PramOut.nokCount = PramOut.nokCount + 1 ;
+						if(PramOut.nokCount &gt;= NOKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasValue);
+							PramOut.StatLower = tostring(LowerLimit);
+							PramOut.StatUpper = tostring(UpperLimit);
+                                                        PramOut.StatUnit = StatUnit;
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+						end;
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasValue);
+					PramOut.StatLower = tostring(LowerLimit);
+					PramOut.StatUpper = tostring(UpperLimit);
+                                        PramOut.StatUnit = StatUnit;
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;		
+
+--OKcount time
+		if(CType == 3) then
+			if(MeasValue == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatLower = tostring(LowerLimit); PramOut.StatUpper = tostring(UpperLimit); PramOut.StatUnit = StatUnit; PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				PramOut.StatValue = tostring(MeasValue);
+				PramOut.StatLower = tostring(LowerLimit);
+				PramOut.StatUpper = tostring(UpperLimit);
+                                PramOut.StatUnit = StatUnit;
+				end;
+				
+				if(MeasValue &gt; LowerLimit and MeasValue &lt; UpperLimit )  then
+					PramOut.duration = os.clock() - PramOut.durationStart;
+						if(PramOut.duration &gt;= OKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasValue);
+							PramOut.StatLower = tostring(LowerLimit);
+							PramOut.StatUpper = tostring(UpperLimit);
+                                                        PramOut.StatUnit = StatUnit;
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+						end;
+				else
+				PramOut.duration = 0;
+				PramOut.durationStart = os.clock();
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasValue);
+					PramOut.StatLower = tostring(LowerLimit);
+					PramOut.StatUpper = tostring(UpperLimit);
+                                        PramOut.StatUnit = StatUnit;
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;
+--NOKcount time
+		if(CType == 4) then
+			if(MeasValue == nil) then  
+				PramOut.errflag = 2 ; PramOut.StatValue = "nil"; PramOut.StatLower = tostring(LowerLimit); PramOut.StatUpper = tostring(UpperLimit); PramOut.StatUnit = StatUnit; PramOut.FinishFlag = true;
+			else
+				if( PramOut.okFlag == false) then
+				engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R="..tostring(RightViewText));
+				engine.ShowMessage();
+				PramOut.StatValue = tostring(MeasValue);
+				PramOut.StatLower = tostring(LowerLimit);
+				PramOut.StatUpper = tostring(UpperLimit);
+                                PramOut.StatUnit = StatUnit;
+				end;
+				
+				if(MeasValue &lt;= LowerLimit or MeasValue &gt;= UpperLimit )  then
+					PramOut.duration = os.clock() - PramOut.durationStart;
+						if(PramOut.duration &gt;= NOKcount and PramOut.okFlag == false) then
+							engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpok");
+							engine.ShowMessage();
+							PramOut.StatValue = tostring(MeasValue);
+							PramOut.StatLower = tostring(LowerLimit);
+							PramOut.StatUpper = tostring(UpperLimit);
+                                                        PramOut.StatUnit = StatUnit;
+							PramOut.errflag = 0 ;
+							PramOut.okFlag = true;
+							PramOut.FinishFlag = true;
+						end;
+				else
+				PramOut.duration = 0;
+				PramOut.durationStart = os.clock();
+				end;
+				
+				if(PramOut.okFlag == false  and  PramOut.timeout &gt;= TimeOut)  then
+					engine.SetLineText(LineNr,"#L=bmpbar,"..tostring(LowerLimit)..","..tostring(UpperLimit)..","..tostring(barScale)..","..tostring(MeasValue).."#R=bmpnok");
+					engine.ShowMessage();
+					PramOut.StatValue = tostring(MeasValue);
+					PramOut.StatLower = tostring(LowerLimit);
+					PramOut.StatUpper = tostring(UpperLimit);
+                                        PramOut.StatUnit = StatUnit;
+					PramOut.errflag = 7 ;
+					PramOut.okFlag = false;
+					PramOut.timeoutFlag = true;
+					PramOut.FinishFlag = true;
+				end;
+			
+			
+			end;		
+			
+		end;
+	
+PramOut.timeout = os.clock() - PramOut.timestart;	
+engine.StatValue = PramOut.StatValue ;
+engine.StatLower = PramOut.StatLower ;
+engine.StatUpper = PramOut.StatUpper ;
+engine.StatUnit = PramOut.StatUnit ;	
+engine.LastError = PramOut.errflag ;
+FinishFlag = PramOut.FinishFlag;
+end;</Script></Function>
+

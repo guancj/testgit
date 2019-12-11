@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s0" type="3" data="0"/>
+<Variable id="s1" type="3" data="0"/>
+</Inputs>
+<Script>TL={0x8CA7,0x05EF,0x038F,0x0C87,0xA6CF,0x1EE7,0x18A7,0x55FF};
+seed=s0*256+s1;
+TLI = bit32.band(seed,0x0007);
+TableValue = TL[TLI+1];
+tempkey = bit32.bxor(seed,TableValue);
+key=bit32.lshift(bit32.band(tempkey,0xf),12)+bit32.rshift(bit32.band(tempkey,0xfff0),4)
+
+key0=bit32.rshift(bit32.band(key,0xff00),8);
+key1=bit32.band(key,0xff);
+--print("key0:"..key0);
+--print("key1:"..key1);
+return key0,key1;
+
+</Script></Function>
+

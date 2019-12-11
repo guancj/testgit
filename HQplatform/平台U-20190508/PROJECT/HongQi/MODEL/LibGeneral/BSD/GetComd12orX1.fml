@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="tcphandle" type="3" data="0" description="tcpHandle 通讯句柄"/>
+<Variable id="vciHandle" type="3" data="0" description="vci 通讯句柄"/>
+<Variable id="fCommand" type="8" data="" description="command10"/>
+<Variable id="sCommand" type="8" data="" description="command11"/>
+<Variable id="x1Command" type="8" data="" description="commandX1"/>
+<Variable id="x2Command" type="8" data="" description="commandX2"/>
+<Variable id="vflag" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="nextStep" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+传入参数:  fCommand:第一个命令字串。 sCommand:第二个命令字串
+           tcphandle: TCP句柄   vciHandle: ECU通讯句柄
+返回参数:  returnResult
+******************************************************************************--]]
+
+local cFlag = 0
+local cxFlag = 0
+local a = 0
+local TimeoutFlag
+local RepMasterCanID = "0800000700"
+local RepSlaveCanID  = "0800000701"
+local RepCanID
+local RevCounter = 0
+local requestData
+local Command
+local sDID = ""
+
+
+
+if (vflag == "H7") then
+	sDID = "\x40\x07"
+elseif ((vflag == "HS7")) then
+	sDID = "\xE0\xD7"
+else
+
+end
+
+
+returnResult = true
+RepMasterCanID = LibGeneral.str2hex(RepMasterCanID)
+RepSlaveCanID = LibGeneral.str2hex(RepSlaveCanID)
+
+repeat
+	err = engine.SockRecv(tcphandle,15000)   --正常使用应该100ms就差不多 change 10s 默认-1
+
+	if (err == 0) then
+		NextCommand = engine.GetResponseString(0,-1)
+		NextCommand = LibGeneral.hex2str(NextCommand)
+		print("SockRecv_Cmd12orCmdX:"..NextCommand)
+		strpos1,endpos1 = NextCommand:find(fCommand)   
+		strpos2,endpos2 = NextCommand:find(sCommand)
+		
+
+		strposX1,endposX1 = NextCommand:find(x1Command)   
+		strposX2,endposX2 = NextCommand:find(x2Command)
+	else
+		print("SockRecv Error")			
+	end
+
+until(strpos1 ~= nil or strpos2 ~= nil or strposX1 ~= nil or strposX2 ~= nil )
+
+if (strpos1 ~=nil and strpos2 == nil and strposX1 == nil and strposX2 == nil) then		--只找到command12
+	fCommand = NextCommand:sub(strpos1,endpos1+8)
+	cFlag = 1
+	print("RecvFlagComd10:"..cFlag)
+elseif (strpos1 == nil and strpos2 ~=nil and strposX1 == nil and strposX2 == nil) then				--只找到command13
+	sCommand = NextCommand:sub(strpos2,endpos2+8)
+	cFlag = 2
+	print("RecvFlagComd11:"..cFlag)		
+elseif (strpos1 ~=nil and strpos2~=nil and strposX1 == nil and strposX2 == nil) then					--同时收到command1,2
+	if (strpos1 &lt; strpos2)then							--command12 在前, command13在后
+		fsCommand = NextCommand:sub(strpos1,endpos2+8)
+        cFlag = 3
+		print("RecvFlag1011:"..cFlag)
+	elseif(strpos1 &gt; strpos2)then						--command13 在前, command12在后
+		fsCommand = NextCommand:sub(strpos2,endpos1+8)
+        cFlag = 4
+		print("RecvFlag1110:"..cFlag)
+	else											--错误
+		returnResult = false
+		print("strpos error")
+	end
+elseif (strpos1 ==nil and strpos2 == nil and strposX1 ~= nil and strposX2 == nil)  then   --只找到commandX1
+	fCommand = NextCommand:sub(strposX1,endposX1)
+	cxFlag = 1
+	print("RecvFlagComdX1:"..cxFlag)
+elseif (strpos1 ==nil and strpos2 == nil and strposX1 == nil and strposX2 ~= nil)  then   --只找到commandX2
+	sCommand = NextCommand:sub(strposX2,endposX2)
+	cxFlag = 2
+	print("RecvFlagComdX2:"..cxFlag)	
+elseif (strpos1 ==nil and strpos2 == nil and strposX1 ~= nil and strposX2 ~= nil)  then	 --同时收到commandX1, commandX2
+	if (strposX1 &lt; strposX2)then							--commandX1 在前, commandX2在后
+		fsCommand = NextCommand:sub(strposX1,endposX2)
+        cxFlag = 3
+		print("RecvFlagX1X2:"..cxFlag)
+	elseif(strpos1 &gt; strpos1)then						--commandX2 在前, commandX1在后
+		fsCommand = NextCommand:sub(strposX2,endposX1)
+        cxFlag = 4
+		print("RecvFlagX1X1:"..cxFlag)
+	else											--错误
+		returnResult = false
+		print("strpos error")
+	end
+else												--未找到期待的command1,2
+	returnResult = false
+    print("don't find command1 or command2 and commandX1 or coommandX2 @Dpin")
+end
+
+if (cxFlag == 0) then
+	nextStep = "step2"
+end
+if (cFlag == 0) then
+	nextStep = "step4"
+end
+
+if (returnResult == true) then	
+	if (cxFlag == 1 or cFlag == 1) then
+		ecuData	= LibGeneral.str2hex(fCommand)
+	elseif (cxFlag == 2 or cFlag == 2) then
+		ecuData	= LibGeneral.str2hex(sCommand)
+	elseif (cxFlag == 3 or cxFlag == 4 or cFlag == 3 or cFlag == 4) then
+		ecuData	= LibGeneral.str2hex(fsCommand)
+	else
+		print("error @Dpin")
+	end
+	
+	ecuData = ecuData:sub(6,13)
+	requestData = "\x01"..sDID..ecuData	
+
+	repeat
+		recvTel = LibGeneral.ECU_DataExchange(vciHandle, 0x31, 0x71, requestData)    --ECU请求第一个command
+		a = a + 1
+	until(engine.LastError == 0 or a &gt;= 3)
+	
+	if (engine.LastError == 0) then	
+		if(string.byte(recvTel:sub(5,5)) == 00) then
+			RepCanID = RepMasterCanID
+		end
+		if(string.byte(recvTel:sub(5,5)) == 01) then
+			RepCanID = RepSlaveCanID
+		end
+		SendData1 = RepCanID..recvTel:sub(7,14)
+		SendData2 = RepCanID..recvTel:sub(15,22)
+		SendData3 = RepCanID..recvTel:sub(23,30)
+		SendData4 = RepCanID..recvTel:sub(31,38)
+		SendData = SendData1..SendData2..SendData3..SendData4
+		
+		err = engine.SockSend(tcphandle,SendData)                              --将正确响应返回给精钰PC
+		if (err == 0)then
+			returnResult = true
+		else
+			returnResult = false
+		end
+	
+		if (returnResult == true and (cFlag == 1 or cFlag == 2 or cxFlag == 1 or cxFlag == 2) ) then
+			repeat
+				err = engine.SockRecv(tcphandle,50000)   
+				RevCounter  = RevCounter + 1
+				if (err == 0) then
+					NextCommand = engine.GetResponseString(0,-1)
+					NextCommand = LibGeneral.hex2str(NextCommand)
+					print("SockRecv:"..NextCommand)
+					if (cFlag == 1 or cxFlag == 1) then
+						Command = fCommand
+					else
+						Command = sCommand
+					end
+					strpos,endpos = NextCommand:find(Command)  
+				else
+					print("SockRecv Error")			
+				end
+				print("command find times")
+			until(strpos ~= nil  or RevCounter == 2)
+			
+			if (strpos ~= nil) then									--接收到第二个command
+				Command = NextCommand:sub(strpos,endpos)
+				ecuData	= LibGeneral.str2hex(Command)	
+				ecuData = ecuData:sub(6,13)
+				
+				requestData = "\x01"..sDID..ecuData
+				repeat
+					recvTel = LibGeneral.ECU_DataExchange(vciHandle, 0x31, 0x71, requestData)     --ECU请求第二个command
+					a = a + 1
+				until(engine.LastError == 0 or a &gt;= 3)
+				
+				if (engine.LastError == 0) then									--如果ECU肯定响应
+					if(string.byte(recvTel:sub(5,5)) == 00) then
+						RepCanID = RepMasterCanID
+					end
+					if(string.byte(recvTel:sub(5,5)) == 01) then
+						RepCanID = RepSlaveCanID
+					end		
+					SendData1 = RepCanID..recvTel:sub(7,14)
+					SendData2 = RepCanID..recvTel:sub(15,22)
+					SendData3 = RepCanID..recvTel:sub(23,30)
+					SendData4 = RepCanID..recvTel:sub(31,38)
+					SendData = SendData1..SendData2..SendData3..SendData4
+					err = engine.SockSend(tcphandle,SendData)						--返回给精钰第二个command 结果
+					if (err == 0)then
+						returnResult = true
+					else
+						returnResult = false
+					end	
+				else															--ECU否定响应 3次
+					returnResult = false
+					print("Ecu Negative Response 2 command! @Dpin ")
+				end	
+			else											--未找到第二个command
+				returnResult = false
+				print("don't find the next command @Dpin")
+			end		
+			
+		end
+		if (returnResult == true and (cFlag == 3 or cFlag == 4 or cxFlag == 3 or cxFlag == 4)) then          --一次性接收到2个command
+				ecuData	= LibGeneral.str2hex(fsCommand) 
+				print("fsCommand"..fsCommand)
+				ecuData = ecuData:sub(19,26)
+				print("ecuData"..ecuData)
+				requestData = "\x01"..sDID..ecuData
+				
+				repeat
+					recvTel = LibGeneral.ECU_DataExchange(vciHandle, 0x31, 0x71, requestData)     --ECU请求第二个command
+					a = a + 1
+				until(engine.LastError == 0 or a &gt;= 3)
+				
+				if (engine.LastError == 0) then									--如果ECU肯定响应
+					if(string.byte(recvTel:sub(5,5)) == 00) then
+						RepCanID = RepMasterCanID
+					end
+					if(string.byte(recvTel:sub(5,5)) == 01) then
+						RepCanID = RepSlaveCanID
+					end		
+					SendData1 = RepCanID..recvTel:sub(7,14)
+					SendData2 = RepCanID..recvTel:sub(15,22)
+					SendData3 = RepCanID..recvTel:sub(23,30)
+					SendData4 = RepCanID..recvTel:sub(31,38)
+					SendData = SendData1..SendData2..SendData3..SendData4
+                                        
+					err = engine.SockSend(tcphandle,SendData)						--返回给精钰第二个command 结果
+					if (err == 0)then
+						returnResult = true
+					else
+						returnResult = false
+					end	
+				else															--ECU否定响应 3次
+					returnResult = false
+					print("Ecu Negative Response 2 command! @Dpin ")
+				end	
+		end
+	else					--ECU第一个请求 否定响应了
+		returnResult = false
+		print("Ecu Negative Response 1 command! @Dpin")	
+	end
+else
+	returnResult = false
+	print (" find command error @Dpin")	
+end</Script></Function>
+

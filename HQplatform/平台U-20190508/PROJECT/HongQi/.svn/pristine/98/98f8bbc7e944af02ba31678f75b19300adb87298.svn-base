@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="binStr2Int">
+<Inputs>
+<Variable id="binString" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="int_result" type="3" data="0"/>
+</Outputs>
+<Script>
+local m;
+local len;
+
+int_result = 0;
+engine.println("input :"..LibGeneral.hex2str(binString));
+len = string.len(binString);
+
+
+m = 0;
+
+while (m &lt; len) do
+
+int_result = int_result + string.byte(binString,(len - m)) * math.pow(0x100,m);
+
+m = m + 1;
+
+end;
+
+
+engine.println(string.format("result : %f",int_result));</Script></Function>
+

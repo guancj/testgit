@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Outputs>
+<Variable id="firapName" type="8" data="" description="FIRAP 名字"/>
+</Outputs>
+<Script>
+--[[
+firapName = "";
+for i=1,50 do
+    firapName = engine.IrdaPeerName;
+    if firapName ~= nil and firapName ~= "" then break end
+    engine.Delay(100);
+end
+--]]
+
+
+firapName = "";
+for i=1,50 do
+       engine.IrdaPeerMask = "IDTM";
+       firapName = engine.IrdaPeerName;
+       if firapName ~= nil and firapName ~= "" then break end
+end</Script></Function>
+

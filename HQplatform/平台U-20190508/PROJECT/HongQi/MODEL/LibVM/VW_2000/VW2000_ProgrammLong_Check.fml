@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="LineNr" type="3" data="1"/>
+<Variable id="ProgL_String" type="8" data="&quot;&quot;"/>
+<Variable id="Comment" type="8" data="&quot;&quot;"/>
+<Variable id="ECU_Handle" type="8" data="vciHandle" description="ECU Handle"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this is used to check programming  data  
+input parameter:ProgL_String;LineNr;Comment;ECU_Handle
+
+01/25/2016     created by viforce
+11/03/2016     changed by viforce
+******************************************************************************--]]
+
+local NumBlock;
+local NumBlockStr;
+local BlockAddr;
+local BlockAddrStr;
+local BlockNum;
+local BlockNumStr;
+local	PartStr;
+local	ProgString;
+local CommentNOK = "NOK"
+
+local Addr_Command;
+local tmpStrLen_byte3;
+local tmpStrLen_byte2;
+local tmpStrLen_byte1;
+local tmpPartStrLen;
+
+local ReadPartStr ;
+local RecvBuff;
+
+if (ECU_Handle  == nil)  then 
+	engine.LastError = 1;
+	engine.StatValue = "ECU Handle nil ";
+	return
+end
+
+if ( LineNr &gt; 0) then
+	engine.SetLineText(LineNr,Comment);
+        engine.ShowMessage();
+end;
+
+engine.LastError = 0;
+ProgString = ProgL_String;
+
+engine.println(LibGeneral.hex2str(ProgString));
+
+if (string.len(ProgString) &lt;= 4)  then engine.StatValue = CommentNOK..":ProgString&lt;4"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok"); engine.ShowMessage();engine.Delay(1);engine.LastError = 1 ; end;
+
+NumBlockStr  = string.sub(ProgString,1,4);
+NumBlock = string.byte(NumBlockStr,1) * 0x1000000 + string.byte(NumBlockStr,2) * 0x10000 + string.byte(NumBlockStr,3)*0x100 + string.byte(NumBlockStr,4);
+ProgString = string.sub(ProgString,5,-1);
+
+while ((NumBlock &gt; 0) and (engine.LastError == 0)) do
+	if (string.len(ProgString) &lt;= 8) then
+		engine.StatValue = CommentNOK..":ProgString&lt;8"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.ShowMessage();engine.Delay(1);engine.LastError = 1;return;end;
+		
+	BlockAddrStr   = string.sub(ProgString,1,4);
+	BlockAddr = string.byte(BlockAddrStr,1) * 0x1000000 + string.byte(BlockAddrStr,2) * 0x10000 + string.byte(BlockAddrStr,3)*0x100 + string.byte(BlockAddrStr,4);
+	ProgString  = string.sub(ProgString,5,-1);
+	BlockNumStr = string.sub(ProgString,1,4);
+	BlockNum =    string.byte(BlockNumStr,1) * 0x1000000 + string.byte(BlockNumStr,2) * 0x10000 + string.byte(BlockNumStr,3)*0x100 + string.byte(BlockNumStr,4);
+	ProgString  = string.sub(ProgString,5,-1);
+	PartStr	    = string.sub(ProgString,1,BlockNum);
+	ProgString  = string.sub(ProgString,BlockNum + 1,-1);
+	engine.println("address : "..LibGeneral.hex2str(BlockAddrStr).."\n");
+        engine.println("Partstring: "..LibGeneral.hex2str(PartStr).."\n");
+	if (string.len(PartStr) &lt; BlockNum)	 then 
+	     engine.StatValue = CommentNOK..":ProgString len err"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.ShowMessage();engine.Delay(1);engine.LastError = 1;return;end;
+
+    ReadPartStr = "";
+    engine.LastError = 0 ;
+
+	Addr_Command = string.sub(BlockAddrStr,2,4).."\x00";
+	tmpStrLen_byte3 = math.floor(BlockNum/0x10000);
+	tmpPartStrLen = BlockNum - tmpStrLen_byte3*0x10000;
+	tmpStrLen_byte2 = math.floor(tmpPartStrLen/0x100);
+	tmpStrLen_byte1 = tmpPartStrLen - tmpStrLen_byte2*0x100;
+	
+    if ((BlockNum &gt; 0) and (BlockNum &lt;= 0xffffff)) then 
+#COMMEX ECU_Handle -1 0x35 Addr_Command tmpStrLen_byte3 tmpStrLen_byte2 tmpStrLen_byte1
+	if (engine.LastError ~= 0) then
+          engine.StatValue = CommentNOK..": 0x35 response err "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.ShowMessage();engine.Delay(1);engine.LastError = 1;return;end;    
+    else
+	engine.println(string.format("BlockNum %f \n",BlockNum));
+	return ;
+	end;
+
+	
+    while (( string.len(ReadPartStr) &lt;  BlockNum) and (engine.LastError == 0)) do
+#COMMEX ECU_Handle -1 0x36 
+RecvBuff = @1-;
+	if (engine.LastError == 0) then
+		ReadPartStr = ReadPartStr..RecvBuff;
+	else
+		engine.StatValue = CommentNOK..": 0x36 response err "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.ShowMessage();engine.Delay(1);engine.LastError = 1;return;
+	end;    
+    end;
+
+        engine.println("readstr:"..LibGeneral.hex2str(ReadPartStr).."\n");
+	if ((engine.LastError ~= 0) or (string.len(ReadPartStr) ~= BlockNum) or (PartStr ~= ReadPartStr)) then
+engine.StatValue = CommentNOK..":  check programming check "; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpnok");engine.ShowMessage();engine.Delay(1000);engine.LastError = 1;return;
+    end;
+
+#COMMEX ECU_Handle -1 0x37
+
+	NumBlock = NumBlock - 1;
+end;
+
+
+engine.StatValue = " Programming check OK"; engine.SetLineText ( LineNr ,"#L="..engine.StatValue.."#R=bmpok");engine.ShowMessage();engine.Delay(1);
+if (LineNr &gt; 0 ) then 
+			engine.SetLineText(LineNr,"");engine.ShowMessage();
+		return ;end;</Script></Function>
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FAS_40_LightingControl" description="service 40">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="Bel_RV" type="11" data="false"/>
+<Variable id="Bel_LDW" type="11" data="false"/>
+<Variable id="Bel_Top_mi_li" type="11" data="false"/>
+<Variable id="Bel_Top_mi_re" type="11" data="false"/>
+<Variable id="Bel_Top_vo" type="11" data="false"/>
+<Variable id="Bel_Top_hi" type="11" data="false"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 40
+input parameter:pHndl,IDT_Timeout,Bel_RV,Bel_LDW,Bel_Top_mi_li,Bel_Top_mi_re,Bel_Top_vo,Bel_Top_hi
+output parameter :ret;
+
+12/23/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00"
+local TempByte5 = 0 
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x28");    -- 设置service号,第2字节
+
+if(Bel_LDW) then   -- Beleuchtung LDW-Tafel 
+  TempByte5 = 1;  
+end
+
+if(Bel_RV) then   -- Beleuchtung Rearview-Tafel 
+  TempByte5 = TempByte5 + 2;
+end
+
+if(Bel_Top_mi_li) then   -- Beleuchtung TopView-Tafel mitte links
+  TempByte5 = TempByte5 + 4;
+end
+
+if(Bel_Top_mi_re) then -- Beleuchtung TopView-Tafel mitte rechts
+  TempByte5 = TempByte5 + 8;
+end
+
+if(Bel_Top_vo) then   -- Beleuchtung TopView-Tafel vorne
+  TempByte5 = TempByte5 + 16;
+end
+
+if(Bel_Top_hi) then    -- Beleuchtung TopView-Tafel hinten
+  TempByte5 = TempByte5 + 32;
+end
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(TempByte5)); 
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

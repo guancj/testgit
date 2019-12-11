@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="从返回的报文中过滤某个字节的信息。&#13;&#10;过滤信息格式(字符串类型)如下：&#13;&#10;&quot;@6==0b?001??00&quot;或&quot;@6==0b?001??00,其中&quot;@6&quot;表示返回报文的&quot;第6个字节&quot;;&quot;0b&quot;表示二进制格式;&quot;?&quot;表示不关心该bit位的值;&quot;0&quot;表示该bit位的值应该为0;&quot;1&quot;表示该bit位的值应该为1;&#13;&#10;">
+<Inputs>
+<Variable id="filter" type="8" data="" description="过滤字符串,形如:&quot;@6==0b?001??00&quot;"/>
+<Variable id="receiveDatagram" type="8" data="" description="接收的报文,格式&quot;\x05\x00\x04......&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="1:OK; 0:NOK，-1:表示参数错误"/>
+</Outputs>
+<Script>ret = -1;
+
+local startP,endP = filter:find("==");
+
+if(filter:sub(1,1) ~= "@" or startP == nil or endP == nil) then
+engine.println("IDT_State_actual parameter filter error!".." filter string is:"..filter);
+return;
+
+end;
+
+--获取需要过滤的字节号
+local byteNum = tonumber(filter:sub(2,startP-1));
+
+--判断输入的参数filter是否合法
+if(filter:sub(1,1) == "@" and byteNum &gt;0 and byteNum &lt; 45 and filter:sub(endP+1,endP+2) == "0b" and string.len(filter:sub(endP+3)) == 8) then --2
+
+local byteBeginPos = endP+3;
+local filterNum = 0;
+local revNum = string.byte(receiveDatagram:sub(byteNum,byteNum));
+--engine.println("IDT****"..tostring(revNum));
+
+for i = 0, 7 do --4
+
+local bitStr = filter:sub(byteBeginPos+i,byteBeginPos+i);
+local bitNum = bit32.extract(revNum,7-i,1);
+--engine.println("bitStr:"..bitStr..";bitNum:"..bitNum.."*******");
+
+if(bitStr == "0" and bitNum == 0) then --5
+ret =1;
+--engine.println("index:"..tostring(i).."ret:"..tostring(ret).."&amp;&amp;&amp;&amp;&amp;");
+elseif( bitStr == "1" and bitNum ==1) then
+ret = 1;
+--engine.println("index:"..tostring(i).."ret:"..tostring(ret).."&amp;&amp;&amp;&amp;&amp;");
+elseif (bitStr == "?") then
+ret =1;
+--engine.println("index:"..tostring(i).."ret:"..tostring(ret).."&amp;&amp;&amp;&amp;&amp;");
+else
+ret = 0;
+break;
+end; --5
+
+end; --4
+
+else
+engine.println("IDT_State_actual parameter filter error!".." filter string is:"..filter);
+end;--2</Script></Function>
+

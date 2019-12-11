@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="driver_door"/>
+<Process id="passenger_door"/>
+<Process id="rear_passenger_door"/>
+<Process id="rear_driver_door"/>
+<Process id="dr_ECU"/>
+<Process id="df_ECU"/>
+<Process id="pf_ECU"/>
+<Process id="pr_ECU"/>
+<Process id="DDCU"/>
+<Process id="DDCU_adjust_mirror_HS7"/>
+<Process id="DDCU_Check_the_turn_and_door_light_HS7"/>
+<Process id="DDCU_rearview_mirror_switch_HS7"/>
+<Process id="DDCU_check_window_switch_HS7"/>
+<Process id="DDCU_seat_memory_child_lock_HS7"/>
+<Process id="DDCU_check_door_lock_HS7"/>
+<Process id="RLDCU"/>
+<Process id="RLDCU_check_door_light_lock_HS7"/>
+<Process id="RLDCU_check_switchs_HS7"/>
+<Process id="RRDCU"/>
+<Process id="RRDCU_check_door_light_lock_HS7"/>
+<Process id="RRDCU_check_switchs_HS7"/>
+<Process id="PDCU"/>
+<Process id="PDCU_adjust_mirror_HS7"/>
+<Process id="PDCU_Check_the_turn_and_door_light_HS7"/>
+<Process id="PLDCU_check_switchs_HS7"/>
+<Process id="DDCU_line_decetion_HS7"/>
+<Process id="RLDCU_line_decetion_HS7"/>
+<Process id="PDCU_line_decetion_HS7"/>
+<Process id="RRDCU_line_decetion_HS7"/>
+<Process id="PDCU_Check_door_lock_HS7"/>
+</children>
+</Workplace>

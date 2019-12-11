@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="value" type="3" data=""/>
+<Variable id="sIdt_tel" type="8" data="0"/>
+<Variable id="byteNum" type="3" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="rIdt_tel" type="8" data=""/>
+</Outputs>
+<Script>if (value &lt; 0) then
+	value = 65536 + value
+end
+
+print("BSDvalue1:"..bit32.extract(value,8,8))
+print("BSDvalue2:"..bit32.extract(value,0,8))
+
+byte1 = string.char(bit32.extract(value,8,8))
+byte2 = string.char(bit32.extract(value,0,8))
+
+
+
+rIdt_tel = LibIDT.idtSetBytes(sIdt_tel,byteNum,1,byte1)
+byteNum = byteNum + 1
+rIdt_tel = LibIDT.idtSetBytes(rIdt_tel,byteNum,1,byte2)
+
+
+</Script></Function>
+

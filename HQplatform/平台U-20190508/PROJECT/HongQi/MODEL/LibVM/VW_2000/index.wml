@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="Status_Check_view_8bit_VW"/>
+
+<Function id="Switch_Status_Check_Text_VW_Complete"/>
+
+<Function id="Switch_Status_Check_view_8bit_VW"/>
+
+<Function id="Switch_Status_Check_VW_Complete"/>
+
+<Function id="Tolerance_Float_VW_Complete"/>
+
+<Function id="TranMode_On_Off"/>
+
+<Function id="VW2000_Actuator_Selectively_Start"/>
+
+<Function id="VW2000_Actuator_Selectively_StatusReading"/>
+
+<Function id="VW2000_Actuator_Selectively_Stop"/>
+
+<Function id="VW2000_Adaptation_Complete"/>
+
+<Function id="VW2000_Adaptation_Read"/>
+
+<Function id="VW2000_Adaption_Long"/>
+
+<Function id="VW2000_Adaption_Multi_Channel"/>
+
+<Function id="VW2000_CodefileProgrammReadLong"/>
+
+<Function id="VW2000_Coding_Long_All"/>
+
+<Function id="VW2000_Coding_Short"/>
+
+<Function id="VW2000_Cod_Long_Read_Check_9b"/>
+
+<Function id="VW2000_Communication_Connect"/>
+
+<Function id="VW2000_ContiniueRoutine"/>
+
+<Function id="VW2000_DTC_Clear"/>
+
+<Function id="VW2000_DTC_ErrorCodes"/>
+
+<Function id="VW2000_DTC_Filter"/>
+
+<Function id="VW2000_DTC_Filter_Match"/>
+
+<Function id="VW2000_DTC_Read_Quantity"/>
+
+<Function id="VW2000_GrundStop"/>
+
+<Function id="VW2000_ID_read"/>
+
+<Function id="VW2000_ID_Read_86_data"/>
+
+<Function id="VW2000_ID_Read_91"/>
+
+<Function id="VW2000_Messwert"/>
+
+<Function id="VW2000_ProgrammLong_Check"/>
+
+<Function id="VW2000_ProgrammLong_Multi_Address"/>
+
+<Function id="VW2000_ReadMemory"/>
+
+<Function id="VW2000_Read_CodingValue_0600"/>
+
+<Function id="VW2000_Read_Service_22_SID"/>
+
+<Function id="VW2000_ReinitializeWithout_Test"/>
+
+<Function id="VW2000_RequestRoutine"/>
+
+<Function id="VW2000_SecurityAccess"/>
+
+<Function id="VW2000_ShortCode_Check_9b"/>
+
+<Function id="VW2000_StartDiagnosticSession"/>
+
+<Function id="VW2000_StartLoop_BasicAdjustment"/>
+
+<Function id="VW2000_StartRoutine"/>
+
+<Function id="VW2000_StopDiagnosticSession"/>
+
+<Function id="VW2000_StopLoop_BasicAdjustment"/>
+
+<Function id="VW2000_Vcidata_Read"/>
+
+<Function id="VW2000_WriteFingerprint"/>
+
+<Function id="VW2000_WriteMemory"/>
+
+<Function id="VW2000_Write_Service_2E_SID"/>
+
+<Function id="VWDgFormel"/>
+
+<Function id="VW2000_Messwert_DatenOffset"/>
+
+<Function id="VW2000_MK60_Gearwheel_fault"/>
+
+<Function id="Switch_Status_Check_Text_VW_Complete2"/>
+
+<Workplace id="MK60">
+</Workplace>
+</children>
+</Workplace>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_ALS_State_actual" description="发送报文，从返回的报文中过滤某个字节的信息。&#13;&#10;过滤信息格式(字符串类型)如下：&#13;&#10;&quot;@6==0b?001??00&quot;或&quot;@6==0b?001??00 &amp;&amp; @10==0b???0000?&quot;,其中&quot;@6&quot;表示返回报文的&quot;第6个字节&quot;;&quot;0b&quot;表示二进制格式;&quot;?&quot;表示不关心该bit位的值;&quot;0&quot;表示该bit位的值应该为0;&quot;1&quot;表示该bit位的值应该为1;&quot;&amp;&amp;&quot;:表示逻辑与.">
+<Inputs>
+<Variable id="filter" type="8" data="" description="过滤字符串,形如:&quot;@6==0b?001??00&quot;"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="isOK" type="11" data="0" description="true:表示OK，false:表示NOK"/>
+<Variable id="receiveDatagram" type="8" data="" description="接收到的报文,格式为&quot;\x05\x00......&quot;"/>
+</Outputs>
+<Script>ret = -1;
+isOK = false;
+receiveDatagram = "";
+
+--判断参数filter是否为nil
+if(filter == nil) then
+
+engine.println("IdtLib:parameter filter is nil,error!");
+return;
+end;
+
+--使用上一次发送报文
+local request = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+if request == nil or request == "" then
+   request = LibIDT.idtInitRequestALS(pHndl);
+end
+
+--发送请求报文
+
+if(request ~= "" and LibIDT.idtDataExchange(request,LibIDT.idtGetTimeout(),pHndl) == true) then --1
+
+receiveDatagram = engine.GetResponseString(0,43);
+
+for v in string.gmatch(filter,"(@%d+==0b[0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?][0,1,%?])") do --2
+ret = LibIDT.idtSetFilterByte(v,receiveDatagram);
+if( ret ~= 1) then --3
+break;
+end; --3
+end; --2
+end; --1
+
+if(ret == 1) then
+isOK = true;
+else
+isOK = false;
+end;</Script></Function>
+

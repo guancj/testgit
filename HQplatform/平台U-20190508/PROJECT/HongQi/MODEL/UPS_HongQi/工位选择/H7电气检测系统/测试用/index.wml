@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="C131_BCM2-Test"/>
+<Process id="C131_HCU_TEST"/>
+<Process id="C131_TBOX_Test"/>
+</children>
+</Workplace>

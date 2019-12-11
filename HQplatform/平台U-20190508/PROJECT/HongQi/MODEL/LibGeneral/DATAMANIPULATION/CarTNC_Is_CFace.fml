@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="Is_CFace" type="11" data=""/>
+</Outputs>
+<Script>if(DString_C131_Car_Tpye=="CH1GM21" ) then
+	Is_CFace = true
+elseif (DString_C131_Car_Tpye=="CH1GM22") then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM41" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM42" ) then
+	Is_CFace = true
+elseif (DString_C131_Car_Tpye=="CH1HM11") then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1DM14" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1DM15" ) then
+	Is_CFace = true
+elseif (DString_C131_Car_Tpye=="CH1FM12") then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1FM13" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1CM28" ) then
+	Is_CFace = true
+elseif (DString_C131_Car_Tpye=="CH1CM29") then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1JM11" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1BM33" ) then
+	Is_CFace = true
+elseif (DString_C131_Car_Tpye=="CH1GM30") then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM23" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM43" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM44" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1BM34" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1CM30" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1CM31" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1DM16" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1DM17" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1FM20" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1FM30" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1NM11" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1JM12" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM40" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM41" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM42" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM46" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM47" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM48" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1CM32" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1CM33" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1BM35" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM54" ) then
+	Is_CFace = true
+else
+	Is_CFace = false
+end</Script></Function>
+

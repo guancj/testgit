@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiDeviceConnection" type="8" data=""/>
+<Variable id="deviceFuncName" type="8" data=""/>
+<Variable id="instanceName" type="8" data=""/>
+<Variable id="createParameter" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiDeviceFunction" type="8" data=""/>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>gdiDeviceFunction,gdiError = engine.GDI_CreateDeviceFunction(gdiDeviceConnection,deviceFuncName, instanceName, createParameter)
+print("creatDeviceFunctionResult of "..instanceName.." is "..tostring(gdiError))</Script></Function>
+

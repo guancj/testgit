@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="FAS" code="">
+
+<Processes>
+<Process id="FAS_01_Start_Check_Name"/>
+<Process id="FAS_02_End_Test"/>
+<Process id="FAS_100_TopViewBoards"/>
+<Process id="FAS_22_Identity"/>
+<Process id="FAS_40_LightingControl"/>
+<Process id="FAS_61_LDW_HeightPanel"/>
+<Process id="FAS_61_LDW_HeightPanelBasePos"/>
+<Process id="FAS_62_NV_HeatingWireSwitch"/>
+<Process id="FAS_63_DoublerRearViewBoard"/>
+<Process id="FAS_83_Result_Coordinates"/>
+<Process id="FAS_84_Result_Coordinates"/>
+<Process id="FAS_C7_Process"/>
+<Process id="FAS_Doppler_BoardPositonCheck"/>
+<Process id="FAS_KAS"/>
+<Process id="FAS_LDW_BoardPositonCheck"/>
+<Process id="FAS_Main"/>
+<Process id="FAS_PRE"/>
+<Process id="FAS_PreparationStart"/>
+<Process id="FAS_RFK_SWA"/>
+<Process id="FAS_RV_BoardPositonCheck"/>
+<Process id="FAS_RV_BoardPositonCheckGrundPos"/>
+<Process id="Par_ARE"/>
+<Process id="Par_FAS"/>
+</Processes>
+<Workplaces>
+<Workplace id="SubFunction"/>
+</Workplaces>
+</Workplace>

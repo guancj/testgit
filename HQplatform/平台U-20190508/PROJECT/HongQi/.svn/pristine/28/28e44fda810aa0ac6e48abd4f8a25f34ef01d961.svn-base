@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="StringSetBitInByte">
+<Inputs>
+<Variable id="SrcString" type="8" data="&quot;&quot;"/>
+<Variable id="BytePosition" type="3" data="0"/>
+<Variable id="BitPosition" type="3" data="0"/>
+<Variable id="Log" type="8" data="&quot;&quot;" description="Log 描述"/>
+</Inputs>
+<Outputs>
+<Variable id="DestString" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  String Set Bit In Byte
+input parameter:SrcString,BytePosition,BitPosition,Log
+output parameter:DestString
+01/10/2017     created by viforce
+******************************************************************************--]]
+
+engine.println(tostring(Log) .. "BytePosition" .. tostring(BytePosition))
+engine.println(tostring(Log) .. "BitPosition" .. tostring(BitPosition))
+if(SrcString ~= nil  and SrcString ~= "")  then
+local srcbinString = SrcString
+local value = string.byte(srcbinString,BytePosition + 1)
+local setBit = math.pow(2,BitPosition)
+	if(#SrcString &gt; 1) then
+		if(BytePosition == 0)then 
+			DestString = string.char(bit32.bor(setBit,value))..string.sub(srcbinString,2,-1)
+                else
+			DestString = string.sub(srcbinString,1,BytePosition)..string.char(bit32.bor(setBit,value))..string.sub(srcbinString,BytePosition + 2,-1)	
+                end
+	else
+        DestString = string.char(bit32.bor(setBit,value))
+	end
+        engine.println(tostring(Log).."DestString:"..LibGeneral.hex2str(DestString))
+else
+engine.println(tostring(Log).."SrcString not valid :"..tostring(SrcString))
+engine.LastError = 1
+end</Script></Function>
+

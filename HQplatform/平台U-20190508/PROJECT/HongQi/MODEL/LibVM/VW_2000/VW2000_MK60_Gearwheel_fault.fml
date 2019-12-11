@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ECU_Handle" type="3" data="vciHandle" description="VCI handle"/>
+<Variable id="DialogHndl" type="3" data="DialogHndl" description="窗口handle 未用"/>
+<Variable id="LocalIdent" type="3" data="11"/>
+<Variable id="DatenOffset" type="3" data="1" description="数据偏移"/>
+<Variable id="Timeout" type="3" data="5" description="超时"/>
+<Variable id="Anweisung" type="8" data="&quot;&quot;" description="显示"/>
+</Inputs>
+<Outputs>
+<Variable id="T1Min" type="8" data=""/>
+<Variable id="T1Max" type="8" data=""/>
+<Variable id="T1av" type="8" data=""/>
+<Variable id="Delta1" type="8" data=""/>
+<Variable id="Delta2" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to   formael data for service 21 xx ;
+input parameter:ECU_Handle,DialogHndl,LocalIdent,DatenOffset,Timeout,Anweisung
+output parameter:T1Min,T1Max,T1av,Delta1,Delta2
+
+08/31/2017     created by viforce
+******************************************************************************--]]
+
+local taste
+local tstart
+local RecvTel
+local LocalID
+local LastError
+engine.SetLineText(1,tostring(Anweisung))
+engine.SetLineText(2,"Messung l?uft")
+
+tstart = os.clock()
+T1Max = 0.0
+T1av  = 0.0
+Delta1 = 100.0
+Delta2 = 100.0
+
+LastError = -1
+LocalID = LocalIdent
+
+while(LastError == -1) do
+
+#COMMEX ECU_Handle -1 0x21 LocalID
+
+	if (0 == engine.LastError) then	
+		RecvTel = @2-;	
+		RecvTel = string.sub(RecvTel,DatenOffset,-1)
+		print("Receive :"..LibGeneral.hex2str(RecvTel))
+	else
+		engine.LastError = 1
+		engine.StatValue = "Me?wert nicht vorhanden oder falscher Type"
+		engine.SetLineText(2,"Me?wert nicht vorhanden oder falscher Type")
+		break
+	end
+	
+	T1Min = LibVW.VWDgFormel(1,RecvTel)
+	if(T1Min &gt; 0.0) then
+		if(T1Min &gt;= 65535)then
+			LastError = 2
+			engine.LastError = 2
+			engine.StatValue = "Messung ungültig"
+			engine.SetLineText(2,"Messung ungültig")
+			engine.Delay(1000)
+		else
+			LastError = 0
+			engine.StatValue = "Messung Ende"
+			engine.SetLineText(2,"Messung Ende")
+			--engine.Delay(1000)
+		end
+	end
+	
+	if((LastError == -1) and (os.clock() &gt; (tstart + Timeout))) then
+		LastError = 3
+		engine.LastError = 3
+		engine.StatValue = "Messung Abbruch"
+		engine.SetLineText(2,"Messung Abbruch")
+		engine.Delay(1000)
+	end
+	
+	
+end
+
+
+if(LastError == 0) then
+	T1Max = LibVW.VWDgFormel(2,RecvTel)
+	T1av = LibVW.VWDgFormel(3,RecvTel)
+	Delta1 = (T1av - T1Min) / T1av * 100.0
+	Delta2 = (T1Max - T1av) / T1av * 100.0
+	engine.LastError = 0
+	engine.StatValue = "gueltig"
+end
+
+print("engine.LastError :" .. tostring(engine.LastError))
+print(string.format("%6.3f",T1Min))
+print(string.format("%6.3f",T1Max))
+print(string.format("%6.3f",Delta1))
+print(string.format("%6.3f",Delta2))</Script></Function>
+

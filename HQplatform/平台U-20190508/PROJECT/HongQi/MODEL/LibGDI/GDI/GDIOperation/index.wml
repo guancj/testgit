@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="GDIDeviceFunctionGetAllOperationInstanceNames"/>
+
+<Function id="GDIOperationCreate"/>
+
+<Function id="GDIOperationCreateByInstancePath"/>
+
+<Function id="GDIOperationExecute"/>
+
+<Function id="GDIOperationExecuteByInstancePath"/>
+
+<Function id="GDIOperationGetByInstanceName"/>
+
+</children>
+</Workplace>

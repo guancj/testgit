@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="改脸&#13;&#10;CH1GM21-&gt;CH1GM30&#13;&#10;CH1GM22-&gt;CH1GM23&#13;&#10;CH1AM41-&gt;CH1AM43&#13;&#10;CH1AM42-&gt;CH1AM44&#13;&#10;CH1BM33-&gt;CH1BM34&#13;&#10;CH1CM29-&gt;CH1CM31&#13;&#10;CH1DM14-&gt;CH1DM16&#13;&#10;CH1DM15-&gt;CH1DM17&#13;&#10;四驱&#13;&#10;CH1FM12-&gt;CH1FM20&#13;&#10;CH1FM13-&gt;CH1FM30&#13;&#10;CH1BM33==CH1NM11&#13;&#10;V6DCT&#13;&#10;CH1JM11-&gt;CH1JM12&#13;&#10;混动&#13;&#10;CH1LM11-&gt;CH1LM13&#13;&#10;CH1LM21-&gt;CH1LM23">
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data="DString_C131_Car_Tpye"/>
+</Inputs>
+<Script>if (DString_C131_Car_Tpye=="CH1GM30") then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM23" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM43" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1AM44" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1BM34" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1CM30" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1CM31" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1DM16" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1DM17" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1FM20" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1FM30" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1NM11" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1JM12" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM40" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM41" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM41" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM41" ) then
+	Is_CFace = true
+elseif(DString_C131_Car_Tpye=="CH1GM41" ) then
+	Is_CFace = true
+else
+	Is_CFace = false
+end
+
+return Is_CFace
+
+
+
+
+--[[
+Is_CFace = (DString_C131_Car_Tpye=="CH1GM30" or DString_C131_Car_Tpye=="CH1GM23" 
+or DString_C131_Car_Tpye=="CH1AM43" or DString_C131_Car_Tpye=="CH1AM44" 
+or DString_C131_Car_Tpye=="CH1BM34" or DString_C131_Car_Tpye=="CH1CM30" 
+or DString_C131_Car_Tpye=="CH1CM31" or DString_C131_Car_Tpye=="CH1DM16" 
+or DString_C131_Car_Tpye=="CH1DM17" or DString_C131_Car_Tpye=="CH1FM20" 
+or DString_C131_Car_Tpye=="CH1FM30" or DString_C131_Car_Tpye=="CH1NM11" 
+or DString_C131_Car_Tpye=="CH1JM12"
+or DString_C131_Car_Tpye=="CH1GM40" or DString_C131_Car_Tpye=="CH1GM41" 
+or DString_C131_Car_Tpye=="CH1GM42" or DString_C131_Car_Tpye=="CH1AM46" 
+or DString_C131_Car_Tpye=="CH1AM47" or DString_C131_Car_Tpye=="CH1AM48" 
+or DString_C131_Car_Tpye=="CH1CM32" or DString_C131_Car_Tpye=="CH1CM33" 
+or DString_C131_Car_Tpye=="CH1BM35" or DString_C131_Car_Tpye=="CH1AM54"
+)
+return Is_CFace;  --[[</Script></Function>
+

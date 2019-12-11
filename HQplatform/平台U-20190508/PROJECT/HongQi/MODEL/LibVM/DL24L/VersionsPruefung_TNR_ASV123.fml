@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data=""/>
+<Variable id="Fzd" type="8" data=""/>
+<Variable id="Knr" type="8" data=""/>
+<Variable id="IstTeilenummer" type="8" data=""/>
+<Variable id="SgSwVersion" type="8" data=""/>
+<Variable id="SgHwVersion" type="8" data=""/>
+<Variable id="SgHerstellKennz" type="8" data=""/>
+<Variable id="SwvPruefung" type="3" data="0"/>
+<Variable id="HwvPruefung" type="3" data="0"/>
+<Variable id="HkzUnterscheidng" type="3" data="0"/>
+<Variable id="VorserienFzg" type="3" data="0"/>
+<Variable id="ErgebnisVektorPre" type="3" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="ErgebnisVektor" type="8" data=""/>
+<Variable id="SollVersion" type="8" data=""/>
+<Variable id="errFlag" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This template performs the version or "Teilefrei" check of the TNR according to the ASV list.
+
+Input parameters:
+XmlHndl - Handle to the ASV-list (already opened before)
+Fzd - vehicle data set
+Knr - vehicle production number (14 characters)
+SgSwVersion - 4 character ECU software version (read from ECU)
+SgHwVersion - 4 character ECU hardware version (read from ECU)
+SgHerstellKennz- ECU manufacturer ID (read from ECU)
+SwvPruefung - = 1: SW version check activated (by Konfigfile)
+HwvPruefung - = 1: HW version check activated (by Konfigfile)
+HkzUnterscheidng - = 1: HerstellerKennzeichen differentiation activated (by Konfigfile)
+VorserienFzg - 0 = no pre-series vehicle, 1 = pre-series vehicle (according to PR-Nr from configfile)
+
+Return values:
+ErgebnisVektor - result vector according to specification, shows the state of "Verbaupruefung";
+   the value is returned as integer value via this parameter.
+   Meaning:
+   Bit 7 - 4: no change by this template
+   Bit 3: 0: SW Version not checked / 1: SW Version checked
+   Bit 2: 0: SW Version OK / 1: SW Version NOK
+   Bit 1: 0: HW Version not checked / 1: HW Version checked
+   Bit 0: 0: HW Version OK / 1: HW Version NOK
+errFlag - error code
+
+input parameter:XmlHndl,Fzd,Knr,IstTeilenummer,SgSwVersion,SgHwVersion,SgHerstellKennz,SwvPruefung,HwvPruefung,HkzUnterscheidng,VorserienFzg,ErgebnisVektor
+output parameter:ErgebnisVektor,errFlag,SollVersion
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+local ASVSchemaVersion = 0
+local bufTab = {}
+local xmlbuflist = {}
+local DEBUG = false
+
+local xmlPath = "/AsvListe/AsvDaten/SgVersionsliste"
+local xmlTag = "Sg"
+local xmlAttribFilterTNR = "SgTnr"
+local xmlAttribFilterHkz = "SgHkz"
+local xmlSubPathTag = "Version"
+local xmlAttribGet = "HwVersion"
+local xmlAttribNameSwVersion = "SwVersion"
+local xmlAttribNameKnrListenIDRef = "KnrListenIDRef"
+local xmlAttribNamePrnrTermIdRef = "PrnrTermIDRef"
+local xmlAttribNameSteuerung = "Steuerung"
+local xmlAttribNameModelljahr = "Modelljahr"
+local FilterModus1 = 3 -- 过滤模式  比对第一组数据
+local FilterModus2 = 1 -- 过滤模式  比对前两组数据
+
+local SteuerungStat = -1
+local ModelljahrStat = -1
+local KnrListenIdStat = -1
+local PRNRTermStat = -1
+local xmlAttribName = ""
+local xmlAttribValue = ""
+local xmlHWVersion = ""
+local xmlSWVersion = ""
+local xmlKnrListenIDRef = ""
+local xmlPrnrTermIdRef = ""
+local xmlSteuerungInt = -1
+
+local sollVersion_allg = ""
+local sollVersion_SWV_ok = ""
+local sollVersion_HWV_ok = ""
+
+local swVersionOnceFound = 0
+local hwVersionOnceFound = 0
+
+-- return value
+ErgebnisVektor = ErgebnisVektorPre
+SollVersion = ""
+errFlag = 0
+-- return value
+tmpbuf = XmlHndl.selectSingleNode("/AsvListe/Kopfdaten/ASVListenVersion")
+if(tmpbuf ~= nil) then
+	tmpbuf = tmpbuf.text
+else
+	tmpbuf = nil
+end
+if(nil ~= tmpbuf and tmpbuf == "V1.14") then
+	ASVSchemaVersion = 114
+else
+	tmpbuf = XmlHndl.selectSingleNode("/AsvListe/Kopfdaten/ASVListenSchemaVersion")
+	if(tmpbuf ~= nil) then
+		tmpbuf = tmpbuf.text
+	else
+		tmpbuf = nil
+	end	
+	if(tmpbuf ~= nil) then
+		if(tmpbuf == "V1.22") then
+			ASVSchemaVersion = 122
+		elseif(tmpbuf == "V1.23") then
+			ASVSchemaVersion = 123
+		end	
+	end
+end
+
+print("VersionsPruefung_TNR_ASV123: ASVSchemaVersion :" .. tostring(ASVSchemaVersion))
+
+if(IstTeilenummer ~= nil and IstTeilenummer ~= "") then
+	if(ASVSchemaVersion &gt;= 123) then
+		bufTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl,xmlPath,xmlTag,xmlAttribFilterTNR,IstTeilenummer,xmlAttribFilterHkz,"xxx","","",FilterModus2)
+	else
+		if(SgHerstellKennz == nil or SgHerstellKennz == "") then
+			bufTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl,xmlPath,xmlTag,xmlAttribFilterTNR,IstTeilenummer,"","","","",FilterModus1)
+		else
+			bufTab = LibVW.GetFilteredTabByAttributeTripel(XmlHndl,xmlPath,xmlTag,xmlAttribFilterTNR,IstTeilenummer,xmlAttribFilterHkz,SgHerstellKennz,"","",FilterModus1)
+		end
+	end
+else
+	engine.LastError = 1
+end	
+
+print("VersionsPruefung_TNR_ASV123: bufTab")
+for i = 1,#bufTab do
+print(bufTab[i].xml)
+end
+
+if(bufTab == nil or #bufTab == 0) then
+	if(ASVSchemaVersion &gt;= 122) then
+		if(HwvPruefung == 1) then
+			ErgebnisVektor = bit32.bor(ErgebnisVektor,0x03)
+		end
+		if(SwvPruefung == 1) then
+			ErgebnisVektor = bit32.bor(ErgebnisVektor,0x0c)
+		end
+	end
+	errFlag = 1991
+	engine.LastError = 1
+	print("VersionsPruefung_TNR_ASV123 HwvPruefung:" .. tostring(HwvPruefung))
+	print("VersionsPruefung_TNR_ASV123 SwvPruefung:" .. tostring(SwvPruefung))
+	print("VersionsPruefung_TNR_ASV123 ErgebnisVektor:" .. tostring(ErgebnisVektor))
+	return ErgebnisVektor,errFlag,SollVersion
+else
+	for i = 1,#bufTab do
+		xmlbuflist = bufTab[i].selectNodes(xmlSubPathTag)	
+		if(xmlbuflist.length &gt; 0) then
+			print("xmlbuflist length :" .. tostring(xmlbuflist.length))
+			for j = 0,xmlbuflist.length - 1 do
+				if (ASVSchemaVersion &gt;= 123) then
+					SteuerungStat = 0
+				else 
+					SteuerungStat = 1
+				end
+				if (ASVSchemaVersion &gt;= 123) then
+					ModelljahrStat = -1
+				else
+					ModelljahrStat = 1
+				end			
+				KnrListenIdStat = -1
+				PRNRTermStat = -1
+				xmlAttribName = ""
+				xmlAttribValue = ""
+				xmlHWVersion = ""
+				xmlSWVersion = ""
+				xmlKnrListenIDRef = ""
+				xmlPrnrTermIdRef = ""
+				xmlSteuerungInt = -1
+				xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribGet)
+				if(xmlAttribValue ~= nil) then
+					xmlHWVersion = xmlAttribValue
+				end
+				xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameSwVersion)
+				if(xmlAttribValue ~= nil) then
+					xmlSWVersion = xmlAttribValue
+				end
+				xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameKnrListenIDRef)
+				if(xmlAttribValue ~= nil) then
+					xmlKnrListenIDRef = xmlAttribValue
+				end
+				xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNamePrnrTermIdRef)
+				if(xmlAttribValue ~= nil) then
+					xmlPrnrTermIdRef = xmlAttribValue
+				end
+				xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameSteuerung)
+				if(xmlAttribValue ~= nil) then
+					xmlSteuerung = xmlAttribValue
+					xmlSteuerungInt = LibVW.ascstrtoNum(xmlSteuerung)
+				end
+				xmlAttribValue = xmlbuflist[j].getAttribute(xmlAttribNameModelljahr)
+				if(xmlAttribValue ~= nil) then
+					xmlModelljahr = xmlAttribValue
+				end		
+				
+				if(DEBUG == true) then
+				print("VersionsPruefung_TNR_ASV123: xmlHWVersion :" .. tostring(xmlHWVersion))
+				print("VersionsPruefung_TNR_ASV123: xmlSWVersion :" .. tostring(xmlSWVersion))
+				print("VersionsPruefung_TNR_ASV123: xmlKnrListenIDRef :" .. tostring(xmlKnrListenIDRef))
+				print("VersionsPruefung_TNR_ASV123: xmlPrnrTermIdRef :" .. tostring(xmlPrnrTermIdRef))
+				print("VersionsPruefung_TNR_ASV123: xmlSteuerungInt :" .. tostring(xmlSteuerungInt))
+				print("VersionsPruefung_TNR_ASV123: xmlModelljahr :" .. tostring(xmlModelljahr))
+				print("VersionsPruefung_TNR_ASV123: Modelljahr aus Fahrzeugdaten: " .. tostring(string.sub(Fzd,32,35)))
+				end
+				engine.LastError = 1
+				ErgebnisVektor = bit32.band(ErgebnisVektor,0xf0)
+				if((SwvPruefung == 0) and (HwvPruefung == 0)) then
+					engine.LastError = 0
+				else
+					if((HwvPruefung == 1) and (xmlHWVersion ~= "") and (SwvPruefung == 1) and (xmlSWVersion ~= "")) then
+						if((xmlHWVersion == SgHwVersion) and (xmlSWVersion == SgSwVersion)) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x0a)
+							engine.LastError = 0
+						end
+					end
+					
+					if((HwvPruefung == 1) and (xmlHWVersion ~= "") and (SwvPruefung == 0)) then
+						if(xmlHWVersion == SgHwVersion) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x02)
+							engine.LastError = 0
+						end					
+					end
+					
+					if((SwvPruefung == 1) and (xmlSWVersion ~= "") and (HwvPruefung == 0)) then
+						if(xmlSWVersion == SgSwVersion) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x08)
+							engine.LastError = 0		
+							print("++++ viforce2 ++++")
+						end
+						
+					end
+
+					if(engine.LastError ~= 0) then 
+						-- 版本不匹配，检测是否针对本车辆数据有效
+						engine.LastError = 0
+						if(ASVSchemaVersion &gt;= 122) then
+							if(HwvPruefung == 1) then
+								ErgebnisVektor = bit32.bor(ErgebnisVektor,0x03)
+							end
+							if(SwvPruefung == 1) then
+								ErgebnisVektor = bit32.bor(ErgebnisVektor,0x0c)
+							end
+						end
+						if((engine.LastError == 0) and (xmlKnrListenIDRef ~= "")) then
+							KnrListenIdStat, errFlag = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+							print("alternativ version (KNR) " .. " HW: " .. tostring(xmlHWVersion) .. ", SW: " .. tostring(xmlSWVersion) .. " Errflag: " .. tostring(errFlag))
+						end
+						if((engine.LastError == 0) and (xmlPrnrTermIdRef ~= "")) then
+							PRNRTermStat, errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+							print("alternativ version (TermId) " .. " HW: " .. tostring(xmlHWVersion) .. ", SW: " .. tostring(xmlSWVersion) .. " Errflag: " .. tostring(errFlag))
+						end
+						print("KnrListenIdStat :" .. tostring(KnrListenIdStat) .. " PRNRTermStat :" .. tostring(PRNRTermStat))
+						if((engine.LastError == 0) and (ASVSchemaVersion &gt;= 123)) then
+							if((bit32.band(xmlSteuerungInt,0x01) == 0x01) and (VorserienFzg == 1)) then
+								SteuerungStat = 1
+							end
+							if((bit32.band(xmlSteuerungInt,0x02) == 0x02) and (VorserienFzg == 0)) then
+								SteuerungStat = 1
+							end
+							ModelljahrStat = 0
+							if(xmlModelljahr == "") then
+								ModelljahrStat = 1
+							elseif(string.sub(xmlModelljahr,3,4) == string.sub(Fzd,34,35)) then
+								ModelljahrStat = 1
+							end
+						end
+						if((engine.LastError == 0) and (KnrListenIdStat ~= 0) and (PRNRTermStat ~= 0) and (SteuerungStat == 1) and (ModelljahrStat == 1)) then
+							-- yes it is, it is a valid alternativ version
+							if(ASVSchemaVersion &lt;= 122) then
+								SollVersion = SollVersion .. " HW: " .. tostring(xmlHWVersion) .. ", SW: " .. tostring(xmlSWVersion)
+							elseif(ASVSchemaVersion &gt;= 123) then
+								sollVersion_allg = sollVersion_allg .. " HW: " .. tostring(xmlHWVersion) .. ", SW: " .. tostring(xmlSWVersion)
+								if ((xmlSWVersion == SgSwVersion) and (sollVersion_SWV_ok == "")) then
+									sollVersion_SWV_ok = " HW: " .. tostring(xmlHWVersion) .. ", SW: " .. tostring(xmlSWVersion) 
+								end
+								if ((xmlHWVersion == SgHwVersion) and (sollVersion_HWV_ok == "")) then
+									sollVersion_HWV_ok = " HW: " .. tostring(xmlHWVersion) .. ", SW: " .. tostring(xmlSWVersion)
+								end
+								-- If no entry has been found yet, either HW or SW is correct: give current entry in list of permitted versions
+								if ((sollVersion_SWV_ok == "") and (sollVersion_HWV_ok == "")) then
+									SollVersion = sollVersion_allg
+								end
+								-- If at least one entry has been found with the SW version ok, use the first entry as the setpoint
+								if ((sollVersion_SWV_ok ~= "") and (sollVersion_HWV_ok == "")) then
+									SollVersion = sollVersion_SWV_ok;
+								-- If at least one entry has been found in which the SW version is nok but the HW version is ok: use the first entry as setpoint
+								elseif ((sollVersion_SWV_ok == "") and (sollVersion_HWV_ok ~= "")) then
+									SollVersion = sollVersion_HWV_ok
+								end
+							end	
+							if((HwvPruefung == 1) and (xmlHWVersion ~= "") and (SwvPruefung == 1) and (xmlSWVersion ~= "")) then
+								if(xmlSWVersion == SgSwVersion) then
+									swVersionOnceFound = 1
+								elseif(xmlHWVersion == SgHwVersion) then
+									hwVersionOnceFound = 1
+								end
+							end
+						end
+						engine.LastError = 1
+						print("alternativ versions found: " .. tostring(SollVersion))						
+					end
+					
+					if((engine.LastError == 0) and (xmlKnrListenIDRef ~= "")) then
+						KnrListenIdStat, errFlag = LibVW.CheckKnrListenId(XmlHndl,xmlKnrListenIDRef,Knr)
+					end
+					if((engine.LastError == 0) and (xmlPrnrTermIdRef ~= "")) then
+						PRNRTermStat, errFlag = LibVW.CheckPRNRTermId(XmlHndl,xmlPrnrTermIdRef,Fzd)
+					end
+					if((engine.LastError == 0) and (ASVSchemaVersion &gt;= 123)) then
+						if((bit32.band(xmlSteuerungInt,0x01) == 0x01) and (VorserienFzg == 1)) then
+							SteuerungStat = 1
+						end
+						if((bit32.band(xmlSteuerungInt,0x02) == 0x02) and (VorserienFzg == 0)) then
+							SteuerungStat = 1
+						end
+					end
+					
+					ModelljahrStat = 0
+					if(xmlModelljahr == "") then
+						ModelljahrStat = 1
+					elseif(string.sub(xmlModelljahr,3,4) == string.sub(Fzd,34,35)) then
+						ModelljahrStat = 1
+					end
+					
+					if((engine.LastError == 0) and (KnrListenIdStat ~= 0) and (PRNRTermStat ~= 0) and (SteuerungStat ~= 0) and (ModelljahrStat == 1)) then
+						engine.LastError = 0
+					else
+						if(bit32.band(ErgebnisVektor,0x02) &gt; 0) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x01)
+						end
+						if(bit32.band(ErgebnisVektor,0x08) &gt; 0) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x04)
+						end
+						engine.LastError = 1
+						print("no correct version found, not yet")
+					end
+					
+					if(engine.LastError == 0) then
+						SollVersion = ""
+					end
+				end
+				if(engine.LastError == 0) then
+					break
+				end
+			end
+		end
+		if(engine.LastError == 0) then
+			break
+		end
+	end
+	print("ErgebnisVektor :" .. tostring(ErgebnisVektor))
+	if((bit32.band(ErgebnisVektor,0x0f) == 0x0f) and (ASVSchemaVersion &gt;= 122)) then
+		print("swVersionOnceFound:" .. tostring(swVersionOnceFound).. ", hwVersionOnceFound: " .. tostring(hwVersionOnceFound) .. ", Ergebnisvektor vor Patch: " .. tostring(ErgebnisVektor)) 
+		if(swVersionOnceFound &gt; 0) then
+			ErgebnisVektor = bit32.band(ErgebnisVektor,0xfb)
+		elseif(hwVersionOnceFound &gt; 0) then
+			ErgebnisVektor = bit32.band(ErgebnisVektor,0xfe)
+		end
+	end
+end
+
+
+
+</Script></Function>
+

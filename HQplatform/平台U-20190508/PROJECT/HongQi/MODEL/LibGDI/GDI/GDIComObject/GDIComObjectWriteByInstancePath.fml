@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="gdiWorkspace" type="8" data=""/>
+<Variable id="instancePath" type="8" data=""/>
+<Variable id="comObjectToWrite" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="gdiError" type="8" data=""/>
+</Outputs>
+<Script>--gdiComObject = engine.GetComObjectByInstancePath(workspace, instancePath)
+--CSF = toCSF(comObjectToWrite)
+gdiComObject = engine.GDI_GetComObjectByInstancePath(gdiWorkspace,instancePath)
+gdiError = engine.GDI_Write(gdiComObject,comObjectToWrite)
+print("ComObjectWriteResult of "..gdiComObject.." is "..tostring(gdiError))</Script></Function>
+

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlHandle" type="8" data="" description="XML handle"/>
+<Variable id="szXml" type="8" data="" description="xml 标签"/>
+</Inputs>
+<Outputs>
+<Variable id="result" type="11" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to   load xml string
+output parameter: result
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+if(xmlHandle ~= nil) then
+	result = xmlHandle.loadXML(szXml)
+else 
+	result = false
+end</Script></Function>
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="General" code="">
+
+<Functions>
+<Function id="Calibration_Multi_Addresses"/>
+
+<Function id="Calibration_Multi_Addresses_Check"/>
+
+<Function id="DTC_Filter_Mit_Audi"/>
+
+<Function id="UDS_DTC_Filter_Statistic_List_VW"/>
+
+</Functions>
+</Workplace>

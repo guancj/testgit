@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FAS_01_Start_Check_Name" description="发送开始检测指令，service 1.">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="VMTName_FAS" type="8" data="&quot;VMT-xxx&quot;"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 01
+input parameter:pHndl,VMTName_FAS,IDT_Timeout
+output parameter :ret;
+
+12/22/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00";
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+VMTName_FAS = string.sub(tostring(VMTName_FAS.."               "),1,15)   -- VMT  Name 长度15 不足补空格
+idt_tel = LibIDT.idtSetBytes(idt_tel,22,15,VMTName_FAS)   --  设置  VMT Name  第22 字节开始 长度15 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x01");    -- 设置service号,第2字节
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

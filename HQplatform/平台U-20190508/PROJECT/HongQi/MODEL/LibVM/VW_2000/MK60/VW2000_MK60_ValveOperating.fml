@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="waitTime" type="3" data="0" description="time between services, in ms"/>
+<Variable id="controlBytes" type="8" data="" description="Valve control bytes. e.g. &quot;\xaa\xb5&quot;"/>
+<Variable id="vciHndl" type="3" data="0" description="vciHndl"/>
+</Inputs>
+<Script>--[[ ***************************************************************
+The function is use to control MK60 valve and pump.
+History:
+    04/14/2016, wuh, funtion created
+****************************************************************--]]
+local requestSID  = "\x30";
+local responseSID = "\x70";
+local localID = "\x80"
+local controlParam = "\x00";
+
+engine.LastError = 0;
+
+--check vciHndl valid
+if vciHndl == nil or vciHndl &lt; 0 then
+    engine.println("ERROR, VW2000_MK60_ValveOperating, input vciHndl is invalid, vciHndl=" .. tostring(vciHndl));
+    engine.LastError = 1;
+    return
+end
+--check controlBytes valid
+if controlBytes == nil or controlBytes:len() ~= 2 then
+    engine.println("ERROR, VW2000_MK60_ValveOperating, input controlBytes is invalid, controlBytes=" .. tostring(controlBytes));
+    engine.LastError = 1;
+    return
+end
+
+--send command
+#COMMEX vciHndl -1 requestSID localID controlParam controlBytes
+--engine.EcuComm(requestSID ..localID .. controlParam .. controlBytes)
+
+engine.Delay(waitTime);
+</Script></Function>
+

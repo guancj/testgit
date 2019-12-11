@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_ALS_CamberResult_service_11" description="发送获取外倾值指令并返回外倾值，service 11。">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="camberFL" type="5" data="0" description="左前外倾值"/>
+<Variable id="camberFLReview" type="3" data="0" description="左前外倾值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="camberFR" type="5" data="0" description="右前外倾值"/>
+<Variable id="camberFRReview" type="3" data="0" description="右前外倾值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="camberRL" type="5" data="0" description="左后外倾值"/>
+<Variable id="camberRLReview" type="3" data="0" description="左后外倾值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="camberRR" type="5" data="0" description="右后外倾值"/>
+<Variable id="camberRRReview" type="3" data="0" description="右后外倾值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="camberDifferenceFront" type="5" data="0" description="前轮倾角差值"/>
+<Variable id="camberDifferenceFrontReview" type="3" data="0" description="前轮倾角差值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+<Variable id="camberDifferenceRear" type="5" data="0" description="后轮倾角差值"/>
+<Variable id="camberDifferenceRearReview" type="3" data="0" description="后轮倾角差值评估,0:无效;1:合格;2:不合格;3:值偏低;4:值偏高"/>
+</Outputs>
+<Script>camberFL,camberFLReview,camberFR,camberFRReview = 0,0,0,0;
+camberRL,camberRLReview,camberRR,camberRRReview = 0,0,0,0;
+camberDifferenceFront,camberDifferenceFrontReview,camberDifferenceRear,camberDifferenceRearReview = 0,0,0,0;
+
+local factor = 0.01;
+
+ret = LibIDT.idtSendDatagramALS("\x0B",LibIDT.idtGetTimeout(),pHndl);
+
+if(ret == 1) then
+
+local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+
+engine.println("### RESULT SERVER 11 :" ..LibIDT.idthex2str(lastRevTel));
+
+--获取左前外倾角和评估值
+camberFL = LibIDT.idthilo2signed(lastRevTel:sub(13,13):byte(),lastRevTel:sub(14,14):byte()) * factor;
+camberFLReview = lastRevTel:sub(29,29):byte();
+
+--获取右前外倾角和评估值
+camberFR = LibIDT.idthilo2signed(lastRevTel:sub(15,15):byte(),lastRevTel:sub(16,16):byte()) * factor;
+camberFRReview = lastRevTel:sub(30,30):byte();
+
+--获取左后外倾角和评估值
+camberRL = LibIDT.idthilo2signed(lastRevTel:sub(17,17):byte(),lastRevTel:sub(18,18):byte()) * factor;
+camberRLReview = lastRevTel:sub(31,31):byte();
+
+--获取右后外倾角和评估值
+camberRR = LibIDT.idthilo2signed(lastRevTel:sub(19,19):byte(),lastRevTel:sub(20,20):byte()) * factor;
+camberRRReview = lastRevTel:sub(32,32):byte();
+
+--获取前轮倾角差值和评估值
+camberDifferenceFront = LibIDT.idthilo2signed(lastRevTel:sub(25,25):byte(),lastRevTel:sub(26,26):byte()) * factor;
+camberDifferenceFrontReview = lastRevTel:sub(33,33):byte();
+
+--获取后轮倾角差值和评估值
+camberDifferenceRear = LibIDT.idthilo2signed(lastRevTel:sub(27,27):byte(),lastRevTel:sub(28,28):byte()) * factor;
+camberDifferenceRearReview = lastRevTel:sub(34,34):byte();
+
+end;
+
+--[[
+if(ret == 1) then
+
+--获取左前外倾角和评估值
+camberFL = LibIDT.idthilo2signed(@12,@13) * factor;
+camberFLReview = @28;
+
+--获取右前外倾角和评估值
+camberFR = LibIDT.idthilo2signed(@14,@15) * factor;
+camberFRReview = @29;
+
+--获取左后外倾角和评估值
+camberRL = LibIDT.idthilo2signed(@16,@17) * factor;
+camberRLReview = @30;
+
+--获取右后外倾角和评估值
+camberRR = LibIDT.idthilo2signed(@18,@19) * factor;
+camberRRReview = @31;
+
+--获取前轮倾角差值和评估值
+camberDifferenceFront = LibIDT.idthilo2signed(@24,@25) * factor;
+camberDifferenceFrontReview = @32;
+
+--获取后轮倾角差值和评估值
+camberDifferenceRear = LibIDT.idthilo2signed(@26,@27) * factor;
+camberDifferenceRearReview = @33;
+
+end;
+]]</Script></Function>
+

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="HUDExtractDataFromResponse">
+<Inputs>
+<Variable id="Response" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="Pid" type="8" data="" description="Production ID (Kennnummer) retrieved from test stand"/>
+<Variable id="functionresultbuff" type="8" data="" description="(xml structure) which contains &quot;functionresult&quot; element"/>
+<Variable id="Result" type="11" data="" description="Result of function retrieved from test stand: 0=not available; 1=available"/>
+<Variable id="ErrorMessage" type="8" data="" description="Error message retrieved from test stand"/>
+<Variable id="ErrorCode" type="3" data="0" description="Error code retrieved from test stand"/>
+<Variable id="err" type="3" data="0" description="0 ok"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  ExtractDataFromResponse
+input paramter:Response
+output paramter:Pid,functionresultbuff,Result,ErrorMessage,ErrorCode
+
+02/10/2017     created by viforce
+******************************************************************************--]]
+
+local functionbuff = ""
+local responsebuff = ""
+err = 0
+if(type(Response) == "string") then
+	-- 去空格 回车 制表符
+	Response = string.gsub(Response, " ", "")
+	Response = string.gsub(Response, "\n", "")
+	Response = string.gsub(Response, "\t", "")
+	-- Read PID functionresultbuff
+        local pos1,pos2 = string.find(Response,"data")
+        local pos3,pos4 = string.find(Response,"/data")
+        if(pos1 ~= nil and pos4 ~= nil) then
+		functionbuff = string.sub(Response,pos1,pos4)
+		 pos1,pos2 = string.find(functionbuff,"&lt;Kennnummer&gt;")
+		 pos3,pos4 = string.find(functionbuff,"&lt;/Kennnummer&gt;")  
+                 if(pos2 ~= nil and pos3 ~= nil ) then
+			Pid = string.sub(functionbuff,pos2+1,pos3 -1)
+                 else
+			err = 1
+			Pid = ""
+			engine.println("&lt;HUDExtractDataFromResponse&gt; ERR get no Pid ")                 
+                 end
+                               
+        else
+		err = 1
+		functionbuff = ""
+                engine.println("&lt;HUDExtractDataFromResponse&gt; ERR get no functionbuff " )
+        end
+        -- functionresult
+	pos1,pos2 = string.find(Response,"functionresult")
+	pos3,pos4 = string.find(Response,"/functionresult")  
+        if(pos1 ~= nil and pos4 ~= nil) then
+		functionresultbuff = string.sub(Response,pos1,pos4)
+        else
+		err = 1
+		functionresultbuff = ""
+                engine.println("&lt;HUDExtractDataFromResponse&gt; ERR get no functionresultbuff ")        
+        end
+        -- response result errormessage errorcode
+ 	pos1,pos2 = string.find(Response,"response")
+	pos3,pos4 = string.find(Response,"/response")        
+	if(pos1 ~= nil and pos4 ~= nil) then
+		responsebuff = string.sub(Response,pos1,pos4)
+                -- read result
+                pos1,pos2 = string.find(responsebuff,"&lt;result&gt;")
+                pos3,pos4 = string.find(responsebuff,"&lt;/result&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			local resulttemp = string.sub(responsebuff,pos2+1,pos3-1)
+                        if(resulttemp == "true" or resulttemp == "1") then
+				Result = true
+                        elseif(resulttemp == "false" or resulttemp == "0") then
+				Result = false
+                        else
+				err = 1
+				Result = false
+                                engine.println("&lt;HUDExtractDataFromResponse&gt; ERR  Result  invalid ") 
+                        end
+                else
+			err = 1
+			Result = false
+                        engine.println("&lt;HUDExtractDataFromResponse&gt; ERR  Result  invalid ")                                 
+                end 
+                 -- read errormessage
+                pos1,pos2 = string.find(responsebuff,"&lt;errormessage&gt;")
+                pos3,pos4 = string.find(responsebuff,"&lt;/errormessage&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			ErrorMessage = string.sub(responsebuff,pos2+1,pos3-1)
+                else
+			err = 1
+			ErrorMessage = ""
+                        engine.println("&lt;HUDExtractDataFromResponse&gt; ERR  ErrorMessage  invalid ")                                 
+                end 
+                 -- read errormessage
+                pos1,pos2 = string.find(responsebuff,"&lt;errorcode&gt;")
+                pos3,pos4 = string.find(responsebuff,"&lt;/errorcode&gt;")  
+                if(pos2 ~= nil  and pos3 ~= nil) then
+			ErrorCode = tonumber(string.sub(responsebuff,pos2+1,pos3-1))
+                else
+			err = 1
+			ErrorCode = -1
+                        engine.println("&lt;HUDExtractDataFromResponse&gt; ERR  ErrorCode  invalid ")                                 
+                end                                           
+        else
+		err = 1
+		responsebuff = ""
+                engine.println("&lt;HUDExtractDataFromResponse&gt; ERR get no responsebuff " )             
+        end
+else
+	err = 1
+	engine.println("&lt;HUDExtractDataFromResponse&gt; ERR Parameter Response :" .. tostring(Response) )
+end</Script></Function>
+

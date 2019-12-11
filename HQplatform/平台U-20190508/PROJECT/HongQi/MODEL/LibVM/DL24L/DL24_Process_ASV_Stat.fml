@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="SG_Name" type="8" data=""/>
+<Variable id="Konfigfile" type="8" data=""/>
+<Variable id="DL24Pos" type="3" data="0"/>
+<Variable id="DL24Laenge" type="3" data="0"/>
+<Variable id="Fzd" type="8" data=""/>
+<Variable id="Knr" type="8" data=""/>
+<Variable id="DL24Path" type="8" data=""/>
+<Variable id="ASVListfile" type="8" data=""/>
+<Variable id="IstTeilenummer" type="8" data=""/>
+<Variable id="SgSwVersion" type="8" data=""/>
+<Variable id="SgHwVersion" type="8" data=""/>
+<Variable id="SgHerstellKennz" type="8" data=""/>
+<Variable id="SwapDcTnrPrev" type="8" data=""/>
+<Variable id="SWaPErstanfr" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="SollTeilenummer" type="8" data=""/>
+<Variable id="ModusFTab" type="3" data="0"/>
+<Variable id="ErgebnisVektor_V" type="3" data="0"/>
+<Variable id="SgBg" type="8" data=""/>
+<Variable id="ZdcTnr" type="8" data=""/>
+<Variable id="ZdcBg" type="8" data=""/>
+<Variable id="XmlContainer" type="8" data=""/>
+<Variable id="XmlVersion" type="8" data=""/>
+<Variable id="ZdcVersionInhalt" type="8" data=""/>
+<Variable id="ErgebnisVektor_I" type="8" data=""/>
+<Variable id="SwapDcTnr" type="8" data="" description="Partnumber of SWaP_DC"/>
+<Variable id="SwapDcBg" type="8" data="" description="Baugruppe SWaP_DC"/>
+<Variable id="SwapDcVersInhalt" type="8" data="" description="Version information of SWaP_DC (SWaP_DC-Version Inhalt)"/>
+<Variable id="KeyID" type="8" data="" description="Key-ID for SWaP"/>
+<Variable id="SWaPDCName" type="8" data="" description="SWaP_DC file name"/>
+<Variable id="ErgebnisVektor_S" type="3" data="0" description="Result vector SWaP according to specification"/>
+<Variable id="StatResult" type="3" data="0" description="Statitic result"/>
+<Variable id="StatTextValue" type="8" data="" description="Text Value of statistic"/>
+<Variable id="StatErrorCode" type="3" data="0" description="Error code of statistic"/>
+<Variable id="StatNominalValue" type="8" data="" description="Nominal value of statistic"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+
+This template can only be used for ASV list versions 1.23 in combination with configfile version V18 or ASV list version 1.22 in 
+combination with configfile versio V16.
+It combines the assembly validation ("Verbauprüfung") and the ZDC process ("IBN") according to to the actual structure of the ASV list and
+minimizes the processing time of the config file (compared to the individual usage of DL24_SG_Teilenummer_Verbau and DL24_ZDC).
+This template gets the reference part number of the selected ECU out of the DL24 data inside the vehicle data set.
+The correct assembly of this ECU is then checked according to configfile and possibly ASV list file.
+Additionally it determines also the the part number of the ZDC for the selected ECU out of the DL24 data inside the vehicle
+data set and ASV list file, as well as the version of the ZDC.
+When processing the ASV list version 1.23 in combination with configfile version V18 the SWaP_DC is determined as well, if SWaP is activated in configfile.
+
+input parameter:SG_Name,Konfigfile,DL24Pos,DL24Laenge,Fzd,Knr,DL24Path,ASVListfile,IstTeilenummer,SgSwVersion,
+			SgHwVersion,SgHerstellKennz,SwapDcTnrPrev,SWaPErstanfr
+output parameter:SollTeilenummer,ModusFTab,ErgebnisVektor_V,SgBg,ZdcTnr,ZdcBg,XmlContainer,XmlVersion,
+			ZdcVersionInhalt,ErgebnisVektor_I,SwapDcTnr,SwapDcBg,SwapDcVersInhalt,KeyID,SWaPDCName,
+                        ErgebnisVektor_S,StatResult,StatTextValue,StatErrorCode,StatNominalValue	
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+-- return value
+local SollTeilenummer = ""
+local ModusFTab = -1
+local ErgebnisVektor_V = 0
+local SgBg = ""
+local ZdcTnr = ""
+local ZdcBg = ""
+local XmlContainer = ""
+local XmlVersion = ""
+local ZdcVersionInhalt = ""
+local ErgebnisVektor_I = ""
+local SwapDcTnr = ""
+local SwapDcBg = ""
+local SwapDcVersInhalt = ""
+local KeyID = ""
+local SWaPDCName = ""
+local ErgebnisVektor_S = 0
+local StatResult = -1
+local StatTextValue = ""
+local StatErrorCode = -1
+local StatNominalValue = ""
+-- return value
+
+local xmlTagKonfigVerbaupruefung = "KonfigurationVerbaupruefung"
+local modusKorrektur = "Korrektur"
+local modusAufbrauch = "Teileaufbrauch"
+local modusZDC = "Zdc"
+local modusFlash="Flash"
+local modusSWaP = "SWaP"
+local aktivSwv = -1
+local aktivHwv = -1
+local aktivHkz = -1
+local aktivASV = -1
+local errFlag_I = 0
+local errFlag_S = 0
+local xmlHndl = XmlDocment()
+local xmlHndl2 = XmlDocment()
+local zdcXmlHndl = XmlDocment()
+
+local IstTnrZDC
+local ZdcName
+local ZdcVersion
+local ZdcDateiName
+local statstr
+local IstVersion = ""
+local SollVersion = ""
+local SollTeilenummerFZD = ""
+
+local SollTnrKorrektur = ""
+local SollZDCKorrektur = ""
+local SollSWaPDCKorrektur = ""
+local prnrVorserie = ""
+local possibleSollTnrTmp = ""
+
+local xmlTagVerbaupruefung = "Verbaupruefung"
+local xmlTagInbetriebnahme = "Inbetriebnahme"
+local EV_Text = ""
+local versionKonfgFile = ""
+
+local sw_version_flashliste
+local flashContainer
+local possibleSollTnr
+local ASVSchemaVersion
+local keyID = ""
+local swapDCName = ""
+local swapDCVersion = ""
+
+local aktKorrSgTnr = -1
+local aktTeileaufbr = -1
+local aktTeileFreiPrf = -1
+local aktFlashen = -1
+local aktKorrZDC = -1
+local aktZdcProzess = -1
+
+local aktVorserie = -1
+local aktSWaP = -1
+local flag_ZDC_geraten = -1
+local asvCorrectedLocal = 0
+local swapDCCorrectedLocal = 0
+local vorserienFzg = -1
+
+local sollTnrVorAufbrauch = ""
+local zdcTnrVorAufbrauch = ""
+local sollSWaPDCKorrekturVorAufbrauch = ""
+local keyIDvorAufbrauch = ""
+
+local keyIDtmp = ""
+local swapDCVersion_tmp = ""
+local swapDCName_tmp = ""
+local keyID_NO_SWaP = "NO_SWAP_SG"
+local xmlTagSWaP = "SWaP"
+
+local XmlContainerPath
+local keyID_local
+
+local modusFTab
+local errFlag = 0
+local errFlag_local = 0
+local errFlag_V = 0
+local errFlag_I = 0
+local errFlag_S = 0
+local swapNullTeileNummer = "V03959000"
+local tnr_ignore = "000000000"
+local LastError_V = 0
+local LastError_S = 0
+local LastError_I = 0
+
+local ASVCorrected = -1
+local SWaPDCCorrected = -1
+local asvCorrectedZDC = -1
+local verbauSg = 1
+
+local sollTnr_dummy = ""
+local sollTnrZdc_dummy = ""
+local zdcTnr_lokal = ""
+
+local pathBuf
+local flashdatencont
+local err_get_part_no = 0
+
+
+SollTeilenummer,ZdcTnr,SwapDcTnr,aktivSwv,aktivHwv,aktivHkz,ModusFTab,aktivASV,aktKorrSgTnr,aktTeileaufbr,aktTeileFreiPrf,aktFlashen,aktKorrZDC,aktZdcProzess,aktSWaP,aktVorserie,SgBg,ZdcBg,SwapDcBg,versionKonfgFile,vorserienFzg,errFlag_V = LibVW.GetPartNoFromVehicleData_ASV123(SG_Name,Konfigfile,DL24Pos,DL24Laenge,xmlTagKonfigVerbaupruefung,Fzd)
+zdcTnr_lokal = ZdcTnr
+err_get_part_no = engine.LastError
+if(versionKonfgFile &lt; "V16") then
+	ErgebnisVektor_V = 0x40
+	ErgebnisVektor_I = 0x80
+	ErgebnisVektor_S = 0x01
+	errFlag_V = 1958
+	engine.LastError = 1
+else
+	-- versionKonfgFile &gt;= "V16"
+	if((engine.LastError == 0) and (ModusFTab ~= 1)) then
+-- Detach blanks from the actual part number so that a minimum of 9 characters remain
+		if(#IstTeilenummer == 12 and string.byte(IstTeilenummer,-1) == 0x20) then 
+			IstTeilenummer = string.sub(IstTeilenummer,1,11)
+		end
+		if(#IstTeilenummer == 11 and string.byte(IstTeilenummer,-1) == 0x20) then 
+			IstTeilenummer = string.sub(IstTeilenummer,1,10)
+		end
+		if(#IstTeilenummer == 10 and string.byte(IstTeilenummer,-1) == 0x20) then 
+			IstTeilenummer = string.sub(IstTeilenummer,1,9)
+		end
+--The part number from FZD has already been determined by GetPartNoFromVehicleData_ASV12x
+		print("SollTeilenummer:"..tostring(SollTeilenummer).." Len: "..#tostring(SollTeilenummer))
+		SollTeilenummerFZD = SollTeilenummer	
+		if(aktivASV == 1) then
+			ASVListfile = DL24Path .. "\\" .. ASVListfile
+			xmlHndl = XmlDocment()
+			if(false == xmlHndl.load(ASVListfile)) then
+				print("!!!load xml file err ")
+				engine.LastError = 1;
+				ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+				errFlag_V = 1986
+			else
+				tmpbuf = xmlHndl.selectSingleNode("/AsvListe/Kopfdaten/ASVListenSchemaVersion")
+				if(nil ~= tmpbuf) then
+					ASVSchemaVersion = tmpbuf.text
+				else
+					engine.LastError = 1
+				end
+
+				print("/AsvListe/Kopfdaten/ASVListenSchemaVersion :" .. tostring(ASVSchemaVersion))
+				if(0 ~= engine.LastError) then
+					errFlag_V = 1959
+					engine.LastError = 1
+					ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+					print("error "..tostring(errFlag_V).." ASV-List version not found")
+					engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag_V,statstr)
+					StatErrorCode = 1
+					StatTextValue = engine.StatValue
+					return SollTeilenummer,ModusFTab,ErgebnisVektor_V,SgBg,ZdcTnr,ZdcBg,XmlContainer,XmlVersion,ZdcVersionInhalt,ErgebnisVektor_I,SwapDcTnr,SwapDcBg,SwapDcVersInhalt,KeyID,SWaPDCName,ErgebnisVektor_S,StatResult,StatTextValue,StatErrorCode,StatNominalValue
+					
+				elseif(ASVSchemaVersion &lt; "V1.22") then
+					errFlag_V = 1958
+					engine.LastError = 1
+					ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+					print("error "..tostring(errFlag_V).." unexpected version of ASV-List: "..tostring(ASVSchemaVersion))
+					engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag_V,statstr)
+					StatErrorCode = 1
+					StatTextValue = engine.StatValue
+					return SollTeilenummer,ModusFTab,ErgebnisVektor_V,SgBg,ZdcTnr,ZdcBg,XmlContainer,XmlVersion,ZdcVersionInhalt,ErgebnisVektor_I,SwapDcTnr,SwapDcBg,SwapDcVersInhalt,KeyID,SWaPDCName,ErgebnisVektor_S,StatResult,StatTextValue,StatErrorCode,StatNominalValue					
+
+				elseif(ASVSchemaVersion &lt; "V1.23" and versionKonfgFile &gt;= "V18") then
+					errFlag_V = 1958
+					engine.LastError = 1
+					ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+					print("error "..tostring(errFlag_V).." unexpected version of Configfile - Version ASV-list: "..tostring(ASVSchemaVersion).." Version configfile :"..tostring(versionKonfgFile))
+					engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag_V,statstr)
+					StatErrorCode = 1
+					StatTextValue = engine.StatValue
+					return SollTeilenummer,ModusFTab,ErgebnisVektor_V,SgBg,ZdcTnr,ZdcBg,XmlContainer,XmlVersion,ZdcVersionInhalt,ErgebnisVektor_I,SwapDcTnr,SwapDcBg,SwapDcVersInhalt,KeyID,SWaPDCName,ErgebnisVektor_S,StatResult,StatTextValue,StatErrorCode,StatNominalValue					
+				end	
+-- 	Korrektur			
+				if(1 == aktKorrSgTnr) then
+--You should always list the part number from FZD as a possible setpoint even if the correction is activated		
+					possibleSollTnr = SollTeilenummer
+					if(ASVSchemaVersion == "V1.22") then
+						asvCorrectedLocal,SollTnrKorrektur,possibleSollTnrTmp,SollZDCKorrektur,ZdcName,ZdcVersion,flag_ZDC_geraten,sw_version_flashliste,flashContainer,errFlag_V = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusKorrektur,SollTeilenummer,SgBg,ZdcTnr,ZdcBg,IstTeilenummer,IstTeilenummer)
+						if(possibleSollTnrTmp ~= "") then
+							possibleSollTnr = possibleSollTnr .. "," .. possibleSollTnrTmp 
+						end
+						print("Tnr_Aenderung -&gt;"..tostring(asvCorrectedLocal))
+						print("SgTnrErsatz -&gt;"..tostring(SollTnrKorrektur))
+						print("SollTnr -&gt;"..tostring(possibleSollTnrTmp))
+						print("ZdcTnrErsatz -&gt;"..tostring(SollZDCKorrektur))
+						print("ZdcName -&gt;"..tostring(ZdcName))
+						print("ZdcVersion -&gt;"..tostring(ZdcVersion))
+						print("FlagZdcGeraten -&gt;"..tostring(flag_ZDC_geraten))
+						print("SW_Version -&gt;"..tostring(sw_version_flashliste))
+						print("Flashdatencont -&gt;"..tostring(flashContainer))
+						print("errFlag_V -&gt;"..tostring(errFlag_V))
+					else
+						-- Korrektur_TNR_ASV123()
+						asvCorrectedLocal,swapDCCorrectedLocal,SollTnrKorrektur,SollZDCKorrektur,SollSWaPDCKorrektur,errFlag_V = LibVW.Korrektur_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummer,SgBg,ZdcTnr,SwapDcTnr,SwapDcBg,vorserienFzg)
+					end
+					print("##### viforce  #### swapDCCorrectedLocal :" .. tostring(swapDCCorrectedLocal))
+					if(swapDCCorrectedLocal == 1)  then
+						SWaPDCCorrected = 1;
+						SwapDcTnr = SollSWaPDCKorrektur
+					end
+					if(asvCorrectedLocal == 1) then
+						ASVCorrected = 1
+						ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x20)
+						SollTeilenummer = SollTnrKorrektur
+						ZdcTnr = SollZDCKorrektur
+						possibleSollTnr = possibleSollTnr .. "," .. SollTeilenummer
+					else
+						possibleSollTnr = SollTeilenummer
+					end
+					print("partNo: " .. tostring(SollTeilenummer) .. " corrected: " .. tostring(ASVCorrected))
+					print("ZDC-partNo: " .. tostring(ZdcTnr))
+					print("ErgebnisVektor:" .. tostring(ErgebnisVektor_V))
+					print("possibleSollTnr:" .. tostring(possibleSollTnr))
+				else
+					possibleSollTnr = SollTeilenummer
+				end	
+
+				asvCorrectedLocal = 0
+				if(IstTeilenummer ~= SollTeilenummer) then
+					if(aktTeileaufbr == 1) then
+						if(ASVSchemaVersion == "V1.22") then
+							asvCorrectedLocal,SollTeilenummer,possibleSollTnrTmp,ZdcTnr,ZdcName,ZdcVersion,flag_ZDC_geraten,sw_version_flashliste,flashContainer,errFlag_V = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusAufbrauch,SollTeilenummer,SgBg,ZdcTnr,ZdcBg,IstTeilenummer,IstTeilenummer)
+							if(engine.LastError == 0 and asvCorrectedLocal == 1) then
+								ASVCorrected = 1
+							end
+							
+							if(engine.LastError ~= 0) then
+								SollTeilenummer = possibleSollTnrTmp
+							end
+							
+							print("Teileaufbrauch - partNo: " .. tostring(SollTeilenummer) .. " used up: " .. tostring(ASVCorrected))
+							print("Teileaufbrauch - ZDC-partNo: " .. tostring(ZdcTnr))
+							
+						else
+						-- ASVSchemaVersion &gt;= "V1.23"
+							swapDCCorrectedLocal = 0
+							sollTnrVorAufbrauch = SollTeilenummer
+							zdcTnrVorAufbrauch = ZdcTnr
+							sollSWaPDCKorrekturVorAufbrauch = SollSWaPDCKorrektur
+							asvCorrectedLocal,swapDCCorrectedLocal,SollTeilenummer,possibleSollTnr,ZdcTnr,SollSWaPDCKorrektur,errFlag_V = LibVW.Aufbrauch_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummer,SgBg,ZdcTnr,SwapDcTnr,SwapDcBg,IstTeilenummer,vorserienFzg)
+							if(engine.LastError ~= 0) then
+								print("Aufbrauch NOK, SollTeilenummer: " .. tostring(SollTeilenummer))
+								print("Aufbrauch NOK, ZdcTnr: " .. tostring(ZdcTnr))
+								print("Aufbrauch NOK, SollSWaPDCKorrektur: " .. tostring(SollSWaPDCKorrektur))
+								print("Aufbrauch NOK, errFlag: " .. tostring(errFlag_V))
+								SollTeilenummer = sollTnrVorAufbrauch
+								ZdcTnr = zdcTnrVorAufbrauch
+								SollSWaPDCKorrektur = sollSWaPDCKorrekturVorAufbrauch	
+								print("Aufbrauch NOK, SollTeilenummer reset: " .. tostring(SollTeilenummer))
+								print("Aufbrauch NOK, ZdcTnr reset: " .. tostring(ZdcTnr))
+								print("Aufbrauch NOK, SollSWaPDCKorrektur reset: " .. tostring(SollSWaPDCKorrektur))								
+							elseif(asvCorrectedLocal == 1) then
+								print("Test: asvCorrectedLocal: " .. tostring(asvCorrectedLocal))
+								print("aktSWaP: " .. tostring(aktSWaP) .. " SWaPDcBg: " .. tostring(SwapDcBg) .." SwapDcTnr: ".. tostring(SwapDcTnr))
+								if ((aktSWaP == 1) and (SwapDcBg ~= "0000") and (SwapDcBg ~= "") and (string.sub(SwapDcTnr,1,9) ~= swapNullTeileNummer) and (string.sub(SwapDcTnr,1,9)~= tnr_ignore)) then
+									print("SWaP_TNR_ASV123 called .....")
+									keyIDtmp,swapDCName_tmp,swapDCVersion_tmp,errFlag_local= LibVW.SWaP_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummer,SgBg,SollSWaPDCKorrektur,SwapDcBg,vorserienFzg)
+									print("+SWaP_TNR_ASV123 ended .....")
+									print("+keyIDtmp :" .. tostring(keyIDtmp))
+									print("+swapDCName_tmp :" .. tostring(swapDCName_tmp))
+									print("+swapDCVersion_tmp :" .. tostring(swapDCVersion_tmp))
+									print("+errFlag_local :" .. tostring(errFlag_local))
+									print("+engine.LastError :" .. tostring(engine.LastError))
+									if(engine.LastError ~= 0 and errFlag_local == 2006) then
+										keyIDtmp = ""
+										engine.LastError = 0
+									end
+									if(keyIDtmp ~= nil) then
+										keyIDtmp = string.upper(keyIDtmp)
+									end
+									if(keyIDtmp == "") then
+										print("Aufbrauch NOK, SollTeilenummer: " .. tostring(SollTeilenummer))
+										print("Aufbrauch NOK, ZdcTnr: " .. tostring(ZdcTnr))
+										print("Aufbrauch NOK, SollSWaPDCKorrektur: " .. tostring(SollSWaPDCKorrektur))
+										print("Aufbrauch NOK, errFlag: " .. tostring(errFlag))	
+										SollTeilenummer = sollTnrVorAufbrauch;
+										ZdcTnr = zdcTnrVorAufbrauch;
+										SollSWaPDCKorrektur = sollSWaPDCKorrekturVorAufbrauch;
+										engine.LastError = 1
+										print("Aufbrauch NOK, SollTeilenummer reset: " .. tostring(SollTeilenummer))
+										print("Aufbrauch NOK, ZdcTnr reset: " .. tostring(ZdcTnr))
+										print("Aufbrauch NOK, SollSWaPDCKorrektur reset: " .. tostring(SollSWaPDCKorrektur))										
+									elseif(keyIDtmp == keyID_NO_SWaP) then
+										ASVCorrected = 1
+										SwapDcTnr = SollSWaPDCKorrektur
+									else
+										keyIDvorAufbrauch,swapDCName_tmp,swapDCVersion_tmp,errFlag_local = LibVW.SWaP_TNR_ASV123(xmlHndl,Fzd,Knr,sollTnrVorAufbrauch,SgBg,sollSWaPDCKorrekturVorAufbrauch,SwapDcBg,vorserienFzg)
+										print("+SWaP_TNR_ASV123 ended .....")
+										print("+keyIDvorAufbrauch :" .. tostring(keyIDvorAufbrauch))
+										print("+swapDCName_tmp :" .. tostring(swapDCName_tmp))
+										print("+swapDCVersion_tmp :" .. tostring(swapDCVersion_tmp))
+										print("+errFlag_local :" .. tostring(errFlag_local))
+										print("+engine.LastError :" .. tostring(engine.LastError))																													
+										if(engine.LastError ~= 0 and errFlag_local == 2006) then
+											keyIDvorAufbrauch = ""
+											engine.LastError = 0
+										end
+										if((keyIDtmp == keyIDvorAufbrauch) and (SollSWaPDCKorrektur == sollSWaPDCKorrekturVorAufbrauch)) then
+											ASVCorrected = 1
+											SwapDcTnr = SollSWaPDCKorrektur
+											print("Aufbrauch OK ! SwapDcTnr :" .. tostring(SwapDcTnr))
+										else
+											print("Aufbrauch NOK, SollTeilenummer: " .. tostring(SollTeilenummer))
+											print("Aufbrauch NOK, ZdcTnr: " .. tostring(ZdcTnr))
+											print("Aufbrauch NOK, SollSWaPDCKorrektur: " .. tostring(SollSWaPDCKorrektur))
+											print("Aufbrauch NOK, errFlag: " .. tostring(errFlag))	
+											SollTeilenummer = sollTnrVorAufbrauch
+											ZdcTnr = zdcTnrVorAufbrauch
+											SollSWaPDCKorrektur = sollSWaPDCKorrekturVorAufbrauch
+											engine.LastError = 1
+											print("Aufbrauch NOK, SollTeilenummer reset: " .. tostring(SollTeilenummer))
+											print("Aufbrauch NOK, ZdcTnr reset: " .. tostring(ZdcTnr))
+											print("Aufbrauch NOK, SollSWaPDCKorrektur reset: " .. tostring(SollSWaPDCKorrektur))												
+										end																														
+									end
+									
+								else
+									ASVCorrected = 1
+								end
+								print("swap partNo: " .. tostring(SollTeilenummer) .. " used up: " .. tostring(ASVCorrected))
+								print("swap ZDC-partNo: " .. tostring(ZdcTnr))
+								print("swap SWaP_DC-partNo: " .. tostring(SwapDcTnr))																
+							end
+						end
+					
+					else
+						engine.LastError = 1
+						print("partNo: " .. tostring(SollTeilenummer) .. " no use up" )
+						errFlag_V = 1976
+					end
+					
+					if(engine.LastError == 0) then
+						ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x10)
+						if(IstTeilenummer ~= SollTeilenummer) then
+							ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+							errFlag_V = 1993
+						end						
+					else
+						ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+						errFlag_V = 1993
+					end
+				
+				end						
+			end
+			
+		else
+			print("no ASV active")
+			if(IstTeilenummer ~= SollTeilenummer) then
+				ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+				errFlag_V = 1993
+			end		
+		end
+		
+		if(IstTeilenummer == SollTeilenummer) then
+			if(aktivASV == 1) then
+				if(aktVorserie == 1) then
+					SollTeilenummerFZD = SollTeilenummer
+				end
+				if((aktivSwv == 0) and (aktivHwv == 0) and (aktTeileFreiPrf == 0)) then
+					engine.LastError = 0
+					print("partNo: " .. tostring(SollTeilenummer) .. " Parts-free-testing switched off")				
+				else
+					-- VersionsPruefung_TNR_ASV123
+					ErgebnisVektor_V,errFlag_V,SollVersion = LibVW.VersionsPruefung_TNR_ASV123(xmlHndl,Fzd,Knr,IstTeilenummer,SgSwVersion,SgHwVersion,SgHerstellKennz,aktivSwv,aktivHwv,aktivHkz,vorserienFzg,ErgebnisVektor_V)
+					print("++++ viforce ++++ errFlag_V :" .. tostring(errFlag_V) .. " engine.LastError :" .. tostring(engine.LastError) .. " SollVersion :" .. tostring(SollVersion) .. " ErgebnisVektor_V:" .. tostring(ErgebnisVektor_V))
+					if(engine.LastError ~= 0) then
+						if((aktivSwv == 0) and (aktivHwv == 0)) then
+							ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0xc0)
+						end
+						if(aktivSwv == 1) then
+							IstVersion = " SW: " .. tostring(SgSwVersion)
+						end
+						if(aktivHwv == 1) then
+							IstVersion = IstVersion .. " HW: " .. tostring(SgHwVersion)
+						end					
+					end				
+				end
+			end
+		end
+		
+	else
+		ErgebnisVektor_V = bit32.bor(ErgebnisVektor_V,0x40)
+	end
+
+	LastError_V = engine.LastError
+	engine.LastError = err_get_part_no
+	-- Start SWaP
+	swapDCName = ""
+	SwapDcVersInhalt = ""
+	verbauSg = 1
+	if(versionKonfgFile &lt; "V18") then
+		ErgebnisVektor_S = 0x01
+		SwapDcTnr = ""
+		errFlag_S = 1958 -- unerwartete ASV-Version
+		engine.LastError = 1	
+		print("DL24_Process_ASV, SWaP: Konfigfile-Version : " .. tostring(versionKonfgFile) .. ", kein SWaP")
+	else
+	-- versionKonfgFile &gt;= "V18"
+		if(ErgebnisVektor_V &lt; 0x40) then
+			verbauSg = 0
+		end
+		
+		ErgebnisVektor_S = 0x00
+		
+		if(aktivASV == 0) then
+			ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x01)
+			SwapDcTnr = ""
+			errFlag_S = 2001
+			engine.LastError = 1
+			print("DL24_SWaP_Stat: NOK - SWaP_DC evaluation started, ASV is not active")	
+		elseif((aktSWaP ~= 1) or (SwapDcBg == "0000")) then
+			ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x01)
+			if((SWaPErstanfr ~= 1) and (SwapDcTnrPrev ~= "")) then
+				ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x40)
+			end	
+			SwapDcTnr = ""
+			errFlag_S = 2004
+			engine.LastError = 1
+			print("DL24_SWaP_Stat: NOK - SWaP_DC evaluation started, although disabled in Configfile")					
+		elseif(verbauSg ~= 0) then
+			ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x02)
+			if((SWaPErstanfr ~= 1) and (SwapDcTnrPrev ~= SwapDcTnr)) then
+				ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x40)
+			end	
+			SwapDcTnr = ""
+			errFlag_S = 2002
+			engine.LastError = 1
+			print("DL24_SWaP_Stat: NOK - SWaP_DC evaluation started after NOK verification")				
+		end
+		
+		if((SWaPDCCorrected == 1) and (verbauSg == 0)) then
+			ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x10)
+		end
+		if(((SwapDcTnr == tnr_ignore) or (string.sub(SwapDcTnr,1,9)== swapNullTeileNummer)) and (verbauSg == 0)) then
+			ErgebnisVektor_S = 0x08
+			if((SWaPErstanfr ~= 1) and (SwapDcTnrPrev ~= SwapDcTnr)) then
+				ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x40)
+				-- SWaP_DC-Tnr changed to the last SWaP request
+			end
+			if(SWaPErstanfr == 1) then
+				ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x20)
+				-- Without communication to control unit
+			end
+			verbauSg = 1
+			engine.LastError = 0
+		end
+		
+		if(verbauSg == 0) then
+			if(engine.LastError == 0) then
+			print("DL24_Process_ASV: Teilenummer SG: " .. tostring(SollTeilenummer) .. " Len: " .. tostring(#SollTeilenummer))
+			print("DL24_Process_ASV: Teilenummer SWaP_DC: " .. tostring(SwapDcTnr) .. " Len: " .. tostring(#SwapDcTnr))
+				if(ASVSchemaVersion &lt; "V1.23") then
+					errFlag_S =1958
+					engine.LastError = 1
+					ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x01)
+					if((SWaPErstanfr ~= 1) and (SwapDcTnrPrev ~= SwapDcTnr)) then
+						ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x40)
+						-- SWaP_DC-Tnr changed to the last SWaP request
+					end
+					if(SWaPErstanfr == 1) then
+						ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S,0x20)
+						-- Without communication to control unit
+					end
+					print("Error :" .. tostring(errFlag_S) .. ",Version ASV-List:" .. tostring(ASVSchemaVersion) .. ",no SWaP")
+					
+				end
+				print("DL24_Process_ASV, ASVListenSchemaVersion: " .. tostring(ASVSchemaVersion))
+			
+				if(engine.LastError == 0) then
+					KeyID ,swapDCName ,SwapDcVersInhalt ,errFlag_S = LibVW.SWaP_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummer,SgBg,SwapDcTnr,SwapDcBg,vorserienFzg)
+					
+					if(engine.LastError ~= 0) then
+						ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S ,0x04)
+						if(errFlag_S == 0) then
+							errFlag_S = 2000
+						end
+					end
+					
+					keyID_local = string.upper(KeyID)
+					if((engine.LastError == 0) and ((keyID_local == keyID_NO_SWaP) or (keyID_local == ""))) then
+						print("DL24_SWaP_Stat: Key-ID: NO_SWAP_SG =&gt; reset SwapDcTnr, SWaPDCName, SWaPDCVersInhalt")
+						swapDCName = ""
+						SwapDcTnr = ""
+						SwapDcVersInhalt = ""
+						ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S ,0x08)
+						ErgebnisVektor_S = bit32.band(ErgebnisVektor_S ,0xEF)
+					elseif((engine.LastError == 0) and (swapDCName ~= "")) then
+						SWaPDCName = swapDCName .. ".xml"
+					end
+					
+					if((SWaPErstanfr ~= 1) and (SwapDcTnrPrev ~= SwapDcTnr)) then
+						ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S ,0x40)
+					end
+					
+					if(SWaPErstanfr == 1) then
+						ErgebnisVektor_S = bit32.bor(ErgebnisVektor_S ,0x20)
+					end
+					
+					print("DL24_SWaP_Stat: SwapDcTnr: " .. tostring(SwapDcTnr) .. ", SWaPDCName: " .. tostring(SWaPDCName))
+					print("DL24_SWaP_Stat: SWaPDCVersInhalt: " .. tostring( SwapDcVersInhalt))
+					print("DL24_SWaP_Stat: err nach SWaP_TNR_ASV123: " .. tostring(engine.LastError))
+				end
+				
+				if((engine.LastError == 0) and (SWaPDCName ~= "")) then
+					XmlContainerPath = DL24Path .. SWaPDCName
+					if(false == xmlHndl2.load(XmlContainerPath)) then
+						print("File not found: " .. tostring(XmlContainerPath))
+						engine.LastError = 1
+						errFlag_S = 2005
+					end
+				end
+			
+			end
+		end
+		LastError_S = engine.LastError
+		XmlContainerPath = ""			
+	end
+	print("++++ viforce KEY ID,swap name :" .. tostring(KeyID) .. " " .. tostring(SWaPDCName))
+-- Start IBN
+	print("DL24_Process_ASV: Start IBN: partNo: " .. tostring(IstTeilenummer))
+	print("DL24_Process_ASV: ZDC-partNo: " .. tostring(ZdcTnr))
+	
+	engine.LastError = err_get_part_no
+	EV_Text = ""
+	possibleSollTnr = ""
+	XmlContainer = ""
+	XmlVersion = ""
+	ZdcVersionInhalt = ""
+	if(ErgebnisVektor_V &lt; 0x40) then
+		verbauSg = 0
+	end
+	ErgebnisVektor_I = 0x00
+	if((verbauSg ~= 0) and (aktVorserie == 1)) then
+		if((bit32.band(ErgebnisVektor_V ,0x01) == 0x01) or (bit32.band(ErgebnisVektor_V ,0x04) == 0x04) or (bit32.band(ErgebnisVektor_V ,0x40) == 0x40) or (bit32.band(ErgebnisVektor_V ,0x80) == 0x80)) then
+			ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I ,0x04)
+			ZdcTnr = ""
+			verbauSg = 0			
+		end	
+	end
+	
+	if((ZdcTnr == "000000000") and (aktivASV == 0)) then
+		ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I ,0x40)
+		errFlag_I = 1997
+		engine.LastError = 1
+	elseif((ZdcTnr == "000000000") and (aktivASV ~= 0)) then
+		ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I ,0x10)
+		errFlag_I = 1997
+		engine.LastError = 1	
+	elseif((verbauSg ~= 0) and (aktVorserie ~= 1)) then
+		ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I ,0x80)
+		errFlag_I = 1994
+		engine.LastError = 1		
+	end
+	
+	if(bit32.band(ErgebnisVektor_V,0x20) == 0x20) then
+		ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I ,0x08)
+	end
+	
+	if(bit32.band(ErgebnisVektor_V,0x10) == 0x10) then
+		ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I ,0x20)
+	end	
+	
+	
+	
+	if(verbauSg == 0) then
+		if(engine.LastError == 0 and ModusFTab ~= 1) then
+			sollTnrZdc_dummy = ZdcTnr	
+			if(aktivASV == 0) then
+				local shellCommandStr = "dir /b " .. tostring(DL24Path) 	
+				local f = io.popen(shellCommandStr)
+				local filenameStr = f:read("*all")
+				XmlContainer = string.match(filenameStr,tostring(zdcTnr_lokal) .. "[^\n]+xml")
+				if(XmlContainer == nil) then
+					print("could not find xml container with partno.: " .. tostring(zdcTnr_lokal))
+					errFlag_I = 1978
+				else
+					ZdcTnr = zdcTnr_lokal
+				end
+				print("open file " .. tostring(XmlContainer) .. " OK?")
+				ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I ,0x40)
+			else
+				print("DL24_Process_ASV: teilenummer ZDC: " .. tostring(zdcTnr_lokal) .. " Len: " .. tostring(#zdcTnr_lokal))
+			
+				ASVListfile = DL24Path .. "\\" .. ASVListfile
+				print("viforce ASVListfile :" .. tostring(ASVListfile))
+				print("++++ YYYY viforce KEY ID,swap name :" .. tostring(KeyID) .. " " .. tostring(SWaPDCName))
+				if(aktZdcProzess == 1) then
+					if(versionKonfgFile &lt; "V18") then
+						asvCorrectedZDC,sollTnr_dummy,possibleSollTnr,zdcTnr_lokal,ZdcName,ZdcVersion,flag_ZDC_geraten,sw_version_flashliste,flashdatencont,errFlag_I = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusZDC,IstTeilenummer,SgBg,ZdcTnr,ZdcBg,"","")
+					else
+						zdcTnr_lokal,ZdcName,ZdcVersion,flag_ZDC_geraten,errFlag_I = LibVW.Zdc_TNR_ASV123(xmlHndl,Fzd,Knr,IstTeilenummer,ZdcTnr,ZdcBg,vorserienFzg)
+					end
+					print("++++ GGGG viforce KEY ID,swap name :" .. tostring(KeyID) .. " " .. tostring(SWaPDCName))
+					if((engine.LastError == 0) and (flag_ZDC_geraten == 1) and (aktVorserie == 1) and (ZdcTnr == "")) then
+						ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I,0x02)
+					end
+					
+					if((engine.LastError == 0) and (aktVorserie == 1) and (ZdcTnr == "")) then
+						ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I,0x04)
+						ErgebnisVektor_I = bit32.band(ErgebnisVektor_I,0x07)
+					end
+					
+					if((engine.LastError ~= 0) and (aktVorserie == 1)) then
+						ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I,0x04)
+					end
+					
+					if((engine.LastError ~= 0) and (aktVorserie == 1) and (ZdcTnr ~= "")) then
+						if(versionKonfgFile &lt; "V18") then
+							asvCorrectedZDC,sollTnr_dummy,possibleSollTnr,zdcTnr_lokal,ZdcName,ZdcVersion,flag_ZDC_geraten,sw_version_flashliste,flashdatencont,errFlag_I = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusZDC,IstTeilenummer,SgBg,"",ZdcBg,"","")
+						else
+							zdcTnr_lokal,ZdcName,ZdcVersion,flag_ZDC_geraten,errFlag_I = LibVW.Zdc_TNR_ASV123(xmlHndl,Fzd,Knr,IstTeilenummer,"",ZdcBg,vorserienFzg)
+						end					
+						if((engine.LastError == 0) and (flag_ZDC_geraten == 1)) then
+							ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I,0x02)
+						end
+						
+						if(engine.LastError == 0) then
+							ErgebnisVektor_I = bit32.band(ErgebnisVektor_I,0x07)
+						end
+					end
+					
+					if(engine.LastError ~= 0) then
+						ZdcTnr = zdcTnr_lokal
+						ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I,0x10)
+						errFlag = 1996
+					end
+					
+					if(engine.LastError == 0) then
+						XmlContainer = tostring(ZdcName) .. ".xml"
+						ZdcTnr = zdcTnr_lokal
+					end		
+					print("ZDCpartNo: " .. tostring(ZdcTnr) .. ", ZDC XmlContainer: " .. tostring(XmlContainer)) 
+					print("ZDC Version: " .. tostring(ZdcVersion) .. ",Flag ZDC geraten:" .. tostring(flag_ZDC_geraten))
+					print("err nach Korrektur_Aufbrauch_TNR_ASV122, ZDC:" .. tostring(engine.LastError))
+					
+				else
+					ErgebnisVektor_I = bit32.bor(ErgebnisVektor_I,0x08)
+					local shellCommandStr = "dir /b " .. tostring(DL24Path) 	
+					local f = io.popen(shellCommandStr)
+					local filenameStr = f:read("*all")
+					XmlContainer = string.match(filenameStr,tostring(sollTnrZdc_dummy) .. "[^\n]+xml")
+					if(XmlContainer == nil) then
+						print("could not find xml container with partno.: " .. tostring(zdcTnr))
+						errFlag_I = 1978
+					else
+						ZdcTnr = sollTnrZdc_dummy
+					end
+					print("open file " .. tostring(XmlContainer) .. " OK?")
+				end
+			end
+			if(engine.LastError == 0) then
+				XmlContainerPath = tostring(DL24Path) .. "\\" .. tostring(XmlContainer)
+				if(false == zdcXmlHndl.load(XmlContainerPath)) then
+					print("!!!zdc XmlContainer File not found ")
+					engine.LastError = 1
+					errFlag = 1985
+				else
+					if(ZdcVersion ~= "") then
+						ZdcVersionInhalt = ZdcVersion
+					else
+						local tmpbuf = zdcXmlHndl.selectSingleNode("/ZDC/IDENT/VERSION-INHALT")
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = ""
+						end	
+						ZdcVersionInhalt = tmpbuf
+					end
+					
+					local tmpbuf = zdcXmlHndl.selectSingleNode("/ZDC/IDENT/VERSION-TYP")
+					if(tmpbuf ~= nil) then
+						tmpbuf = tmpbuf.text
+					else
+						tmpbuf = ""
+					end	
+					XmlVersion = tmpbuf					
+				end			
+			end
+		end
+	end	
+end
+engine.LastError = LastError_I
+	
+if(versionKonfgFile &gt;= "V18") then
+	engine.StatValue = tostring(SollTeilenummer) .. " " .. tostring(SollVersion) .. " " .. tostring(XmlContainer) .. " " .. tostring(SWaPDCName)
+	StatNominalValue = tostring(SollTeilenummer) .. " " .. tostring(SollVersion) .. " " .. tostring(XmlContainer) .. " " .. tostring(SWaPDCName)
+else
+	engine.StatValue = tostring(SollTeilenummer) .. " " .. tostring(SollVersion) .. " " .. tostring(XmlContainer)
+	StatNominalValue = tostring(SollTeilenummer) .. " " .. tostring(SollVersion) .. " " .. tostring(XmlContainer)
+end
+
+if(versionKonfgFile &gt;= "V18") then
+	EV_Text = LibVW.DL24_EV_Text_ASV123(ErgebnisVektor_V,xmlTagVerbaupruefung)
+else
+	EV_Text = LibVW.DL24_EV_Text(ErgebnisVektor_V,xmlTagVerbaupruefung)
+end
+
+engine.StatValue = engine.StatValue .. " Tnr:" .. tostring(IstTeilenummer) .. "/" .. tostring(IstVersion) .. "/EV:" .. tostring(LibVW.conv1ByteToBinString(ErgebnisVektor_V)) .. "/" .. tostring(EV_Text)
+if(versionKonfgFile &gt;= "V18") then
+	EV_Text = LibVW.DL24_EV_Text_ASV123(ErgebnisVektor_I,xmlTagInbetriebnahme)
+else
+	EV_Text = LibVW.DL24_EV_Text(ErgebnisVektor_I,xmlTagInbetriebnahme)
+end
+engine.StatValue = engine.StatValue .. "/ZDC-Container:" .. tostring(XmlContainer) .. "/EV:" .. tostring(LibVW.conv1ByteToBinString(ErgebnisVektor_I)) .. "/" .. tostring(EV_Text)
+print("DL24_Process_ASV: errflag:" .. tostring(errFlag_I))
+
+if(versionKonfgFile &gt;= "V18") then
+	EV_Text = LibVW.DL24_EV_Text_ASV123(ErgebnisVektor_S,xmlTagSWaP)
+	engine.StatValue = engine.StatValue .. "/SWaP_DC:" .. tostring(SWaPDCName) .. "/EV:" .. tostring(LibVW.conv1ByteToBinString(ErgebnisVektor_S)) .. "/" .. tostring(EV_Text)
+	if(bit32.band(ErgebnisVektor_S,0x0f) ~= 0) then
+		engine.StatValue = engine.StatValue .. "/"
+		engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag_S,engine.StatValue)
+	end
+end
+
+engine.StatValue = engine.StatValue .. "/"
+engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag_I,engine.StatValue)
+
+if((ErgebnisVektor_V &lt; 0x40) and (bit32.band(ErgebnisVektor_V,0x04) == 0) and (bit32.band(ErgebnisVektor_V,0x01) == 0)) then
+    StatErrorCode = 0
+    StatTextValue = engine.StatValue
+    StatResult = 0
+else
+	engine.StatValue = engine.StatValue .. "/"
+	engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag_V,engine.StatValue)
+	engine.StatValue = engine.StatValue .. "/SollTnr:" .. tostring(SollTeilenummer)
+	if(SollVersion ~= "") then
+		engine.StatValue = engine.StatValue .. "/SollVersion:" .. tostring(SollVersion)
+	end
+    StatErrorCode = 1
+    StatTextValue = engine.StatValue
+    StatResult = 1		
+end
+XmlContainer = XmlContainerPath
+if(SWaPDCName ~= "") then
+	SWaPDCName = DL24Path .. "\\" .. SWaPDCName
+end
+print("+++++ viforce +++++" .. tostring(SWaPDCName))
+print("DL24_Process_ASV: Stats:" .. tostring(engine.StatValue))
+</Script></Function>
+

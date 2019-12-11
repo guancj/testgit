@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="H7前束工位"/>
+<Process id="HS7前束工位"/>
+<Workplace id="FWEService">
+</Workplace>
+<Workplace id="SWEService">
+</Workplace>
+<Workplace id="FASService">
+</Workplace>
+<Workplace id="Process">
+</Workplace>
+<Workplace id="HS7Process">
+</Workplace>
+<Workplace id="ECU">
+</Workplace>
+<Process id="C229前束工位"/>
+<Workplace id="C229Process">
+</Workplace>
+</children>
+</Workplace>

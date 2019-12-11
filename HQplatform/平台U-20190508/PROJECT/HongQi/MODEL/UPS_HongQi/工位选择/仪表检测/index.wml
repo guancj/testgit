@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Process id="analog_measure_H7"/>
+<Process id="sas_H7"/>
+<Process id="peps_H7"/>
+<Process id="bcm1_H7"/>
+<Process id="airco_H7"/>
+<Process id="cluster_H7"/>
+<Function id="sec_general"/>
+
+<Process id="IVI_HS7"/>
+<Process id="IC_HS7"/>
+<Process id="BCM1_HS7"/>
+<Process id="ACP_F"/>
+<Process id="analog_measure_HS7"/>
+<Process id="airco_HS7"/>
+<Process id="peps_HS7"/>
+<Process id="sas_HS7"/>
+<Process id="IVI_HS7-1"/>
+</children>
+</Workplace>

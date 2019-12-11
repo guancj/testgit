@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="获取发送报文的计数">
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回当前的serialNumber值，形式如下:&quot;\x1F&quot;,并将serialNumber值自增"/>
+</Outputs>
+<Script>
+if(LibIDT.serialNumber ==  @41) then
+
+if(LibIDT.serialNumber == 255) then
+
+LibIDT.serialNumber = 0;
+
+else
+
+LibIDT.serialNumber = LibIDT.serialNumber + 1;
+
+end;
+
+end;
+
+ret = string.char(LibIDT.serialNumber);
+
+
+--[[
+if(serialNumber == @41) then
+
+if(serialNumber == 255) then
+
+serialNumber = 0;
+
+else
+
+serialNumber = serialNumber + 1;
+
+end;
+
+end;
+
+ret = string.char(serialNumber);
+--]]</Script></Function>
+

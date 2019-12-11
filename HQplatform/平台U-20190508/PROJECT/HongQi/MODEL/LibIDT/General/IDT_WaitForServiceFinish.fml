@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="serviceNum" type="3" data="0" description="服务号"/>
+<Variable id="timeOut" type="3" data="0" description="in second, &apos;0&apos; = no time out"/>
+<Variable id="pHndl" type="8" data=""/>
+<Variable id="sendMode" type="3" data="0" description="0:不连发 n :连发n次，主要用在信号不好 丢包环境下"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="&quot;1&quot;=Finished, &quot;2&quot;=Running, &quot;0&quot;= No service running. &quot;-1&quot;=timeout happened. &quot;-2&quot;=error"/>
+<Variable id="revTel" type="8" data="" description="回复报文"/>
+</Outputs>
+<Script>ret = 0;
+revTel = ""
+local reqTel = "";
+local startTime = os.clock()
+sendMode = sendMode or 0
+engine.LastError = 0
+
+if pHndl == nil or pHndl &lt; 0 then
+	engine.println("IdtLib:idtDataExchange:pHndl is invalid, pHndl= " .. tostring(pHndl));
+	engine.LastError = -1;
+	ret = -2
+	return ret;
+end;
+
+engine.println("IDT_WaitForServiceFinish, start waiting service, service=" .. tostring(serviceNum))
+
+while ret ~= 1 do
+	-- get last telegram
+	local reqTel = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+	reqTel = LibIDT.idtSetBytes(reqTel,2,1,string.char(serviceNum));
+	if reqTel == nil or reqTel == "" then
+		engine.println("ERROR, IDT_WaitForServiceFinish, no _LASTSNDTEL ")
+		engine.LastError = 1;
+		ret = -2
+		break
+	end
+	-- send last telegram
+	_ , revTel = LibIDT.idtDataExchange(reqTel,LibIDT.idtGetTimeout(),pHndl,sendMode)
+        ret = engine.UdpHandleVarGet(Handl, "_CURRENTSEVACK")
+	-- timeout check
+	if timeOut ~= 0 and os.clock() - startTime &gt; timeOut then
+		engine.println("WARNING, IDT_WaitForServiceFinish, wait for service finish timeout!")
+		ret = -1
+		break
+	end
+
+        engine.Delay(100)
+end
+-- send a "\x00" service after service finished
+if ret == 1 then
+    reqTel = engine.UdpHandleVarGet(pHndl, "_LASTSNDTEL");
+    reqTel = LibIDT.idtSetBytes(reqTel,2,1,"\x00");
+    LibIDT.idtDataExchange(reqTel,LibIDT.idtGetTimeout(),pHndl,sendMode)
+end
+
+engine.UdpHandleVarSet(pHndl, "_CURRENTSERVICE", "\x00")
+
+engine.println("IDT_WaitForServiceFinish, end waiting service, service="
+	.. tostring(serviceNum) .. ", ret=" .. tostring(ret))
+</Script></Function>
+

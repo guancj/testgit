@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="FAS_KAS" flags="1">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="FWEHndl" type="3" dir="0" data="FWEHndl"/>
+<Variable id="FASHndl" type="3" dir="0" data="FASHndl"/>
+<Variable id="SWEHndl" type="3" dir="0" data="SWEHndl"/>
+<Variable id="IDT_YPosRadhausVL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVR_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHL_shared" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHR_shared" type="5" dir="0" data="0"/>
+<Variable id="fFWE_Achsversatz_VA_shared" type="5" dir="0" data="0"/>
+<Variable id="fFWE_Achsversatz_HA_shared" type="5" dir="0" data="0"/>
+<Variable id="fFWE_Dackelwinkel_shared" type="5" dir="0" data="0"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="395" top="23" right="495" bottom="55"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="396" top="1450" right="496" bottom="1482"/>
+<Script></Script></End>
+<Activities>
+<Activity id="3" ActivityType="3" name="变道辅助">
+<Rect left="396" top="224" right="496" bottom="256"/>
+<Script></Script></Activity>
+<Activity id="4" ActivityType="5" name="FAS_84_Result_Coordinates">
+<Rect left="396" top="371" right="496" bottom="403"/>
+<SubProcesses>
+<SubProcess id="FAS_84_Result_Coordinates">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="fFAS_LDW_OL_X_shared" value="0" ret="FAS_LDW_OL_X_shared"/>
+<Parameter id="fFAS_LDW_OL_Y_shared" value="0" ret="FAS_LDW_OL_Y_shared"/>
+<Parameter id="fFAS_LDW_OL_Z_shared" value="0" ret="FAS_LDW_OL_Z_shared"/>
+<Parameter id="fFAS_LDW_OR_X_shared" value="0" ret="FAS_LDW_OR_X_shared"/>
+<Parameter id="fFAS_LDW_OR_Y_shared" value="0" ret="FAS_LDW_OR_Y_shared"/>
+<Parameter id="fFAS_LDW_OR_Z_shared" value="0" ret="FAS_LDW_OR_Z_shared"/>
+<Parameter id="fFAS_LDW_UL_X_shared" value="0" ret="FAS_LDW_UL_X_shared"/>
+<Parameter id="fFAS_LDW_UL_Y_shared" value="0" ret="FAS_LDW_UL_Y_shared"/>
+<Parameter id="fFAS_LDW_UL_Z_shared" value="0" ret="FAS_LDW_UL_Z_shared"/>
+<Parameter id="fFAS_LDW_UR_X_shared" value="0" ret="FAS_LDW_UR_X_shared"/>
+<Parameter id="fFAS_LDW_UR_Y_shared" value="0" ret="FAS_LDW_UR_Y_shared"/>
+<Parameter id="fFAS_LDW_UR_Z_shared" value="0" ret="FAS_LDW_UR_Z_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="30" ActivityType="3" name="普通节点">
+<Rect left="683" top="370" right="783" bottom="402"/>
+<Script>engine.println(" &lt;FAS_KAS&gt; : FAS Service 84 LDW Boards Coordinates")
+-- 变道辅助 坐标</Script></Activity>
+<Activity id="31" ActivityType="5" name="FAS_61_LDW_HeightPanel">
+<Rect left="397" top="439" right="497" bottom="471"/>
+<SubProcesses>
+<SubProcess id="FAS_61_LDW_HeightPanel">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="IDT_YPosRadhausVL" value="IDT_YPosRadhausVL_shared"/>
+<Parameter id="IDT_YPosRadhausVR" value="IDT_YPosRadhausVR_shared"/>
+<Parameter id="IDT_YPosRadhausHL" value="IDT_YPosRadhausHL_shared"/>
+<Parameter id="IDT_YPosRadhausHR" value="IDT_YPosRadhausHR_shared"/>
+<Parameter id="fFAS_LDW_UL_X" value="FAS_LDW_UL_X_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="32" ActivityType="3" name="普通节点">
+<Rect left="686" top="439" right="786" bottom="471"/>
+<Script>engine.println(" &lt;FAS_KAS&gt; : FAS Service 61 LDW heightPanel")
+-- 变道辅助 设定高度</Script></Activity>
+<Activity id="33" ActivityType="4" name="路由节点">
+<Rect left="268" top="358" right="300" bottom="390"/>
+</Activity>
+<Activity id="34" ActivityType="5" name="FAS_LDW_BoardPositonCheck">
+<Rect left="396" top="565" right="496" bottom="597"/>
+<SubProcesses>
+<SubProcess id="FAS_LDW_BoardPositonCheck">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="35" ActivityType="3" name="普通节点">
+<Rect left="396" top="501" right="496" bottom="533"/>
+<Script></Script></Activity>
+<Activity id="36" ActivityType="3" name="普通节点">
+<Rect left="682" top="564" right="782" bottom="596"/>
+<Script>engine.println(" &lt;FAS_KAS&gt; : wait LDW  in positon  ")
+-- 等待变道辅助报警板到工作位置</Script></Activity>
+<Activity id="37" ActivityType="5" name="FAS_84_Result_Coordinates">
+<Rect left="396" top="630" right="496" bottom="662"/>
+<SubProcesses>
+<SubProcess id="FAS_84_Result_Coordinates">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="fFAS_LDW_OL_X_shared" value="0" ret="FAS_LDW_OL_X_shared"/>
+<Parameter id="fFAS_LDW_OL_Y_shared" value="0" ret="FAS_LDW_OL_Y_shared"/>
+<Parameter id="fFAS_LDW_OL_Z_shared" value="0" ret="FAS_LDW_OL_Z_shared"/>
+<Parameter id="fFAS_LDW_OR_X_shared" value="0" ret="FAS_LDW_OR_X_shared"/>
+<Parameter id="fFAS_LDW_OR_Y_shared" value="0" ret="FAS_LDW_OR_Y_shared"/>
+<Parameter id="fFAS_LDW_OR_Z_shared" value="0" ret="FAS_LDW_OR_Z_shared"/>
+<Parameter id="fFAS_LDW_UL_X_shared" value="0" ret="FAS_LDW_UL_X_shared"/>
+<Parameter id="fFAS_LDW_UL_Y_shared" value="0" ret="FAS_LDW_UL_Y_shared"/>
+<Parameter id="fFAS_LDW_UL_Z_shared" value="0" ret="FAS_LDW_UL_Z_shared"/>
+<Parameter id="fFAS_LDW_UR_X_shared" value="0" ret="FAS_LDW_UR_X_shared"/>
+<Parameter id="fFAS_LDW_UR_Y_shared" value="0" ret="FAS_LDW_UR_Y_shared"/>
+<Parameter id="fFAS_LDW_UR_Z_shared" value="0" ret="FAS_LDW_UR_Z_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="38" ActivityType="3" name="普通节点">
+<Rect left="683" top="629" right="783" bottom="661"/>
+<Script>engine.println(" &lt;FAS_KAS&gt; : FAS Service 84 LDW Boards Coordinates 2")
+-- 变道辅助 坐标</Script></Activity>
+<Activity id="39" ActivityType="4" name="路由节点">
+<Rect left="269" top="554" right="301" bottom="586"/>
+</Activity>
+<Activity id="40" ActivityType="3" name="照相机校准">
+<Rect left="397" top="695" right="497" bottom="727"/>
+<Line3Text Enable="1" Text="控制器：照相机校准"/>
+<Script></Script></Activity>
+<Activity id="41" ActivityType="5" name="c7_kas">
+<Rect left="398" top="763" right="498" bottom="795"/>
+<SubProcesses>
+<SubProcess id="c7_kas">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;CameraCalibration&quot;,&quot;DTCCheck&quot;,&quot;DTCClear&quot;}"/>
+<Parameter id="Radhauskante_VL" value="0" ret="Radhauskante_VL"/>
+<Parameter id="Radhauskante_VR" value="0" ret="Radhauskante_VR"/>
+<Parameter id="Radhauskante_HL" value="0" ret="Radhauskante_HL"/>
+<Parameter id="Radhauskante_HR" value="0" ret="Radhauskante_HR"/>
+<Parameter id="fFWE_Dackelwinkel_shared" value="fFWE_Dackelwinkel_shared"/>
+<Parameter id="IDT_YPosRadhausHR_shared" value="IDT_YPosRadhausHR_shared"/>
+<Parameter id="fFWE_Achsversatz_VA_shared" value="fFWE_Achsversatz_VA_shared"/>
+<Parameter id="fFWE_Achsversatz_HA_shared" value="fFWE_Achsversatz_HA_shared"/>
+<Parameter id="IDT_YPosRadhausVL_shared" value="IDT_YPosRadhausVL_shared"/>
+<Parameter id="IDT_YPosRadhausVR_shared" value="IDT_YPosRadhausVR_shared"/>
+<Parameter id="IDT_YPosRadhausHL_shared" value="IDT_YPosRadhausHL_shared"/>
+<Parameter id="fFAS_LDW_OL_X_shared" value="FAS_LDW_OL_X_shared"/>
+<Parameter id="fFAS_LDW_OL_Y_shared" value="FAS_LDW_OL_Y_shared"/>
+<Parameter id="fFAS_LDW_OL_Z_shared" value="FAS_LDW_OL_Z_shared"/>
+<Parameter id="fFAS_LDW_OR_X_shared" value="FAS_LDW_OR_X_shared"/>
+<Parameter id="fFAS_LDW_OR_Y_shared" value="FAS_LDW_OR_Y_shared"/>
+<Parameter id="fFAS_LDW_OR_Z_shared" value="FAS_LDW_OR_Z_shared"/>
+<Parameter id="fFAS_LDW_UL_X_shared" value="FAS_LDW_UL_X_shared"/>
+<Parameter id="fFAS_LDW_UL_Y_shared" value="FAS_LDW_UL_Y_shared"/>
+<Parameter id="fFAS_LDW_UL_Z_shared" value="FAS_LDW_UL_Z_shared"/>
+<Parameter id="fFAS_LDW_UR_X_shared" value="FAS_LDW_UR_X_shared"/>
+<Parameter id="fFAS_LDW_UR_Y_shared" value="FAS_LDW_UR_Y_shared"/>
+<Parameter id="fFAS_LDW_UR_Z_shared" value="FAS_LDW_UR_Z_shared"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="42" ActivityType="3" name="控制器BVE重置">
+<Rect left="399" top="829" right="499" bottom="861"/>
+<Script></Script></Activity>
+<Activity id="43" ActivityType="5" name="c7_bve">
+<Rect left="399" top="891" right="499" bottom="923"/>
+<SubProcesses>
+<SubProcess id="c7_bve">
+<Parameters>
+<Parameter id="Exec_Tab" value="{&quot;Connection&quot;,&quot;Reset&quot;}"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="44" ActivityType="4" name="路由节点">
+<Rect left="269" top="815" right="301" bottom="847"/>
+</Activity>
+<Activity id="45" ActivityType="3" name="a_flag_LDW HUP">
+<Rect left="400" top="962" right="500" bottom="994"/>
+<Script>engine.SharedVarSet("_a_flag_LDW",1)</Script></Activity>
+<Activity id="46" ActivityType="4" name="路由节点">
+<Rect left="270" top="906" right="302" bottom="938"/>
+</Activity>
+<Activity id="47" ActivityType="3" name="a_flag1 == 0 &amp;&amp; a_flag4 == 0 循环 HUP">
+<Rect left="400" top="1029" right="500" bottom="1061"/>
+<Script>
+while( engine.SharedVarGet("_a_flag1") == 0 and engine.SharedVarGet("_a_flag4") == 0 and engine.SharedVarGet("_GlobalFinishShared") == 0 )  do
+	engine.Delay(250)
+end</Script></Activity>
+<Activity id="50" ActivityType="4" name="路由节点">
+<Rect left="273" top="1093" right="305" bottom="1125"/>
+</Activity>
+<Activity id="51" ActivityType="5" name="FAS_61_LDW_HeightPanelBasePos">
+<Rect left="400" top="1095" right="500" bottom="1127"/>
+<SubProcesses>
+<SubProcess id="FAS_61_LDW_HeightPanelBasePos">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="52" ActivityType="3" name="FAS：灯光调整">
+<Rect left="399" top="1162" right="499" bottom="1194"/>
+<Script></Script></Activity>
+<Activity id="54" ActivityType="5" name="FAS_40_LightingControl">
+<Rect left="398" top="1226" right="498" bottom="1258"/>
+<SubProcesses>
+<SubProcess id="FAS_40_LightingControl">
+<Parameters>
+<Parameter id="Handl" value="FASHndl"/>
+<Parameter id="isOK" value="false" ret="isOK"/>
+<Parameter id="RecvData" value="IDT_Default_Answer_FAS" ret="IDT_Default_Answer_FAS"/>
+<Parameter id="bFAS_LDW_Beleuchtung_shared" value="false"/>
+<Parameter id="bFAS_RV_Beleuchtung_shared" value="false"/>
+<Parameter id="bFAS_TopView_Beleuchtung_shared" value="false"/>
+</Parameters>
+</SubProcess>
+</SubProcesses>
+</Activity>
+<Activity id="55" ActivityType="3" name="普通节点">
+<Rect left="651" top="1227" right="751" bottom="1259"/>
+<Script>engine.println(" &lt;FAS_KAS&gt; : FAS Lighting Control  not  OK")
+-- FAS:灯光调节</Script></Activity>
+<Activity id="56" ActivityType="3" name="a_flag1 == 0 || a_flag2 == 0 || a_flag3 == 0">
+<Rect left="397" top="1294" right="497" bottom="1326"/>
+<Script>while( (engine.SharedVarGet("_a_flag1") == 0 or engine.SharedVarGet("_a_flag2") == 0 or engine.SharedVarGet("_a_flag3") == 0 ) and engine.SharedVarGet("_GlobalFinishShared") == 0 )  do
+	engine.Delay(250)
+end</Script></Activity>
+<Activity id="57" ActivityType="3" name="等待拍照结束">
+<Rect left="396" top="158" right="496" bottom="190"/>
+<Script>
+while(engine.SharedVarGet("_DInt_RFK_Bildaufnahme_beendet") == 0 and engine.SharedVarGet("_GlobalFinishShared") == 0 )  do
+	engine.Delay(250)
+end
+</Script></Activity>
+<Activity id="60" ActivityType="3" name="设置同步变量">
+<Rect left="397" top="1372" right="497" bottom="1404"/>
+<Script>engine.SharedVarSet("_DInt_Ablaufsteuerung_shared",1) -- sgr 采集数据结束
+engine.SharedVarSet("_a_flag1",1) -- hup 结束
+
+</Script></Activity>
+<Activity id="61" ActivityType="3" name="LAS判断">
+<Rect left="395" top="84" right="495" bottom="116"/>
+<Script></Script></Activity>
+<Activity id="62" ActivityType="4" name="路由节点">
+<Rect left="330" top="144" right="362" bottom="176"/>
+</Activity>
+<Activity id="63" ActivityType="3" name="普通节点">
+<Rect left="396" top="293" right="496" bottom="325"/>
+<Script></Script></Activity>
+<Activity id="64" ActivityType="3" name="普通节点">
+<Rect left="683" top="292" right="783" bottom="324"/>
+<Script></Script></Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="61" type="0">
+</Transition>
+<Transition StartId="3" EndId="63" type="7">
+<Expression>$8T4|$7Y4|$7Y5|$QR9|$8G4|$QK1|$KS1</Expression></Transition>
+<Transition StartId="3" EndId="33" type="0">
+</Transition>
+<Transition StartId="4" EndId="30" type="0">
+</Transition>
+<Transition StartId="4" EndId="31" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="31" EndId="32" type="0">
+</Transition>
+<Transition StartId="31" EndId="35" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="33" EndId="39" type="0">
+</Transition>
+<Transition StartId="34" EndId="36" type="0">
+</Transition>
+<Transition StartId="34" EndId="37" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="35" EndId="34" type="7">
+<Expression>$8T4|$7Y4|$7Y5|$QR9|$8G4|$QK1</Expression></Transition>
+<Transition StartId="35" EndId="39" type="0">
+</Transition>
+<Transition StartId="37" EndId="38" type="0">
+</Transition>
+<Transition StartId="37" EndId="40" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="39" EndId="44" type="0">
+</Transition>
+<Transition StartId="40" EndId="41" type="0">
+</Transition>
+<Transition StartId="41" EndId="42" type="7">
+<Expression>$8T4|$QR9|$7Y4|$7Y5</Expression></Transition>
+<Transition StartId="41" EndId="44" type="0">
+</Transition>
+<Transition StartId="42" EndId="43" type="0">
+</Transition>
+<Transition StartId="43" EndId="45" type="0">
+</Transition>
+<Transition StartId="44" EndId="46" type="0">
+</Transition>
+<Transition StartId="45" EndId="47" type="0">
+</Transition>
+<Transition StartId="46" EndId="45" type="0">
+</Transition>
+<Transition StartId="47" EndId="51" type="7">
+<Expression>$8T4|$7Y4|$7Y5|$QR9|$8G4|$QK1|$KS1</Expression></Transition>
+<Transition StartId="47" EndId="50" type="0">
+</Transition>
+<Transition StartId="50" EndId="52" type="0">
+</Transition>
+<Transition StartId="51" EndId="52" type="0">
+</Transition>
+<Transition StartId="52" EndId="54" type="0">
+</Transition>
+<Transition StartId="54" EndId="55" type="0">
+</Transition>
+<Transition StartId="54" EndId="56" type="1">
+<Expression>isOK == true</Expression></Transition>
+<Transition StartId="56" EndId="60" type="0">
+</Transition>
+<Transition StartId="57" EndId="3" type="0">
+</Transition>
+<Transition StartId="60" EndId="2" type="0">
+</Transition>
+<Transition StartId="61" EndId="57" type="7">
+<Expression>$KA6</Expression></Transition>
+<Transition StartId="61" EndId="62" type="0">
+</Transition>
+<Transition StartId="62" EndId="3" type="0">
+</Transition>
+<Transition StartId="63" EndId="4" type="1">
+<Expression>engine.SharedVarGet("_GlobalFinishShared") == 0</Expression></Transition>
+<Transition StartId="63" EndId="64" type="0">
+</Transition>
+</Transitions>
+</Process>
+

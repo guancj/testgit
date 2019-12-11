@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="HUDTelegramExchange">
+<Inputs>
+<Variable id="Request" type="8" data="&quot;&quot;" description="Request as xml structure"/>
+<Variable id="IpAddress" type="8" data="&quot;127.0.0.1&quot;" description="IP address of test stand"/>
+<Variable id="Timeout" type="3" data="5" description="Timeout in sec for sending request and receiving response"/>
+</Inputs>
+<Outputs>
+<Variable id="Response" type="8" data="" description="Response as xml structure"/>
+<Variable id="err" type="3" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  TelegramExchange
+input paramter:Request,IpAddress,Timeout
+output paramter:Response
+
+02/10/2017     created by viforce
+******************************************************************************--]]
+
+local rHost = "TCP:127.0.0.1:8009"
+rHost = "TCP:"..IpAddress..":8009"
+local tcphandle = engine.SockOpen(rHost)
+
+if(tcphandle ~= nil) then
+        err = engine.SockExchange(tcphandle,Request,Timeout * 1000)
+        if(err == 0) then
+		Response = engine.GetResponseString(0,-1)    
+                print("Type :".. type(Response))          
+                print(tostring(Response))
+                engine.SockClose(tcphandle)
+        else
+		print("&lt;hudTestDemol&gt; Error : recv data err")
+                engine.SockClose(tcphandle)
+        end 
+else
+	print("&lt;hudTestDemol&gt; Error : tcphandle was nil")
+end</Script></Function>
+

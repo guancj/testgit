@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FAS_63_DoublerRearViewBoard" description="service 63">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+<Variable id="RearViewTafel" type="11" data="false"/>
+<Variable id="Doppler" type="11" data="false"/>
+<Variable id="dopplerStatus" type="11" data="false"/>
+<Variable id="rearViewTafelStatus" type="11" data="false"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FAS Service 63
+input parameter:pHndl,IDT_Timeout,RearViewTafel,Doppler,dopplerStatus ,rearViewTafelStatus                      
+output parameter :ret;
+
+12/26/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00"
+
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x3F");    -- 设置service号,第2字节
+
+if(Doppler == true and RearViewTafel == true) then
+-- Doppler and RearView panels to work position
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.bor(string.byte(idt_tel,5),0x03)));
+        idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x01)));
+elseif(Doppler == false and RearViewTafel == false) then
+-- Doppler and RearViewTafel in basic position
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.band(string.byte(idt_tel,5),0xfc)));
+        idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.band(string.byte(idt_tel,6),0xfe)));
+elseif(Doppler == true and RearViewTafel == false) then
+-- With Doppler == 1 and RearViewTafel == 0 only Doppler to work position. RearViewTafel stops
+	idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.bor(string.byte(idt_tel,5),0x03)));
+        if(rearViewTafelStatus == false) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.band(string.byte(idt_tel,6),0xfe)));	
+        else
+		idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x01)));
+        end
+elseif(Doppler == false and RearViewTafel == true) then
+-- With RearViewTafel == 1 and Doppler == 0, only move RearViewTafel to work position. Doppler stops
+	if(dopplerStatus == false) then
+		idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.band(string.byte(idt_tel,5),0xfc)));	
+        else
+		idt_tel = LibIDT.idtSetBytes(idt_tel,5,1,string.char(bit32.bor(string.byte(idt_tel,5),0x03)));	
+        end
+        idt_tel = LibIDT.idtSetBytes(idt_tel,6,1,string.char(bit32.bor(string.byte(idt_tel,6),0x01)));       
+end
+
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")</Script></Function>
+

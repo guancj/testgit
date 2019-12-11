@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="DString_C131_Car_Tpye" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>ret = true
+if(DString_C131_Car_Tpye=="CNDA01A") then
+elseif(DString_C131_Car_Tpye=="CH1PM20") then
+elseif(DString_C131_Car_Tpye=="CH1PM30") then 
+else
+    ret = false
+end			
+</Script></Function>
+

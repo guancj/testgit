@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="VariCoding" type="8" data=""/>
+<Variable id="num" type="8" data=""/>
+</Inputs>
+<Script>return tonumber(string.sub(VariCoding,num,num+1));
+</Script></Function>
+

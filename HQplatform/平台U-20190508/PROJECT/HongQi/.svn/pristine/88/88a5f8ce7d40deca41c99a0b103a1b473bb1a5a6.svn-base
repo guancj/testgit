@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="IDT_HUP_AUDI" code="">
+
+<Functions>
+<Function id="HUP_01_Start_Check_Name"/>
+
+<Function id="HUP_22_Fzg_Ident"/>
+
+<Function id="HUP_86_KamPos_BasicWorkingPosition"/>
+
+<Function id="HUP_86_KamPos_Driving"/>
+
+<Function id="HUP_87_PanningSystem"/>
+
+<Function id="HUP_88_PanningY_Foers"/>
+
+<Function id="HUP_88_Panning_Y_Foers"/>
+
+<Function id="HUP_89_WriteReferenceData"/>
+
+<Function id="HUP_90_KamPosSetting"/>
+
+<Function id="HUP_91_TakePicture"/>
+
+<Function id="HUP_92_Calculation"/>
+
+<Function id="IDT_HUP_State_actual"/>
+
+<Function id="IDT_HUP_State_store"/>
+
+</Functions>
+</Workplace>

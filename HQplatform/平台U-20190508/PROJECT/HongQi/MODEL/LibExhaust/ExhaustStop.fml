@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="ExhaustStop">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="the exhaust connection handle"/>
+</Inputs>
+<Script>--[[ ***************************************************************
+The function is used to stop the gas tester and close connection
+History:
+    03/16/2016, wuh : function created
+	04/10/2016, wuh : protocal change
+****************************************************************--]]
+	local err = 0
+	
+	-- check connection handl
+	if nil == pHndl or pHndl &lt; 0 then
+		engine.println("ERROR, ExhaustStop : input connection handl not valid, pHndl=" .. tostring(pHndl))
+		engine.LastError = 1
+		return
+	end
+	
+	-- set request tel for exhaust tester stop
+	local reqData = "Stop{ }"
+	-- send requst and receive response
+	err, revData  = LibExhaust.exhaustDataExchange(pHndl, reqData)
+	if err ~= 0  or revData == nil then
+		engine.println("ERROR, ExhaustStop : exhaust stop command failed, revData=" .. tostring(revData))
+		engine.LastError = 1;
+		return
+	end
+	-- check response correct
+	if  revData:sub(1,4) ~= "Stop" then
+		engine.println("ERROR, ExhaustStop : exhaust stop receive data is not correct, receive data=" .. tostring(revData))
+		engine.LastError = 1;
+		return
+	end
+	-- close udp connection
+        engine.println("### pxHndl:"..tostring(pHndl))
+	err = engine.SockClose(pHndl)
+        engine.println("### pxHndl:"..tostring(pHndl))
+	
+	engine.LastError = err</Script></Function>
+

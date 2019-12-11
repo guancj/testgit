@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="VW2000_MK60_ValveImpuls"/>
+
+<Function id="VW2000_MK60_ValveOperating"/>
+
+<Function id="VW2000_StopVentilansteuerung_MK60"/>
+
+</children>
+</Workplace>

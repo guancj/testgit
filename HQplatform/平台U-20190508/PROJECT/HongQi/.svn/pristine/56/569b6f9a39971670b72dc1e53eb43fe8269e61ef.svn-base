@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FAS_HoeheLDWTafel_ini">
+<Inputs>
+<Variable id="RefFile" type="8" data="&quot;fas_referenzwerte.ini&quot;"/>
+<Variable id="section" type="8" data="&quot;AU571CN&quot;"/>
+<Variable id="HoeheVL" type="5" data="0"/>
+<Variable id="HoeheVR" type="5" data="0"/>
+<Variable id="HoeheHL" type="5" data="0"/>
+<Variable id="HoeheHR" type="5" data="0"/>
+<Variable id="X_VATafel" type="5" data="0"/>
+</Inputs>
+<Outputs>
+<Variable id="HoeheTafel" type="5" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+Function  used to  caculate  from a file "fas_referenzwerte.ini";
+input parameter:RefFile,Fzg,HoeheVL,HoeheVR,HoeheHL,HoeheHR,X_VATafel
+output parameter :HoeheTafel
+
+1/17/2017     created by viforce
+******************************************************************************--]]
+local SocketX
+
+local XRadstand
+local Z_VA_nom
+local Z_HA_nom
+local Z_Tafel_nom
+
+
+local deltaZ_VA;
+local deltaZ_HA;
+local deltaZ1;
+local deltaZ2;
+
+local ini = IniFile(engine.ProgPath.."\\fas_referenzwerte.ini") or IniFile(engine.ReleasePath.."\\fas_referenzwerte.ini")
+engine.println("IniFile:fas_referenzwerte.ini :"..type(ini)..": section =&gt;"..tostring(section))
+engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(HoeheVL))
+engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(HoeheVR))
+engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(HoeheHL))
+engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(HoeheHR))
+engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(X_VATafel))
+
+SocketX = tonumber(ini.getString(section,"SocketX","-1"))
+XRadstand = tonumber(ini.getString(section,"XRadstand","-1"))
+Z_VA_nom = tonumber(ini.getString(section,"Z_VA_nom","-1"))
+Z_HA_nom = tonumber(ini.getString(section,"Z_HA_nom","-1"))
+Z_Tafel_nom = tonumber(ini.getString(section,"Z_Tafel_nom","-1"))
+if(SocketX ~= -1 and XRadstand ~= -1 and Z_VA_nom ~= -1 and Z_HA_nom ~= -1 and Z_Tafel_nom ~= -1) then
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(section)..": SocketX:"..tostring(SocketX))
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(section)..": XRadstand:"..tostring(XRadstand))
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(section)..": Z_VA_nom:"..tostring(Z_VA_nom))
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(section)..": Z_HA_nom:"..tostring(Z_HA_nom))
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;"..tostring(section)..": Z_Tafel_nom:"..tostring(Z_Tafel_nom))
+	
+	
+	if (SocketX &lt; 0.0)  then
+		SocketX = SocketX * -1.0;
+	end
+	
+	deltaZ_VA = ((HoeheVR+HoeheVL)/2.0) - Z_VA_nom;
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;deltaZ_VA  ".. tostring(deltaZ_VA))
+	deltaZ_HA = ((HoeheHR+HoeheHL)/2.0) - Z_HA_nom;
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;deltaZ_HA  ".. tostring(deltaZ_HA))
+	
+	deltaZ1 = deltaZ_VA + (deltaZ_HA-deltaZ_VA)*(SocketX/XRadstand);
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;deltaZ1  ".. tostring(deltaZ1))
+	
+	deltaZ2 = (deltaZ_VA-deltaZ_HA) * (X_VATafel+SocketX) / XRadstand;
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;deltaZ2  ".. tostring(deltaZ2))
+	
+	HoeheTafel = Z_Tafel_nom + deltaZ1 + deltaZ2;
+	engine.println("&lt;FAS_HoeheLDWTafel_ini&gt;HoeheTafel  ".. tostring(HoeheTafel))
+	
+	engine.StatValue = tostring(HoeheTafel)
+	engine.LastError = 0
+else
+	engine.StatValue = "Read fas_referenzwerte.ini failed"
+	engine.LastError = 1
+end</Script></Function>
+

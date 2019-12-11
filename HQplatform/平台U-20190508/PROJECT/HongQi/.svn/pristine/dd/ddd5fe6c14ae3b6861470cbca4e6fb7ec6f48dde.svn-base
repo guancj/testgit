@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="zdcGetZdstelles">
+<Inputs>
+<Variable id="nodeTabelle" type="3" data="0" description="the zdc &apos;TABELLE&apos; xml object"/>
+<Variable id="debugLevel" type="3" data="0" description="debug level 0,1,2,3,4,5"/>
+</Inputs>
+<Outputs>
+<Variable id="zdstelles" type="3" data="0" description="a table which stores all the &apos;ZDE&apos; information"/>
+<Variable id="zdeNum" type="3" data="0" description="&apos;ZDE&apos;  total number in ZDC container"/>
+<Variable id="minValidByte" type="3" data="0" description="the minimal vaild byte in zdstelles table"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+The function is use to get all the 'ZDE' information of one 'TABELLE' element in zdc container.
+And this ZDE' information will be used for caculating zdc code word
+History:
+    02/01/2016, wuh : function created
+	03/10/2016, wuh : remove the '-1' fill before minValidByte index values
+	04/11/2016, wuh : add debugLevel
+****************************************************************--]]
+	local err,zdstelles,zdeNum = 0, {}, 0
+	
+	local nodeZdes = nodeTabelle.selectNodes("KOPF/ZDE")
+	zdeNum = nodeZdes.length
+	local minValidByte = nil
+	for i = 0,  nodeZdes.length-1, 1 do
+		local nodeZde = nodeZdes[i]
+		local zdstelle = tonumber(nodeZde.selectSingleNode("ZDSTELLE").text, 16)
+		-- store minValidByte
+		if nil == minValidByte or zdstelle &lt; minValidByte then minValidByte = zdstelle end
+		if zdstelle &lt; 0 then
+			err = 1
+			engine.println("ERROR, zdcGetZdstelles : ZDSTELLE is invalid, ZDSTELLE=" .. zdstelle)
+			break
+		end
+		local nodeZdbytes = nodeZde.selectNodes("ZDBYTE")
+		for j = 0, nodeZdbytes.length-1, 1 do
+			local nodeZdbyte = nodeZdbytes[j]
+			local zlsb = tonumber(nodeZdbyte.selectSingleNode("ZLSB").text)
+			-- init table if first time
+			if nil == zdstelles[zdstelle] then zdstelles[zdstelle]={} end
+			if zdstelles[zdstelle][zlsb] == nil then zdstelles[zdstelle][zlsb]={} end
+			-- set values
+			zdstelles[zdstelle][zlsb].zmsb = tonumber(nodeZdbyte.selectSingleNode("ZMSB").text) 
+			zdstelles[zdstelle][zlsb].zlsb = zlsb
+			zdstelles[zdstelle][zlsb].zbez = nodeZdbyte.selectSingleNode("ZBEZ").text				
+		end
+	end	
+	if debugLevel &gt; 0 then
+		engine.println("zdcGetZdstelles, zdstelles minValidByte : " .. minValidByte)
+	end
+	
+	engine.LastError = err</Script></Function>
+

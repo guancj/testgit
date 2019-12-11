@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_RTS_GroundState_service_5" description="向转毂台发送回基准位报文,service 5">
+<Inputs>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+</Outputs>
+<Script>ret = LibIDT.idtSendDatagramRTS("\x05",LibIDT.idtGetTimeout(),pHndl);</Script></Function>
+

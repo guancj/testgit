@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s" type="8" data=""/>
+</Inputs>
+<Script>  local r;
+
+  r = '';
+  for i=1,string.len(s) do
+    r = r .. string.format("%02X",string.byte(s,i));
+  end
+  return r;
+</Script></Function>
+

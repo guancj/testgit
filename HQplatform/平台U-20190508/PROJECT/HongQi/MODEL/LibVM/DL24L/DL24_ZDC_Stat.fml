@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="SG_Name" type="8" data="" description="ECU short name (according to configfile)"/>
+<Variable id="Konfigfile" type="8" data="" description="config file DL24"/>
+<Variable id="DL24Pos" type="3" data="0" description="Position of DL24 data inside the vehicle data set"/>
+<Variable id="DL24Laenge" type="3" data="0" description="length of DL24 data inside the vehicle data set"/>
+<Variable id="Fzd" type="8" data="" description="vehicle data set"/>
+<Variable id="Knr" type="8" data="" description="production number"/>
+<Variable id="DL24Path" type="8" data="" description="path to DL24 directory (ASV list, ZDC, ...)"/>
+<Variable id="ASVListfile" type="8" data="" description="ASV list file"/>
+<Variable id="ASVCorrected" type="8" data="" description="bool: flag if corrected / used up"/>
+<Variable id="SollTeilenummer" type="8" data="" description="corrected / alternative ECU part number"/>
+<Variable id="ErgebnisVektorPre" type="3" data="0" description="result vector according to specification"/>
+<Variable id="SollZdcTnrPra" type="8" data="" description="predefined ZDC-Tnr (Result of Verbaupruefung), returns ZDC-Tnr of finally selected ZDC"/>
+</Inputs>
+<Outputs>
+<Variable id="ModusFTab" type="8" data="" description="Activation of FTab process"/>
+<Variable id="XmlContainer" type="8" data="" description="file name ZDC container"/>
+<Variable id="XmlVersion" type="8" data="" description="ZDC version type"/>
+<Variable id="ZdcVersionInhalt" type="3" data="0" description="ZDC content version"/>
+<Variable id="ErgebnisVektor" type="3" data="0" description="result vector according to specification"/>
+<Variable id="SollZdcTnr" type="8" data="" description="predefined ZDC-Tnr (Result of Verbaupruefung), returns ZDC-Tnr of finally selected ZDC"/>
+<Variable id="StatResult" type="3" data="0" description="Statitic result"/>
+<Variable id="StatTextValue" type="8" data="" description="Text Value of statistic"/>
+<Variable id="StatErrorCode" type="8" data="" description="Error code of statistic"/>
+<Variable id="StatNominalValue" type="8" data="" description="Nominal value of statistic"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This template gets the part number of the ZDC for the selected ECU out of the DL24 data inside the vehicle
+data set and ASV list file
+Additionally the version of the ZDC will be read and returned
+
+input parameter:SG_Name,Konfigfile,DL24Pos,DL24Laenge,Fzd,Knr,DL24Path,ASVListfile,ASVCorrected,SollTeilenummer,ErgebnisVektor,SollZdcTnr
+output parameter:ModusFTab,XmlContainer,XmlVersion,ZdcVersionInhalt,ErgebnisVektor,SollZdcTnr,StatResult,StatTextValue,StatErrorCode,StatNominalValue
+
+05/16/2017     created by viforce
+******************************************************************************--]]
+
+-- return value
+ModusFTab = -1
+XmlContainer = ""
+XmlVersion = ""
+ZdcVersionInhalt = ""
+ErgebnisVektor = ErgebnisVektorPre
+SollZdcTnr = SollZdcTnrPra
+StatResult = -1
+StatTextValue = ""
+StatErrorCode = -1
+StatNominalValue = ""
+-- return value
+
+local xmlTagKonfigInbetriebnahme = "KonfigurationInbetriebnahme"
+local xmlTagInbetriebnahme = "Inbetriebnahme"
+local modusKorrektur = "Korrektur"
+local modusAufbrauch = "Teileaufbrauch"
+local modusZDC = "Zdc"
+local modusFlash="Flash"
+local EV_Text = ""
+local teilenummer
+local ZdcName
+local ZdcVersion
+local ZdcDateiName
+local statstr
+local XmlContainerPath
+local sgTnr
+local zdcTnr
+local sgBg
+local zdcBg
+local versionKonfgFile =""
+local possibleSollTnr = ""
+local sollTnr_dummy = ""
+local swapTnr
+local swapBg
+local keyID
+local swapDCName
+local swapDCVersion
+local sw_version_flashliste
+local flashdatencont
+
+local ergebnisvektor_Verbau = ErgebnisVektor
+local aktivSwv
+local aktivHwv
+local aktivHkz
+local aktivASV
+local aktVorserie
+local flag_ZDC_geraten
+local aktKorrSgTnr = -1
+local aktTeileaufbr = -1
+local aktTeileFreiPrf = -1
+local aktFlashen = -1
+local aktKorrZDC = -1
+local aktZdcProzess = -1
+local vorserienFzg = -1
+local aktSWaP = -1
+local swapDCCorrectedLocal = -1
+local flagSWaPGeraten = -1
+
+local errFlag = 0
+local asvCorrectedZDC = 0
+local verbauSg = -1
+local xmlHndl = XmlDocment()
+local zdcXmlHndl = XmlDocment()
+
+sgTnr,zdcTnr,swapTnr,aktivSwv,aktivHwv,aktivHkz,ModusFTab,aktivASV,aktKorrSgTnr,aktTeileaufbr,aktTeileFreiPrf,aktFlashen,aktKorrZDC,aktZdcProzess,aktSWaP,aktVorserie,sgBg,zdcBg,swapBg,versionKonfgFile,vorserienFzg,errFlag = LibVW.GetPartNoFromVehicleData_ASV123(SG_Name,Konfigfile,DL24Pos,DL24Laenge,xmlTagKonfigInbetriebnahme,Fzd)
+
+if(versionKonfgFile &gt;= "V16") then
+	if(ErgebnisVektor &lt; 0x40) then
+		verbauSg = 0
+	end
+	
+	ErgebnisVektor = 0x00
+	
+	if((verbauSg ~= 0) and (aktVorserie == 1)) then
+	-- pre - production
+		if((bit32.band(ergebnisvektor_Verbau,0x01) == 0x01) or (bit32.band(ergebnisvektor_Verbau,0x04) == 0x04) or (bit32.band(ergebnisvektor_Verbau,0x80) == 0x80) or (bit32.band(ergebnisvektor_Verbau,0x40) == 0x40)) then
+			ErgebnisVektor = bit32.bor(ErgebnisVektor,0x04)
+			SollZdcTnr = ""
+			verbauSg = 0
+		end	
+	end
+	
+	if((SollZdcTnr == "000000000") and (aktivASV == 0)) then
+		ErgebnisVektor = bit32.bor(ErgebnisVektor,0x40)
+		errFlag = 1997
+		engine.LastError = 1	
+	elseif((SollZdcTnr == "000000000") and (aktivASV ~= 0)) then
+		ErgebnisVektor = bit32.bor(ErgebnisVektor,0x10)
+		errFlag = 1997
+		engine.LastError = 1	
+	elseif((verbauSg ~= 0) and (aktVorserie ~= 1)) then
+		ErgebnisVektor = bit32.bor(ErgebnisVektor,0x80)
+		errFlag = 1994
+		engine.LastError = 1	
+	end
+	
+	if(ASVCorrected == 1) then
+	-- Korrektur
+		if(bit32.band(ergebnisvektor_Verbau,0x20) == 0x20) then
+			ErgebnisVektor = bit32.bor(ErgebnisVektor,0x08)
+		end
+	-- Aufbrauch	
+		if(bit32.band(ergebnisvektor_Verbau,0x10) == 0x10) then
+			ErgebnisVektor = bit32.bor(ErgebnisVektor,0x20)
+		end	
+	end
+	print("DL24_ZDC: Ergebnisvektor nach Auswertung FZD und Konfigfile: " .. tostring(ErgebnisVektor))
+	
+else
+	if (bit32.band(ErgebnisVektor,0x40) == 0x00) then
+		verbauSg = 0
+	end
+	ErgebnisVektor = 0x00
+	if(verbauSg ~= 0) then
+		ErgebnisVektor = bit32.bor(ErgebnisVektor,0x80)
+		errFlag = 1994
+		engine.LastError = 1
+	end
+end
+
+if(verbauSg == 0) then
+	if(versionKonfgFile &gt;= "V16") then
+		if(engine.LastError == 0 and ModusFTab ~= 1) then
+			teilenummer = SollZdcTnr	
+			if(aktivASV == 0) then
+				local shellCommandStr = "dir /b " .. tostring(DL24Path) 	
+				local f = io.popen(shellCommandStr)
+				local filenameStr = f:read("*all")
+				XmlContainer = string.match(filenameStr,tostring(zdcTnr) .. "[^\n]+xml")
+				if(XmlContainer == nil) then
+					print("could not find xml container with partno.: " .. tostring(zdcTnr))
+					errFlag = 1978
+				else
+					SollZdcTnr = zdcTnr
+				end
+				print("open file " .. tostring(XmlContainer) .. " OK?")
+				ErgebnisVektor = bit32.bor(ErgebnisVektor,0x40)
+			else
+				print("teilenummer SG: " .. tostring(SollTeilenummer) .. " Len: " .. tostring(#SollTeilenummer))
+				print("teilenummer ZDC: " .. tostring(SollZdcTnr) .. " Len: " .. tostring(#SollZdcTnr))
+			
+				ASVListfile = DL24Path .. "\\" .. ASVListfile
+				print("viforce ASVListfile :" .. tostring(ASVListfile))
+				if(false == xmlHndl.load(ASVListfile)) then
+					print("!!!load xml file err ")
+					engine.LastError = 1
+					errFlag = 1986
+				else
+					if(aktZdcProzess == 1) then
+						if(versionKonfgFile &lt; "V18") then
+							asvCorrectedZDC,sollTnr_dummy,possibleSollTnr,zdcTnr,ZdcName,ZdcVersion,flag_ZDC_geraten,sw_version_flashliste,flashdatencont,errFlag = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusZDC,SollTeilenummer,SgBg,SollZdcTnr,zdcBg,SollTeilenummer,SollTeilenummer)
+						else
+							zdcTnr,ZdcName,ZdcVersion,flag_ZDC_geraten,errFlag = LibVW.Zdc_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummer,SollZdcTnr,zdcBg,vorserienFzg)
+						end
+						
+						if((engine.LastError == 0) and (flag_ZDC_geraten == 1) and (aktVorserie == 1) and (SollZdcTnr == "")) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x02)
+						end
+						
+						if((engine.LastError == 0) and (aktVorserie == 1) and (SollZdcTnr == "")) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x04)
+							ErgebnisVektor = bit32.band(ErgebnisVektor,0x07)
+						end
+						
+						if((engine.LastError ~= 0) and (aktVorserie == 1)) then
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x04)
+						end
+						
+						if((engine.LastError ~= 0) and (aktVorserie == 1) and (SollZdcTnr ~= "")) then
+							if(versionKonfgFile &lt; "V18") then
+								asvCorrectedZDC,sollTnr_dummy,possibleSollTnr,zdcTnr,ZdcName,ZdcVersion,flag_ZDC_geraten,sw_version_flashliste,flashdatencont,errFlag = LibVW.Korrektur_Aufbrauch_TNR_ASV122(xmlHndl,Fzd,Knr,modusZDC,SollTeilenummer,SgBg,"",zdcBg,SollTeilenummer,SollTeilenummer)
+							else
+								zdcTnr,ZdcName,ZdcVersion,flag_ZDC_geraten,errFlag = LibVW.Zdc_TNR_ASV123(xmlHndl,Fzd,Knr,SollTeilenummer,"",zdcBg,vorserienFzg)
+							end					
+							if((engine.LastError == 0) and (flag_ZDC_geraten == 1)) then
+								ErgebnisVektor = bit32.bor(ErgebnisVektor,0x02)
+							end
+							
+							if(engine.LastError == 0) then
+								ErgebnisVektor = bit32.band(ErgebnisVektor,0x07)
+							end
+						end
+						
+						if(engine.LastError ~= 0) then
+							SollZdcTnr = zdcTnr
+							ErgebnisVektor = bit32.bor(ErgebnisVektor,0x10)
+							errFlag = 1996
+						end
+						
+						if(engine.LastError == 0) then
+							XmlContainer = tostring(ZdcName) .. ".xml"
+							SollZdcTnr = zdcTnr
+						end		
+						print("ZDCpartNo: " .. tostring(zdcTnr) .. ", ZDC XmlContainer: " .. tostring(XmlContainer)) 
+						print("ZDC Version: " .. tostring(ZdcVersion) .. ",Flag ZDC geraten:" .. tostring(flag_ZDC_geraten))
+						print("err nach Korrektur_Aufbrauch_TNR_ASV122, ZDC:" .. tostring(engine.LastError))
+						
+					else
+						ErgebnisVektor = bit32.bor(ErgebnisVektor,0x08)
+						local shellCommandStr = "dir /b " .. tostring(DL24Path) 	
+						local f = io.popen(shellCommandStr)
+						local filenameStr = f:read("*all")
+						XmlContainer = string.match(filenameStr,tostring(teilenummer) .. "[^\n]+xml")
+						if(XmlContainer == nil) then
+							print("could not find xml container with partno.: " .. tostring(zdcTnr))
+							errFlag = 1978
+						else
+							SollZdcTnr = teilenummer
+						end
+						print("open file " .. tostring(XmlContainer) .. " OK?")
+					end
+				end
+			end
+			if(engine.LastError == 0) then
+				XmlContainerPath = tostring(DL24Path) .. "\\" ..  tostring(XmlContainer)
+				if(false == zdcXmlHndl.load(XmlContainerPath)) then
+					print("!!!zdc XmlContainer File not found ")
+					engine.LastError = 1
+					errFlag = 1985
+				else
+					if(ZdcVersion ~= "") then
+						ZdcVersionInhalt = ZdcVersion
+					else
+						local tmpbuf = zdcXmlHndl.selectSingleNode("/ZDC/IDENT/VERSION-INHALT")
+						if(tmpbuf ~= nil) then
+							tmpbuf = tmpbuf.text
+						else
+							tmpbuf = ""
+						end	
+						ZdcVersionInhalt = tmpbuf
+					end
+					
+					local tmpbuf = zdcXmlHndl.selectSingleNode("/ZDC/IDENT/VERSION-TYP")
+					if(tmpbuf ~= nil) then
+						tmpbuf = tmpbuf.text
+					else
+						tmpbuf = ""
+					end	
+					XmlVersion = tmpbuf					
+				end			
+			end
+		end
+	else
+-- versionKonfgFile &gt;= "V16"
+-- V16以下暂时未遇到 
+-- versionKonfgFile &gt;= "V16"
+	end
+end
+
+StatTarget = tostring(XmlContainer)
+StatNominalValue = tostring(XmlContainer)
+
+engine.StatValue = "ZDC-Container:" .. tostring(XmlContainer) .. "/EV:" .. tostring(LibVW.conv1ByteToBinString(ErgebnisVektor)) .. "/"
+if(versionKonfgFile &gt;= "V16") then
+	EV_Text = LibVW.DL24_EV_Text(ErgebnisVektor,xmlTagInbetriebnahme)
+	engine.StatValue = engine.StatValue .. "/" .. tostring(EV_Text) .. "/"
+end
+
+if(engine.LastError == 0) then
+    StatErrorCode = 0
+    StatTextValue = engine.StatValue
+    StatResult = 0
+else
+	engine.StatValue = LibVW.DL24_Errflag2Statstr(errFlag,engine.StatValue)
+	StatErrorCode = 1
+    StatTextValue = engine.StatValue
+	engine.LastError = 1
+end
+
+XmlContainer = XmlContainerPath</Script></Function>
+

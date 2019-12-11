@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Model format="9" library="1" module="LibIDT" version="" engine="VMDSEngine" language="lua">
+<Variables>
+<Variable id="sendMark" type="3" data="6" description="发送报文的第一个字节数值"/>
+<Variable id="receiveMark" type="3" data="5" description="接受报文的第一个字节数值"/>
+<Variable id="serialNumber" type="3" data="0" description="发送报文计数,调用getSerialNumber函数取得计数,取值范围0-255"/>
+<Variable id="UdpId" type="3" data="1" description="建立UDP通信时使用的id号"/>
+<Variable id="timeout" type="3" data="1" description="发送超时时间,以s(秒)为单位"/>
+<Variable id="toggleTimes" type="3" data="0" description="应答次数,发送报文的第4个字节,其值为上次接受报文的第12字节的值"/>
+<Variable id="toeType" type="3" data="6" description="前束类型"/>
+<Variable id="DELAY_BETWEEN_SERVICE" type="3" data="100" description="每次服务发送后的延迟时间(ms)"/>
+<Variable id="DelayPerActivity" type="3" data="0"/>
+</Variables>
+<Imports>
+<Model id="LibGeneral" module="LibGeneral"/>
+</Imports>
+<children>
+<Workplace id="ALS">
+</Workplace>
+<Workplace id="General">
+</Workplace>
+<Workplace id="HLA">
+</Workplace>
+<Workplace id="IDT_AUDI">
+</Workplace>
+<Workplace id="RTS">
+</Workplace>
+<Workplace id="Subfunctions">
+</Workplace>
+<Workplace id="gcjFunction">
+</Workplace>
+</children>
+</Model>

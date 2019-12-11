@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="KillThread">
+<Inputs>
+<Variable id="killMode" type="3" data="0" description="0 - kill 所有兄弟流程 1 - kill 指定兄弟流程"/>
+<Variable id="FlowName" type="8" data="{}" description="表,指定的兄弟流程名 如 {&quot;thread2&quot;,&quot;thread3&quot;}"/>
+<Variable id="kTimeout" type="3" data="5000" description="在kTimeout内没有自动结束的话强制终止"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to  kill thread Ord
+input parameter:killMode,FlowName,kTimeout
+
+11/09/2016     created by viforce
+******************************************************************************--]]
+local i,j;
+local flows = engine.GetFlows() ;
+
+if( nil ~=  flows) then
+
+	for i = 1,#flows do
+		engine.println("reiminate " .. engine.GetFlowName(flows[i]));
+		if (killMode == 0) then
+			engine.TerminateFlow(flows[i],kTimeout) ;
+		elseif(killMode == 1) then
+			for  j = 1,#FlowName do
+				if(engine.GetFlowName(flows[i]) == FlowName[j]) then
+					engine.TerminateFlow(flows[i],kTimeout) ;
+				end
+			end
+		end
+	end
+else
+engine.println("!!!flows") ;
+end</Script></Function>
+

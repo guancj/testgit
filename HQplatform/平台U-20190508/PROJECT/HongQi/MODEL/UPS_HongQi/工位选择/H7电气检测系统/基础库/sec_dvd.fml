@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s0" type="3" data="s0"/>
+<Variable id="s1" type="3" data="s1"/>
+<Variable id="s2" type="3" data="s2"/>
+<Variable id="s3" type="3" data="s3"/>
+</Inputs>
+<Script>--seed = s0*16777216 + s1*65536 + s2*256 + s3;
+--seed = "\x50\x2f\x71\xe0"
+--seed = tostring(seed)
+--print("seed:"..seed);	
+print("s0:"..s0.." s1:"..s1.." s2:"..s2.." s3:"..s3)
+key0 = 0;
+key1 = 0;
+key2 = 0;
+key3 = 0;
+local seedLocal 
+retLen = -1
+if(s0 == 0 and s1 == 0) then
+	retLen = 0
+else
+	seedLocal = bit32.lshift(s0,24) + bit32.lshift(s1,16) + bit32.lshift(s2,8) + s3
+	for i = 1 , 35 do
+		if(bit32.band(seedLocal,0x80000000) &gt; 0) then
+			seedLocal = bit32.lshift(seedLocal,1)
+			seedLocal = bit32.bxor(seedLocal,0x06243517)
+		else
+			seedLocal = bit32.lshift(seedLocal,1)
+		end
+	end
+	
+	local IntText = ""
+	local bitNum = 0
+	local val = seedLocal
+	for i = 0,3 do 
+		val = val - bitNum * (math.pow(0x100,4 - i))
+		bitNum = math.floor(val/(math.pow(0x100,3 - i)))
+		IntText = IntText..string.char(bitNum);
+	end;
+
+	key = IntText
+	retLen = length
+	
+	print(hexstr(key))
+        --print(key)
+	print(tostring(seedLocal))
+	
+	--return key,retLen
+	
+end
+key0=bit32.rshift(bit32.band(seedLocal,bit32.lshift(0xff,24)),24);
+key1=bit32.rshift(bit32.band(seedLocal,bit32.lshift(0xff,16)),16);
+key2=bit32.rshift(bit32.band(seedLocal,bit32.lshift(0xff,8)),8);
+key3=bit32.rshift(bit32.band(seedLocal,bit32.lshift(0xff,0)),0);
+print("key0:"..key0.." key1:"..key1.." key2:"..key2.." key3:"..key3);	
+
+--seedToKey('\x50\x2f\x71\xe0',4)</Script></Function>
+

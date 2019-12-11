@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="RTS" code="">
+
+<Functions>
+<Function id="IDT_RTS_BrakeForce"/>
+
+<Function id="IDT_RTS_DriveActuators_service_3"/>
+
+<Function id="IDT_RTS_GetRollerSpeed"/>
+
+<Function id="IDT_RTS_GetState"/>
+
+<Function id="IDT_RTS_GroundState_service_5"/>
+
+<Function id="IDT_RTS_service_4"/>
+
+<Function id="IDT_RTS_StartTest_service_1"/>
+
+<Function id="IDT_RTS_State_actual"/>
+
+<Function id="IDT_RTS_State_store"/>
+
+<Function id="IDT_RTS_StopTest_service_2"/>
+
+<Function id="IDT_RTS_ViewPos"/>
+
+</Functions>
+</Workplace>

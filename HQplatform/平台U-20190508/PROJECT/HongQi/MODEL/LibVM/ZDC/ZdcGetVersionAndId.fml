@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="zdcHndl" type="3" data="0" description="ZDC handle"/>
+<Variable id="ifZdcIdFromName" type="11" data="true" description="if zdc id read from zdc name or date id"/>
+</Inputs>
+<Outputs>
+<Variable id="zdcId" type="8" data="" description="&quot;DATEIID&quot; value, e.g. &quot;5K0523v____&quot;"/>
+<Variable id="zdcVersion" type="8" data="" description="&quot;VERSION-INHALT&quot;value , e.g. &quot;0009&quot;"/>
+<Variable id="zdcVersionType" type="8" data="" description="&quot;VERSION-TYP&quot; value. e.g. &quot;020401&quot;"/>
+</Outputs>
+<Script>--[[ ***************************************************************
+This function is used to return the zdc file version and zdc id which in the 'IDENT' info block
+History:
+    03/07/2016, wuh : function created
+    04/24/2016, wuh : add id read from DATANAME possible
+****************************************************************--]]
+	local err = 0
+	local zdcId = ""
+	local zdcVersion = ""
+	local zdcVersionType = ""
+
+	-- **** precondition check **** --
+	if nil == zdcHndl then 
+		engine.StatValue = "input zdc handle is invalid"
+		engine.println("ERROR, ZdcGetVersionAndId : input zdc handle is invalid, zdcHndl= " .. tostring(zdcHndl))
+		engine.LastError =1
+		return zdcId,zdcVersion, zdcVersionType
+	end	
+	
+	-- zdc id
+        if ifZdcIdFromName then
+	    local tmpNode = zdcHndl.selectSingleNode("/ZDC/IDENT/DATEINAME")
+	    if nil == tmpNode then 
+		    engine.StatValue = "get zdc id info failed"
+		    engine.println("ERROR, ZdcGetVersionAndId : ZDC id not found at xpath = '/ZDC/IDENT/DATEINAME'")
+		    err = 1
+		    zdcId = ""
+	    else
+		    local tmpZdcId = tmpNode.text
+                    tmpZdcId = tmpZdcId .. "           "
+                    tmpZdcId = tmpZdcId:sub(1,11)
+                    if tmpZdcId:sub(-1,-1) == "_" then tmpZdcId = tmpZdcId:sub(1,-2) .. " "
+                    elseif tmpZdcId:sub(-2,-2) == "_" then tmpZdcId = tmpZdcId:sub(1,-3) .. " "
+                    end
+                    zdcId = tmpZdcId
+		    engine.println("ZdcGetVersionAndId, got zdc id : " .. tostring(zdcId))
+	    end
+        else
+	    local tmpNode = zdcHndl.selectSingleNode("/ZDC/IDENT/DATEIID")
+	    if nil == tmpNode then 
+		    engine.StatValue = "get zdc id info failed"
+		    engine.println("ERROR, ZdcGetVersionAndId : ZDC id not found at xpath = '/ZDC/IDENT/DATEIID'")
+		    err = 1
+		    zdcId = ""
+	    else
+		    zdcId = tmpNode.text
+		    engine.println("ZdcGetVersionAndId, got zdc id : " .. tostring(zdcId))
+	    end
+        end
+	
+	-- zdc zdcVersion
+	local tmpNode = zdcHndl.selectSingleNode("/ZDC/IDENT/VERSION-INHALT")
+	if nil == tmpNode then 
+		engine.StatValue = "get zdc version info failed"
+		engine.println("ERROR, ZdcGetVersionAndId : ZDC version not found at xpath = '/ZDC/IDENT/VERSION-INHALT'")
+		err = 1
+		zdcVersion = ""
+	else
+		zdcVersion = tmpNode.text
+		engine.println("ZdcGetVersionAndId, got zdc version : " .. tostring(zdcVersion))
+	end
+	
+	-- zdc zdcVersionType
+	local tmpNode = zdcHndl.selectSingleNode("/ZDC/IDENT/VERSION-TYP")
+	if nil == tmpNode then 
+		engine.StatValue = "get zdc version type info failed"
+		engine.println("ERROR, ZdcGetVersionAndId : ZDC version type not found at xpath = '/ZDC/IDENT/VERSION-TYP'")
+		err = 1
+		zdcVersionType = ""
+	else
+		zdcVersionType = tmpNode.text
+		engine.println("ZdcGetVersionAndId, got zdc version type : " .. tostring(zdcVersionType))
+	end
+	
+	engine.LastError = err</Script></Function>
+

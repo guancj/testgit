@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="section" type="8" data=""/>
+<Variable id="key" type="8" data=""/>
+</Inputs>
+<Script>--key_value=read_ini(section,key,"C:\\VMT\\fawcar_para.ini");
+key_value=read_ini(section,key,".\\fawcar_para.ini");  
+if(key_value==nil)then
+   engine.println(key..":");
+   key_value = ""
+else          
+   engine.println(key..":"..key_value);
+end
+return key_value;
+
+</Script></Function>
+

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="--[[&#13;&#10;DelS函数用于去除s参数的前后空格&#13;&#10;--]]&#13;&#10;">
+<Inputs>
+<Variable id="s" type="8" data=""/>
+</Inputs>
+<Script>  return (string.gsub(s, "^%s*(.-)%s*$", "%1"));
+</Script></Function>
+

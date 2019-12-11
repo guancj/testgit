@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="FWE_28_Result_AxialOffset" description="service 28">
+<Inputs>
+<Variable id="pHndl" type="3" data="-1" description="通讯句柄"/>
+<Variable id="IDT_Timeout" type="3" data="5"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="返回值,0:没有正在被执行的service;1:执行成功;2:service正在执行中;-1:执行失败"/>
+<Variable id="AxisOffset_VA" type="5" data="0" description="轴偏距：前轴"/>
+<Variable id="AxisOffset_HA" type="5" data="0" description="轴偏距：后轴"/>
+<Variable id="SymmetricalAngle" type="5" data="0" description="对称角"/>
+<Variable id="ErrorCode" type="3" data="0"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+IDT Function  FWE Service 28
+input parameter:pHndl,IDT_Timeout
+output parameter :ret,AxisOffset_VA,AxisOffset_HA,SymmetricalAngle,ErrorCode
+
+12/23/2016     created by viforce
+******************************************************************************--]]
+
+local idt_tel = ""
+local zero = "\x00";
+local factor = 0.1
+idt_tel = idt_tel .. string.char(engine.UdpHandleVarGet(pHndl, "_SNDMARK"));    --设置发送报文第1字节
+idt_tel = idt_tel .. zero:rep(43);   -- 基本帧长度 44  后补零 
+
+idt_tel = LibIDT.idtSetBytes(idt_tel,2,1,"\x1C");    -- 设置service号,第2字节
+
+
+--发送报文并校验返回报文是否正确
+err, revTel = LibIDT.idtDataExchange(idt_tel,IDT_Timeout,pHndl)
+
+ret = engine.UdpHandleVarGet(pHndl, "_CURRENTSEVACK")
+
+
+if(ret == 1) then
+
+-- local lastRevTel = engine.UdpHandleVarGet(pHndl, "_LASTREVTEL");
+local lastRevTel = revTel
+engine.println("### RESULT SERVER 28 :" ..LibIDT.idthex2str(lastRevTel));
+
+--获取轴偏距：前轴
+AxisOffset_VA = LibIDT.idtSigned2float(lastRevTel:sub(13,13):byte(),lastRevTel:sub(14,14):byte(),factor);
+--获取轴偏距：后轴
+AxisOffset_HA = LibIDT.idtSigned2float(lastRevTel:sub(15,15):byte(),lastRevTel:sub(16,16):byte(),factor);
+--对称角
+SymmetricalAngle = LibIDT.idtSigned2float(lastRevTel:sub(17,17):byte(),lastRevTel:sub(18,18):byte(),factor);
+--Error Code  but not important or not  use
+ErrorCode = lastRevTel:sub(35,35):byte();
+
+end</Script></Function>
+

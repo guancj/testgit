@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace id="SubFunction" code="">
+
+<Processes>
+<Process id="CheckFirapName"/>
+<Process id="FAS_CheckStatus"/>
+<Process id="FAS_ErrorMonitor"/>
+<Process id="FWE_CheckStatus"/>
+<Process id="FWE_ErrorMonitor"/>
+<Process id="HUP_CheckStatus"/>
+<Process id="HUP_ErrorMonitor"/>
+<Process id="IDT_Ctrl_Monitor"/>
+<Process id="SWE_CheckStatus"/>
+<Process id="SWE_ErrorMonitor"/>
+</Processes>
+</Workplace>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="s0" type="3" data="0"/>
+<Variable id="s1" type="3" data="0"/>
+<Variable id="s2" type="3" data="0"/>
+<Variable id="s3" type="3" data="0"/>
+</Inputs>
+<Script>	seed=bit32.lshift(s0,24)+bit32.lshift(s1,16)+bit32.lshift(s2,8)+s3;
+	key=bit32.bxor(bit32.lshift(bit32.bxor(bit32.rshift(seed,3),seed),4),seed);
+
+	key0=bit32.rshift(bit32.band(key,bit32.lshift(0xff,24)),24);
+	key1=bit32.rshift(bit32.band(key,bit32.lshift(0xff,16)),16);
+	key2=bit32.rshift(bit32.band(key,bit32.lshift(0xff,8)),8);
+	key3=bit32.rshift(bit32.band(key,bit32.lshift(0xff,0)),0);
+        engine.println(string.format("%02x%02x%02x%02x",key0,key1,key2,key3));
+	return key0,key1,key2,key3;</Script></Function>
+

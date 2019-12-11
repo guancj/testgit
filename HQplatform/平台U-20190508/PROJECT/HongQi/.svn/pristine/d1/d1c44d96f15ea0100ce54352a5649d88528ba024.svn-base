@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Process id="HUP_89_FWE_Pruefstandsdaten" description="照相机移动" flags="1" block="4" ptbtext="DEP1368" group="146" pbltext="DEP1511">
+<CommunicationParameters>
+<Variable id="ProtocolType" type="3" data="1" description="协议"/>
+<Variable id="ProtocolPort" type="3" data="0" description="物理通道"/>
+<Variable id="FunctionAddress" type="3" data="0" description="功能地址"/>
+<Variable id="ECUAddress" type="3" data="0" description="ECU地址"/>
+<Variable id="TesterAddress" type="3" data="0xF1" description="VMT地址"/>
+<Variable id="Baudrate" type="3" data="500000" description="比特率"/>
+<Variable id="TIdle" type="3" data="400" description="IdleLine"/>
+<Variable id="TWuP" type="3" data="50" description="WuP"/>
+<Variable id="P1Min" type="3" data="0" description="ECUInterval"/>
+<Variable id="P1Max" type="3" data="20" description="ECUInterval"/>
+<Variable id="P2Min" type="3" data="25" description="TexterReq-&gt;ECURes"/>
+<Variable id="P2Max" type="3" data="50" description="TexterReq-&gt;ECURes"/>
+<Variable id="P3Min" type="3" data="10" description="ECURes-&gt;TexterReq"/>
+<Variable id="P3Max" type="3" data="4000" description="ECURes-&gt;TexterReq"/>
+<Variable id="P4Min" type="3" data="5" description="TexterInterval"/>
+<Variable id="P4Max" type="3" data="20" description="TexterInterval"/>
+<Variable id="CAN_SND_ID" type="3" data="0" description="CAN的发送ID"/>
+<Variable id="CAN_RCV_ID" type="3" data="0" description="CAN的接收ID"/>
+</CommunicationParameters>
+<ProcessParameters>
+<Variable id="Handl" type="3" dir="0" data="0" description="通讯句柄"/>
+<Variable id="isOK" type="11" dir="1" data="false" description="状态：true=OK，false=NOK"/>
+<Variable id="RecvData" type="8" dir="2" data="" description="回复报文"/>
+<Variable id="IDT_YPosRadhausVL" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausVR" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHL" type="5" dir="0" data="0"/>
+<Variable id="IDT_YPosRadhausHR" type="5" dir="0" data="0"/>
+<Variable id="FWE_Achsversatz_VA_shared" type="5" dir="0" data="0"/>
+<Variable id="FWE_Achsversatz_HA_shared" type="5" dir="0" data="0"/>
+</ProcessParameters>
+<Start id="1" ActivityType="1" name="开始节点">
+<Rect left="322" top="67" right="422" bottom="99"/>
+<Script></Script></Start>
+<End id="2" ActivityType="2" name="结束节点">
+<Rect left="323" top="411" right="423" bottom="443"/>
+<Script></Script></End>
+<Activities>
+<Activity id="5" ActivityType="3" name="错误">
+<Rect left="491" top="275" right="591" bottom="307"/>
+<Line2Text Enable="1" Text="FWE SERVICE 89 ERROR"/>
+<Script>engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : HUP: Write FWE Reference Data NIO --&gt;"..tostring(Ret))</Script></Activity>
+<Activity id="6" ActivityType="4" name="路由节点">
+<Rect left="673" top="410" right="705" bottom="442"/>
+</Activity>
+<Activity id="21" ActivityType="3" name="不合格">
+<Rect left="638" top="275" right="738" bottom="307"/>
+<Script>isOK = false;
+engine.DialogBackColor = "red";</Script></Activity>
+<Activity id="23" ActivityType="3" name="OK">
+<Rect left="322" top="335" right="422" bottom="367"/>
+<Script>isOK = true;
+engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : HUP: +++HUP 89 Hoehe VL --&gt;"..tostring(IDT_YPosRadhausVL))
+engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : HUP: +++HUP 89 Hoehe VR --&gt;"..tostring(IDT_YPosRadhausVR))
+engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : HUP: +++HUP 89 Hoehe HL --&gt;"..tostring(IDT_YPosRadhausHL))
+engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : HUP: +++HUP 89 Hoehe HR --&gt;"..tostring(IDT_YPosRadhausHR))
+engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : HUP: +++HUP 89 Achsversatz VA --&gt;"..tostring(FWE_Achsversatz_VA_shared))
+engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : HUP: +++HUP 89 Achsversatz HA --&gt;"..tostring(FWE_Achsversatz_HA_shared))
+</Script></Activity>
+<Activity id="25" ActivityType="13" name="IDT_WaitForServiceFinish">
+<Rect left="321" top="274" right="421" bottom="306"/>
+<FunctionRef id="IDT_WaitForServiceFinish" model="LibIDT">
+<Parameters>
+<Parameter id="serviceNum" value="89"/>
+<Parameter id="timeOut" value="5"/>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+<Parameter id="revTel" ret="RecvData"/>
+</Parameters>
+</FunctionRef>
+<assessment no="9" name="DEP1519" type="8" flags="97"/>
+</Activity>
+<Activity id="26" ActivityType="3" name="判断通讯句柄">
+<Rect left="321" top="137" right="421" bottom="169"/>
+<Script>engine.DialogBackColor = -1;</Script></Activity>
+<Activity id="27" ActivityType="3" name="SET Error">
+<Rect left="638" top="138" right="738" bottom="170"/>
+<Script>engine.println(" &lt;HUP_89_FWE_Pruefstandsdaten&gt; : handle invalid --&gt;"..tostring(Handl))</Script></Activity>
+<Activity id="35" ActivityType="13" name="HUP_89_WriteReferenceData">
+<Rect left="320" top="207" right="420" bottom="239"/>
+<Line3Text Enable="1" Text="HUP:写数据"/>
+<FunctionRef id="HUP_89_WriteReferenceData" model="LibIDT">
+<Parameters>
+<Parameter id="pHndl" value="Handl"/>
+<Parameter id="IDT_Timeout" value="5"/>
+<Parameter id="HoeheRadhaus_VL" value="IDT_YPosRadhausVL"/>
+<Parameter id="HoeheRadhaus_VR" value="IDT_YPosRadhausVR"/>
+<Parameter id="HoeheRadhaus_HL" value="IDT_YPosRadhausHL"/>
+<Parameter id="HoeheRadhaus_HR" value="IDT_YPosRadhausHR"/>
+<Parameter id="Achsversatz_VA" value="FWE_Achsversatz_VA_shared"/>
+<Parameter id="Achsversatz_HA" value="FWE_Achsversatz_HA_shared"/>
+<Parameter id="ret" value="0" ret="Ret"/>
+</Parameters>
+</FunctionRef>
+</Activity>
+</Activities>
+<Transitions>
+<Transition StartId="1" EndId="26" type="0">
+</Transition>
+<Transition StartId="5" EndId="21" type="0">
+</Transition>
+<Transition StartId="6" EndId="2" type="0">
+</Transition>
+<Transition StartId="21" EndId="6" type="0">
+</Transition>
+<Transition StartId="23" EndId="2" type="0">
+</Transition>
+<Transition StartId="25" EndId="23" type="1">
+<Expression>Ret == 1</Expression></Transition>
+<Transition StartId="25" EndId="5" type="0">
+</Transition>
+<Transition StartId="26" EndId="35" type="1">
+<Expression>Handl ~= nil and Handl &gt;= 0</Expression></Transition>
+<Transition StartId="26" EndId="27" type="0">
+</Transition>
+<Transition StartId="27" EndId="21" type="0">
+</Transition>
+<Transition StartId="35" EndId="25" type="0">
+</Transition>
+</Transitions>
+</Process>
+

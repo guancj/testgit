@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="HUDTcpGetBGWCalc">
+<Inputs>
+<Variable id="Pid" type="8" data="&quot;&quot;" description="Production ID (Kennnummer)"/>
+<Variable id="IpAddress" type="8" data="&quot;127.0.0.1&quot;" description="IP address of test stand"/>
+<Variable id="Timeout" type="3" data="5" description="Timeout in sec for sending request and receiving response"/>
+<Variable id="Sender" type="8" data="&quot;MFT&quot;" description="String to be sent as value of tag Sender"/>
+<Variable id="Receiver" type="8" data="&quot;PS&quot;" description="String to be sent as value of tag Receiver"/>
+</Inputs>
+<Outputs>
+<Variable id="Result" type="11" data="" description="Result of function retrieved from test stand: 0=not available; 1=available"/>
+<Variable id="ErrorMessage" type="8" data="" description="Error message retreived from test stand"/>
+<Variable id="ErrorCode" type="3" data="" description="Error code retrieved from test stand"/>
+</Outputs>
+<Script>--[[*****************************************************************************
+this function is used to  BGW Berechnung
+input paramter:Pid,IpAddress,Timeout,Sender,Receiver
+output paramter:Result,ErrorMessage,ErrorCode
+
+02/10/2017     created by viforce
+******************************************************************************--]]</Script></Function>
+

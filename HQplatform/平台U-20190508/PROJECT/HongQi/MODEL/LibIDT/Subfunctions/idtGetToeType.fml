@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="获取模型常量中前束类型值.以&quot;\x06&quot;形式返回">
+<Outputs>
+<Variable id="ret" type="8" data="" description="返回模型常量中前束类型值.以&quot;\x06&quot;形式"/>
+</Outputs>
+<Script>ret = string.char(LibIDT.toeType);
+
+--ret = string.char(toeType);</Script></Function>
+

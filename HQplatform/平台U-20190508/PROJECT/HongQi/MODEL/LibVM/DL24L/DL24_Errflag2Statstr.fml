@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="ErrFlag" type="3" data="0"/>
+<Variable id="statstr" type="8" data="&quot;&quot;"/>
+</Inputs>
+<Outputs>
+<Variable id="statstr" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+This function used to transform errflag  to text
+把错误标识数转换成对应的描述字符串，以期表面错误原因
+input parameter:ErrFlag,statstr
+output parameter:statstr
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+statstr  = statstr or ""
+local Err1954 = "Error processing Flashliste"
+local Err1955 = "Error processing ZdcListe"
+local Err1956 = "Error processing Teileaufbrauchliste"
+local Err1957 = "Error processing Korrekturliste"
+local Err1958 = "Unexpected ASV list version"
+local Err1959 = "ASV list version not found"
+local Err1960 = "Incorrect Baugruppen length"
+local Err1961 = "ZdcTnr not found"
+local Err1962 = "AktivierungVorseriensteuerung not found"
+local Err1963 = "AktivierungHkzUnterscheidung not found"
+local Err1964 = "AktivierungHwvPruefung not found"
+local Err1965 = "AktivierungSwvPruefung not found"
+local Err1966 = "PRNR Vorserie not found"
+local Err1967 = "Activate Vorseriensteuerung global flag not found"
+local Err1968 = "No flashcontainer found in ASV"
+local Err1969 = "ASV not active, no flashing possible"
+local Err1970 = "Aktivierung KorrekturSG Flag nicht gefunden"
+local Err1971 = "Aktivierung Teileaufbrauch Flag nicht gefunden"
+local Err1972 = "Aktivierung Teile-Frei-Pruefung Flag nicht gefunden"
+local Err1973 = "Aktivierung Flashen Flag nicht gefunden"
+local Err1974 = "Aktivierung KorrekturZDC Flag nicht gefunden"
+local Err1975 = "Aktivierung ZdcProzess Flag nicht gefunden"
+local Err1976 = "No spare parts allowed"
+local Err1977 = "No part-free test is allowed"
+local Err1978 = "konnte ZDC nicht finden"
+local Err1979 = "Aktivierung ASV Flag nicht gefunden"
+local Err1980 = "Wert DL-Prozess nicht gefunden"
+local Err1981 = "Datenschluessel nicht gefunden"
+local Err1982 = "No configuration for SG"
+local Err1983 = "Config files not found"
+local Err1984 = "No TNr found in the record"
+local Err1985 = "ZDC not found"
+local Err1986 = "ASV-Liste not found"
+local Err1987 = "Ref. PRNRTerm not found"
+local Err1988 = "Ref KNRListID not found"
+local Err1989 = "kein Teileaufbrauch / Eintrag ZdcListe"
+local Err1990 = "Korrektur / Aufbrauch ungueltig"
+local Err1991 = "Tnr. gesperrt"
+local Err1992 = "Versionspruefung n.i.O. (HW / SW)"
+local Err1993 = "Tnr. n.i.O."
+local Err1994 = "Tnr. n.i.O., keine Inbetriebnahme"
+local Err1995 = "kein ZDC zur Tnr. in ASV (Aufbrauch)"
+local Err1996 = "kein ZDC zur Tnr. in ASV"
+local Err1997 = "IBN mit der Alternativ-ZDC-TNR 000000000 nicht moeglich"
+local Err1998 = "Error processing SWaP_DCListe"
+local Err1999 = "Key ID is not unique"
+local Err2000 = "kein SWaP_DC zur Tnr. in ASV"
+local Err2001 = "ASV nicht aktiv, kein SWaP-Prozess"
+local Err2002 = "Tnr. n.i.O., kein SWaP-Prozess"
+local Err2003 = "SWaP-Nullteilenummer, keine Ermittlung eines SWaP_DC"
+local Err2004 = "AktivierungSWaP nicht aktiv, keine Ermittlung eines SWaP_DC"
+local Err2005 = "SWaP_DC-Datei nicht gefunden"
+local Err2006 = "No entry found in SWaP_DCListe"
+
+if(1954 == ErrFlag) then
+statstr = statstr .. Err1954;
+elseif(1955 == ErrFlag) then
+statstr = statstr .. Err1955;
+elseif(1956 == ErrFlag) then
+statstr = statstr .. Err1956;
+elseif(1957 == ErrFlag) then
+statstr = statstr .. Err1957;
+elseif(1958 == ErrFlag) then
+statstr = statstr .. Err1958;
+elseif(1959 == ErrFlag) then
+statstr = statstr .. Err1959;
+elseif(1960 == ErrFlag) then
+statstr = statstr .. Err1960;
+elseif(1961 == ErrFlag) then
+statstr = statstr .. Err1961;
+elseif(1962 == ErrFlag) then
+statstr = statstr .. Err1962;
+elseif(1963 == ErrFlag) then
+statstr = statstr .. Err1963;
+elseif(1964 == ErrFlag) then
+statstr = statstr .. Err1964;
+elseif(1965 == ErrFlag) then
+statstr = statstr .. Err1965;
+elseif(1966 == ErrFlag) then
+statstr = statstr .. Err1966;
+elseif(1967 == ErrFlag) then
+statstr = statstr .. Err1967;
+elseif(1968 == ErrFlag) then
+statstr = statstr .. Err1968;
+elseif(1969 == ErrFlag) then
+statstr = statstr .. Err1969;
+elseif(1970 == ErrFlag) then
+statstr = statstr .. Err1970;
+elseif(1971 == ErrFlag) then
+statstr = statstr .. Err1971;
+elseif(1972 == ErrFlag) then
+statstr = statstr .. Err1972;
+elseif(1973 == ErrFlag) then
+statstr = statstr .. Err1973;
+elseif(1974 == ErrFlag) then
+statstr = statstr .. Err1974;
+elseif(1975 == ErrFlag) then
+statstr = statstr .. Err1975;
+elseif(1976 == ErrFlag) then
+statstr = statstr .. Err1976;
+elseif(1977 == ErrFlag) then
+statstr = statstr .. Err1977;
+elseif(1978 == ErrFlag) then
+statstr = statstr .. Err1978;
+elseif(1979 == ErrFlag) then
+statstr = statstr .. Err1979;
+elseif(1980 == ErrFlag) then
+statstr = statstr .. Err1980;
+elseif(1981 == ErrFlag) then
+statstr = statstr .. Err1981;
+elseif(1982 == ErrFlag) then
+statstr = statstr .. Err1982;
+elseif(1983 == ErrFlag) then
+statstr = statstr .. Err1983;
+elseif(1984 == ErrFlag) then
+statstr = statstr .. Err1984;
+elseif(1985 == ErrFlag) then
+statstr = statstr .. Err1985;
+elseif(1986 == ErrFlag) then
+statstr = statstr .. Err1986;
+elseif(1987 == ErrFlag) then
+statstr = statstr .. Err1987;
+elseif(1988 == ErrFlag) then
+statstr = statstr .. Err1988;
+elseif(1989 == ErrFlag) then
+statstr = statstr .. Err1989;
+elseif(1990 == ErrFlag) then
+statstr = statstr .. Err1990;
+elseif(1991 == ErrFlag) then
+statstr = statstr .. Err1991;
+elseif(1992 == ErrFlag) then
+statstr = statstr .. Err1992;
+elseif(1993 == ErrFlag) then
+statstr = statstr .. Err1993;
+elseif(1994 == ErrFlag) then
+statstr = statstr .. Err1994;
+elseif(1995 == ErrFlag) then
+statstr = statstr .. Err1995;
+elseif(1996 == ErrFlag) then
+statstr = statstr .. Err1996;
+elseif(1997 == ErrFlag) then
+statstr = statstr .. Err1997;
+elseif(1998 == ErrFlag) then
+statstr = statstr .. Err1998;
+elseif(1999 == ErrFlag) then
+statstr = statstr .. Err1999;
+elseif(2000 == ErrFlag) then
+statstr = statstr .. Err2000;
+elseif(2001 == ErrFlag) then
+statstr = statstr .. Err2001;
+elseif(2002 == ErrFlag) then
+statstr = statstr .. Err2002;
+elseif(2003 == ErrFlag) then
+statstr = statstr .. Err2003;
+elseif(2004 == ErrFlag) then
+statstr = statstr .. Err2004;
+elseif(2005 == ErrFlag) then
+statstr = statstr .. Err2005;
+elseif(2006 == ErrFlag) then
+statstr = statstr .. Err2006;
+end</Script></Function>
+

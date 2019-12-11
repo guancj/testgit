@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function id="IDT_Excute_Common_Service" description="针对前束与大灯检测，使用此函数发送指令，入参为service号和timeout值，发送接收报文并验证成功时,读取engine.LastError值为0；失败为-1。&#13;&#10;ret返回值的含义：0 -没有正在被执行的service;1 -执行成功;2 -service正在执行中;-1 -执行失败。&#13;&#10;&#13;&#10;此函数适用的service如下:&#13;&#10;前束：&#13;&#10;service 1 开始检测; service 5 回基准位; &#13;&#10;&#13;&#10;大灯：&#13;&#10;service 1 开始检测; service 5 回基准位; service 41左近光灯检测; service 42右近光灯检测; service 43左远光灯检测; service 44右远光灯检测; service 45左雾灯检测; service 46右雾灯检测&#13;&#10;&#13;&#10;&#13;&#10;">
+<Inputs>
+<Variable id="service" type="3" data="0" description="service号，如 1：表示start test"/>
+<Variable id="pHndl" type="3" data="0" description="通讯句柄"/>
+</Inputs>
+<Outputs>
+<Variable id="ret" type="3" data="0" description="0 -没有正在被执行的service;1 -执行成功;2 -service正在执行中;-1 -执行失败"/>
+</Outputs>
+<Script>ret = idtSendDatagramALS(string.char(service),LibIDT.idtGetTimeout(),pHndl);</Script></Function>
+

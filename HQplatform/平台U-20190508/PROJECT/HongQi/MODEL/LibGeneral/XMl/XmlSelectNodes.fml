@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="xmlHandle" type="8" data="" description="xml handle"/>
+<Variable id="xPath" type="8" data="" description="XPath表达式"/>
+</Inputs>
+<Outputs>
+<Variable id="xmlNodeList" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+用xPath表达式查询选择节点
+output parameter: xmlNodeList
+
+05/07/2017     created by chenzhiwei
+******************************************************************************--]]
+
+xmlNodeList = xmlHandle.selectNodes(xPath)
+</Script></Function>
+

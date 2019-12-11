@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workplace>
+<children>
+<Function id="GDIDeviceFunctionDeleteByInstancePath"/>
+
+<Function id="GDIDeviceFunctionGetByInstanceName"/>
+
+<Function id="GDIDeviceConnectionGetAllDeviceFunctionInstanceNames"/>
+
+<Function id="GDIDeviceFunctionCreate"/>
+
+<Function id="GDIDeviceFunctionCreateByInstancePath"/>
+
+<Function id="GDIDeviceFunctionDelete"/>
+
+</children>
+</Workplace>

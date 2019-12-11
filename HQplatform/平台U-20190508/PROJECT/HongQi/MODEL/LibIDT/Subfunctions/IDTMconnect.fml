@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Outputs>
+<Variable id="ret" type="11" data=""/>
+</Outputs>
+<Script>--os.execute("rasdial 拨号连接&gt;tmp.log")
+--ExecuteProcess("C:\\Program Files\\TightVNC\\tvnserver.exe","\"C:\\Program Files\\TightVNC\\tvnserver.exe\" -controlservice -disconnectall",0,false);
+
+ExecuteProcess("C:\\Windows\\System32\\rasdial.exe","C:\\Windows\\System32\\rasdial.exe 拨号连接",0,true)
+--engine.Delay(3000)</Script></Function>
+

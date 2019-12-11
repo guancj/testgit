@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="GroupNr" type="8" data="" description="Component group number"/>
+<Variable id="ManufacturerID" type="8" data="" description="Manufacturer-ID  7"/>
+<Variable id="ManufacturerData" type="8" data="" description="Manufacturer date 6"/>
+<Variable id="ManufacturerStandID" type="8" data="" description="Manufacturer test stand ID 4"/>
+<Variable id="RunningNr" type="8" data="" description="Running number 4"/>
+</Inputs>
+<Script>--[[*****************************************************************************
+this function is used to   bzd Manufacturer string  
+input parameter:GroupNr;ManufacturerID;ManufacturerData;ManufacturerStandID;RunningNr;
+
+3 component group number
+7 Manufacturer id
+6 Manufacturer date
+4 Manufacturer test stand ID 
+4 Running number
+
+created by zxh 02/22/2016
+******************************************************************************--]]
+
+local	ManufacturerIDlen, ManufacturerDatalen, ManufacturerStandIDlen, RunningNrlen, count;
+count = 0;	
+ManufacturerIDlen = string.len (ManufacturerID);
+if ((ManufacturerIDlen &gt; 0) and (ManufacturerIDlen &lt;= 7))  then
+	ManufacturerID = string.format ("% 7s", ManufacturerID);
+else
+    engine.println (string.format("ManufacturerID length wrong, Soll: 7 != %d ", ManufacturerIDlen).."\n");
+	ManufacturerID = "       ";
+	count = count + 1;
+end;
+
+ManufacturerDatalen = string.len (ManufacturerData);
+if ((ManufacturerDatalen &gt; 0) and (ManufacturerDatalen &lt;= 6)) then
+	ManufacturerData = string.format ("% 6s", ManufacturerData);
+else
+    engine.println (string.format("ManufacturerData length wrong, Soll: 6 != %d ", ManufacturerDatalen).."\n");
+	ManufacturerData = "      ";
+	count = count + 1;
+end;
+
+ManufacturerStandIDlen = string.len (ManufacturerStandID);
+if ((ManufacturerStandIDlen &gt; 0) and (ManufacturerStandIDlen &lt;= 4)) then
+	ManufacturerStandID = string.format ("% 4s", ManufacturerStandID);
+else
+    engine.println (string.format("ManufacturerStandID length wrong, Soll: 4 != %d ",ManufacturerStandIDlen).."\n");
+	ManufacturerStandID = "    ";
+	count = count + 1;
+end;
+
+RunningNrlen = string.len (RunningNr);
+if ((RunningNrlen &gt; 0) and (RunningNrlen &lt;= 4)) then
+	RunningNr = string.format ("% 4s", RunningNr);
+else
+    engine.println (string.format("RunningNr length wrong, Soll: 4 != %d ",RunningNrlen).."\n");
+	RunningNr = "    ";
+	count = count + 1;
+end;
+
+if (count == 0) then
+	engine.LastError = 0;
+else
+	engine.LastError = 1;
+end;
+engine.StatValue = "BAUTEIL".."{".."\\\""..GroupNr.."\\\";".."\\\""..GroupNr..ManufacturerID..ManufacturerData..ManufacturerStandID..RunningNr.."-".."\\\""..";".."}";
+
+--engine.StatValue = "BAUTEIL".."{".."\""..GroupNr.."\";".."\""..GroupNr..ManufacturerID..ManufacturerData..ManufacturerStandID..RunningNr.."-".."\""..";".."}";
+engine.println("###BZD Manufacturer :"..engine.StatValue.."\n");</Script></Function>
+

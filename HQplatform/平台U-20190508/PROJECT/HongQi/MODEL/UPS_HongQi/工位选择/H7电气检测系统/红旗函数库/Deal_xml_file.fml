@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="filename" type="8" data="VIN"/>
+</Inputs>
+<Outputs>
+<Variable id="spec_data" type="8" data=""/>
+</Outputs>
+<Script>--[[ 
+************************************************************************************************************************
+The function is used to extract speciality data from XML file for writing CCM
+
+History:
+    09/07/2016, developer : Zhushaodong created
+************************************************************************************************************************
+--]]
+
+spec_data=""
+xmlfilename=filename..".xml";
+filepath="c:/spec/"..xmlfilename;
+print("deal with file:"..xmlfilename.."        ".."filepath:"..filepath);
+doc = XmlDocument();
+--doc.load("d:/test/LFPH4BCNXG1L01731.xml");
+doc.load(filepath);
+nodes = doc.selectNodes("/CCMS/CCM");
+for i=0,nodes.length-1 do
+  node = nodes[i];
+  --print("nodeName" .. node.nodeName);
+  --print("NAME" .. node.getAttribute("NAME"));
+  print("DID" .. node.getAttribute("DID"));
+  --print("SIZE" .. node.getAttribute("SIZE"));
+  --print("DATA".. doc.selectNodes("/CCMS/CCM/DATA")[i].text);
+  --spec_data=spec_data.." "..doc.selectNodes("/CCMS/CCM/DATA")[i].text
+  spec_data=spec_data..doc.selectNodes("/CCMS/CCM/DATA")[i].text
+end
+print("spec_data:"..spec_data);
+
+--spec_0105=string.sub(spec_data,1,21)..string.sub(spec_data,22,145)..string.sub(spec_data,146,146)..string.sub(spec_data,147,270)..string.sub(spec_data,271,271)..string.sub(spec_data,272,395)..string.sub(spec_data,396,396)..string.sub(spec_data,397,520)..string.sub(spec_data,521,521)..string.sub(spec_data,522,645)..string.sub(spec_data,646,646)..string.sub(spec_data,647,770)..string.sub(spec_data,771,776);
+spec_0105=hexstr(string.sub(spec_data,1,21))..string.sub(spec_data,22,145)..hexstr(string.sub(spec_data,146,146))..string.sub(spec_data,147,270)..hexstr(string.sub(spec_data,271,271))..string.sub(spec_data,272,395)..hexstr(string.sub(spec_data,396,396))..string.sub(spec_data,397,520)..hexstr(string.sub(spec_data,521,521))..string.sub(spec_data,522,645)..hexstr(string.sub(spec_data,646,646))..string.sub(spec_data,647,770)..hexstr(string.sub(spec_data,771,776));
+print("spec_0105:"..spec_0105);
+
+spec_0109=string.sub(spec_data,777,808);
+print("spec_0109:"..spec_0109);
+
+spec_010B=string.sub(spec_data,809,816);
+print("spec_010B:"..spec_010B);
+
+spec_112A=string.sub(spec_data,817,820);
+print("spec_112A:"..spec_112A);
+
+spec_0101=hexstr(string.sub(spec_data,821,841))..string.sub(spec_data,842,965)..hexstr(string.sub(spec_data,966,966))..string.sub(spec_data,967,1090)..hexstr(string.sub(spec_data,1091,1096));
+print("spec_0101:"..spec_0101);
+
+spec_0103=string.sub(spec_data,1097,1100);
+print("spec_0103:"..spec_0103);
+
+spec_0102=string.sub(spec_data,1101,1224);
+print("spec_0102:"..spec_0102);
+
+spec_F1A2=string.sub(spec_data,1225,1240);
+print("spec_F1A2:"..spec_F1A2);
+
+spec_010A=string.sub(spec_data,1241,1880);
+print("spec_010A:"..spec_010A);
+</Script></Function>
+

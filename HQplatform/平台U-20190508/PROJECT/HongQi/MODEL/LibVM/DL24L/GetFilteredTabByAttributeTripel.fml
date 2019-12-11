@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="XmlHndl" type="8" data="" description="xml 文件句柄"/>
+<Variable id="XmlPath" type="8" data="" description="xml 路径"/>
+<Variable id="XmlTag" type="8" data="" description="xml 目标"/>
+<Variable id="XmlAttribFilter1" type="8" data="" description="属性1"/>
+<Variable id="SollValStr_1" type="8" data="" description="属性1 对应值"/>
+<Variable id="XmlAttribFilter2" type="8" data="" description="属性2"/>
+<Variable id="SollValStr_2" type="8" data="" description="属性2 对应值"/>
+<Variable id="XmlAttribFilter3" type="8" data="" description="属性3"/>
+<Variable id="SollValStr_3" type="8" data="" description="属性3 对应值"/>
+<Variable id="FilterModus" type="3" data="0" description="1 - 8"/>
+</Inputs>
+<Outputs>
+<Variable id="bufTab" type="8" data=""/>
+</Outputs>
+<Script>--[[*****************************************************************************
+这个函数主要是匹配符合属性值的xml 对象放到表里并返回，根据不同的filterModus 可以选择匹配不同的属性方案
+
+-- FilterModus
+-- 1000 8 XmlAttribFilter1 XmlAttribFilter2   XmlAttribFilter3
+-- 0111 7 
+-- 0110 6								      XmlAttribFilter3
+-- 0101 5 			       XmlAttribFilter2
+-- 0100 4 			       XmlAttribFilter2   XmlAttribFilter3
+-- 0011 3 XmlAttribFilter1
+-- 0010 2 XmlAttribFilter1 				      XmlAttribFilter3
+-- 0001 1 XmlAttribFilter1 XmlAttribFilter2
+
+input parameter:XmlHndl,XmlPath,XmlTag,XmlAttribFilter1,SollValStr_1,XmlAttribFilter2,SollValStr_2,XmlAttribFilter3,SollValStr_3,FilterModus
+output parameter:bufTab
+
+05/15/2017     created by viforce
+******************************************************************************--]]
+
+
+local xmlbuf
+local xmlbuflist
+local i = 0
+local count = 1
+local DEBUG = false
+
+if(DEBUG == true) then
+print("GetFilteredTabByAttributeTripel: XmlPath :"..tostring(XmlPath)..", XmlTag: "..tostring(XmlTag))
+print("GetFilteredTabByAttributeTripel: Attribute1 :"..tostring(XmlAttribFilter1)..", Value: "..tostring(SollValStr_1))
+print("GetFilteredTabByAttributeTripel: Attribute2 :"..tostring(XmlAttribFilter2)..", Value: "..tostring(SollValStr_2))
+print("GetFilteredTabByAttributeTripel: Attribute3 :"..tostring(XmlAttribFilter3)..", Value: "..tostring(SollValStr_3))
+print("GetFilteredTabByAttributeTripel: Filtermodus :"..tostring(FilterModus))
+end
+
+
+bufTab = {}  -- return value Table xml nodes
+
+if(XmlAttribFilter1 == "") then
+	if(4 &lt;= FilterModus and FilterModus &lt;= 7) then
+		print("GetFilteredTabByAttributeTripel: XmlAttribFilter1 empty =&gt; ignored")
+	else
+		print("GetFilteredTabByAttributeTripel: XmlAttribFilter1 empty =&gt; Error")
+		engine.LastError = 1
+	end
+end
+
+if(XmlAttribFilter2 == "") then
+	if((2 &lt;= FilterModus and FilterModus &lt;= 3) or (6 &lt;= FilterModus and FilterModus &lt;= 7) ) then
+		print("GetFilteredTabByAttributeTripel: XmlAttribFilter2 empty =&gt; ignored")
+	else
+		print("GetFilteredTabByAttributeTripel: XmlAttribFilter2 empty =&gt; Error")
+		engine.LastError = 1	
+	end
+end
+
+if(XmlAttribFilter3 == "") then
+	if(1 == FilterModus or 3 == FilterModus or 5 == FilterModus or 7 == FilterModus) then
+		print("GetFilteredTabByAttributeTripel: XmlAttribFilter3 empty =&gt; ignored")
+	else
+		print("GetFilteredTabByAttributeTripel: XmlAttribFilter3 empty =&gt; Error")
+		engine.LastError = 1
+	end
+end
+
+if(0 == engine.LastError) then
+	if(nil ~= XmlHndl) then
+		print("zhou I am here " .. tostring(XmlPath) .. tostring(XmlTag))
+		xmlbuflist = XmlHndl.selectNodes(XmlPath.."/"..XmlTag);
+		print("xmlbuflist :" .. tostring(xmlbuflist.length))
+		if(xmlbuflist.length &gt; 0) then
+			for i = 0 ,xmlbuflist.length - 1  do 
+				if(DEBUG == true) then
+				print("getAttribute 1 :"..tostring(xmlbuflist[i].getAttribute(XmlAttribFilter1)).." =&gt; "..tostring(SollValStr_1))
+				print("getAttribute 2 :"..tostring(xmlbuflist[i].getAttribute(XmlAttribFilter2)).." =&gt; "..tostring(SollValStr_2))
+				print("getAttribute 3 :"..tostring(xmlbuflist[i].getAttribute(XmlAttribFilter3)).." =&gt; "..tostring(SollValStr_3))
+				end
+				if(8 == FilterModus) then
+					if(xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 and xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 and xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3) then
+						bufTab[count] = xmlbuflist[i]
+						print("bufTab : "..bufTab[count].xml)
+						count = count + 1 						
+					end
+				elseif(7 == FilterModus) then
+						bufTab[count] = xmlbuflist[i]
+						print("bufTab : "..bufTab[count].xml)
+						count = count + 1 	
+				elseif(6 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(5 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end					
+				elseif(4 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2 and xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(3 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(2 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 and xmlbuflist[i].getAttribute(XmlAttribFilter3) == SollValStr_3) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				elseif(1 == FilterModus) then
+						if(xmlbuflist[i].getAttribute(XmlAttribFilter1) == SollValStr_1 and xmlbuflist[i].getAttribute(XmlAttribFilter2) == SollValStr_2) then 
+							bufTab[count] = xmlbuflist[i]
+							print("bufTab : "..bufTab[count].xml)
+							count = count + 1						
+						end				
+				end	
+			end
+		end	
+	else
+		print("Error : XmlHndl is not valid")
+		engine.LastError = 1
+	end
+end
+if(#bufTab == 0) then
+	print("GetFilteredTabByAttributeTripel: xml filter does not find any valid data")
+end</Script></Function>
+

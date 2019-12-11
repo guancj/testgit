@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function>
+<Inputs>
+<Variable id="strNames" type="8" data=""/>
+</Inputs>
+<Outputs>
+<Variable id="tableNames" type="8" data=""/>
+</Outputs>
+<Script>--分割字串，获取名字列表
+
+tmpTable ={};
+local stringRight = strNames
+while(stringRight ~="")
+do
+	i,j=string.find(stringRight,";")
+	if(i~=nil) then
+		stringLeft = string.sub(stringRight,0,i-1)
+		stringRight = string.sub(stringRight,i+1,-1)
+	else
+		stringLeft = stringRight
+		stringRight = "";
+	end
+	table.insert(tmpTable,stringLeft)
+end
+
+tableNames = tmpTable</Script></Function>
+

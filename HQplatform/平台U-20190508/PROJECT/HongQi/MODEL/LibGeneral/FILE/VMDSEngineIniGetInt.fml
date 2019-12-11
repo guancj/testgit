@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Function description="从配置文件（VMDSEngine.ini）读取数值型配置信息">
+<Inputs>
+<Variable id="strSection" type="8" data="" description="ini file section"/>
+<Variable id="strKey" type="8" data="" description="Key"/>
+<Variable id="nDefault" type="3" data="0" description="未找到相应结果的返回值"/>
+</Inputs>
+<Outputs>
+<Variable id="intValue" type="3" data="0" description="数值型返回值"/>
+</Outputs>
+<Script>intValue = engine.IniGetInt(strSection,strKey,nDefault)</Script></Function>
+
