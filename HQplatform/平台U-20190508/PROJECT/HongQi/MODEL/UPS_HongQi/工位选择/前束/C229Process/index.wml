@@ -7,5 +7,6 @@
 <Process id="C229_TestProcess"/>
 <Process id="C229_SAS_Calibration"/>
 <Process id="C229_ESP_Calibration"/>
+<Process id="C229_GIT_TEST"/>
 </children>
 </Workplace>
